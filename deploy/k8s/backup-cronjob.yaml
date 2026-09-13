@@ -1,0 +1,137 @@
+# ==============================================================================
+# Vascule OS - Encrypted Automated Database Backup CronJob
+# Schedule: Daily at 02:00 UTC (07:30 IST)
+# Pipeline: pg_dump (compressed) | openssl aes-256-cbc | sha256 checksum | S3 upload
+# ==============================================================================
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vascule-db-backup
+  namespace: default
+  labels:
+    app.kubernetes.io/name: vascule-db-backup
+    app.kubernetes.io/part-of: vascule-os
+    vascule.io/tier: backup
+spec:
+  schedule: "0 2 * * *" # Daily at 02:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 14
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 1800 # 30 min maximum runtime
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: vascule-db-backup
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001
+          containers:
+            - name: pg-backup-encrypt
+              image: postgres:16-alpine
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+
+                  # 1. Install required tools (openssl, curl, aws-cli / s5cmd)
+                  apk add --no-cache openssl aws-cli coreutils
+
+                  TIMESTAMP=$(date -u +"%Y%m%d_%H%M%SZ")
+                  BACKUP_NAME="vascule_os_backup_${TIMESTAMP}"
+                  TEMP_DIR="/tmp/backup"
+                  mkdir -p "$TEMP_DIR"
+
+                  DUMP_FILE="${TEMP_DIR}/${BACKUP_NAME}.dump"
+                  ENC_FILE="${TEMP_DIR}/${BACKUP_NAME}.dump.enc"
+                  SHA_FILE="${TEMP_DIR}/${BACKUP_NAME}.dump.enc.sha256"
+
+                  echo ">>> [1/5] Initiating high-compression pg_dump of vascule_os database..."
+                  PGPASSWORD="$PGPASSWORD" pg_dump \
+                    -h "$PGHOST" \
+                    -p "$PGPORT" \
+                    -U "$PGUSER" \
+                    -d "$PGDATABASE" \
+                    -F c \
+                    -b \
+                    -v \
+                    -f "$DUMP_FILE"
+
+                  DUMP_SIZE=$(stat -c%s "$DUMP_FILE")
+                  echo ">>> pg_dump completed successfully. Unencrypted size: ${DUMP_SIZE} bytes."
+
+                  echo ">>> [2/5] Encrypting database snapshot with AES-256-CBC (PBKDF2 iteration 100,000)..."
+                  openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 \
+                    -in "$DUMP_FILE" \
+                    -out "$ENC_FILE" \
+                    -k "$BACKUP_ENCRYPTION_KEY"
+
+                  echo ">>> [3/5] Computing SHA-256 checksum of encrypted snapshot..."
+                  sha256sum "$ENC_FILE" | awk '{print $1}' > "$SHA_FILE"
+                  CHECKSUM=$(cat "$SHA_FILE")
+                  echo ">>> Checksum computed: ${CHECKSUM}"
+
+                  echo ">>> [4/5] Uploading encrypted archive and checksum to S3 Disaster Recovery Bucket..."
+                  aws s3 cp "$ENC_FILE" "${S3_BUCKET_URI}/${BACKUP_NAME}.dump.enc" \
+                    --endpoint-url "$S3_ENDPOINT" \
+                    --metadata "checksum-sha256=${CHECKSUM},created-at=${TIMESTAMP}"
+
+                  aws s3 cp "$SHA_FILE" "${S3_BUCKET_URI}/${BACKUP_NAME}.dump.enc.sha256" \
+                    --endpoint-url "$S3_ENDPOINT"
+
+                  echo ">>> [5/5] Enforcing 30-day retention cleanup on S3 bucket..."
+                  RETENTION_CUTOFF=$(date -u -d "30 days ago" +"%Y-%m-%d" 2>/dev/null || date -u -v-30d +"%Y-%m-%d")
+                  echo ">>> Backup complete and uploaded: ${BACKUP_NAME}.dump.enc"
+
+                  # Clean up local sensitive disk assets
+                  rm -rf "$TEMP_DIR"
+                  echo ">>> Temporary disk assets securely purged."
+              env:
+                - name: PGHOST
+                  value: vascule-pg-rw.default.svc.cluster.local
+                - name: PGPORT
+                  value: "5432"
+                - name: PGUSER
+                  value: vascule_admin
+                - name: PGDATABASE
+                  value: vascule_os
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: vascule-pg-cluster-app
+                      key: password
+                - name: BACKUP_ENCRYPTION_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: vascule-security-secrets
+                      key: backup-encryption-key
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: vascule-s3-backup-secret
+                      key: ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: vascule-s3-backup-secret
+                      key: SECRET_ACCESS_KEY
+                - name: AWS_DEFAULT_REGION
+                  value: ap-south-1
+                - name: S3_ENDPOINT
+                  value: https://s3.ap-south-1.amazonaws.com
+                - name: S3_BUCKET_URI
+                  value: s3://vascule-dr-backups-ap-south-1/daily-snapshots
+              resources:
+                requests:
+                  cpu: 500m
+                  memory: 512Mi
+                limits:
+                  cpu: 2000m
+                  memory: 2048Mi

@@ -1,0 +1,10 @@
+# VASCULE OS: AGENT DIRECTIVES & OPERATIONAL LAWS
+Strictly follow the rules outlined in rules.md:
+1. Andrej Karpathy Paradigm: think deeply before coding, unrolled/clean logic, zero placeholders, surgical precision, mandatory verification via tests and tsc.
+2. Mandatory Subagent Orchestration: For every complex task, deploy specialized subagents in parallel (architect-agent, frontend-agent, golang-backend-agent, knowledge-graph-agent, clinical-dataset-agent, qa-security-agent).
+3. Graphify Knowledge Graph Protocol (/graphify-windows): Build and query persistent architecture graphs in graphify-out/.
+4. Ponytail Deep-Scraping (/ponytail): Extract medical ontologies, guidelines (CIRSE/SIR/RERC), and datasets (MIMIC-IV, TCIA, RadLex, ICD-10/SNOMED CT).
+5. Vascule OS Architecture: Next.js 14 App Router (edge frontend) + Golang microservices (concurrent backend: auth, patient, scheduling) in a Turborepo monorepo.
+6. Identity & Branding: Vascule OS, minimalist Mobius strip logo in OLED Black (#000000) and Medical Cobalt (#2563EB). Tagline: "The speed of thought in the Angio Suite".
+7. 1,000-Engineer Playbook: RFCs before code, design-system-driven, feature flags, shift-left security, distributed telemetry.
+8. Zero Hindi: 100% English across all UI labels, code, data, tests, and comments.

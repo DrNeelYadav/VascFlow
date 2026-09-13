@@ -1,0 +1,18 @@
+apiVersion: v2
+name: vascule-os
+description: Enterprise Helm Chart for Vascule OS - Clinical PACS, Reporting & Health Schemes Monorepo
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - healthcare
+  - dicom
+  - fhir
+  - pacs
+  - vascular-surgery
+  - nextjs
+  - golang
+home: https://vascule-os.sms.rajasthan.gov.in
+maintainers:
+  - name: Vascule OS Infrastructure Team
+    email: sre-infra@vascule-os.org

@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Staff {
+  id         String     @id @default(cuid())
+  roleCode   String
+  name       String
+  title      String
+  email      String     @unique
+  roleTier   String
+  department String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  auditLogs  AuditLog[]
+}
+
+model Patient {
+  id              String   @id @default(cuid())
+  crNo            String   @unique
+  ipdNo           String
+  name            String
+  age             Int
+  gender          String
+  weightKg        Float
+  serumCreatinine Float
+  totalBilirubin  Float
+  serumAlbumin    Float
+  inr             Float
+  sodiumMeqL      Float
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String
+  staffId     String
+  staff       Staff    @relation(fields: [staffId], references: [id])
+  ipAddress   String
+  userAgent   String
+  detailsJson String
+  timestamp   DateTime @default(now())
+}

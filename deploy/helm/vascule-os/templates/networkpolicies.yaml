@@ -1,0 +1,157 @@
+{{- if .Values.networkPolicy.enabled }}
+# ---------------------------------------------------------------------------
+# 1. Default Deny All Ingress Policy
+# ---------------------------------------------------------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vascule-default-deny-ingress
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+---
+# ---------------------------------------------------------------------------
+# 2. Allow Ingress Traffic to Web App Frontend
+# ---------------------------------------------------------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vascule-allow-ingress-to-webapp
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: web-app
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 3000
+---
+# ---------------------------------------------------------------------------
+# 3. Allow BFF Gateway to Microservices (Auth, FHIR, DICOM)
+# ---------------------------------------------------------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vascule-allow-webapp-to-microservices
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values: ["auth-service", "fhir-service", "dicom-service"]
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: web-app
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8081
+        - protocol: TCP
+          port: 8082
+    # Allow Prometheus Scraper to /metrics
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8081
+        - protocol: TCP
+          port: 8082
+---
+# ---------------------------------------------------------------------------
+# 4. Allow Native Hospital HL7 MLLP Feed to FHIR Service
+# ---------------------------------------------------------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vascule-allow-mllp-ingress
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: fhir-service
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 2575
+---
+# ---------------------------------------------------------------------------
+# 5. Allow Database Traffic Only From Authorized Microservices
+# ---------------------------------------------------------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vascule-allow-db-access
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: vascule-pg-cluster
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values: ["auth-service", "fhir-service", "dicom-service"]
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+# ---------------------------------------------------------------------------
+# 6. Allow Redis Session Cache Access From WebApp and Auth
+# ---------------------------------------------------------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vascule-allow-redis-access
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vascule-redis
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values: ["web-app", "auth-service"]
+      ports:
+        - protocol: TCP
+          port: 6379
+{{- end }}

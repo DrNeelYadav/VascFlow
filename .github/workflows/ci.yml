@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build, Test & Compliance (Turborepo & Go 1.22)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout Source Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Go 1.22 Toolchain
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+          cache-dependency-path: services/auth-service/go.mod
+
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Install Monorepo Dependencies
+        run: npm ci
+
+      - name: HIPAA & SOC 2 Cryptographic & Secret Compliance Audit
+        run: |
+          echo "=================================================================="
+          echo "Running HIPAA & SOC 2 Security Compliance Audit"
+          echo "Standard: HIPAA Security Rule (45 CFR § 164.312) & SOC 2 CC6.1/CC6.7"
+          echo "Enforcing zero plain text secrets and unencrypted private keys"
+          echo "=================================================================="
+
+          VIOLATIONS=0
+
+          echo "Auditing for unencrypted private cryptographic keys..."
+          if grep -rnEI --exclude-dir={.git,node_modules,.turbo,dist,.next,cypress} \
+             "-----BEGIN (RSA |DSA |EC |OPENSSH |PGP )?PRIVATE KEY-----" .; then
+            echo "::error::[HIPAA/SOC2 VIOLATION] Unencrypted private key detected in repository!"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          fi
+
+          echo "Auditing for live plaintext API tokens and high-entropy secrets..."
+          if grep -rnEI --exclude-dir={.git,node_modules,.turbo,dist,.next,cypress} \
+             -E "(AKIA[0-9A-Z]{16})|(ghp_[0-9a-zA-Z]{36})|(github_pat_[0-9a-zA-Z_]{82})|(xox[baprs]-[0-9a-zA-Z]{10,48})|(sk_live_[0-9a-zA-Z]{24})" .; then
+            echo "::error::[HIPAA/SOC2 VIOLATION] Live plaintext secret or API token detected in source files!"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          fi
+
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "::error::HIPAA & SOC 2 Compliance gate failed with $VIOLATIONS violation(s)."
+            exit 1
+          fi
+
+          echo "✔ HIPAA & SOC 2 Security Audit Passed: Zero plain text secrets or unencrypted keys detected."
+
+      - name: Run Turborepo Pipeline
+        run: npx turbo run build test lint typecheck
+
+      - name: Compile Go Auth Service
+        run: |
+          cd services/auth-service
+          go vet ./...
+          CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-w -s" -o /dev/null .

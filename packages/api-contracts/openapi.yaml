@@ -1,0 +1,300 @@
+openapi: 3.1.0
+info:
+  title: Vascule OS Authentication Service API
+  description: Institutional authentication, session token issuance, and health monitoring contract for Vascule OS clinical infrastructure.
+  version: 1.0.0
+  contact:
+    name: Vascule OS Infrastructure Team
+    email: infra@vascule.hospital.org
+servers:
+  - url: http://localhost:8080
+    description: Local development auth service
+  - url: https://auth.vascule.hospital.org
+    description: Production clinical auth gateway
+tags:
+  - name: System
+    description: Health monitoring and service telemetry metadata
+  - name: Authentication
+    description: Institutional credential verification and JWT token issuance
+paths:
+  /health:
+    get:
+      tags:
+        - System
+      summary: Service health check
+      description: Returns service metadata, operational status, version 1.0.0, uptime, and subsystem readiness.
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy and operational
+          headers:
+            X-Trace-ID:
+              schema:
+                type: string
+              description: OpenTelemetry distributed trace ID
+            X-Span-ID:
+              schema:
+                type: string
+              description: OpenTelemetry span ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Institutional credential login
+      description: Validates institutional credentials (institutional email, security PIN, role code) and returns a signed JWT session token with claims.
+      operationId: loginInstitutionalUser
+      requestBody:
+        required: true
+        description: Institutional credentials payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication. Returns signed JWT token structure with claims and user profile.
+          headers:
+            X-Trace-ID:
+              schema:
+                type: string
+              description: OpenTelemetry distributed trace ID
+            X-Span-ID:
+              schema:
+                type: string
+              description: OpenTelemetry span ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Unauthorized. Invalid credentials, unknown account, or role mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity. Request payload failed schema validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal Server Error. Unexpected server failure during token signing or request processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Pass the issued JWT token in the Authorization header as `Bearer <token>`
+  schemas:
+    ComponentStatus:
+      type: object
+      required:
+        - status
+        - description
+      properties:
+        status:
+          type: string
+          example: "UP"
+        description:
+          type: string
+          example: "OpenTelemetry tracing provider active"
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - service
+        - version
+        - timestamp
+        - uptimeSeconds
+        - environment
+        - components
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        service:
+          type: string
+          example: "auth-service"
+        version:
+          type: string
+          example: "1.0.0"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-09-13T12:00:00Z"
+        uptimeSeconds:
+          type: number
+          format: double
+          example: 124.58
+        environment:
+          type: string
+          example: "production"
+        components:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ComponentStatus'
+    LoginRequest:
+      type: object
+      required:
+        - institutionalEmail
+        - securityPin
+        - roleCode
+      properties:
+        institutionalEmail:
+          type: string
+          format: email
+          description: Institutional email address belonging to clinical staff
+          example: "ir.specialist@vascule.hospital.org"
+        securityPin:
+          type: string
+          minLength: 4
+          maxLength: 12
+          description: Secure institutional authentication PIN
+          example: "830192"
+        roleCode:
+          type: string
+          description: Clinical or operational role code
+          enum:
+            - ADMIN
+            - DOCTOR
+            - RADIOLOGIST
+            - INTERVENTIONAL_RADIOLOGIST
+            - NURSE
+            - CLINICIAN
+          example: "INTERVENTIONAL_RADIOLOGIST"
+    UserProfile:
+      type: object
+      required:
+        - id
+        - institutionalEmail
+        - fullName
+        - roleCode
+        - department
+        - institutionId
+        - status
+        - permissions
+      properties:
+        id:
+          type: string
+          example: "usr_ir_002"
+        institutionalEmail:
+          type: string
+          format: email
+          example: "ir.specialist@vascule.hospital.org"
+        fullName:
+          type: string
+          example: "Dr. Marcus Thorne, MD, FSIR"
+        roleCode:
+          type: string
+          example: "INTERVENTIONAL_RADIOLOGIST"
+        department:
+          type: string
+          example: "Vascular & Interventional Angiography"
+        institutionId:
+          type: string
+          example: "inst_vascule_central"
+        status:
+          type: string
+          example: "ACTIVE"
+        permissions:
+          type: array
+          items:
+            type: string
+          example:
+            - "records:read"
+            - "records:write"
+            - "imaging:read"
+            - "imaging:write"
+            - "procedures:schedule"
+            - "procedures:execute"
+            - "inventory:order"
+            - "prescriptions:write"
+    LoginResponse:
+      type: object
+      required:
+        - token
+        - tokenType
+        - expiresIn
+        - user
+      properties:
+        token:
+          type: string
+          description: HMAC-SHA256 signed JSON Web Token containing user identity and clinical permissions
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJ1c3JfaXJfMDAyIiwiZW1haWwiOiJpci5zcGVjaWFsaXN0QHZhc2N1bGUuaG9zcGl0YWwub3JnIn0.signature"
+        tokenType:
+          type: string
+          example: "Bearer"
+        expiresIn:
+          type: integer
+          format: int64
+          description: Token lifespan in seconds (24 hours)
+          example: 86400
+        user:
+          $ref: '#/components/schemas/UserProfile'
+    ValidationErrorDetail:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+          example: "securityPin"
+        message:
+          type: string
+          example: "securityPin length must be between 4 and 12 characters"
+    ValidationErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+        - message
+        - errors
+      properties:
+        status:
+          type: integer
+          example: 422
+        error:
+          type: string
+          example: "Unprocessable Entity"
+        message:
+          type: string
+          example: "The request payload failed institutional credential schema validation"
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+        - message
+        - timestamp
+      properties:
+        status:
+          type: integer
+          example: 401
+        error:
+          type: string
+          example: "Unauthorized"
+        message:
+          type: string
+          example: "Invalid institutional credentials or unauthorized role requested"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-09-13T12:00:00Z"
+        traceId:
+          type: string
+          example: "4bf92f3577b34da6a3ce929d0e0e4736"

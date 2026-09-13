@@ -1,0 +1,141 @@
+{{- if .Values.authService.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vascule-auth-service
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+    app.kubernetes.io/component: auth-service
+spec:
+  replicas: {{ .Values.authService.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "vascule-os.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: auth-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        {{- include "vascule-os.labels" . | nindent 8 }}
+        app.kubernetes.io/component: auth-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: auth-service
+      containers:
+        - name: auth-service
+          image: "{{ .Values.authService.image.repository }}:{{ .Values.authService.image.tag }}"
+          imagePullPolicy: {{ .Values.authService.image.pullPolicy }}
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: {{ .Values.authService.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.authService.probes.liveness.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.authService.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.authService.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.authService.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.authService.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.authService.probes.readiness.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.authService.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.authService.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.authService.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.authService.probes.readiness.failureThreshold }}
+          resources:
+            {{- toYaml .Values.authService.resources | nindent 12 }}
+          env:
+            {{- range $key, $val := .Values.authService.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: vascule-security-secrets
+                  key: jwt-secret
+                  optional: false
+{{- end }}
+---
+{{- if .Values.authService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: vascule-auth-service
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+    app.kubernetes.io/component: auth-service
+spec:
+  type: {{ .Values.authService.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.authService.service.port }}
+      targetPort: {{ .Values.authService.service.targetPort }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "vascule-os.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: auth-service
+{{- end }}
+---
+{{- if and .Values.authService.enabled .Values.authService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vascule-auth-service-hpa
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+    app.kubernetes.io/component: auth-service
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vascule-auth-service
+  minReplicas: {{ .Values.authService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.authService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.authService.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.authService.autoscaling.targetMemoryUtilizationPercentage }}
+{{- end }}

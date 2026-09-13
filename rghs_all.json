@@ -1,0 +1,9440 @@
+[
+  {
+    "code": "1",
+    "name": "Consultation OPD",
+    "nabhRate": 135,
+    "nonNabhRate": 135
+  },
+  {
+    "code": "2",
+    "name": "Consultation- for Inpatients",
+    "nabhRate": 350,
+    "nonNabhRate": 350
+  },
+  {
+    "code": "3",
+    "name": "Dressings of wounds",
+    "nabhRate": 58,
+    "nonNabhRate": 45
+  },
+  {
+    "code": "4",
+    "name": "Suturing of wounds with local anesthesia",
+    "nabhRate": 112,
+    "nonNabhRate": 97
+  },
+  {
+    "code": "5",
+    "name": "Aspiration Plural Effusion - Diagnostic",
+    "nabhRate": 138,
+    "nonNabhRate": 120
+  },
+  {
+    "code": "6",
+    "name": "Aspiration Plural Effusion - Therapeutic",
+    "nabhRate": 200,
+    "nonNabhRate": 174
+  },
+  {
+    "code": "7",
+    "name": "Abdominal Aspiration - Diagnostic",
+    "nabhRate": 358,
+    "nonNabhRate": 311
+  },
+  {
+    "code": "8",
+    "name": "Abdominal Aspiration - Therapeutic",
+    "nabhRate": 476,
+    "nonNabhRate": 414
+  },
+  {
+    "code": "9",
+    "name": "Pericardial Aspiration",
+    "nabhRate": 393,
+    "nonNabhRate": 342
+  },
+  {
+    "code": "10",
+    "name": "Joints Aspiration",
+    "nabhRate": 328,
+    "nonNabhRate": 285
+  },
+  {
+    "code": "11",
+    "name": "Biopsy Skin",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "12",
+    "name": "Removal of Stitches",
+    "nabhRate": 37,
+    "nonNabhRate": 32
+  },
+  {
+    "code": "13",
+    "name": "Venesection",
+    "nabhRate": 129,
+    "nonNabhRate": 112
+  },
+  {
+    "code": "14",
+    "name": "Phimosis Under LA",
+    "nabhRate": 1357,
+    "nonNabhRate": 1180
+  },
+  {
+    "code": "15",
+    "name": "Sternal puncture",
+    "nabhRate": 179,
+    "nonNabhRate": 156
+  },
+  {
+    "code": "16",
+    "name": "Injection for Haemorrhoids",
+    "nabhRate": 429,
+    "nonNabhRate": 373
+  },
+  {
+    "code": "17",
+    "name": "Injection for Varicose Veins",
+    "nabhRate": 362,
+    "nonNabhRate": 315
+  },
+  {
+    "code": "18",
+    "name": "Catheterisation",
+    "nabhRate": 500,
+    "nonNabhRate": 425
+  },
+  {
+    "code": "19",
+    "name": "Dilatation of Urethra",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "20",
+    "name": "Incision drainage",
+    "nabhRate": 449,
+    "nonNabhRate": 390
+  },
+  {
+    "code": "21",
+    "name": "Intercostal Drainage",
+    "nabhRate": 130,
+    "nonNabhRate": 113
+  },
+  {
+    "code": "22",
+    "name": "Peritoneal Dialysis",
+    "nabhRate": 1517,
+    "nonNabhRate": 1319
+  },
+  {
+    "code": "23",
+    "name": "Excision of Moles",
+    "nabhRate": 358,
+    "nonNabhRate": 311
+  },
+  {
+    "code": "24",
+    "name": "Excision of Warts",
+    "nabhRate": 321,
+    "nonNabhRate": 279
+  },
+  {
+    "code": "25",
+    "name": "Excision of Molluscum contagiosum",
+    "nabhRate": 135,
+    "nonNabhRate": 117
+  },
+  {
+    "code": "26",
+    "name": "Excision of Venereal Warts",
+    "nabhRate": 166,
+    "nonNabhRate": 144
+  },
+  {
+    "code": "27",
+    "name": "Excision of Corns",
+    "nabhRate": 145,
+    "nonNabhRate": 126
+  },
+  {
+    "code": "28",
+    "name": "I/D Injection Keloid(Intralesional Injection)",
+    "nabhRate": 100,
+    "nonNabhRate": 87
+  },
+  {
+    "code": "29",
+    "name": "Chemical Cautery (s)",
+    "nabhRate": 114,
+    "nonNabhRate": 99
+  },
+  {
+    "code": "32",
+    "name": "Pterygium Surgery",
+    "nabhRate": 6325,
+    "nonNabhRate": 5500
+  },
+  {
+    "code": "33",
+    "name": "Conjunctival Peritomy",
+    "nabhRate": 60,
+    "nonNabhRate": 52
+  },
+  {
+    "code": "35",
+    "name": "Removal of corneal foreign body",
+    "nabhRate": 120,
+    "nonNabhRate": 104
+  },
+  {
+    "code": "38",
+    "name": "Corneal grafting\u2014Penetrating keratoplasty",
+    "nabhRate": 5951,
+    "nonNabhRate": 5175
+  },
+  {
+    "code": "39",
+    "name": "Corneal grafting\u2014Lamellar keratoplasty",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "45",
+    "name": "EDTA for band shaped keratopathy",
+    "nabhRate": 894,
+    "nonNabhRate": 777
+  },
+  {
+    "code": "46",
+    "name": "Arcuate keratotomy for astigmatism",
+    "nabhRate": 2898,
+    "nonNabhRate": 2520
+  },
+  {
+    "code": "49",
+    "name": "Penetrating keratoplasty with vitrectomy",
+    "nabhRate": 12570,
+    "nonNabhRate": 10930
+  },
+  {
+    "code": "51",
+    "name": "DALK- Deep anterior lamellar keratoplasty",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "52",
+    "name": "Keratoprosthesis stage I and II",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "57",
+    "name": "Dacryocystorhinostomy\u2014Plain",
+    "nabhRate": 2976,
+    "nonNabhRate": 2588
+  },
+  {
+    "code": "60",
+    "name": "Caliculoplasty",
+    "nabhRate": 2381,
+    "nonNabhRate": 2070
+  },
+  {
+    "code": "61",
+    "name": "Dacryocystectomy",
+    "nabhRate": 1984,
+    "nonNabhRate": 1725
+  },
+  {
+    "code": "62",
+    "name": "Punctal plugs for dry eyes",
+    "nabhRate": 135,
+    "nonNabhRate": 117
+  },
+  {
+    "code": "63",
+    "name": "Refraction",
+    "nabhRate": 41,
+    "nonNabhRate": 36
+  },
+  {
+    "code": "64",
+    "name": "Indirect Ophthalmoscopy",
+    "nabhRate": 69,
+    "nonNabhRate": 60
+  },
+  {
+    "code": "65",
+    "name": "Orthoptic check-up- with synoptophore",
+    "nabhRate": 46,
+    "nonNabhRate": 40
+  },
+  {
+    "code": "66",
+    "name": "Lees\u2019 charting or Hess\u2019 charting",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "67",
+    "name": "Orthoptic exercises",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "68",
+    "name": "Pleoptic exercises",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "69",
+    "name": "Perimetry/field test\u2014Goldman",
+    "nabhRate": 150,
+    "nonNabhRate": 130
+  },
+  {
+    "code": "70",
+    "name": "Perimetry/field test\u2014 automated",
+    "nabhRate": 150,
+    "nonNabhRate": 130
+  },
+  {
+    "code": "71",
+    "name": "Fluorescein angiography for fundus or iris",
+    "nabhRate": 952,
+    "nonNabhRate": 828
+  },
+  {
+    "code": "72",
+    "name": "Ultrasound A- Scan",
+    "nabhRate": 894,
+    "nonNabhRate": 777
+  },
+  {
+    "code": "73",
+    "name": "Ultrasound B- Scan",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "74",
+    "name": "Fundus Photo Test",
+    "nabhRate": 207,
+    "nonNabhRate": 180
+  },
+  {
+    "code": "75",
+    "name": "Indocyanin green angiography",
+    "nabhRate": 952,
+    "nonNabhRate": 828
+  },
+  {
+    "code": "77",
+    "name": "Corneal topography",
+    "nabhRate": 343,
+    "nonNabhRate": 298
+  },
+  {
+    "code": "78",
+    "name": "Corneal pachymetry",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "79",
+    "name": "Auto-refraction",
+    "nabhRate": 37,
+    "nonNabhRate": 32
+  },
+  {
+    "code": "80",
+    "name": "Macular function tests",
+    "nabhRate": 46,
+    "nonNabhRate": 40
+  },
+  {
+    "code": "81",
+    "name": "Potential acuity metry",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "82",
+    "name": "Laser interferometry",
+    "nabhRate": 179,
+    "nonNabhRate": 156
+  },
+  {
+    "code": "83",
+    "name": "OCT-Optical coherence tomography",
+    "nabhRate": 2200,
+    "nonNabhRate": 1913
+  },
+  {
+    "code": "84",
+    "name": "HRT- Heidelberg\u2019s retinal tomogram",
+    "nabhRate": 155,
+    "nonNabhRate": 135
+  },
+  {
+    "code": "85",
+    "name": "GDx Nerve fibre layer analyzer",
+    "nabhRate": 101,
+    "nonNabhRate": 88
+  },
+  {
+    "code": "86",
+    "name": "UBM- Ultrasound bio microscopy",
+    "nabhRate": 155,
+    "nonNabhRate": 135
+  },
+  {
+    "code": "87",
+    "name": "Non Contact tonometry (NCT)",
+    "nabhRate": 52,
+    "nonNabhRate": 45
+  },
+  {
+    "code": "88",
+    "name": "IOP measurement with schiotz",
+    "nabhRate": 31,
+    "nonNabhRate": 27
+  },
+  {
+    "code": "89",
+    "name": "IOP measurement with applation tonometry",
+    "nabhRate": 52,
+    "nonNabhRate": 45
+  },
+  {
+    "code": "90",
+    "name": "Three mirror examination for retina",
+    "nabhRate": 60,
+    "nonNabhRate": 52
+  },
+  {
+    "code": "91",
+    "name": "90 D lens examination",
+    "nabhRate": 52,
+    "nonNabhRate": 45
+  },
+  {
+    "code": "92",
+    "name": "Gonioscopy",
+    "nabhRate": 60,
+    "nonNabhRate": 52
+  },
+  {
+    "code": "93",
+    "name": "Chalazion incision and curettage in one eye",
+    "nabhRate": 414,
+    "nonNabhRate": 360
+  },
+  {
+    "code": "94",
+    "name": "Chalazion incision and curettage in both eyes",
+    "nabhRate": 446,
+    "nonNabhRate": 388
+  },
+  {
+    "code": "96",
+    "name": "Ptosis surgery with LPS resection one lid",
+    "nabhRate": 5693,
+    "nonNabhRate": 4950
+  },
+  {
+    "code": "97",
+    "name": "Ptosis surgery with Sling surgery one lid",
+    "nabhRate": 6903,
+    "nonNabhRate": 6003
+  },
+  {
+    "code": "98",
+    "name": "Ectropion surgery- one lid",
+    "nabhRate": 1610,
+    "nonNabhRate": 1400
+  },
+  {
+    "code": "99",
+    "name": "Ectropion surgery- both lids",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "100",
+    "name": "Epicanthus correction",
+    "nabhRate": 1604,
+    "nonNabhRate": 1395
+  },
+  {
+    "code": "101",
+    "name": "Cantholysis and canthotomy",
+    "nabhRate": 596,
+    "nonNabhRate": 518
+  },
+  {
+    "code": "102",
+    "name": "Entropion surgery- one lid",
+    "nabhRate": 1428,
+    "nonNabhRate": 1242
+  },
+  {
+    "code": "103",
+    "name": "Entropion surgery- both lids",
+    "nabhRate": 2070,
+    "nonNabhRate": 1800
+  },
+  {
+    "code": "104",
+    "name": "Tarsorraphy",
+    "nabhRate": 748,
+    "nonNabhRate": 650
+  },
+  {
+    "code": "105",
+    "name": "Suturing of lid lacerations",
+    "nabhRate": 1190,
+    "nonNabhRate": 1035
+  },
+  {
+    "code": "106",
+    "name": "Lid retraction repair",
+    "nabhRate": 1760,
+    "nonNabhRate": 1530
+  },
+  {
+    "code": "107",
+    "name": "Concretions removal",
+    "nabhRate": 120,
+    "nonNabhRate": 104
+  },
+  {
+    "code": "108",
+    "name": "Bucket handle procedure for lid tumors",
+    "nabhRate": 358,
+    "nonNabhRate": 311
+  },
+  {
+    "code": "109",
+    "name": "Cheek rotation flap for lid tumors",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "110",
+    "name": "Orbitotomy",
+    "nabhRate": 8332,
+    "nonNabhRate": 7245
+  },
+  {
+    "code": "111",
+    "name": "Enucleation",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "113",
+    "name": "Evisceration",
+    "nabhRate": 3571,
+    "nonNabhRate": 3105
+  },
+  {
+    "code": "115",
+    "name": "Telecanthus correction",
+    "nabhRate": 5357,
+    "nonNabhRate": 4658
+  },
+  {
+    "code": "116",
+    "name": "Orbital decompression",
+    "nabhRate": 5951,
+    "nonNabhRate": 5175
+  },
+  {
+    "code": "117",
+    "name": "Exenteration",
+    "nabhRate": 5951,
+    "nonNabhRate": 5175
+  },
+  {
+    "code": "118",
+    "name": "Exenteration with skin grafting",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "119",
+    "name": "Fracture orbital repair",
+    "nabhRate": 9522,
+    "nonNabhRate": 8280
+  },
+  {
+    "code": "120",
+    "name": "Retinal laser procedures",
+    "nabhRate": 1553,
+    "nonNabhRate": 1350
+  },
+  {
+    "code": "121",
+    "name": "Retinal detachment surgery (RDS)",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "123",
+    "name": "Buckle removal",
+    "nabhRate": 1190,
+    "nonNabhRate": 1035
+  },
+  {
+    "code": "124",
+    "name": "Silicone oil removal",
+    "nabhRate": 2898,
+    "nonNabhRate": 2520
+  },
+  {
+    "code": "125",
+    "name": "Anterior retinal cryopexy",
+    "nabhRate": 1203,
+    "nonNabhRate": 1046
+  },
+  {
+    "code": "126",
+    "name": "Squint correction for one eye",
+    "nabhRate": 5175,
+    "nonNabhRate": 4500
+  },
+  {
+    "code": "127",
+    "name": "Squint correction for both eyes",
+    "nabhRate": 7763,
+    "nonNabhRate": 6750
+  },
+  {
+    "code": "128",
+    "name": "Trabeculectomy",
+    "nabhRate": 7935,
+    "nonNabhRate": 6900
+  },
+  {
+    "code": "129",
+    "name": "Trabeculotomy",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "130",
+    "name": "Trabeculectomy with Trabeculotomy",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "131",
+    "name": "Trephination",
+    "nabhRate": 2381,
+    "nonNabhRate": 2070
+  },
+  {
+    "code": "132",
+    "name": "Goniotomy",
+    "nabhRate": 358,
+    "nonNabhRate": 311
+  },
+  {
+    "code": "133",
+    "name": "Glaucoma surgery with Glaucoma valves",
+    "nabhRate": 7256,
+    "nonNabhRate": 6310
+  },
+  {
+    "code": "134",
+    "name": "Cyclocryotherapy",
+    "nabhRate": 1190,
+    "nonNabhRate": 1035
+  },
+  {
+    "code": "135",
+    "name": "YAG laser iridotomy",
+    "nabhRate": 1553,
+    "nonNabhRate": 1350
+  },
+  {
+    "code": "136",
+    "name": "YAG laser capsulotomy",
+    "nabhRate": 1132,
+    "nonNabhRate": 984
+  },
+  {
+    "code": "137",
+    "name": "ALT-Argon laser trabeculoplasty",
+    "nabhRate": 1719,
+    "nonNabhRate": 1495
+  },
+  {
+    "code": "138",
+    "name": "PDT-Photodymic therapy",
+    "nabhRate": 3571,
+    "nonNabhRate": 3105
+  },
+  {
+    "code": "139",
+    "name": "TTT- Transpupillary thermal therapy",
+    "nabhRate": 3450,
+    "nonNabhRate": 3000
+  },
+  {
+    "code": "140",
+    "name": "PTK- Phototherapeutic keratectomy",
+    "nabhRate": 7763,
+    "nonNabhRate": 6750
+  },
+  {
+    "code": "141",
+    "name": "Argon/diode laser for retinal detachment",
+    "nabhRate": 1190,
+    "nonNabhRate": 1035
+  },
+  {
+    "code": "142",
+    "name": "Intralase application for keratoconus",
+    "nabhRate": 5951,
+    "nonNabhRate": 5175
+  },
+  {
+    "code": "143",
+    "name": "EOG- electro-oculogram",
+    "nabhRate": 932,
+    "nonNabhRate": 810
+  },
+  {
+    "code": "144",
+    "name": "ERG- Electro-retinogram",
+    "nabhRate": 822,
+    "nonNabhRate": 715
+  },
+  {
+    "code": "145",
+    "name": "VEP- visually evoked potential",
+    "nabhRate": 920,
+    "nonNabhRate": 800
+  },
+  {
+    "code": "146",
+    "name": "Vitrectomy- pars plana",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "147",
+    "name": "Intravitreal injections- of antibiotics",
+    "nabhRate": 1190,
+    "nonNabhRate": 1035
+  },
+  {
+    "code": "149",
+    "name": "X Ray orbit",
+    "nabhRate": 127,
+    "nonNabhRate": 110
+  },
+  {
+    "code": "150",
+    "name": "CT orbit and brain",
+    "nabhRate": 1840,
+    "nonNabhRate": 1600
+  },
+  {
+    "code": "151",
+    "name": "MRI- Orbit and brain",
+    "nabhRate": 3571,
+    "nonNabhRate": 3105
+  },
+  {
+    "code": "152",
+    "name": "Dacryocystography",
+    "nabhRate": 366,
+    "nonNabhRate": 318
+  },
+  {
+    "code": "153",
+    "name": "Orbital angio-graphical studies",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "157",
+    "name": "Pars plana lensectomy with/without IOL",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "160",
+    "name": "Optic nerve sheathotomy",
+    "nabhRate": 7763,
+    "nonNabhRate": 6750
+  },
+  {
+    "code": "161",
+    "name": "Iridodialysis repair or papillary reconstruction",
+    "nabhRate": 5175,
+    "nonNabhRate": 4500
+  },
+  {
+    "code": "162",
+    "name": "Iris cyst removal",
+    "nabhRate": 880,
+    "nonNabhRate": 765
+  },
+  {
+    "code": "163",
+    "name": "Lid Abscess incision and Drainage",
+    "nabhRate": 1760,
+    "nonNabhRate": 1530
+  },
+  {
+    "code": "164",
+    "name": "Orbital Abscess incision and Drainage",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "165",
+    "name": "Biopsy",
+    "nabhRate": 476,
+    "nonNabhRate": 414
+  },
+  {
+    "code": "166",
+    "name": "Paracentesis",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "167",
+    "name": "Scleral graft for scleral melting or perforation",
+    "nabhRate": 2898,
+    "nonNabhRate": 2520
+  },
+  {
+    "code": "168",
+    "name": "Amniotic membrane grafting",
+    "nabhRate": 1150,
+    "nonNabhRate": 1000
+  },
+  {
+    "code": "169",
+    "name": "Cyclodiathermy",
+    "nabhRate": 2381,
+    "nonNabhRate": 2070
+  },
+  {
+    "code": "170",
+    "name": "Intraocular foreign body removal",
+    "nabhRate": 193,
+    "nonNabhRate": 168
+  },
+  {
+    "code": "171",
+    "name": "Electrolysis",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "172",
+    "name": "Perforating injury repair",
+    "nabhRate": 4658,
+    "nonNabhRate": 4050
+  },
+  {
+    "code": "174",
+    "name": "Flap Operation per quadrant",
+    "nabhRate": 373,
+    "nonNabhRate": 324
+  },
+  {
+    "code": "175",
+    "name": "Gingivectomy per quadrant",
+    "nabhRate": 269,
+    "nonNabhRate": 234
+  },
+  {
+    "code": "178",
+    "name": "Splints/Circummandibular wiring under LA",
+    "nabhRate": 587,
+    "nonNabhRate": 510
+  },
+  {
+    "code": "179",
+    "name": "splints/Circummandibular wiring under GA",
+    "nabhRate": 1139,
+    "nonNabhRate": 990
+  },
+  {
+    "code": "184",
+    "name": "Extraction per tooth under LA",
+    "nabhRate": 92,
+    "nonNabhRate": 80
+  },
+  {
+    "code": "185",
+    "name": "Complicated Extraction per Tooth under LA",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "186",
+    "name": "Extraction of impacted tooth under LA",
+    "nabhRate": 184,
+    "nonNabhRate": 160
+  },
+  {
+    "code": "191",
+    "name": "TM joint ankylosis- under GA",
+    "nabhRate": 7763,
+    "nonNabhRate": 6750
+  },
+  {
+    "code": "192",
+    "name": "Biopsy Intraoral-Soft tissue",
+    "nabhRate": 388,
+    "nonNabhRate": 337
+  },
+  {
+    "code": "193",
+    "name": "Biopsy Intraoral-Bone",
+    "nabhRate": 430,
+    "nonNabhRate": 374
+  },
+  {
+    "code": "194",
+    "name": "Hemi-mandibulectomy with graft",
+    "nabhRate": 21735,
+    "nonNabhRate": 18900
+  },
+  {
+    "code": "195",
+    "name": "Hemi-mandibulectomy without graft",
+    "nabhRate": 21735,
+    "nonNabhRate": 18900
+  },
+  {
+    "code": "196",
+    "name": "Segmental-mandibulectomy with graft",
+    "nabhRate": 3910,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "197",
+    "name": "Segmental-mandibulectomy without graft",
+    "nabhRate": 1139,
+    "nonNabhRate": 990
+  },
+  {
+    "code": "198",
+    "name": "Maxillectomy- Total with graft",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "199",
+    "name": "Maxillectomy- Total without graft",
+    "nabhRate": 2243,
+    "nonNabhRate": 1950
+  },
+  {
+    "code": "200",
+    "name": "Maxillectomy- partial with graft",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "201",
+    "name": "Maxillectomy- partial without graft",
+    "nabhRate": 2588,
+    "nonNabhRate": 2250
+  },
+  {
+    "code": "203",
+    "name": "Pre-prosthetic surgery- Alveoloplasty",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "204",
+    "name": "Pre-prosthetic surgery - ridge augmentation",
+    "nabhRate": 1380,
+    "nonNabhRate": 1200
+  },
+  {
+    "code": "207",
+    "name": "Apicoectomy- Single root",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "208",
+    "name": "Apicoectomy-Multiple roots",
+    "nabhRate": 748,
+    "nonNabhRate": 650
+  },
+  {
+    "code": "209",
+    "name": "Metal Crown-per unit",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "210",
+    "name": "Metal Crown with Acrylic facing per unit",
+    "nabhRate": 805,
+    "nonNabhRate": 700
+  },
+  {
+    "code": "211",
+    "name": "Complete single denture-metal based",
+    "nabhRate": 1553,
+    "nonNabhRate": 1350
+  },
+  {
+    "code": "212",
+    "name": "Complete denture- acrylic based per arch",
+    "nabhRate": 1093,
+    "nonNabhRate": 950
+  },
+  {
+    "code": "3",
+    "name": "teeth",
+    "nabhRate": 805,
+    "nonNabhRate": 700
+  },
+  {
+    "code": "217",
+    "name": "Amalgam restoration-per tooth",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "219",
+    "name": "Glass Ionomer filling-per tooth",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "220",
+    "name": "Scaling polishing",
+    "nabhRate": 311,
+    "nonNabhRate": 270
+  },
+  {
+    "code": "221",
+    "name": "Removable Orthodontics appliance- per Arch",
+    "nabhRate": 805,
+    "nonNabhRate": 700
+  },
+  {
+    "code": "222",
+    "name": "Fixed Orthodontics-per Arch",
+    "nabhRate": 1323,
+    "nonNabhRate": 1150
+  },
+  {
+    "code": "223",
+    "name": "Space maintainers-Fixed",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "224",
+    "name": "Habit breaking appliances-removable",
+    "nabhRate": 920,
+    "nonNabhRate": 800
+  },
+  {
+    "code": "225",
+    "name": "Habit breaking appliances-Fixed",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "226",
+    "name": "Expansion plate",
+    "nabhRate": 1150,
+    "nonNabhRate": 1000
+  },
+  {
+    "code": "227",
+    "name": "Feeding appliance for cleft palate",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "229",
+    "name": "Functional orthodontic appliances",
+    "nabhRate": 3450,
+    "nonNabhRate": 3000
+  },
+  {
+    "code": "230",
+    "name": "Obturator (Maxillo-facial)",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "231",
+    "name": "Occlusal night guard(splint)",
+    "nabhRate": 920,
+    "nonNabhRate": 800
+  },
+  {
+    "code": "232",
+    "name": "Pure Tone Audiogram",
+    "nabhRate": 178,
+    "nonNabhRate": 155
+  },
+  {
+    "code": "233",
+    "name": "Impedence with stepedeal reflex",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "235",
+    "name": "Multiple hearing assessment test to Adults",
+    "nabhRate": 120,
+    "nonNabhRate": 104
+  },
+  {
+    "code": "236",
+    "name": "Speech Discrimination Score",
+    "nabhRate": 93,
+    "nonNabhRate": 81
+  },
+  {
+    "code": "237",
+    "name": "Speech Assessment",
+    "nabhRate": 124,
+    "nonNabhRate": 108
+  },
+  {
+    "code": "238",
+    "name": "Speech therapy per session of 30-40 minutes",
+    "nabhRate": 136,
+    "nonNabhRate": 118
+  },
+  {
+    "code": "239",
+    "name": "Cold Calorie Test for Vestibular function",
+    "nabhRate": 178,
+    "nonNabhRate": 155
+  },
+  {
+    "code": "240",
+    "name": "Removal of foreign body From Nose",
+    "nabhRate": 358,
+    "nonNabhRate": 311
+  },
+  {
+    "code": "241",
+    "name": "Removal of foreign body From Ear",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "242",
+    "name": "Syringing (Ear)",
+    "nabhRate": 171,
+    "nonNabhRate": 149
+  },
+  {
+    "code": "243",
+    "name": "Polyp removal under LA",
+    "nabhRate": 596,
+    "nonNabhRate": 518
+  },
+  {
+    "code": "244",
+    "name": "Polyp removal under GA",
+    "nabhRate": 880,
+    "nonNabhRate": 765
+  },
+  {
+    "code": "245",
+    "name": "Peritonsillar abscess Drainage under LA",
+    "nabhRate": 1500,
+    "nonNabhRate": 1304
+  },
+  {
+    "code": "246",
+    "name": "Myringoplasty",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "247",
+    "name": "Staepedectomy",
+    "nabhRate": 9522,
+    "nonNabhRate": 8280
+  },
+  {
+    "code": "248",
+    "name": "Myringotomy with Grommet insertion",
+    "nabhRate": 4761,
+    "nonNabhRate": 4140
+  },
+  {
+    "code": "249",
+    "name": "Tympanotomy",
+    "nabhRate": 8927,
+    "nonNabhRate": 7763
+  },
+  {
+    "code": "250",
+    "name": "Tympanoplasty",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "251",
+    "name": "Mastoidectomy",
+    "nabhRate": 15473,
+    "nonNabhRate": 13455
+  },
+  {
+    "code": "252",
+    "name": "Otoplasty",
+    "nabhRate": 16664,
+    "nonNabhRate": 14490
+  },
+  {
+    "code": "253",
+    "name": "Labyrinthectomy",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "254",
+    "name": "Skull Base surgery",
+    "nabhRate": 25875,
+    "nonNabhRate": 22500
+  },
+  {
+    "code": "255",
+    "name": "Facial Nerve Decompression",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "256",
+    "name": "Septoplasty",
+    "nabhRate": 5951,
+    "nonNabhRate": 5175
+  },
+  {
+    "code": "257",
+    "name": "Submucous Resection",
+    "nabhRate": 7570,
+    "nonNabhRate": 6583
+  },
+  {
+    "code": "258",
+    "name": "Septo-rhinoplasty",
+    "nabhRate": 16664,
+    "nonNabhRate": 14490
+  },
+  {
+    "code": "259",
+    "name": "Rhinoplasty- Non-cosmetic",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "260",
+    "name": "Fracture Reduction of Nasal Bone",
+    "nabhRate": 4600,
+    "nonNabhRate": 4000
+  },
+  {
+    "code": "261",
+    "name": "Intra nasal Diathermy",
+    "nabhRate": 1190,
+    "nonNabhRate": 1035
+  },
+  {
+    "code": "262",
+    "name": "Turbinectomy",
+    "nabhRate": 5951,
+    "nonNabhRate": 5175
+  },
+  {
+    "code": "263",
+    "name": "Endoscopic Dacryocystorhinostomy (DCR)",
+    "nabhRate": 13455,
+    "nonNabhRate": 11700
+  },
+  {
+    "code": "264",
+    "name": "Endoscopic Surgery",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "265",
+    "name": "Septal Perforation Repair",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "266",
+    "name": "Antrum Puncture",
+    "nabhRate": 983,
+    "nonNabhRate": 855
+  },
+  {
+    "code": "267",
+    "name": "Lateral Rhinotomy",
+    "nabhRate": 1035,
+    "nonNabhRate": 900
+  },
+  {
+    "code": "268",
+    "name": "Cranio-facial resection",
+    "nabhRate": 26393,
+    "nonNabhRate": 22950
+  },
+  {
+    "code": "270",
+    "name": "Angiofibroma Excision",
+    "nabhRate": 17595,
+    "nonNabhRate": 15300
+  },
+  {
+    "code": "271",
+    "name": "Endoscopic Hypophysectomy",
+    "nabhRate": 22253,
+    "nonNabhRate": 19350
+  },
+  {
+    "code": "272",
+    "name": "Endoscopic Optic Nerve Decompression",
+    "nabhRate": 33923,
+    "nonNabhRate": 29498
+  },
+  {
+    "code": "273",
+    "name": "Decompression of Orbit",
+    "nabhRate": 26393,
+    "nonNabhRate": 22950
+  },
+  {
+    "code": "274",
+    "name": "Punch/Wedge biopsy",
+    "nabhRate": 775,
+    "nonNabhRate": 674
+  },
+  {
+    "code": "275",
+    "name": "Tonsillectomy",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "276",
+    "name": "Uvulo-palatoplasty",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "279",
+    "name": "Polyp removal ear",
+    "nabhRate": 860,
+    "nonNabhRate": 748
+  },
+  {
+    "code": "280",
+    "name": "Polyp removal Nose(Septal polyp)",
+    "nabhRate": 860,
+    "nonNabhRate": 748
+  },
+  {
+    "code": "282",
+    "name": "Endolymphatic sac decompression",
+    "nabhRate": 3306,
+    "nonNabhRate": 2875
+  },
+  {
+    "code": "283",
+    "name": "Diagnostic endoscopy under GA",
+    "nabhRate": 2645,
+    "nonNabhRate": 2300
+  },
+  {
+    "code": "284",
+    "name": "Young's operation for Atrophic rhinitis",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "285",
+    "name": "Vidian neurectomy for vasomotor Rhinitis",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "286",
+    "name": "Nasal Packing-anterior",
+    "nabhRate": 397,
+    "nonNabhRate": 345
+  },
+  {
+    "code": "287",
+    "name": "Nasal Packing-posterior",
+    "nabhRate": 926,
+    "nonNabhRate": 805
+  },
+  {
+    "code": "288",
+    "name": "Ranula Excision",
+    "nabhRate": 7083,
+    "nonNabhRate": 6159
+  },
+  {
+    "code": "289",
+    "name": "Tongue Tie excision",
+    "nabhRate": 1656,
+    "nonNabhRate": 1440
+  },
+  {
+    "code": "290",
+    "name": "Sub Mandibular Duct Lithotomy",
+    "nabhRate": 309,
+    "nonNabhRate": 269
+  },
+  {
+    "code": "291",
+    "name": "Adenoidectomy",
+    "nabhRate": 5837,
+    "nonNabhRate": 5076
+  },
+  {
+    "code": "292",
+    "name": "Palatopharyngoplasty",
+    "nabhRate": 9390,
+    "nonNabhRate": 8165
+  },
+  {
+    "code": "293",
+    "name": "Pharyngoplasty",
+    "nabhRate": 17795,
+    "nonNabhRate": 15474
+  },
+  {
+    "code": "294",
+    "name": "Styloidectomy",
+    "nabhRate": 10120,
+    "nonNabhRate": 8800
+  },
+  {
+    "code": "297",
+    "name": "Bronchoscopy with foreign body (FB) removal",
+    "nabhRate": 2804,
+    "nonNabhRate": 2438
+  },
+  {
+    "code": "298",
+    "name": "Other Major Surgery",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "299",
+    "name": "Other Minor Surgery",
+    "nabhRate": 9775,
+    "nonNabhRate": 8500
+  },
+  {
+    "code": "300",
+    "name": "Ear Lobe Repair one side",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "303",
+    "name": "Partial Amputation of Pinna",
+    "nabhRate": 4658,
+    "nonNabhRate": 4050
+  },
+  {
+    "code": "304",
+    "name": "Total Amputation of Pinna",
+    "nabhRate": 6417,
+    "nonNabhRate": 5580
+  },
+  {
+    "code": "306",
+    "name": "Excision of Cystic Hygroma",
+    "nabhRate": 5357,
+    "nonNabhRate": 4658
+  },
+  {
+    "code": "307",
+    "name": "Excision of Cystic Hygroma Extensive",
+    "nabhRate": 7713,
+    "nonNabhRate": 6707
+  },
+  {
+    "code": "308",
+    "name": "Excision of Branchial Cyst",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "309",
+    "name": "Excision of Branchial Sinus",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "310",
+    "name": "Excision of Pharyngeal Diverticulum",
+    "nabhRate": 12167,
+    "nonNabhRate": 10580
+  },
+  {
+    "code": "311",
+    "name": "Excision of Carotid Body-Tumours",
+    "nabhRate": 13357,
+    "nonNabhRate": 11615
+  },
+  {
+    "code": "312",
+    "name": "Operation for Cervical Rib",
+    "nabhRate": 14375,
+    "nonNabhRate": 12500
+  },
+  {
+    "code": "313",
+    "name": "Block Dissection of Cervical Lymph Nodes",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "314",
+    "name": "Pharyngectomy reconstruction",
+    "nabhRate": 16675,
+    "nonNabhRate": 14500
+  },
+  {
+    "code": "320",
+    "name": "Cheek Advancement",
+    "nabhRate": 10118,
+    "nonNabhRate": 8798
+  },
+  {
+    "code": "321",
+    "name": "Excision of the Maxilla",
+    "nabhRate": 19996,
+    "nonNabhRate": 17388
+  },
+  {
+    "code": "322",
+    "name": "Excision of mandible-segmental",
+    "nabhRate": 16069,
+    "nonNabhRate": 13973
+  },
+  {
+    "code": "323",
+    "name": "Mandibulectomy",
+    "nabhRate": 21735,
+    "nonNabhRate": 18900
+  },
+  {
+    "code": "324",
+    "name": "Partial Glossectomy",
+    "nabhRate": 5713,
+    "nonNabhRate": 4968
+  },
+  {
+    "code": "325",
+    "name": "Hemiglossectomy",
+    "nabhRate": 8050,
+    "nonNabhRate": 7000
+  },
+  {
+    "code": "326",
+    "name": "Total Glossectomy",
+    "nabhRate": 23687,
+    "nonNabhRate": 20597
+  },
+  {
+    "code": "328",
+    "name": "Parotidectomy - Superficial",
+    "nabhRate": 12498,
+    "nonNabhRate": 10868
+  },
+  {
+    "code": "329",
+    "name": "Parotidectomy - Total",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "330",
+    "name": "Parotidectomy - Radical",
+    "nabhRate": 20234,
+    "nonNabhRate": 17595
+  },
+  {
+    "code": "331",
+    "name": "Repair of Parotid Duct",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "332",
+    "name": "Removal of Submandibular Salivary gland",
+    "nabhRate": 8927,
+    "nonNabhRate": 7763
+  },
+  {
+    "code": "333",
+    "name": "Hemithyroidectomy",
+    "nabhRate": 10753,
+    "nonNabhRate": 9350
+  },
+  {
+    "code": "334",
+    "name": "Partial Thyroidectomy (lobectomy)",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "335",
+    "name": "Subtotal Thyroidectomy",
+    "nabhRate": 13510,
+    "nonNabhRate": 11748
+  },
+  {
+    "code": "336",
+    "name": "Total Thyroidectomy",
+    "nabhRate": 19665,
+    "nonNabhRate": 17100
+  },
+  {
+    "code": "337",
+    "name": "Resection Enucleation of thyroid Adenoma",
+    "nabhRate": 10950,
+    "nonNabhRate": 9522
+  },
+  {
+    "code": "338",
+    "name": "Total Thyroidectomy and Block Dissection",
+    "nabhRate": 27376,
+    "nonNabhRate": 23805
+  },
+  {
+    "code": "339",
+    "name": "Excision of Lingual Thyroid",
+    "nabhRate": 17473,
+    "nonNabhRate": 15194
+  },
+  {
+    "code": "340",
+    "name": "Excision of Thyroglossal Cyst/Fistula",
+    "nabhRate": 13688,
+    "nonNabhRate": 11903
+  },
+  {
+    "code": "341",
+    "name": "Excision of Parathyroid Adenoma/Carcinoma",
+    "nabhRate": 22020,
+    "nonNabhRate": 19148
+  },
+  {
+    "code": "342",
+    "name": "Laryngectomy",
+    "nabhRate": 19665,
+    "nonNabhRate": 17100
+  },
+  {
+    "code": "343",
+    "name": "Laryngo Pharyngectomy",
+    "nabhRate": 31050,
+    "nonNabhRate": 27000
+  },
+  {
+    "code": "344",
+    "name": "Hyoid Suspension",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "345",
+    "name": "Genioplasty",
+    "nabhRate": 12420,
+    "nonNabhRate": 10800
+  },
+  {
+    "code": "347",
+    "name": "Phonosurgery",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "349",
+    "name": "Microlaryngeal Surgery",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "350",
+    "name": "Laryngofissure",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "351",
+    "name": "Tracheal Stenosis Excision",
+    "nabhRate": 20472,
+    "nonNabhRate": 17802
+  },
+  {
+    "code": "352",
+    "name": "Excisional Biopsies",
+    "nabhRate": 5951,
+    "nonNabhRate": 5175
+  },
+  {
+    "code": "353",
+    "name": "Benign Tumour Excisions",
+    "nabhRate": 9833,
+    "nonNabhRate": 8550
+  },
+  {
+    "code": "354",
+    "name": "Temporal Bone subtotal resection",
+    "nabhRate": 21425,
+    "nonNabhRate": 18630
+  },
+  {
+    "code": "355",
+    "name": "Modified Radical Neck Dissection",
+    "nabhRate": 26186,
+    "nonNabhRate": 22770
+  },
+  {
+    "code": "356",
+    "name": "Carotid Body Excision",
+    "nabhRate": 26910,
+    "nonNabhRate": 23400
+  },
+  {
+    "code": "357",
+    "name": "Total Laryngectomy",
+    "nabhRate": 40564,
+    "nonNabhRate": 35273
+  },
+  {
+    "code": "358",
+    "name": "Flap Reconstructive Surgery",
+    "nabhRate": 42849,
+    "nonNabhRate": 37260
+  },
+  {
+    "code": "359",
+    "name": "Parapharyngeal Tumour Excision",
+    "nabhRate": 40707,
+    "nonNabhRate": 35397
+  },
+  {
+    "code": "360",
+    "name": "Other Major Surgery",
+    "nabhRate": 24438,
+    "nonNabhRate": 21250
+  },
+  {
+    "code": "361",
+    "name": "Other Minor Surgery",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "362",
+    "name": "Drainage of abscess",
+    "nabhRate": 6210,
+    "nonNabhRate": 5400
+  },
+  {
+    "code": "363",
+    "name": "Excision of lumps",
+    "nabhRate": 7213,
+    "nonNabhRate": 6272
+  },
+  {
+    "code": "364",
+    "name": "Local mastectomy-simple",
+    "nabhRate": 13093,
+    "nonNabhRate": 11385
+  },
+  {
+    "code": "365",
+    "name": "Radical mastectomy-formal or modified",
+    "nabhRate": 29756,
+    "nonNabhRate": 25875
+  },
+  {
+    "code": "366",
+    "name": "Excision of mammary fistula",
+    "nabhRate": 16069,
+    "nonNabhRate": 13973
+  },
+  {
+    "code": "367",
+    "name": "Segmental resection of breast",
+    "nabhRate": 16664,
+    "nonNabhRate": 14490
+  },
+  {
+    "code": "368",
+    "name": "Other Major Surgery",
+    "nabhRate": 26450,
+    "nonNabhRate": 23000
+  },
+  {
+    "code": "369",
+    "name": "Other Minor Surgery",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "370",
+    "name": "Injury Of Superficial Soft Tissues",
+    "nabhRate": 489,
+    "nonNabhRate": 425
+  },
+  {
+    "code": "371",
+    "name": "Suturing of small wounds",
+    "nabhRate": 278,
+    "nonNabhRate": 242
+  },
+  {
+    "code": "372",
+    "name": "Secondary suture of wounds",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "373",
+    "name": "Debridement of wounds",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "374",
+    "name": "Removal Of Foreign Bodies",
+    "nabhRate": 316,
+    "nonNabhRate": 275
+  },
+  {
+    "code": "375",
+    "name": "Excision of Cervical Lymph Node",
+    "nabhRate": 1786,
+    "nonNabhRate": 1553
+  },
+  {
+    "code": "376",
+    "name": "Excision of Axillary Lymph Node",
+    "nabhRate": 2356,
+    "nonNabhRate": 2049
+  },
+  {
+    "code": "377",
+    "name": "Excision of Inguinal Lymph Node",
+    "nabhRate": 2356,
+    "nonNabhRate": 2049
+  },
+  {
+    "code": "378",
+    "name": "Excision Biopsy of Ulcers",
+    "nabhRate": 1610,
+    "nonNabhRate": 1400
+  },
+  {
+    "code": "379",
+    "name": "Excision Biopsy of Superficial Lumps",
+    "nabhRate": 3333,
+    "nonNabhRate": 2898
+  },
+  {
+    "code": "380",
+    "name": "Incision Biopsy of Growths/Ulcers",
+    "nabhRate": 1521,
+    "nonNabhRate": 1323
+  },
+  {
+    "code": "381",
+    "name": "Trucut Needle Biopsy",
+    "nabhRate": 1604,
+    "nonNabhRate": 1395
+  },
+  {
+    "code": "382",
+    "name": "Percutaneous Kidney Biopsy",
+    "nabhRate": 1521,
+    "nonNabhRate": 1323
+  },
+  {
+    "code": "383",
+    "name": "Marrow Biopsy (Open)",
+    "nabhRate": 1219,
+    "nonNabhRate": 1060
+  },
+  {
+    "code": "384",
+    "name": "Muscle Biopsy",
+    "nabhRate": 1521,
+    "nonNabhRate": 1323
+  },
+  {
+    "code": "385",
+    "name": "Scalene Node Biopsy",
+    "nabhRate": 1397,
+    "nonNabhRate": 1215
+  },
+  {
+    "code": "386",
+    "name": "Excision of Sebaceous Cysts",
+    "nabhRate": 1286,
+    "nonNabhRate": 1118
+  },
+  {
+    "code": "387",
+    "name": "Excision of Superficial Lipoma",
+    "nabhRate": 2000,
+    "nonNabhRate": 1739
+  },
+  {
+    "code": "388",
+    "name": "Excision of Superficial Neurofibroma",
+    "nabhRate": 2588,
+    "nonNabhRate": 2250
+  },
+  {
+    "code": "389",
+    "name": "Excision of Dermoid Cysts",
+    "nabhRate": 2356,
+    "nonNabhRate": 2049
+  },
+  {
+    "code": "390",
+    "name": "Haemorrhoidectomy",
+    "nabhRate": 24375,
+    "nonNabhRate": 20720
+  },
+  {
+    "code": "391",
+    "name": "Stappler haemorrhoidectomy",
+    "nabhRate": 43700,
+    "nonNabhRate": 38000
+  },
+  {
+    "code": "392",
+    "name": "keloid excision",
+    "nabhRate": 1265,
+    "nonNabhRate": 1100
+  },
+  {
+    "code": "398",
+    "name": "Achalasia Cardia Transthoracic",
+    "nabhRate": 15473,
+    "nonNabhRate": 13455
+  },
+  {
+    "code": "399",
+    "name": "Achalasia Cardia Abdominal",
+    "nabhRate": 13093,
+    "nonNabhRate": 11385
+  },
+  {
+    "code": "400",
+    "name": "Oesophago Gastrectomy for mid 1/3 lesion",
+    "nabhRate": 25353,
+    "nonNabhRate": 22046
+  },
+  {
+    "code": "401",
+    "name": "Heller\u2019s Operation",
+    "nabhRate": 20441,
+    "nonNabhRate": 17775
+  },
+  {
+    "code": "404",
+    "name": "Other Major Surgery",
+    "nabhRate": 28592,
+    "nonNabhRate": 24863
+  },
+  {
+    "code": "405",
+    "name": "Other Minor Surgery",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "406",
+    "name": "Gastroscopy",
+    "nabhRate": 1786,
+    "nonNabhRate": 1553
+  },
+  {
+    "code": "407",
+    "name": "Gastric duodenal Biopsy (Endoscopic)",
+    "nabhRate": 2243,
+    "nonNabhRate": 1950
+  },
+  {
+    "code": "408",
+    "name": "Pyloromyotomy",
+    "nabhRate": 3071,
+    "nonNabhRate": 2670
+  },
+  {
+    "code": "409",
+    "name": "Gastrostomy",
+    "nabhRate": 8927,
+    "nonNabhRate": 7763
+  },
+  {
+    "code": "410",
+    "name": "Simple Closure of Perforated peptic Ulcer",
+    "nabhRate": 10120,
+    "nonNabhRate": 8800
+  },
+  {
+    "code": "412",
+    "name": "Duodenojejunostomy",
+    "nabhRate": 19613,
+    "nonNabhRate": 17055
+  },
+  {
+    "code": "413",
+    "name": "Partial/Subtotal Gastrectomy for Carcinoma",
+    "nabhRate": 23805,
+    "nonNabhRate": 20700
+  },
+  {
+    "code": "414",
+    "name": "Partial/Subtotal Gastrectomy for Ulcer",
+    "nabhRate": 23210,
+    "nonNabhRate": 20183
+  },
+  {
+    "code": "415",
+    "name": "Operation for Bleeding Peptic Ulcer",
+    "nabhRate": 21710,
+    "nonNabhRate": 18878
+  },
+  {
+    "code": "416",
+    "name": "Operation for Gastrojejunal Ulcer",
+    "nabhRate": 20472,
+    "nonNabhRate": 17802
+  },
+  {
+    "code": "417",
+    "name": "Total Gastrectomy for Cancer",
+    "nabhRate": 24610,
+    "nonNabhRate": 21400
+  },
+  {
+    "code": "418",
+    "name": "Highly Selective Vagotomy",
+    "nabhRate": 19282,
+    "nonNabhRate": 16767
+  },
+  {
+    "code": "419",
+    "name": "Selective Vagotomy drainage",
+    "nabhRate": 19282,
+    "nonNabhRate": 16767
+  },
+  {
+    "code": "420",
+    "name": "Congenital Diaphragmatic Hernia",
+    "nabhRate": 19640,
+    "nonNabhRate": 17078
+  },
+  {
+    "code": "421",
+    "name": "Hiatus Hernia Repair- Abdominal",
+    "nabhRate": 15939,
+    "nonNabhRate": 13860
+  },
+  {
+    "code": "422",
+    "name": "Hiatus Hernia Repair- Transthoracic",
+    "nabhRate": 16664,
+    "nonNabhRate": 14490
+  },
+  {
+    "code": "423",
+    "name": "Exploratory Laparotomy",
+    "nabhRate": 13093,
+    "nonNabhRate": 11385
+  },
+  {
+    "code": "424",
+    "name": "Epigastric Hernia Repair",
+    "nabhRate": 11784,
+    "nonNabhRate": 10247
+  },
+  {
+    "code": "425",
+    "name": "Umbilical Hernia Repair",
+    "nabhRate": 11784,
+    "nonNabhRate": 10247
+  },
+  {
+    "code": "426",
+    "name": "Ventral /incisional Hernia Repair",
+    "nabhRate": 11328,
+    "nonNabhRate": 9850
+  },
+  {
+    "code": "427",
+    "name": "Inguinal Hernia Herniorrhaphy",
+    "nabhRate": 15355,
+    "nonNabhRate": 13352
+  },
+  {
+    "code": "428",
+    "name": "Inguinal Hernia - Hernioplasty",
+    "nabhRate": 17078,
+    "nonNabhRate": 14850
+  },
+  {
+    "code": "429",
+    "name": "Femoral Hernia Repair",
+    "nabhRate": 18926,
+    "nonNabhRate": 16457
+  },
+  {
+    "code": "431",
+    "name": "Splenectomy - For Trauma",
+    "nabhRate": 19640,
+    "nonNabhRate": 17078
+  },
+  {
+    "code": "432",
+    "name": "Splenectomy - For Hypersplenism",
+    "nabhRate": 15939,
+    "nonNabhRate": 13860
+  },
+  {
+    "code": "433",
+    "name": "Splenorenal Anastomosis",
+    "nabhRate": 24035,
+    "nonNabhRate": 20900
+  },
+  {
+    "code": "434",
+    "name": "Portocaval Anastomosis",
+    "nabhRate": 30360,
+    "nonNabhRate": 26400
+  },
+  {
+    "code": "436",
+    "name": "Mesentericocaval Anastomosis",
+    "nabhRate": 28463,
+    "nonNabhRate": 24750
+  },
+  {
+    "code": "437",
+    "name": "Warren Shunt (Distal Splenorenal Shunt)",
+    "nabhRate": 29756,
+    "nonNabhRate": 25875
+  },
+  {
+    "code": "440",
+    "name": "Cystojejunostomy or Cystogastrostomy",
+    "nabhRate": 15939,
+    "nonNabhRate": 13860
+  },
+  {
+    "code": "441",
+    "name": "Cholecystectomy",
+    "nabhRate": 11328,
+    "nonNabhRate": 9850
+  },
+  {
+    "code": "442",
+    "name": "Cholecystectomy exploration of CBD",
+    "nabhRate": 15180,
+    "nonNabhRate": 13200
+  },
+  {
+    "code": "443",
+    "name": "Repair of Common Bile Duct (CBD)",
+    "nabhRate": 15640,
+    "nonNabhRate": 13600
+  },
+  {
+    "code": "444",
+    "name": "Operation for Hydatid Cyst of Liver",
+    "nabhRate": 13093,
+    "nonNabhRate": 11385
+  },
+  {
+    "code": "445",
+    "name": "Cholecystostomy",
+    "nabhRate": 11328,
+    "nonNabhRate": 9850
+  },
+  {
+    "code": "447",
+    "name": "Operation on Adrenal Glands - Bilateral",
+    "nabhRate": 27019,
+    "nonNabhRate": 23495
+  },
+  {
+    "code": "448",
+    "name": "Operation on Adrenal Glands - Unilateral",
+    "nabhRate": 15180,
+    "nonNabhRate": 13200
+  },
+  {
+    "code": "449",
+    "name": "Appendicectomy",
+    "nabhRate": 8918,
+    "nonNabhRate": 7755
+  },
+  {
+    "code": "450",
+    "name": "Appendicular Abscess - Drainage",
+    "nabhRate": 10118,
+    "nonNabhRate": 8798
+  },
+  {
+    "code": "451",
+    "name": "Mesenteric Cyst- Excision",
+    "nabhRate": 11426,
+    "nonNabhRate": 9936
+  },
+  {
+    "code": "452",
+    "name": "Peritonioscopy/Laparoscopy",
+    "nabhRate": 4761,
+    "nonNabhRate": 4140
+  },
+  {
+    "code": "453",
+    "name": "Jejunostomy",
+    "nabhRate": 6325,
+    "nonNabhRate": 5500
+  },
+  {
+    "code": "454",
+    "name": "Ileostomy",
+    "nabhRate": 16445,
+    "nonNabhRate": 14300
+  },
+  {
+    "code": "455",
+    "name": "Resection anastomosis of Small Intestine",
+    "nabhRate": 21425,
+    "nonNabhRate": 18630
+  },
+  {
+    "code": "456",
+    "name": "Duodenal Diverticulum",
+    "nabhRate": 19044,
+    "nonNabhRate": 16560
+  },
+  {
+    "code": "457",
+    "name": "Operation for Intestinal Obstruction",
+    "nabhRate": 11385,
+    "nonNabhRate": 9900
+  },
+  {
+    "code": "458",
+    "name": "Operation for Intestinal perforation",
+    "nabhRate": 39330,
+    "nonNabhRate": 34200
+  },
+  {
+    "code": "459",
+    "name": "Benign Tumours of Small Intestine",
+    "nabhRate": 20234,
+    "nonNabhRate": 17595
+  },
+  {
+    "code": "460",
+    "name": "Excision of Small Intestine Fistula",
+    "nabhRate": 20234,
+    "nonNabhRate": 17595
+  },
+  {
+    "code": "461",
+    "name": "Operations for GI Bleed",
+    "nabhRate": 18400,
+    "nonNabhRate": 16000
+  },
+  {
+    "code": "465",
+    "name": "Ileosigmoidostomy and related resection",
+    "nabhRate": 17378,
+    "nonNabhRate": 15111
+  },
+  {
+    "code": "467",
+    "name": "Caecostomy",
+    "nabhRate": 4040,
+    "nonNabhRate": 3513
+  },
+  {
+    "code": "468",
+    "name": "Loop Colostomy Transverse Sigmoid",
+    "nabhRate": 13569,
+    "nonNabhRate": 11799
+  },
+  {
+    "code": "469",
+    "name": "Terminal Colostomy",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "470",
+    "name": "Closure of Colostomy",
+    "nabhRate": 18092,
+    "nonNabhRate": 15732
+  },
+  {
+    "code": "471",
+    "name": "Right Hemicolectomy",
+    "nabhRate": 15180,
+    "nonNabhRate": 13200
+  },
+  {
+    "code": "472",
+    "name": "Left Hemicolectomy",
+    "nabhRate": 15180,
+    "nonNabhRate": 13200
+  },
+  {
+    "code": "473",
+    "name": "Total Colectomy",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "474",
+    "name": "Operations for Volvulus of Large Bowel",
+    "nabhRate": 25792,
+    "nonNabhRate": 22428
+  },
+  {
+    "code": "475",
+    "name": "Operations for Sigmoid Diverticulitis",
+    "nabhRate": 19282,
+    "nonNabhRate": 16767
+  },
+  {
+    "code": "477",
+    "name": "Fissure in Ano - Fissurectomy",
+    "nabhRate": 15870,
+    "nonNabhRate": 13800
+  },
+  {
+    "code": "478",
+    "name": "Rectal Polyp-Excision",
+    "nabhRate": 5856,
+    "nonNabhRate": 5092
+  },
+  {
+    "code": "479",
+    "name": "Fistula in Ano - High Fistulectomy",
+    "nabhRate": 17352,
+    "nonNabhRate": 15102
+  },
+  {
+    "code": "480",
+    "name": "Fistula in Ano - Low Fistulectomy",
+    "nabhRate": 10120,
+    "nonNabhRate": 8800
+  },
+  {
+    "code": "481",
+    "name": "Prolapse Rectum - Thiersch Wiring",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "482",
+    "name": "Prolapse Rectum - Rectopexy",
+    "nabhRate": 6325,
+    "nonNabhRate": 5500
+  },
+  {
+    "code": "483",
+    "name": "Prolapse Rectum - Grahams Operation",
+    "nabhRate": 19044,
+    "nonNabhRate": 16560
+  },
+  {
+    "code": "484",
+    "name": "Operations for Hirschsprungs Disease",
+    "nabhRate": 14759,
+    "nonNabhRate": 12834
+  },
+  {
+    "code": "485",
+    "name": "Excision of Pilonidal Sinus (open)",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "486",
+    "name": "Excision of Pilonidal Sinus with closure",
+    "nabhRate": 13225,
+    "nonNabhRate": 11500
+  },
+  {
+    "code": "487",
+    "name": "Abdomino-Perineal Excision of Rectum",
+    "nabhRate": 18975,
+    "nonNabhRate": 16500
+  },
+  {
+    "code": "488",
+    "name": "Anterior Resection of rectum",
+    "nabhRate": 22615,
+    "nonNabhRate": 19665
+  },
+  {
+    "code": "489",
+    "name": "Pull Through Abdominal Resection",
+    "nabhRate": 17771,
+    "nonNabhRate": 15453
+  },
+  {
+    "code": "490",
+    "name": "Retro Peritoneal Tumor Removal",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "491",
+    "name": "Radio ablation of varicose veins",
+    "nabhRate": 2070,
+    "nonNabhRate": 1800
+  },
+  {
+    "code": "492",
+    "name": "Laser ablation of varicose veins",
+    "nabhRate": 19838,
+    "nonNabhRate": 17250
+  },
+  {
+    "code": "493",
+    "name": "Laparoscopic Fundoplication",
+    "nabhRate": 22195,
+    "nonNabhRate": 19300
+  },
+  {
+    "code": "494",
+    "name": "Laparoscopic Splenectomy",
+    "nabhRate": 28750,
+    "nonNabhRate": 25000
+  },
+  {
+    "code": "495",
+    "name": "Laparoscopic Removal of hydatid cyst",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "498",
+    "name": "Laparoscopic GI bypass operation",
+    "nabhRate": 25300,
+    "nonNabhRate": 22000
+  },
+  {
+    "code": "499",
+    "name": "Laparoscopic Total Colectomy",
+    "nabhRate": 28750,
+    "nonNabhRate": 25000
+  },
+  {
+    "code": "500",
+    "name": "Laparoscopic Hemicolectomy",
+    "nabhRate": 26450,
+    "nonNabhRate": 23000
+  },
+  {
+    "code": "502",
+    "name": "Laparoscopic Cholecystetomy",
+    "nabhRate": 21821,
+    "nonNabhRate": 18975
+  },
+  {
+    "code": "503",
+    "name": "Laparoscopic Appedicectomy",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "504",
+    "name": "Laparoscopic Hernia inguinal repair",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "505",
+    "name": "Laparoscopic ventral Hernia Repair",
+    "nabhRate": 20125,
+    "nonNabhRate": 17500
+  },
+  {
+    "code": "506",
+    "name": "Laparoscopic Paraumblical Hernia Repair",
+    "nabhRate": 20125,
+    "nonNabhRate": 17500
+  },
+  {
+    "code": "507",
+    "name": "Laparoscopic Adrenelectomy",
+    "nabhRate": 13800,
+    "nonNabhRate": 12000
+  },
+  {
+    "code": "508",
+    "name": "Laparoscopic Nephrectomy",
+    "nabhRate": 22770,
+    "nonNabhRate": 19800
+  },
+  {
+    "code": "509",
+    "name": "Other Major Surgery",
+    "nabhRate": 43700,
+    "nonNabhRate": 38000
+  },
+  {
+    "code": "510",
+    "name": "Other Minor Surgery",
+    "nabhRate": 6900,
+    "nonNabhRate": 6000
+  },
+  {
+    "code": "512",
+    "name": "Compressed Air / Piped Oxygen /Per Hour",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "513",
+    "name": "Ventilator charges (Per day)",
+    "nabhRate": 604,
+    "nonNabhRate": 525
+  },
+  {
+    "code": "514",
+    "name": "Paediatric care for New born (Per day)",
+    "nabhRate": 192,
+    "nonNabhRate": 167
+  },
+  {
+    "code": "515",
+    "name": "Incubator charges (Per day)",
+    "nabhRate": 380,
+    "nonNabhRate": 330
+  },
+  {
+    "code": "516",
+    "name": "Neonatal ICU charges (Per day)",
+    "nabhRate": 405,
+    "nonNabhRate": 352
+  },
+  {
+    "code": "517",
+    "name": "Resuscitation",
+    "nabhRate": 207,
+    "nonNabhRate": 180
+  },
+  {
+    "code": "518",
+    "name": "Exchange Transfusion",
+    "nabhRate": 299,
+    "nonNabhRate": 260
+  },
+  {
+    "code": "519",
+    "name": "Pneupack ventilator in Nursery (Per day)",
+    "nabhRate": 596,
+    "nonNabhRate": 518
+  },
+  {
+    "code": "520",
+    "name": "Atrial Septal Defect(ASD) closure",
+    "nabhRate": 59579,
+    "nonNabhRate": 51808
+  },
+  {
+    "code": "522",
+    "name": "TOF/TAPVC/TCPC/REV/RSOV repair",
+    "nabhRate": 131523,
+    "nonNabhRate": 114368
+  },
+  {
+    "code": "523",
+    "name": "BD Glenn/Left atrium myxoma",
+    "nabhRate": 92863,
+    "nonNabhRate": 80750
+  },
+  {
+    "code": "525",
+    "name": "Double Switch Operation (DSO)",
+    "nabhRate": 119157,
+    "nonNabhRate": 103615
+  },
+  {
+    "code": "526",
+    "name": "Atrioventricular(AV) canal repair",
+    "nabhRate": 172500,
+    "nonNabhRate": 150000
+  },
+  {
+    "code": "527",
+    "name": "Fontan procedure",
+    "nabhRate": 174915,
+    "nonNabhRate": 152100
+  },
+  {
+    "code": "528",
+    "name": "Conduit repair",
+    "nabhRate": 174915,
+    "nonNabhRate": 152100
+  },
+  {
+    "code": "530",
+    "name": "CABG + Intra-Aortic Balloon Pump (IABP)",
+    "nabhRate": 174915,
+    "nonNabhRate": 152100
+  },
+  {
+    "code": "531",
+    "name": "CABG + Valve.",
+    "nabhRate": 187450,
+    "nonNabhRate": 163000
+  },
+  {
+    "code": "532",
+    "name": "CABG without bypass.",
+    "nabhRate": 155250,
+    "nonNabhRate": 135000
+  },
+  {
+    "code": "533",
+    "name": "Ascending aorta replacement",
+    "nabhRate": 149500,
+    "nonNabhRate": 130000
+  },
+  {
+    "code": "534",
+    "name": "Double Valve Replacement (DVR)",
+    "nabhRate": 178735,
+    "nonNabhRate": 155422
+  },
+  {
+    "code": "536",
+    "name": "Mitral Valve repair + Aortic Valve repair",
+    "nabhRate": 119157,
+    "nonNabhRate": 103615
+  },
+  {
+    "code": "537",
+    "name": "Aorta femoral bypass",
+    "nabhRate": 53820,
+    "nonNabhRate": 46800
+  },
+  {
+    "code": "540",
+    "name": "Pericardectomy",
+    "nabhRate": 43801,
+    "nonNabhRate": 38088
+  },
+  {
+    "code": "542",
+    "name": "Gunshot injury",
+    "nabhRate": 53799,
+    "nonNabhRate": 46782
+  },
+  {
+    "code": "543",
+    "name": "Heart transplant",
+    "nabhRate": 285660,
+    "nonNabhRate": 248400
+  },
+  {
+    "code": "544",
+    "name": "Balloon coronary angioplasty/PTCA with VCD",
+    "nabhRate": 85100,
+    "nonNabhRate": 74000
+  },
+  {
+    "code": "546",
+    "name": "Rotablation",
+    "nabhRate": 56206,
+    "nonNabhRate": 48875
+  },
+  {
+    "code": "548",
+    "name": "Cardiac Catheterization (CATH)",
+    "nabhRate": 10350,
+    "nonNabhRate": 9000
+  },
+  {
+    "code": "549",
+    "name": "Aortic Arch Replacement",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "550",
+    "name": "Aortic Dissection",
+    "nabhRate": 14548,
+    "nonNabhRate": 12650
+  },
+  {
+    "code": "551",
+    "name": "Thoraco Abdominal Aneurism Repair",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "552",
+    "name": "Embolectomy/Mechanical Thrombectomy",
+    "nabhRate": 24150,
+    "nonNabhRate": 21000
+  },
+  {
+    "code": "554",
+    "name": "Bentall Repair with Prosthetic Valve",
+    "nabhRate": 34500,
+    "nonNabhRate": 30000
+  },
+  {
+    "code": "555",
+    "name": "Bentall Repair with Biologic Valve",
+    "nabhRate": 146625,
+    "nonNabhRate": 127500
+  },
+  {
+    "code": "556",
+    "name": "Coaractation dilatation",
+    "nabhRate": 16675,
+    "nonNabhRate": 14500
+  },
+  {
+    "code": "557",
+    "name": "Coaractation dilatation with Stenting",
+    "nabhRate": 21275,
+    "nonNabhRate": 18500
+  },
+  {
+    "code": "565",
+    "name": "Combo device implantation",
+    "nabhRate": 46000,
+    "nonNabhRate": 40000
+  },
+  {
+    "code": "567",
+    "name": "Ambulatory BP monitoring",
+    "nabhRate": 675,
+    "nonNabhRate": 587
+  },
+  {
+    "code": "568",
+    "name": "External Loop/event recording",
+    "nabhRate": 2947,
+    "nonNabhRate": 2563
+  },
+  {
+    "code": "569",
+    "name": "RF Ablation conventional",
+    "nabhRate": 36225,
+    "nonNabhRate": 31500
+  },
+  {
+    "code": "570",
+    "name": "RF Ablation Atrial Tachycardia/Carto",
+    "nabhRate": 51750,
+    "nonNabhRate": 45000
+  },
+  {
+    "code": "571",
+    "name": "Endomyocardial biopsy",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "572",
+    "name": "Intra aortic balloon pump (IABP)",
+    "nabhRate": 8993,
+    "nonNabhRate": 7820
+  },
+  {
+    "code": "573",
+    "name": "Intra vascular coils",
+    "nabhRate": 47610,
+    "nonNabhRate": 41400
+  },
+  {
+    "code": "574",
+    "name": "Septostomy- Balloon",
+    "nabhRate": 18573,
+    "nonNabhRate": 16150
+  },
+  {
+    "code": "575",
+    "name": "Septostomy- Blade",
+    "nabhRate": 22483,
+    "nonNabhRate": 19550
+  },
+  {
+    "code": "578",
+    "name": "Digital subtraction angiography- venogram",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "579",
+    "name": "CT Guided biopsy",
+    "nabhRate": 1310,
+    "nonNabhRate": 1139
+  },
+  {
+    "code": "580",
+    "name": "Sinogram",
+    "nabhRate": 894,
+    "nonNabhRate": 777
+  },
+  {
+    "code": "581",
+    "name": "Peripheral Angioplasty with VCD",
+    "nabhRate": 13225,
+    "nonNabhRate": 11500
+  },
+  {
+    "code": "582",
+    "name": "Peripheral Angioplasty without VCD",
+    "nabhRate": 13225,
+    "nonNabhRate": 11500
+  },
+  {
+    "code": "583",
+    "name": "Renal Angioplasty",
+    "nabhRate": 62462,
+    "nonNabhRate": 54315
+  },
+  {
+    "code": "584",
+    "name": "Intravascular ultrasound (IVUS)",
+    "nabhRate": 25875,
+    "nonNabhRate": 22500
+  },
+  {
+    "code": "585",
+    "name": "Fractional flow reserve (FFR)",
+    "nabhRate": 13196,
+    "nonNabhRate": 11475
+  },
+  {
+    "code": "586",
+    "name": "Holter analysis",
+    "nabhRate": 978,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "587",
+    "name": "Aortic stent grafting for aortic aneurysm",
+    "nabhRate": 81248,
+    "nonNabhRate": 70650
+  },
+  {
+    "code": "588",
+    "name": "Inferior Vena Cava (IVC) filter implantation",
+    "nabhRate": 16693,
+    "nonNabhRate": 14516
+  },
+  {
+    "code": "589",
+    "name": "ASD/VSD/PDA device closure",
+    "nabhRate": 37493,
+    "nonNabhRate": 32603
+  },
+  {
+    "code": "590",
+    "name": "Electrocardiogram (ECG)",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "591",
+    "name": "Head-up tilt test (HUTT)",
+    "nabhRate": 2277,
+    "nonNabhRate": 1980
+  },
+  {
+    "code": "592",
+    "name": "2D echocardiography",
+    "nabhRate": 1242,
+    "nonNabhRate": 1080
+  },
+  {
+    "code": "593",
+    "name": "3D echocardiography",
+    "nabhRate": 1613,
+    "nonNabhRate": 1403
+  },
+  {
+    "code": "594",
+    "name": "Fetal Echo",
+    "nabhRate": 1449,
+    "nonNabhRate": 1260
+  },
+  {
+    "code": "597",
+    "name": "Stress Echo- exercise",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "598",
+    "name": "Stress Echo- pharmacological",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "601",
+    "name": "Coronary angiography",
+    "nabhRate": 12650,
+    "nonNabhRate": 11000
+  },
+  {
+    "code": "602",
+    "name": "CT coronary angiography",
+    "nabhRate": 6935,
+    "nonNabhRate": 6030
+  },
+  {
+    "code": "603",
+    "name": "Cardiac CT scan",
+    "nabhRate": 2473,
+    "nonNabhRate": 2150
+  },
+  {
+    "code": "604",
+    "name": "Cardiac MRI",
+    "nabhRate": 2737,
+    "nonNabhRate": 2380
+  },
+  {
+    "code": "605",
+    "name": "Stress Cardiac MRI",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "606",
+    "name": "MR angiography.",
+    "nabhRate": 6199,
+    "nonNabhRate": 5390
+  },
+  {
+    "code": "607",
+    "name": "Cardiac PET",
+    "nabhRate": 1553,
+    "nonNabhRate": 1350
+  },
+  {
+    "code": "608",
+    "name": "Pericardiocentesis",
+    "nabhRate": 3623,
+    "nonNabhRate": 3150
+  },
+  {
+    "code": "609",
+    "name": "Other Major Surgery",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "610",
+    "name": "Other Minor Surgery",
+    "nabhRate": 4399,
+    "nonNabhRate": 3825
+  },
+  {
+    "code": "612",
+    "name": "vacuum delivery",
+    "nabhRate": 8927,
+    "nonNabhRate": 7763
+  },
+  {
+    "code": "613",
+    "name": "Forceps Delivery",
+    "nabhRate": 9522,
+    "nonNabhRate": 8280
+  },
+  {
+    "code": "614",
+    "name": "Cesarean Section(CS)",
+    "nabhRate": 15180,
+    "nonNabhRate": 13200
+  },
+  {
+    "code": "615",
+    "name": "Cesarean Hysterectomy",
+    "nabhRate": 19640,
+    "nonNabhRate": 17078
+  },
+  {
+    "code": "618",
+    "name": "Laparotomy for Ectopic pregnancy",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "619",
+    "name": "Laparotomy-peritonitis Lavage and Drainage",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "621",
+    "name": "Ovarian Cystectomy-laparoscopic.",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "622",
+    "name": "Ovarian Cystectomy -laparotomy.",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "623",
+    "name": "Salpingo-Oophorectomy-laparotomy",
+    "nabhRate": 13248,
+    "nonNabhRate": 11520
+  },
+  {
+    "code": "625",
+    "name": "Exploration of perineal Haematoma repair",
+    "nabhRate": 8280,
+    "nonNabhRate": 7200
+  },
+  {
+    "code": "627",
+    "name": "Manual Removal of Placenta",
+    "nabhRate": 3571,
+    "nonNabhRate": 3105
+  },
+  {
+    "code": "628",
+    "name": "Examination under anesthesia (EUA)",
+    "nabhRate": 1150,
+    "nonNabhRate": 1000
+  },
+  {
+    "code": "629",
+    "name": "Burst-abdomen Repair",
+    "nabhRate": 10350,
+    "nonNabhRate": 9000
+  },
+  {
+    "code": "630",
+    "name": "Gaping Perineal Wound Secondary Suturing",
+    "nabhRate": 1714,
+    "nonNabhRate": 1490
+  },
+  {
+    "code": "632",
+    "name": "Complete perineal tear-repair",
+    "nabhRate": 2202,
+    "nonNabhRate": 1915
+  },
+  {
+    "code": "633",
+    "name": "Exploration of PPH-tear repair",
+    "nabhRate": 3623,
+    "nonNabhRate": 3150
+  },
+  {
+    "code": "634",
+    "name": "Suction evacuation vesicular mole",
+    "nabhRate": 5175,
+    "nonNabhRate": 4500
+  },
+  {
+    "code": "636",
+    "name": "Colpotomy",
+    "nabhRate": 3571,
+    "nonNabhRate": 3105
+  },
+  {
+    "code": "637",
+    "name": "Repair of post-coital tear/ perineal injury",
+    "nabhRate": 3631,
+    "nonNabhRate": 3157
+  },
+  {
+    "code": "638",
+    "name": "Excision of urethral caruncle",
+    "nabhRate": 3571,
+    "nonNabhRate": 3105
+  },
+  {
+    "code": "639",
+    "name": "Shirodhkar/ McDonald stitch",
+    "nabhRate": 3333,
+    "nonNabhRate": 2898
+  },
+  {
+    "code": "641",
+    "name": "Non-descent Vaginal Hysterectomy (NDVH)",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "643",
+    "name": "Myomectomy -laparotomy",
+    "nabhRate": 16100,
+    "nonNabhRate": 14000
+  },
+  {
+    "code": "644",
+    "name": "Myomectomy -laparoscopic",
+    "nabhRate": 7274,
+    "nonNabhRate": 6325
+  },
+  {
+    "code": "645",
+    "name": "Vaginoplasty",
+    "nabhRate": 15473,
+    "nonNabhRate": 13455
+  },
+  {
+    "code": "646",
+    "name": "Vulvectomy -Simple",
+    "nabhRate": 10120,
+    "nonNabhRate": 8800
+  },
+  {
+    "code": "647",
+    "name": "Vulvectomy-Radical",
+    "nabhRate": 10120,
+    "nonNabhRate": 8800
+  },
+  {
+    "code": "648",
+    "name": "Rectovaginal Fistula (RVF) Repair",
+    "nabhRate": 21821,
+    "nonNabhRate": 18975
+  },
+  {
+    "code": "649",
+    "name": "Manchester Operation",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "652",
+    "name": "Diagnostic Curettage",
+    "nabhRate": 2571,
+    "nonNabhRate": 2236
+  },
+  {
+    "code": "653",
+    "name": "Cervical Biopsy",
+    "nabhRate": 1863,
+    "nonNabhRate": 1620
+  },
+  {
+    "code": "654",
+    "name": "Polypectomy",
+    "nabhRate": 1571,
+    "nonNabhRate": 1366
+  },
+  {
+    "code": "655",
+    "name": "Other-Minor Operation Endometrial",
+    "nabhRate": 2530,
+    "nonNabhRate": 2200
+  },
+  {
+    "code": "656",
+    "name": "Excision Vaginal Cyst/Bartholin Cyst",
+    "nabhRate": 3571,
+    "nonNabhRate": 3105
+  },
+  {
+    "code": "657",
+    "name": "Excision Vaginal Septum",
+    "nabhRate": 4761,
+    "nonNabhRate": 4140
+  },
+  {
+    "code": "659",
+    "name": "Laparoscopy Sterilization",
+    "nabhRate": 3795,
+    "nonNabhRate": 3300
+  },
+  {
+    "code": "662",
+    "name": "Total laparoscopic hysterectomy",
+    "nabhRate": 26565,
+    "nonNabhRate": 23100
+  },
+  {
+    "code": "664",
+    "name": "Conisation of cervix",
+    "nabhRate": 4629,
+    "nonNabhRate": 4025
+  },
+  {
+    "code": "665",
+    "name": "Trachelectomy of cervix for early CA cervix",
+    "nabhRate": 6325,
+    "nonNabhRate": 5500
+  },
+  {
+    "code": "666",
+    "name": "Hysteroscopic cannulation",
+    "nabhRate": 3306,
+    "nonNabhRate": 2875
+  },
+  {
+    "code": "669",
+    "name": "Colposcopy",
+    "nabhRate": 1035,
+    "nonNabhRate": 900
+  },
+  {
+    "code": "670",
+    "name": "Inversion of Uterus - Vaginal Reposition",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "671",
+    "name": "Inversion of Uterus - Abdominal Reposition",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "674",
+    "name": "Vaginal Vesicovaginal Fistula (VVF) Repair",
+    "nabhRate": 32200,
+    "nonNabhRate": 28000
+  },
+  {
+    "code": "676",
+    "name": "Amniocentesis",
+    "nabhRate": 1012,
+    "nonNabhRate": 880
+  },
+  {
+    "code": "677",
+    "name": "Karyotyping",
+    "nabhRate": 920,
+    "nonNabhRate": 800
+  },
+  {
+    "code": "678",
+    "name": "Thermal balloon ablation.",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "679",
+    "name": "Ultrasonographic myolysis",
+    "nabhRate": 10654,
+    "nonNabhRate": 9264
+  },
+  {
+    "code": "680",
+    "name": "Vaginal Myomectomy",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "681",
+    "name": "Intra Uterine Inseminition",
+    "nabhRate": 1058,
+    "nonNabhRate": 920
+  },
+  {
+    "code": "682",
+    "name": "Intracytoplasmic sperm injection (ICSI)",
+    "nabhRate": 13225,
+    "nonNabhRate": 11500
+  },
+  {
+    "code": "683",
+    "name": "Laparotomy abdominal sacro-colpopexy",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "684",
+    "name": "Vaginal Colpopexy",
+    "nabhRate": 22770,
+    "nonNabhRate": 19800
+  },
+  {
+    "code": "685",
+    "name": "Laparoscopic abdominal sacro-colpopexy",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "686",
+    "name": "Laparotomy pelvic Lymphadenectomy",
+    "nabhRate": 1380,
+    "nonNabhRate": 1200
+  },
+  {
+    "code": "687",
+    "name": "Laparoscopic pelvic Lymphadenectomy",
+    "nabhRate": 4025,
+    "nonNabhRate": 3500
+  },
+  {
+    "code": "688",
+    "name": "Endometrial aspiration cytology/biopsy",
+    "nabhRate": 590,
+    "nonNabhRate": 513
+  },
+  {
+    "code": "691",
+    "name": "Transvaginal tapes for Stress incontinence",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "692",
+    "name": "trans-obturator tapes for Stress incontinence",
+    "nabhRate": 12420,
+    "nonNabhRate": 10800
+  },
+  {
+    "code": "694",
+    "name": "Diagnostic cystoscopy",
+    "nabhRate": 2976,
+    "nonNabhRate": 2588
+  },
+  {
+    "code": "696",
+    "name": "Internal Iliac ligation",
+    "nabhRate": 3738,
+    "nonNabhRate": 3250
+  },
+  {
+    "code": "697",
+    "name": "stepwise devascularisation",
+    "nabhRate": 9522,
+    "nonNabhRate": 8280
+  },
+  {
+    "code": "698",
+    "name": "Assisted breech delivery",
+    "nabhRate": 11308,
+    "nonNabhRate": 9833
+  },
+  {
+    "code": "699",
+    "name": "Intra-uterine fetal blood transfusion",
+    "nabhRate": 22020,
+    "nonNabhRate": 19148
+  },
+  {
+    "code": "702",
+    "name": "Hysteroscopy Removal of Septum",
+    "nabhRate": 11385,
+    "nonNabhRate": 9900
+  },
+  {
+    "code": "703",
+    "name": "Hysteroscopy Diagnostic",
+    "nabhRate": 8625,
+    "nonNabhRate": 7500
+  },
+  {
+    "code": "706",
+    "name": "Sterilization Post partum (minilap)",
+    "nabhRate": 4313,
+    "nonNabhRate": 3750
+  },
+  {
+    "code": "707",
+    "name": "Sterilization interval (minilap)",
+    "nabhRate": 4313,
+    "nonNabhRate": 3750
+  },
+  {
+    "code": "708",
+    "name": "Ultrasonography Level II scan/Anomaly Scan",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "709",
+    "name": "Fetal nuchal Translucency",
+    "nabhRate": 345,
+    "nonNabhRate": 300
+  },
+  {
+    "code": "713",
+    "name": "Quadruple test",
+    "nabhRate": 2300,
+    "nonNabhRate": 2000
+  },
+  {
+    "code": "714",
+    "name": "Biophysical score",
+    "nabhRate": 690,
+    "nonNabhRate": 600
+  },
+  {
+    "code": "715",
+    "name": "Other Major Surgery",
+    "nabhRate": 28980,
+    "nonNabhRate": 25200
+  },
+  {
+    "code": "716",
+    "name": "Other Minor Surgery",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "717",
+    "name": "Partial Nephrectomy -open",
+    "nabhRate": 16783,
+    "nonNabhRate": 14594
+  },
+  {
+    "code": "719",
+    "name": "Nephrolithomy -open",
+    "nabhRate": 13800,
+    "nonNabhRate": 12000
+  },
+  {
+    "code": "720",
+    "name": "Nephrolithomy -Laparoscopic/endoscopic",
+    "nabhRate": 16100,
+    "nonNabhRate": 14000
+  },
+  {
+    "code": "721",
+    "name": "Pyelolithotomy-open",
+    "nabhRate": 14950,
+    "nonNabhRate": 13000
+  },
+  {
+    "code": "722",
+    "name": "Pyelolithotomy -Laparoscopic/endoscopic",
+    "nabhRate": 11638,
+    "nonNabhRate": 10120
+  },
+  {
+    "code": "728",
+    "name": "Operations for Hydronephrosis-Ileal ureter",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "729",
+    "name": "Open Drainage of Perinephric Abscess",
+    "nabhRate": 8280,
+    "nonNabhRate": 7200
+  },
+  {
+    "code": "731",
+    "name": "Cavernostomy",
+    "nabhRate": 11241,
+    "nonNabhRate": 9775
+  },
+  {
+    "code": "732",
+    "name": "Operations for Cyst of the Kidney -open",
+    "nabhRate": 12379,
+    "nonNabhRate": 10764
+  },
+  {
+    "code": "734",
+    "name": "Ureterolithotomy -open",
+    "nabhRate": 13711,
+    "nonNabhRate": 11923
+  },
+  {
+    "code": "735",
+    "name": "Ureterolithotomy-Lap/Endoscopic",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "736",
+    "name": "Nephroureterectomy open",
+    "nabhRate": 16664,
+    "nonNabhRate": 14490
+  },
+  {
+    "code": "737",
+    "name": "Nephroureterectomy -Lap/Endoscopic",
+    "nabhRate": 17710,
+    "nonNabhRate": 15400
+  },
+  {
+    "code": "738",
+    "name": "Operations for Ureter for -Double Ureters",
+    "nabhRate": 19665,
+    "nonNabhRate": 17100
+  },
+  {
+    "code": "743",
+    "name": "Ureterostomy - Cutaneous",
+    "nabhRate": 13800,
+    "nonNabhRate": 12000
+  },
+  {
+    "code": "744",
+    "name": "Uretero-Colic anastomosis",
+    "nabhRate": 16560,
+    "nonNabhRate": 14400
+  },
+  {
+    "code": "745",
+    "name": "Formation of an Ileal Conduit",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "746",
+    "name": "Ureteric Catheterisation",
+    "nabhRate": 10950,
+    "nonNabhRate": 8278
+  },
+  {
+    "code": "747",
+    "name": "Biopsy of Bladder (Cystoscopic)",
+    "nabhRate": 2530,
+    "nonNabhRate": 2200
+  },
+  {
+    "code": "748",
+    "name": "Cysto-Litholapaxy",
+    "nabhRate": 11308,
+    "nonNabhRate": 9833
+  },
+  {
+    "code": "749",
+    "name": "Operations for Injuries of the Bladder",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "751",
+    "name": "Simple Cystectomy",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "752",
+    "name": "Diverticulectomy -open",
+    "nabhRate": 16560,
+    "nonNabhRate": 14400
+  },
+  {
+    "code": "753",
+    "name": "Diverticulectomy- Lap/Endoscopic",
+    "nabhRate": 19044,
+    "nonNabhRate": 16560
+  },
+  {
+    "code": "755",
+    "name": "Augmentation Cystoplasty",
+    "nabhRate": 7337,
+    "nonNabhRate": 6380
+  },
+  {
+    "code": "759",
+    "name": "Repair of Ureterocoel -Open",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "760",
+    "name": "Repair of Ureterocoel -Lap/Endoscopic",
+    "nabhRate": 15813,
+    "nonNabhRate": 13750
+  },
+  {
+    "code": "761",
+    "name": "Repair of Ureterocoel -Endoscopic incision",
+    "nabhRate": 13455,
+    "nonNabhRate": 11700
+  },
+  {
+    "code": "762",
+    "name": "Open Suprapubic Prostatectomy",
+    "nabhRate": 21425,
+    "nonNabhRate": 18630
+  },
+  {
+    "code": "763",
+    "name": "Open Retropubic Prostatectomy",
+    "nabhRate": 20830,
+    "nonNabhRate": 18113
+  },
+  {
+    "code": "764",
+    "name": "Transurethral Resection of Prostate (TURP)",
+    "nabhRate": 19282,
+    "nonNabhRate": 16767
+  },
+  {
+    "code": "765",
+    "name": "Urethroscopy/ Cystopanendoscopy",
+    "nabhRate": 4761,
+    "nonNabhRate": 4140
+  },
+  {
+    "code": "766",
+    "name": "Internal urethrotomy -optical",
+    "nabhRate": 6325,
+    "nonNabhRate": 5500
+  },
+  {
+    "code": "770",
+    "name": "Abdomino Perineal urethroplasty",
+    "nabhRate": 16100,
+    "nonNabhRate": 14000
+  },
+  {
+    "code": "771",
+    "name": "Posterior Urethral Valve fulguration.",
+    "nabhRate": 11664,
+    "nonNabhRate": 10143
+  },
+  {
+    "code": "778",
+    "name": "Reduction of Paraphimosis",
+    "nabhRate": 1898,
+    "nonNabhRate": 1650
+  },
+  {
+    "code": "779",
+    "name": "Circumcision",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "780",
+    "name": "Meatotomy",
+    "nabhRate": 2428,
+    "nonNabhRate": 2111
+  },
+  {
+    "code": "781",
+    "name": "Meatoplasty",
+    "nabhRate": 3333,
+    "nonNabhRate": 2898
+  },
+  {
+    "code": "783",
+    "name": "Operations for Hypospadias - Second Stage",
+    "nabhRate": 17204,
+    "nonNabhRate": 14960
+  },
+  {
+    "code": "785",
+    "name": "Operations for Crippled Hypospadias",
+    "nabhRate": 12650,
+    "nonNabhRate": 11000
+  },
+  {
+    "code": "786",
+    "name": "Operations for Epispadias _primary repair",
+    "nabhRate": 13852,
+    "nonNabhRate": 12045
+  },
+  {
+    "code": "788",
+    "name": "Partial Amputation of the Penis",
+    "nabhRate": 11141,
+    "nonNabhRate": 9688
+  },
+  {
+    "code": "789",
+    "name": "Total amputation of the Penis",
+    "nabhRate": 12420,
+    "nonNabhRate": 10800
+  },
+  {
+    "code": "790",
+    "name": "Orchidectomy-Simple",
+    "nabhRate": 10118,
+    "nonNabhRate": 8798
+  },
+  {
+    "code": "791",
+    "name": "Orchidectomy -Radical",
+    "nabhRate": 12650,
+    "nonNabhRate": 11000
+  },
+  {
+    "code": "793",
+    "name": "Epididymectomy",
+    "nabhRate": 18750,
+    "nonNabhRate": 15938
+  },
+  {
+    "code": "796",
+    "name": "Operations for Hydrocele - Unilateral",
+    "nabhRate": 6071,
+    "nonNabhRate": 5279
+  },
+  {
+    "code": "797",
+    "name": "Operations for Hydrocele - Bilateral",
+    "nabhRate": 8855,
+    "nonNabhRate": 7700
+  },
+  {
+    "code": "798",
+    "name": "Operation for Torsion of Testis",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "806",
+    "name": "Excision of Filarial Scrotum",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "807",
+    "name": "Kidney Transplantation (related)",
+    "nabhRate": 230000,
+    "nonNabhRate": 200000
+  },
+  {
+    "code": "809",
+    "name": "ABO incompatible Transplantation",
+    "nabhRate": 507150,
+    "nonNabhRate": 441000
+  },
+  {
+    "code": "810",
+    "name": "Swap Transplantation",
+    "nabhRate": 401580,
+    "nonNabhRate": 349200
+  },
+  {
+    "code": "811",
+    "name": "Kidney Transplant Graft Nephrectomy",
+    "nabhRate": 61583,
+    "nonNabhRate": 53550
+  },
+  {
+    "code": "812",
+    "name": "Donor Nephrectomy (open)",
+    "nabhRate": 33063,
+    "nonNabhRate": 28750
+  },
+  {
+    "code": "813",
+    "name": "Donor Nephrectomy (Laparoscopic)",
+    "nabhRate": 52900,
+    "nonNabhRate": 46000
+  },
+  {
+    "code": "814",
+    "name": "Cadaver Transplantation",
+    "nabhRate": 95795,
+    "nonNabhRate": 83300
+  },
+  {
+    "code": "822",
+    "name": "Arteriovenous Fistula for Haemodialysis",
+    "nabhRate": 2645,
+    "nonNabhRate": 2300
+  },
+  {
+    "code": "823",
+    "name": "Arteriovenous Shunt for Haemodialysis",
+    "nabhRate": 4025,
+    "nonNabhRate": 3500
+  },
+  {
+    "code": "824",
+    "name": "Jugular Catheterization for Haemodialysis",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "825",
+    "name": "Subclavian Catheterization for Haemodialysis",
+    "nabhRate": 2530,
+    "nonNabhRate": 2200
+  },
+  {
+    "code": "829",
+    "name": "Permcath Insertion",
+    "nabhRate": 3220,
+    "nonNabhRate": 2800
+  },
+  {
+    "code": "830",
+    "name": "Arterio venous Prosthetic Graft",
+    "nabhRate": 2128,
+    "nonNabhRate": 1850
+  },
+  {
+    "code": "831",
+    "name": "Single lumen Jugular Catheterization",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "832",
+    "name": "Single lumen Subclavian Catheterization",
+    "nabhRate": 1955,
+    "nonNabhRate": 1700
+  },
+  {
+    "code": "833",
+    "name": "Plasma Exchange/ Plasmapheresis",
+    "nabhRate": 1840,
+    "nonNabhRate": 1600
+  },
+  {
+    "code": "840",
+    "name": "Acute Peritoneal Dialysis",
+    "nabhRate": 1668,
+    "nonNabhRate": 1450
+  },
+  {
+    "code": "841",
+    "name": "Fistologram for Arteriovenous Fistula",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "842",
+    "name": "Ultrasound guided kidney Biopsy",
+    "nabhRate": 978,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "843",
+    "name": "Fistula stenosis dilation",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "844",
+    "name": "Slow continuous Ultrafilteration",
+    "nabhRate": 2588,
+    "nonNabhRate": 2250
+  },
+  {
+    "code": "847",
+    "name": "Endoscopic Bulking agent Inject",
+    "nabhRate": 5060,
+    "nonNabhRate": 4400
+  },
+  {
+    "code": "848",
+    "name": "Testicular Biopsy",
+    "nabhRate": 2151,
+    "nonNabhRate": 1870
+  },
+  {
+    "code": "849",
+    "name": "Radical Nephrectomy -Open",
+    "nabhRate": 18975,
+    "nonNabhRate": 16500
+  },
+  {
+    "code": "850",
+    "name": "Radical Nephrectomy -Lap/Endoscopic",
+    "nabhRate": 22770,
+    "nonNabhRate": 19800
+  },
+  {
+    "code": "851",
+    "name": "Radical Nephrectomy plus IV thrombus",
+    "nabhRate": 25300,
+    "nonNabhRate": 22000
+  },
+  {
+    "code": "853",
+    "name": "Vesicovaginal Fistula (VVF) Repair (Open)",
+    "nabhRate": 16560,
+    "nonNabhRate": 14400
+  },
+  {
+    "code": "855",
+    "name": "Radical Cystectomy -Ileal conduit",
+    "nabhRate": 19550,
+    "nonNabhRate": 17000
+  },
+  {
+    "code": "856",
+    "name": "Radical Cystectomy - continent diversion.",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "857",
+    "name": "Radical Cystectomy - Neo bladder",
+    "nabhRate": 21275,
+    "nonNabhRate": 18500
+  },
+  {
+    "code": "858",
+    "name": "Nephrectomy Simple -Open",
+    "nabhRate": 11086,
+    "nonNabhRate": 9640
+  },
+  {
+    "code": "859",
+    "name": "Nephrectomy Simple-lap/Endoscopic",
+    "nabhRate": 13034,
+    "nonNabhRate": 11334
+  },
+  {
+    "code": "860",
+    "name": "Nephrostomy -Open",
+    "nabhRate": 10350,
+    "nonNabhRate": 9000
+  },
+  {
+    "code": "861",
+    "name": "Nephrostomy -Lap/Endoscopic",
+    "nabhRate": 12310,
+    "nonNabhRate": 10704
+  },
+  {
+    "code": "864",
+    "name": "Partial Cystectomy",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "867",
+    "name": "Closure of Urethral Fistula",
+    "nabhRate": 11385,
+    "nonNabhRate": 9900
+  },
+  {
+    "code": "868",
+    "name": "Orchidopexy - Unilateral -Open",
+    "nabhRate": 10212,
+    "nonNabhRate": 8880
+  },
+  {
+    "code": "869",
+    "name": "Orchidopexy - Unilateral- Lap/Endoscopic",
+    "nabhRate": 13570,
+    "nonNabhRate": 11800
+  },
+  {
+    "code": "870",
+    "name": "Orchidopexy - Bilateral -Open",
+    "nabhRate": 12712,
+    "nonNabhRate": 11054
+  },
+  {
+    "code": "871",
+    "name": "Orchidopexy - Bilateral -Lap/Endoscopic",
+    "nabhRate": 16675,
+    "nonNabhRate": 14500
+  },
+  {
+    "code": "872",
+    "name": "Cystolithotomy -Suprapubic",
+    "nabhRate": 10118,
+    "nonNabhRate": 8798
+  },
+  {
+    "code": "873",
+    "name": "Endoscopic Removal of Stone in Bladder",
+    "nabhRate": 3795,
+    "nonNabhRate": 3300
+  },
+  {
+    "code": "875",
+    "name": "Ureteroscopic Surgery",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "876",
+    "name": "Urethroplasty 1st Stage",
+    "nabhRate": 11308,
+    "nonNabhRate": 9833
+  },
+  {
+    "code": "877",
+    "name": "Scrotal Exploration",
+    "nabhRate": 8855,
+    "nonNabhRate": 7700
+  },
+  {
+    "code": "878",
+    "name": "Perineal Urethrostomy",
+    "nabhRate": 5187,
+    "nonNabhRate": 4510
+  },
+  {
+    "code": "879",
+    "name": "Dilatation of Stricture Urethra under G.A.",
+    "nabhRate": 2300,
+    "nonNabhRate": 2000
+  },
+  {
+    "code": "880",
+    "name": "Dilatation of Stricture Urethra under LA",
+    "nabhRate": 1786,
+    "nonNabhRate": 1553
+  },
+  {
+    "code": "882",
+    "name": "Laparoscopic partial Nephrectomy",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "883",
+    "name": "Laparoscopic pyelolithotomy",
+    "nabhRate": 13283,
+    "nonNabhRate": 11550
+  },
+  {
+    "code": "884",
+    "name": "Laparoscopic Pyeloplasty",
+    "nabhRate": 11241,
+    "nonNabhRate": 9775
+  },
+  {
+    "code": "885",
+    "name": "Laparoscopic surgery for Renal cyst",
+    "nabhRate": 10753,
+    "nonNabhRate": 9350
+  },
+  {
+    "code": "886",
+    "name": "Laparoscopic ureterolithotomy",
+    "nabhRate": 12650,
+    "nonNabhRate": 11000
+  },
+  {
+    "code": "887",
+    "name": "Laparoscopic Nephroureterectomy",
+    "nabhRate": 14548,
+    "nonNabhRate": 12650
+  },
+  {
+    "code": "889",
+    "name": "Uroflow Study (Uroflometry)",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "890",
+    "name": "Urodynamic Study (Cystometry)",
+    "nabhRate": 506,
+    "nonNabhRate": 440
+  },
+  {
+    "code": "895",
+    "name": "Radical prostatectomy-Open",
+    "nabhRate": 18449,
+    "nonNabhRate": 16043
+  },
+  {
+    "code": "896",
+    "name": "Radical prostatectomy-Laparoscopic",
+    "nabhRate": 23144,
+    "nonNabhRate": 20125
+  },
+  {
+    "code": "898",
+    "name": "Holmium YAG Prostate Surgery",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "901",
+    "name": "Holmium YAG Stone Lithotripsy",
+    "nabhRate": 11730,
+    "nonNabhRate": 10200
+  },
+  {
+    "code": "902",
+    "name": "Green Light laser for prostate",
+    "nabhRate": 19838,
+    "nonNabhRate": 17250
+  },
+  {
+    "code": "908",
+    "name": "Prosthetic surgery for urinary incontinence",
+    "nabhRate": 2645,
+    "nonNabhRate": 2300
+  },
+  {
+    "code": "911",
+    "name": "Other Major Surgery",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "912",
+    "name": "Other Minor Surgery",
+    "nabhRate": 7820,
+    "nonNabhRate": 6800
+  },
+  {
+    "code": "917",
+    "name": "Excision of Brain Tumours -Supratentorial",
+    "nabhRate": 40493,
+    "nonNabhRate": 35211
+  },
+  {
+    "code": "918",
+    "name": "Excision of Brain Tumours -Infratentorial",
+    "nabhRate": 46575,
+    "nonNabhRate": 40500
+  },
+  {
+    "code": "919",
+    "name": "Surgery of spinal Cord Tumours",
+    "nabhRate": 46575,
+    "nonNabhRate": 40500
+  },
+  {
+    "code": "921",
+    "name": "Twist Drill Craniostomy",
+    "nabhRate": 4888,
+    "nonNabhRate": 4250
+  },
+  {
+    "code": "922",
+    "name": "Subdural Tapping",
+    "nabhRate": 2542,
+    "nonNabhRate": 2210
+  },
+  {
+    "code": "923",
+    "name": "Ventricular Tapping",
+    "nabhRate": 3071,
+    "nonNabhRate": 2670
+  },
+  {
+    "code": "924",
+    "name": "Abscess Tapping",
+    "nabhRate": 2976,
+    "nonNabhRate": 2588
+  },
+  {
+    "code": "926",
+    "name": "Skull Traction Application",
+    "nabhRate": 2645,
+    "nonNabhRate": 2300
+  },
+  {
+    "code": "927",
+    "name": "Lumber Pressure Monitoring",
+    "nabhRate": 4399,
+    "nonNabhRate": 3825
+  },
+  {
+    "code": "928",
+    "name": "Vascular Malformations",
+    "nabhRate": 22770,
+    "nonNabhRate": 19800
+  },
+  {
+    "code": "929",
+    "name": "Meningo Encephalocoele excision and repair",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "930",
+    "name": "Meningomyelocoel Repair",
+    "nabhRate": 27830,
+    "nonNabhRate": 24200
+  },
+  {
+    "code": "931",
+    "name": "CSF Rhinorrhaea Repair",
+    "nabhRate": 29756,
+    "nonNabhRate": 25875
+  },
+  {
+    "code": "932",
+    "name": "Cranioplasty",
+    "nabhRate": 24995,
+    "nonNabhRate": 21735
+  },
+  {
+    "code": "933",
+    "name": "Anterior Cervical Dissectomy",
+    "nabhRate": 17181,
+    "nonNabhRate": 14940
+  },
+  {
+    "code": "934",
+    "name": "Brachial Plexus Exploration and neurotization",
+    "nabhRate": 16069,
+    "nonNabhRate": 13973
+  },
+  {
+    "code": "935",
+    "name": "Median Nerve Decompression",
+    "nabhRate": 14490,
+    "nonNabhRate": 12600
+  },
+  {
+    "code": "936",
+    "name": "Peripheral Nerve Surgery - Major",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "937",
+    "name": "Peripheral Nerve Surgery Minor",
+    "nabhRate": 8570,
+    "nonNabhRate": 7452
+  },
+  {
+    "code": "938",
+    "name": "Ventriculoatrial /Ventriculoperitoneal Shunt",
+    "nabhRate": 12022,
+    "nonNabhRate": 10454
+  },
+  {
+    "code": "939",
+    "name": "Nerve Biopsy",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "940",
+    "name": "Brain Biopsy",
+    "nabhRate": 6679,
+    "nonNabhRate": 5808
+  },
+  {
+    "code": "941",
+    "name": "Anterior Cervical Spine Surgery with fusion",
+    "nabhRate": 33327,
+    "nonNabhRate": 28980
+  },
+  {
+    "code": "942",
+    "name": "Anterio Lateral Decompression of spine",
+    "nabhRate": 29756,
+    "nonNabhRate": 25875
+  },
+  {
+    "code": "943",
+    "name": "Brain Mapping",
+    "nabhRate": 963,
+    "nonNabhRate": 837
+  },
+  {
+    "code": "944",
+    "name": "Cervical or Dorsal or Lumbar Laminectomy",
+    "nabhRate": 23805,
+    "nonNabhRate": 20700
+  },
+  {
+    "code": "947",
+    "name": "Depressed Fracture Elevation",
+    "nabhRate": 25875,
+    "nonNabhRate": 22500
+  },
+  {
+    "code": "948",
+    "name": "Lumbar Discectomy",
+    "nabhRate": 28566,
+    "nonNabhRate": 24840
+  },
+  {
+    "code": "949",
+    "name": "Endarterectomy (Carotid)",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "951",
+    "name": "Spasticity Surgery -",
+    "nabhRate": 41064,
+    "nonNabhRate": 35708
+  },
+  {
+    "code": "952",
+    "name": "Spinal Fusion Procedure",
+    "nabhRate": 31050,
+    "nonNabhRate": 27000
+  },
+  {
+    "code": "953",
+    "name": "Spinal Intra Medullary Tumours",
+    "nabhRate": 35708,
+    "nonNabhRate": 31050
+  },
+  {
+    "code": "954",
+    "name": "Spinal Bifida Surgery Major",
+    "nabhRate": 19640,
+    "nonNabhRate": 17078
+  },
+  {
+    "code": "955",
+    "name": "Spinal Bifida Surgery Minor",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "957",
+    "name": "Trans Sphenoidal Surgery",
+    "nabhRate": 34500,
+    "nonNabhRate": 30000
+  },
+  {
+    "code": "958",
+    "name": "Trans Oral Surgery",
+    "nabhRate": 34500,
+    "nonNabhRate": 30000
+  },
+  {
+    "code": "961",
+    "name": "Endoscopic aqueductoplasty",
+    "nabhRate": 16100,
+    "nonNabhRate": 14000
+  },
+  {
+    "code": "962",
+    "name": "Facial nerve reconstruction",
+    "nabhRate": 31050,
+    "nonNabhRate": 27000
+  },
+  {
+    "code": "963",
+    "name": "Carotid stenting",
+    "nabhRate": 48602,
+    "nonNabhRate": 42263
+  },
+  {
+    "code": "964",
+    "name": "Cervical disc arthroplasty",
+    "nabhRate": 28566,
+    "nonNabhRate": 24840
+  },
+  {
+    "code": "965",
+    "name": "Lumbar disc arthroplasty",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "966",
+    "name": "Corpus callostomy for Epilepsy",
+    "nabhRate": 40250,
+    "nonNabhRate": 35000
+  },
+  {
+    "code": "967",
+    "name": "Hemispherotomy for Epilepsy",
+    "nabhRate": 37030,
+    "nonNabhRate": 32200
+  },
+  {
+    "code": "968",
+    "name": "Endoscopic CSF rhinorrhea repair",
+    "nabhRate": 31050,
+    "nonNabhRate": 27000
+  },
+  {
+    "code": "970",
+    "name": "Epilepsy surgery",
+    "nabhRate": 37493,
+    "nonNabhRate": 32603
+  },
+  {
+    "code": "972",
+    "name": "Cervical laminoplasty",
+    "nabhRate": 33120,
+    "nonNabhRate": 28800
+  },
+  {
+    "code": "973",
+    "name": "Lateral mass C1-C2 screw fixation",
+    "nabhRate": 26450,
+    "nonNabhRate": 23000
+  },
+  {
+    "code": "977",
+    "name": "Image guided craniotomy",
+    "nabhRate": 33327,
+    "nonNabhRate": 28980
+  },
+  {
+    "code": "978",
+    "name": "Baclofen pump implantation",
+    "nabhRate": 40365,
+    "nonNabhRate": 35100
+  },
+  {
+    "code": "980",
+    "name": "Endoscopic sympathectomy",
+    "nabhRate": 17705,
+    "nonNabhRate": 15396
+  },
+  {
+    "code": "981",
+    "name": "Lumber puncture",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "982",
+    "name": "External ventricular drainage (EVD)",
+    "nabhRate": 4761,
+    "nonNabhRate": 4140
+  },
+  {
+    "code": "983",
+    "name": "Endoscopic 3rd ventriculostomy",
+    "nabhRate": 41400,
+    "nonNabhRate": 36000
+  },
+  {
+    "code": "984",
+    "name": "Endoscopic cranial surgery/Biopsy/aspiration",
+    "nabhRate": 32639,
+    "nonNabhRate": 28382
+  },
+  {
+    "code": "986",
+    "name": "Aneurysm coiling (Endovascular)",
+    "nabhRate": 39560,
+    "nonNabhRate": 34400
+  },
+  {
+    "code": "987",
+    "name": "Surgery for skull fractures",
+    "nabhRate": 45885,
+    "nonNabhRate": 39900
+  },
+  {
+    "code": "988",
+    "name": "Carpel Tunnel decompression",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "989",
+    "name": "Clipping of intracranial aneurysm",
+    "nabhRate": 27773,
+    "nonNabhRate": 24150
+  },
+  {
+    "code": "994",
+    "name": "Surgery for brain stem tumours",
+    "nabhRate": 45527,
+    "nonNabhRate": 39589
+  },
+  {
+    "code": "1003",
+    "name": "Baclofen pump implantation for spasticity",
+    "nabhRate": 17937,
+    "nonNabhRate": 15597
+  },
+  {
+    "code": "1004",
+    "name": "Peripheral Nerve tumor surgery",
+    "nabhRate": 24840,
+    "nonNabhRate": 21600
+  },
+  {
+    "code": "1005",
+    "name": "Surgery Intra Cranial Meningioma",
+    "nabhRate": 23000,
+    "nonNabhRate": 20000
+  },
+  {
+    "code": "1006",
+    "name": "Surgery for Intracranial Schwannoma",
+    "nabhRate": 40250,
+    "nonNabhRate": 35000
+  },
+  {
+    "code": "1007",
+    "name": "Surgery for Gliomas",
+    "nabhRate": 51750,
+    "nonNabhRate": 45000
+  },
+  {
+    "code": "1008",
+    "name": "Surgery for Orbital tumors",
+    "nabhRate": 46000,
+    "nonNabhRate": 40000
+  },
+  {
+    "code": "1009",
+    "name": "Surgery for Cranial (Skull) tumors",
+    "nabhRate": 44275,
+    "nonNabhRate": 38500
+  },
+  {
+    "code": "1011",
+    "name": "Kyphoplasty",
+    "nabhRate": 46000,
+    "nonNabhRate": 40000
+  },
+  {
+    "code": "1012",
+    "name": "Balloon Kyphoplasty",
+    "nabhRate": 41400,
+    "nonNabhRate": 36000
+  },
+  {
+    "code": "1014",
+    "name": "Other Major Surgery",
+    "nabhRate": 43988,
+    "nonNabhRate": 38250
+  },
+  {
+    "code": "1015",
+    "name": "Other Minor Surgery",
+    "nabhRate": 17595,
+    "nonNabhRate": 15300
+  },
+  {
+    "code": "1016",
+    "name": "Excision of thyroglossal Duct/Cyst",
+    "nabhRate": 16560,
+    "nonNabhRate": 14400
+  },
+  {
+    "code": "1019",
+    "name": "Colon Replacement of Oesophagus",
+    "nabhRate": 23805,
+    "nonNabhRate": 20700
+  },
+  {
+    "code": "1020",
+    "name": "Omphalo Mesenteric Cyst Excision",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "1021",
+    "name": "Omphalo Mesenteric Duct- Excision",
+    "nabhRate": 16069,
+    "nonNabhRate": 13973
+  },
+  {
+    "code": "1022",
+    "name": "Meckels Diverticulectomy",
+    "nabhRate": 3464,
+    "nonNabhRate": 3012
+  },
+  {
+    "code": "1023",
+    "name": "Omphalocele 1st Stage (Hernia Repair)",
+    "nabhRate": 16069,
+    "nonNabhRate": 13973
+  },
+  {
+    "code": "1024",
+    "name": "Omphalocele 2nd Stge (Hernia Repair)",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "1025",
+    "name": "Gastroschisis Repair",
+    "nabhRate": 16664,
+    "nonNabhRate": 14490
+  },
+  {
+    "code": "1026",
+    "name": "Inguinal Herniotomy",
+    "nabhRate": 12997,
+    "nonNabhRate": 11302
+  },
+  {
+    "code": "1027",
+    "name": "Congenital Hydrocele",
+    "nabhRate": 12420,
+    "nonNabhRate": 10800
+  },
+  {
+    "code": "1028",
+    "name": "Hydrocele of Cord",
+    "nabhRate": 12420,
+    "nonNabhRate": 10800
+  },
+  {
+    "code": "1029",
+    "name": "Torsion Testis Operation",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1030",
+    "name": "Congenital Pyloric Stenosis- operation",
+    "nabhRate": 14426,
+    "nonNabhRate": 12544
+  },
+  {
+    "code": "1031",
+    "name": "Duodenal Atresia Operation",
+    "nabhRate": 14490,
+    "nonNabhRate": 12600
+  },
+  {
+    "code": "1032",
+    "name": "Pancreatic Ring Operation",
+    "nabhRate": 23210,
+    "nonNabhRate": 20183
+  },
+  {
+    "code": "1033",
+    "name": "Meconium Ileus Operation",
+    "nabhRate": 15008,
+    "nonNabhRate": 13050
+  },
+  {
+    "code": "1034",
+    "name": "Malrotation of Intestines Operation",
+    "nabhRate": 14663,
+    "nonNabhRate": 12750
+  },
+  {
+    "code": "1035",
+    "name": "Rectal Biopsy (Megacolon)",
+    "nabhRate": 10076,
+    "nonNabhRate": 8762
+  },
+  {
+    "code": "1036",
+    "name": "Colostomy Transverse",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1037",
+    "name": "Colostomy Left Iliac",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1043",
+    "name": "Intussusception Operation",
+    "nabhRate": 21425,
+    "nonNabhRate": 18630
+  },
+  {
+    "code": "1045",
+    "name": "Operation of Choledochal Cyst",
+    "nabhRate": 16560,
+    "nonNabhRate": 14400
+  },
+  {
+    "code": "1046",
+    "name": "Nephrectomy for -Pyonephrosis",
+    "nabhRate": 17595,
+    "nonNabhRate": 15300
+  },
+  {
+    "code": "1047",
+    "name": "Nephrectomy for - Hydronephrosis",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1048",
+    "name": "Nephrectomy for -Wilms Tumour",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1050",
+    "name": "Sacro-Coccygeal Teratoma Excision",
+    "nabhRate": 14490,
+    "nonNabhRate": 12600
+  },
+  {
+    "code": "1051",
+    "name": "Neuroblastoma Debulking",
+    "nabhRate": 16560,
+    "nonNabhRate": 14400
+  },
+  {
+    "code": "1052",
+    "name": "Neuroblastoma Total Excision",
+    "nabhRate": 21425,
+    "nonNabhRate": 18630
+  },
+  {
+    "code": "1053",
+    "name": "Rhabdomyosarcoma wide Excision",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "1054",
+    "name": "Congenital Atresia stenosis of Small Intestine",
+    "nabhRate": 19665,
+    "nonNabhRate": 17100
+  },
+  {
+    "code": "1055",
+    "name": "Muconium ileus",
+    "nabhRate": 16560,
+    "nonNabhRate": 14400
+  },
+  {
+    "code": "1056",
+    "name": "Malrotation volvulus of the Midgut",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1057",
+    "name": "Excision of Meckel\u2019s Deverticulum",
+    "nabhRate": 13800,
+    "nonNabhRate": 12000
+  },
+  {
+    "code": "1058",
+    "name": "Other Major Surgery",
+    "nabhRate": 31050,
+    "nonNabhRate": 27000
+  },
+  {
+    "code": "1059",
+    "name": "Other Minor Surgery",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "1060",
+    "name": "Primary Suturing of Wound",
+    "nabhRate": 311,
+    "nonNabhRate": 270
+  },
+  {
+    "code": "1061",
+    "name": "Injection of Keloids - Ganglion",
+    "nabhRate": 1137,
+    "nonNabhRate": 989
+  },
+  {
+    "code": "1062",
+    "name": "Injection of Keloids - Haemangioma",
+    "nabhRate": 1190,
+    "nonNabhRate": 1035
+  },
+  {
+    "code": "1063",
+    "name": "Free Grafts - Wolfe Grafts",
+    "nabhRate": 1984,
+    "nonNabhRate": 1725
+  },
+  {
+    "code": "1064",
+    "name": "Free Grafts - Thiersch- Small Area 5%",
+    "nabhRate": 7737,
+    "nonNabhRate": 6728
+  },
+  {
+    "code": "1065",
+    "name": "Free Grafts - Large Area 10%",
+    "nabhRate": 8280,
+    "nonNabhRate": 7200
+  },
+  {
+    "code": "1067",
+    "name": "Skin Flaps - Rotation Flaps",
+    "nabhRate": 9284,
+    "nonNabhRate": 8073
+  },
+  {
+    "code": "1068",
+    "name": "Skin Flaps - Advancement Flaps",
+    "nabhRate": 12938,
+    "nonNabhRate": 11250
+  },
+  {
+    "code": "1070",
+    "name": "Skin Flaps - Cross Finger",
+    "nabhRate": 12938,
+    "nonNabhRate": 11250
+  },
+  {
+    "code": "1071",
+    "name": "Skin Flaps - Abdominal",
+    "nabhRate": 9677,
+    "nonNabhRate": 8415
+  },
+  {
+    "code": "1072",
+    "name": "Skin Flaps - Thoracic",
+    "nabhRate": 9677,
+    "nonNabhRate": 8415
+  },
+  {
+    "code": "1073",
+    "name": "Skin Flaps - Arm Etc.",
+    "nabhRate": 11385,
+    "nonNabhRate": 9900
+  },
+  {
+    "code": "1074",
+    "name": "Subcutaneous Pedicle Flaps Raising",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "1075",
+    "name": "Subcutaneous Pedicle Flaps Delay",
+    "nabhRate": 6158,
+    "nonNabhRate": 5355
+  },
+  {
+    "code": "1076",
+    "name": "Subcutaneous Pedicle Flaps Transfer",
+    "nabhRate": 6158,
+    "nonNabhRate": 5355
+  },
+  {
+    "code": "1077",
+    "name": "Cartilage Grafting",
+    "nabhRate": 8927,
+    "nonNabhRate": 7763
+  },
+  {
+    "code": "1078",
+    "name": "Reduction of Facial Fractures of Nose",
+    "nabhRate": 1428,
+    "nonNabhRate": 1242
+  },
+  {
+    "code": "1079",
+    "name": "Reduction of Facial Fractures of Maxilla",
+    "nabhRate": 9200,
+    "nonNabhRate": 8000
+  },
+  {
+    "code": "1083",
+    "name": "Internal Wire Fixation of Mandible maxilla",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "1084",
+    "name": "Cleft Lip - repair.",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "1085",
+    "name": "Cleft Palate Repair",
+    "nabhRate": 13093,
+    "nonNabhRate": 11385
+  },
+  {
+    "code": "1087",
+    "name": "Secondary Surgery for Cleft Lip Deformity",
+    "nabhRate": 10350,
+    "nonNabhRate": 9000
+  },
+  {
+    "code": "1088",
+    "name": "Secondary Surgery for Cleft Palate",
+    "nabhRate": 13093,
+    "nonNabhRate": 11385
+  },
+  {
+    "code": "1089",
+    "name": "Reconstruction of Eyelid Defects - Minor",
+    "nabhRate": 6547,
+    "nonNabhRate": 5693
+  },
+  {
+    "code": "1090",
+    "name": "Reconstruction of Eyelid Defects - Major",
+    "nabhRate": 9315,
+    "nonNabhRate": 8100
+  },
+  {
+    "code": "1093",
+    "name": "Plastic Surgery of the Nose - Minor",
+    "nabhRate": 8332,
+    "nonNabhRate": 7245
+  },
+  {
+    "code": "1094",
+    "name": "Plastic Surgery of the Nose - Major",
+    "nabhRate": 9833,
+    "nonNabhRate": 8550
+  },
+  {
+    "code": "1096",
+    "name": "Pendulous Breast - Mammoplasty",
+    "nabhRate": 14950,
+    "nonNabhRate": 13000
+  },
+  {
+    "code": "1097",
+    "name": "Underdeveloped Breast Mammoplasty",
+    "nabhRate": 13800,
+    "nonNabhRate": 12000
+  },
+  {
+    "code": "1099",
+    "name": "Syndactyly Repair",
+    "nabhRate": 14663,
+    "nonNabhRate": 12750
+  },
+  {
+    "code": "1100",
+    "name": "Dermabrasion Face",
+    "nabhRate": 13688,
+    "nonNabhRate": 11903
+  },
+  {
+    "code": "1101",
+    "name": "upto 30% Burns 1st Dressing",
+    "nabhRate": 158,
+    "nonNabhRate": 137
+  },
+  {
+    "code": "1102",
+    "name": "upto 30% Burns Subsequent Dressing",
+    "nabhRate": 129,
+    "nonNabhRate": 112
+  },
+  {
+    "code": "1103",
+    "name": "30% to 50% Burns 1st Dressing",
+    "nabhRate": 200,
+    "nonNabhRate": 174
+  },
+  {
+    "code": "1104",
+    "name": "30% to 50% Burns Subsequent Dressing",
+    "nabhRate": 158,
+    "nonNabhRate": 137
+  },
+  {
+    "code": "1105",
+    "name": "Extensive Burn -above 50% Frist Dressing",
+    "nabhRate": 285,
+    "nonNabhRate": 248
+  },
+  {
+    "code": "1107",
+    "name": "Plaster Work",
+    "nabhRate": 293,
+    "nonNabhRate": 255
+  },
+  {
+    "code": "1108",
+    "name": "Fingers (post slab)",
+    "nabhRate": 268,
+    "nonNabhRate": 233
+  },
+  {
+    "code": "1109",
+    "name": "Fingers full plaster",
+    "nabhRate": 298,
+    "nonNabhRate": 259
+  },
+  {
+    "code": "1110",
+    "name": "Colles Fracture - Below elbow",
+    "nabhRate": 1012,
+    "nonNabhRate": 880
+  },
+  {
+    "code": "1111",
+    "name": "Colles Fracture - Full plaster",
+    "nabhRate": 1029,
+    "nonNabhRate": 895
+  },
+  {
+    "code": "1112",
+    "name": "Colles fracture Ant. Or post. slab",
+    "nabhRate": 460,
+    "nonNabhRate": 400
+  },
+  {
+    "code": "1113",
+    "name": "Above elbow full plaster",
+    "nabhRate": 179,
+    "nonNabhRate": 156
+  },
+  {
+    "code": "1114",
+    "name": "Above Knee post-slab",
+    "nabhRate": 610,
+    "nonNabhRate": 530
+  },
+  {
+    "code": "1115",
+    "name": "Below Knee full plaster",
+    "nabhRate": 190,
+    "nonNabhRate": 165
+  },
+  {
+    "code": "1116",
+    "name": "Below Knee post-slab",
+    "nabhRate": 743,
+    "nonNabhRate": 646
+  },
+  {
+    "code": "1117",
+    "name": "Tube Plaster (or plaster cylinder)",
+    "nabhRate": 863,
+    "nonNabhRate": 750
+  },
+  {
+    "code": "1118",
+    "name": "Above knee full plaster",
+    "nabhRate": 1310,
+    "nonNabhRate": 1139
+  },
+  {
+    "code": "1119",
+    "name": "Above knee full slab",
+    "nabhRate": 1198,
+    "nonNabhRate": 1042
+  },
+  {
+    "code": "1120",
+    "name": "Minerva Jacket",
+    "nabhRate": 2500,
+    "nonNabhRate": 2174
+  },
+  {
+    "code": "1121",
+    "name": "Plaster Jacket",
+    "nabhRate": 2262,
+    "nonNabhRate": 1967
+  },
+  {
+    "code": "1122",
+    "name": "Shoulder spica",
+    "nabhRate": 2024,
+    "nonNabhRate": 1760
+  },
+  {
+    "code": "1123",
+    "name": "Single Hip spica",
+    "nabhRate": 2322,
+    "nonNabhRate": 2019
+  },
+  {
+    "code": "1124",
+    "name": "Double Hip spica",
+    "nabhRate": 2857,
+    "nonNabhRate": 2484
+  },
+  {
+    "code": "1125",
+    "name": "Strapping of Finger",
+    "nabhRate": 185,
+    "nonNabhRate": 161
+  },
+  {
+    "code": "1126",
+    "name": "Strapping of Toes",
+    "nabhRate": 186,
+    "nonNabhRate": 162
+  },
+  {
+    "code": "1127",
+    "name": "Strapping of Wrist",
+    "nabhRate": 238,
+    "nonNabhRate": 207
+  },
+  {
+    "code": "1128",
+    "name": "Strapping of Elbow",
+    "nabhRate": 271,
+    "nonNabhRate": 236
+  },
+  {
+    "code": "1129",
+    "name": "Strapping of Knee",
+    "nabhRate": 358,
+    "nonNabhRate": 311
+  },
+  {
+    "code": "1130",
+    "name": "Strapping of Ankle",
+    "nabhRate": 358,
+    "nonNabhRate": 311
+  },
+  {
+    "code": "1131",
+    "name": "Strapping of Chest",
+    "nabhRate": 476,
+    "nonNabhRate": 414
+  },
+  {
+    "code": "1132",
+    "name": "Strapping of Shoulder",
+    "nabhRate": 536,
+    "nonNabhRate": 466
+  },
+  {
+    "code": "1133",
+    "name": "Figure of 8 bandage",
+    "nabhRate": 536,
+    "nonNabhRate": 466
+  },
+  {
+    "code": "1134",
+    "name": "Collar and cuff sling",
+    "nabhRate": 265,
+    "nonNabhRate": 230
+  },
+  {
+    "code": "1135",
+    "name": "Ball bandage",
+    "nabhRate": 414,
+    "nonNabhRate": 360
+  },
+  {
+    "code": "1137",
+    "name": "Application of Functional Cast Brace",
+    "nabhRate": 1397,
+    "nonNabhRate": 1215
+  },
+  {
+    "code": "1138",
+    "name": "Application of Skin Traction",
+    "nabhRate": 714,
+    "nonNabhRate": 621
+  },
+  {
+    "code": "1139",
+    "name": "Application of Skeletal Tractions",
+    "nabhRate": 982,
+    "nonNabhRate": 854
+  },
+  {
+    "code": "1140",
+    "name": "Bandage strappings for Fractures",
+    "nabhRate": 572,
+    "nonNabhRate": 497
+  },
+  {
+    "code": "1141",
+    "name": "Aspiration intra Articular Injections",
+    "nabhRate": 596,
+    "nonNabhRate": 518
+  },
+  {
+    "code": "1142",
+    "name": "Application of POP Spices jackets",
+    "nabhRate": 2560,
+    "nonNabhRate": 2226
+  },
+  {
+    "code": "1143",
+    "name": "Close Reduction of Fractures of Limb POP",
+    "nabhRate": 2691,
+    "nonNabhRate": 2340
+  },
+  {
+    "code": "1144",
+    "name": "Reduction of Compound Fractures",
+    "nabhRate": 2857,
+    "nonNabhRate": 2484
+  },
+  {
+    "code": "1148",
+    "name": "Tension Band Wirings",
+    "nabhRate": 5856,
+    "nonNabhRate": 5092
+  },
+  {
+    "code": "1149",
+    "name": "Bone Grafting",
+    "nabhRate": 7475,
+    "nonNabhRate": 6500
+  },
+  {
+    "code": "1150",
+    "name": "Excision of Bone Tumours",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "1152",
+    "name": "Sequestrectomy saucerization",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "1153",
+    "name": "Sequestrectomy saucerizations -Arthrotomy",
+    "nabhRate": 10320,
+    "nonNabhRate": 8974
+  },
+  {
+    "code": "1154",
+    "name": "Multiple Pinning Fracture Neck Femur",
+    "nabhRate": 11903,
+    "nonNabhRate": 10350
+  },
+  {
+    "code": "1155",
+    "name": "Plate Fixations for Fracture Neck Femur",
+    "nabhRate": 15180,
+    "nonNabhRate": 13200
+  },
+  {
+    "code": "1158",
+    "name": "Close Reduction of Dislocations",
+    "nabhRate": 3286,
+    "nonNabhRate": 2857
+  },
+  {
+    "code": "1159",
+    "name": "Open Reduction of Dislocations",
+    "nabhRate": 3559,
+    "nonNabhRate": 3095
+  },
+  {
+    "code": "1161",
+    "name": "Neurolysis/Nerve repair",
+    "nabhRate": 14283,
+    "nonNabhRate": 12420
+  },
+  {
+    "code": "1162",
+    "name": "Nerve Repair with Grafting",
+    "nabhRate": 17259,
+    "nonNabhRate": 15008
+  },
+  {
+    "code": "1163",
+    "name": "Tendon with Transplant or Graft",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "1164",
+    "name": "Tendon Lengthening/Tendon repair",
+    "nabhRate": 8332,
+    "nonNabhRate": 7245
+  },
+  {
+    "code": "1165",
+    "name": "Tendon Transfer",
+    "nabhRate": 3214,
+    "nonNabhRate": 2795
+  },
+  {
+    "code": "1166",
+    "name": "Laminectomy Excision Disc and Tumours",
+    "nabhRate": 4999,
+    "nonNabhRate": 4347
+  },
+  {
+    "code": "1167",
+    "name": "Split Osteotomy and Internal Fixations",
+    "nabhRate": 24995,
+    "nonNabhRate": 21735
+  },
+  {
+    "code": "1172",
+    "name": "Arthrodesis of - Minor Joints",
+    "nabhRate": 10712,
+    "nonNabhRate": 9315
+  },
+  {
+    "code": "1173",
+    "name": "Arthrodesis of - Major Joints",
+    "nabhRate": 10350,
+    "nonNabhRate": 9000
+  },
+  {
+    "code": "1175",
+    "name": "Soft Tissue Operations for Polio",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "1176",
+    "name": "Hemiarthroplasty- Hip",
+    "nabhRate": 22138,
+    "nonNabhRate": 19250
+  },
+  {
+    "code": "1177",
+    "name": "Hemiarthroplasty- Shoulder",
+    "nabhRate": 22138,
+    "nonNabhRate": 19250
+  },
+  {
+    "code": "1178",
+    "name": "Operations for Brachial Plexus cervical Rib",
+    "nabhRate": 24995,
+    "nonNabhRate": 21735
+  },
+  {
+    "code": "1179",
+    "name": "Amputations - Below Knee",
+    "nabhRate": 7590,
+    "nonNabhRate": 6600
+  },
+  {
+    "code": "1180",
+    "name": "Amputations - Below Elbow",
+    "nabhRate": 7083,
+    "nonNabhRate": 6159
+  },
+  {
+    "code": "1181",
+    "name": "Amputations - Above Knee",
+    "nabhRate": 9258,
+    "nonNabhRate": 8050
+  },
+  {
+    "code": "1182",
+    "name": "Amputations - Above Elbow",
+    "nabhRate": 7083,
+    "nonNabhRate": 6159
+  },
+  {
+    "code": "1183",
+    "name": "Amputations - Forequarter",
+    "nabhRate": 13800,
+    "nonNabhRate": 12000
+  },
+  {
+    "code": "1185",
+    "name": "Disarticulations - Major joint",
+    "nabhRate": 21425,
+    "nonNabhRate": 18630
+  },
+  {
+    "code": "1186",
+    "name": "Disarticulations - Minor joint",
+    "nabhRate": 13093,
+    "nonNabhRate": 11385
+  },
+  {
+    "code": "1187",
+    "name": "Arthrography",
+    "nabhRate": 9522,
+    "nonNabhRate": 8280
+  },
+  {
+    "code": "1188",
+    "name": "Arthroscopy - Diagnostic",
+    "nabhRate": 8868,
+    "nonNabhRate": 7711
+  },
+  {
+    "code": "1189",
+    "name": "Arthroscopy-therapeutic: without implant",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "1190",
+    "name": "Arthroscopy-therapeutic: with implant",
+    "nabhRate": 17854,
+    "nonNabhRate": 15525
+  },
+  {
+    "code": "1191",
+    "name": "Soft Tissue Operation on Joints -Small",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "1192",
+    "name": "Soft Tissue Operation on Joints -Large",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1194",
+    "name": "Removal of Wires screw",
+    "nabhRate": 1822,
+    "nonNabhRate": 1584
+  },
+  {
+    "code": "1195",
+    "name": "Removal of Plates",
+    "nabhRate": 4285,
+    "nonNabhRate": 3726
+  },
+  {
+    "code": "1196",
+    "name": "Total Hip Replacement (THR)",
+    "nabhRate": 81650,
+    "nonNabhRate": 71000
+  },
+  {
+    "code": "1197",
+    "name": "Total Ankle Joint Replacement",
+    "nabhRate": 109710,
+    "nonNabhRate": 95400
+  },
+  {
+    "code": "1198",
+    "name": "Total Knee Joint Replacement (TKR)",
+    "nabhRate": 113850,
+    "nonNabhRate": 99000
+  },
+  {
+    "code": "1199",
+    "name": "Total Shoulder Joint Replacement",
+    "nabhRate": 81765,
+    "nonNabhRate": 71100
+  },
+  {
+    "code": "1200",
+    "name": "Total Elbow Joint Replacement",
+    "nabhRate": 81765,
+    "nonNabhRate": 71100
+  },
+  {
+    "code": "1201",
+    "name": "Total Wrist Joint Replacement",
+    "nabhRate": 115000,
+    "nonNabhRate": 100000
+  },
+  {
+    "code": "1202",
+    "name": "Total finger joint replacement",
+    "nabhRate": 20700,
+    "nonNabhRate": 18000
+  },
+  {
+    "code": "1203",
+    "name": "Tubular external fixator",
+    "nabhRate": 4761,
+    "nonNabhRate": 4140
+  },
+  {
+    "code": "1204",
+    "name": "Ilizarov's external fixator",
+    "nabhRate": 8035,
+    "nonNabhRate": 6987
+  },
+  {
+    "code": "1205",
+    "name": "Pelvi-acetebular fracture -Internal fixation",
+    "nabhRate": 8927,
+    "nonNabhRate": 7763
+  },
+  {
+    "code": "1206",
+    "name": "Meniscectomy",
+    "nabhRate": 12420,
+    "nonNabhRate": 10800
+  },
+  {
+    "code": "1207",
+    "name": "Meniscus Repair",
+    "nabhRate": 11500,
+    "nonNabhRate": 10000
+  },
+  {
+    "code": "1210",
+    "name": "Knee Collateral Ligament Reconstruction",
+    "nabhRate": 14375,
+    "nonNabhRate": 12500
+  },
+  {
+    "code": "1211",
+    "name": "Bencarf Repair Shoulder",
+    "nabhRate": 15180,
+    "nonNabhRate": 13200
+  },
+  {
+    "code": "1212",
+    "name": "RC Repair",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "1213",
+    "name": "Biceps tenodesis",
+    "nabhRate": 16100,
+    "nonNabhRate": 14000
+  },
+  {
+    "code": "1214",
+    "name": "Distal biceps tendon repair",
+    "nabhRate": 11937,
+    "nonNabhRate": 10380
+  },
+  {
+    "code": "1215",
+    "name": "Arthrolysis of knee",
+    "nabhRate": 14375,
+    "nonNabhRate": 12500
+  },
+  {
+    "code": "1216",
+    "name": "Capsulotomy of Shoulder",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "1217",
+    "name": "Conservative Plaster of Paris (POP)",
+    "nabhRate": 1242,
+    "nonNabhRate": 1080
+  },
+  {
+    "code": "1218",
+    "name": "Application for CTEV per sitting",
+    "nabhRate": 1242,
+    "nonNabhRate": 1080
+  },
+  {
+    "code": "1224",
+    "name": "Discectomy/ Micro Discectomy",
+    "nabhRate": 14375,
+    "nonNabhRate": 12500
+  },
+  {
+    "code": "1225",
+    "name": "Laminectomy",
+    "nabhRate": 5343,
+    "nonNabhRate": 4646
+  },
+  {
+    "code": "2",
+    "name": "Level",
+    "nabhRate": 25300,
+    "nonNabhRate": 22000
+  },
+  {
+    "code": "1230",
+    "name": "Vertebroplasty",
+    "nabhRate": 13800,
+    "nonNabhRate": 12000
+  },
+  {
+    "code": "1231",
+    "name": "Spinal Injections",
+    "nabhRate": 466,
+    "nonNabhRate": 405
+  },
+  {
+    "code": "1233",
+    "name": "Proximal Femoral Nail (PFN for IT Fracture)",
+    "nabhRate": 16100,
+    "nonNabhRate": 14000
+  },
+  {
+    "code": "1234",
+    "name": "Spinal Osteotomy",
+    "nabhRate": 1649,
+    "nonNabhRate": 1434
+  },
+  {
+    "code": "1235",
+    "name": "Illizarov\u2019s / External Fixation for Trauma",
+    "nabhRate": 13455,
+    "nonNabhRate": 11700
+  },
+  {
+    "code": "1237",
+    "name": "Mini Fixator for Hand/Foot",
+    "nabhRate": 10350,
+    "nonNabhRate": 9000
+  },
+  {
+    "code": "1238",
+    "name": "Other Major Surgery",
+    "nabhRate": 39589,
+    "nonNabhRate": 34425
+  },
+  {
+    "code": "1239",
+    "name": "Other Minor Surgery",
+    "nabhRate": 13665,
+    "nonNabhRate": 11883
+  },
+  {
+    "code": "1240",
+    "name": "Ultrasonic Therapy",
+    "nabhRate": 81,
+    "nonNabhRate": 70
+  },
+  {
+    "code": "1241",
+    "name": "Shortwave Diathermy (SWD)",
+    "nabhRate": 81,
+    "nonNabhRate": 70
+  },
+  {
+    "code": "1242",
+    "name": "Electrical Stimulation (Therapeutic)",
+    "nabhRate": 81,
+    "nonNabhRate": 70
+  },
+  {
+    "code": "1243",
+    "name": "Muscle testing and diagnostic",
+    "nabhRate": 82,
+    "nonNabhRate": 71
+  },
+  {
+    "code": "1244",
+    "name": "Infrared",
+    "nabhRate": 86,
+    "nonNabhRate": 75
+  },
+  {
+    "code": "1246",
+    "name": "Intermittent Lumbar Traction",
+    "nabhRate": 81,
+    "nonNabhRate": 70
+  },
+  {
+    "code": "1247",
+    "name": "Intermittent Cervical Traction",
+    "nabhRate": 86,
+    "nonNabhRate": 75
+  },
+  {
+    "code": "1248",
+    "name": "Wax Bath",
+    "nabhRate": 81,
+    "nonNabhRate": 70
+  },
+  {
+    "code": "1249",
+    "name": "Hot Pack",
+    "nabhRate": 90,
+    "nonNabhRate": 78
+  },
+  {
+    "code": "1250",
+    "name": "Breathing Exercises Postural Drainage",
+    "nabhRate": 52,
+    "nonNabhRate": 45
+  },
+  {
+    "code": "1251",
+    "name": "Cerebral Palsy - Exercise",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1252",
+    "name": "Post Polio - Exercise",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1253",
+    "name": "Cobalt 60 therapy",
+    "nabhRate": 65981,
+    "nonNabhRate": 57375
+  },
+  {
+    "code": "1254",
+    "name": "Cobalt 60 therapy- Radical therapy",
+    "nabhRate": 78689,
+    "nonNabhRate": 68425
+  },
+  {
+    "code": "1255",
+    "name": "Cobalt 60 therapy- Palliative therapy",
+    "nabhRate": 25293,
+    "nonNabhRate": 21994
+  },
+  {
+    "code": "1256",
+    "name": "Linear accelerator",
+    "nabhRate": 30791,
+    "nonNabhRate": 26775
+  },
+  {
+    "code": "1257",
+    "name": "Linear accelerator- Radical therapy",
+    "nabhRate": 67448,
+    "nonNabhRate": 58650
+  },
+  {
+    "code": "1258",
+    "name": "Linear accelerator- Palliative therapy",
+    "nabhRate": 35411,
+    "nonNabhRate": 30792
+  },
+  {
+    "code": "1259",
+    "name": "3D Planning",
+    "nabhRate": 5621,
+    "nonNabhRate": 4888
+  },
+  {
+    "code": "1260",
+    "name": "2D Planning",
+    "nabhRate": 5059,
+    "nonNabhRate": 4399
+  },
+  {
+    "code": "1261",
+    "name": "IMRT(Intensity Modulated radiotherapy)",
+    "nabhRate": 104409,
+    "nonNabhRate": 90790
+  },
+  {
+    "code": "1262",
+    "name": "SRT (Stereotactic radiotherapy)",
+    "nabhRate": 63130,
+    "nonNabhRate": 54896
+  },
+  {
+    "code": "1263",
+    "name": "SRS(Stereotactic radio surgery)",
+    "nabhRate": 83365,
+    "nonNabhRate": 72491
+  },
+  {
+    "code": "1264",
+    "name": "IGRT(Image guided radiotherapy)",
+    "nabhRate": 152161,
+    "nonNabhRate": 132314
+  },
+  {
+    "code": "1266",
+    "name": "Electron beam with Linear accelerator",
+    "nabhRate": 69835,
+    "nonNabhRate": 60726
+  },
+  {
+    "code": "1267",
+    "name": "Tomotherapy",
+    "nabhRate": 82179,
+    "nonNabhRate": 71460
+  },
+  {
+    "code": "1268",
+    "name": "Intracavitory",
+    "nabhRate": 13490,
+    "nonNabhRate": 11730
+  },
+  {
+    "code": "1269",
+    "name": "Interstitial",
+    "nabhRate": 60703,
+    "nonNabhRate": 52785
+  },
+  {
+    "code": "1270",
+    "name": "Intraluminal",
+    "nabhRate": 10118,
+    "nonNabhRate": 8798
+  },
+  {
+    "code": "1271",
+    "name": "Surface mould",
+    "nabhRate": 4807,
+    "nonNabhRate": 4180
+  },
+  {
+    "code": "1272",
+    "name": "Gliadel Wafer",
+    "nabhRate": 97187,
+    "nonNabhRate": 84510
+  },
+  {
+    "code": "1273",
+    "name": "Neoadjuvant",
+    "nabhRate": 949,
+    "nonNabhRate": 825
+  },
+  {
+    "code": "1274",
+    "name": "Adjuvant",
+    "nabhRate": 949,
+    "nonNabhRate": 825
+  },
+  {
+    "code": "1275",
+    "name": "Concurrent-chemoradiation",
+    "nabhRate": 1012,
+    "nonNabhRate": 880
+  },
+  {
+    "code": "1276",
+    "name": "Single drug",
+    "nabhRate": 572,
+    "nonNabhRate": 497
+  },
+  {
+    "code": "1277",
+    "name": "Multiple drugs",
+    "nabhRate": 928,
+    "nonNabhRate": 807
+  },
+  {
+    "code": "1278",
+    "name": "Targeted therapy",
+    "nabhRate": 1012,
+    "nonNabhRate": 880
+  },
+  {
+    "code": "1279",
+    "name": "Chemoport facility",
+    "nabhRate": 1012,
+    "nonNabhRate": 880
+  },
+  {
+    "code": "1281",
+    "name": "Upper GI Endoscopy + Lower GI Endoscopy",
+    "nabhRate": 1786,
+    "nonNabhRate": 1553
+  },
+  {
+    "code": "1282",
+    "name": "Diagnostic endoscopy",
+    "nabhRate": 288,
+    "nonNabhRate": 250
+  },
+  {
+    "code": "1283",
+    "name": "Endoscopic biopsy",
+    "nabhRate": 380,
+    "nonNabhRate": 330
+  },
+  {
+    "code": "1284",
+    "name": "Endoscopic mucosal resection",
+    "nabhRate": 1597,
+    "nonNabhRate": 1389
+  },
+  {
+    "code": "1285",
+    "name": "Oesophageal stricture dilatation",
+    "nabhRate": 1898,
+    "nonNabhRate": 1650
+  },
+  {
+    "code": "1287",
+    "name": "Foreign body removal",
+    "nabhRate": 1898,
+    "nonNabhRate": 1650
+  },
+  {
+    "code": "1288",
+    "name": "Oesophageal stenting",
+    "nabhRate": 3450,
+    "nonNabhRate": 3000
+  },
+  {
+    "code": "1289",
+    "name": "Band ligation of oesophageal varices",
+    "nabhRate": 2588,
+    "nonNabhRate": 2250
+  },
+  {
+    "code": "1290",
+    "name": "Sclerotherapy of oesophageal varices",
+    "nabhRate": 2588,
+    "nonNabhRate": 2250
+  },
+  {
+    "code": "1291",
+    "name": "Glue injection of varices",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "1292",
+    "name": "Argon plasma coagulation",
+    "nabhRate": 4166,
+    "nonNabhRate": 3623
+  },
+  {
+    "code": "1293",
+    "name": "Pyloric balloon dilatation",
+    "nabhRate": 2657,
+    "nonNabhRate": 2310
+  },
+  {
+    "code": "1294",
+    "name": "Enteranal stenting",
+    "nabhRate": 4048,
+    "nonNabhRate": 3520
+  },
+  {
+    "code": "1295",
+    "name": "Duodenal stricture dilation",
+    "nabhRate": 1139,
+    "nonNabhRate": 990
+  },
+  {
+    "code": "1296",
+    "name": "Single balloon enterocopy",
+    "nabhRate": 4140,
+    "nonNabhRate": 3600
+  },
+  {
+    "code": "1297",
+    "name": "Double balloon enteroscopy",
+    "nabhRate": 4025,
+    "nonNabhRate": 3500
+  },
+  {
+    "code": "1298",
+    "name": "Capsule endoscopy",
+    "nabhRate": 5693,
+    "nonNabhRate": 4950
+  },
+  {
+    "code": "1299",
+    "name": "Piles banding",
+    "nabhRate": 1226,
+    "nonNabhRate": 1066
+  },
+  {
+    "code": "1300",
+    "name": "Colonic stricture dilatation",
+    "nabhRate": 3013,
+    "nonNabhRate": 2620
+  },
+  {
+    "code": "1301",
+    "name": "Hot biopsy forceps procedures",
+    "nabhRate": 3450,
+    "nonNabhRate": 3000
+  },
+  {
+    "code": "1302",
+    "name": "Colonic stenting",
+    "nabhRate": 3013,
+    "nonNabhRate": 2620
+  },
+  {
+    "code": "1303",
+    "name": "Junction biopsy",
+    "nabhRate": 2300,
+    "nonNabhRate": 2000
+  },
+  {
+    "code": "1304",
+    "name": "Conjugal microscopy",
+    "nabhRate": 4600,
+    "nonNabhRate": 4000
+  },
+  {
+    "code": "1305",
+    "name": "Endoscopic sphincterotomy",
+    "nabhRate": 2657,
+    "nonNabhRate": 2310
+  },
+  {
+    "code": "1306",
+    "name": "CBD stone extraction",
+    "nabhRate": 2657,
+    "nonNabhRate": 2310
+  },
+  {
+    "code": "1307",
+    "name": "CBD stricture dilatation",
+    "nabhRate": 7475,
+    "nonNabhRate": 6500
+  },
+  {
+    "code": "1308",
+    "name": "Biliary stenting (plastic and metallic)",
+    "nabhRate": 5313,
+    "nonNabhRate": 4620
+  },
+  {
+    "code": "1309",
+    "name": "Mechanical lithotripsy of CBD stones",
+    "nabhRate": 8855,
+    "nonNabhRate": 7700
+  },
+  {
+    "code": "1310",
+    "name": "Pancreatic sphincterotomy",
+    "nabhRate": 6641,
+    "nonNabhRate": 5775
+  },
+  {
+    "code": "1311",
+    "name": "Pancreatic stricture dilatation",
+    "nabhRate": 6325,
+    "nonNabhRate": 5500
+  },
+  {
+    "code": "1312",
+    "name": "Pancreatic stone extraction",
+    "nabhRate": 10451,
+    "nonNabhRate": 9088
+  },
+  {
+    "code": "1313",
+    "name": "Mechanical lithotripsy of pancreatic stones",
+    "nabhRate": 11784,
+    "nonNabhRate": 10247
+  },
+  {
+    "code": "1314",
+    "name": "Endoscopic cysto gastrostomy",
+    "nabhRate": 8855,
+    "nonNabhRate": 7700
+  },
+  {
+    "code": "1315",
+    "name": "Balloon dilatation of papilla",
+    "nabhRate": 7142,
+    "nonNabhRate": 6210
+  },
+  {
+    "code": "1316",
+    "name": "Ultrasound guided FNAC",
+    "nabhRate": 633,
+    "nonNabhRate": 550
+  },
+  {
+    "code": "1317",
+    "name": "Ultrasound guided abscess Drainage",
+    "nabhRate": 745,
+    "nonNabhRate": 648
+  },
+  {
+    "code": "1320",
+    "name": "Vascular embolization",
+    "nabhRate": 17365,
+    "nonNabhRate": 15100
+  },
+  {
+    "code": "1323",
+    "name": "Muscular stenting",
+    "nabhRate": 101171,
+    "nonNabhRate": 87975
+  },
+  {
+    "code": "1325",
+    "name": "Portal haemodymic studies",
+    "nabhRate": 1980,
+    "nonNabhRate": 1722
+  },
+  {
+    "code": "1326",
+    "name": "Manometry and PH metry",
+    "nabhRate": 1854,
+    "nonNabhRate": 1612
+  },
+  {
+    "code": "1327",
+    "name": "Oesophageal PH metry",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1328",
+    "name": "Oesophageal manometry",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1329",
+    "name": "Small bowel manometry",
+    "nabhRate": 7038,
+    "nonNabhRate": 6120
+  },
+  {
+    "code": "1330",
+    "name": "Anorectal manometry",
+    "nabhRate": 7038,
+    "nonNabhRate": 6120
+  },
+  {
+    "code": "1331",
+    "name": "Colonic manometry",
+    "nabhRate": 7918,
+    "nonNabhRate": 6885
+  },
+  {
+    "code": "1332",
+    "name": "Biliary manometry",
+    "nabhRate": 8798,
+    "nonNabhRate": 7650
+  },
+  {
+    "code": "1333",
+    "name": "Sengstaken blackenesse tube tempode",
+    "nabhRate": 2976,
+    "nonNabhRate": 2588
+  },
+  {
+    "code": "1334",
+    "name": "Lintas machles tube tempode",
+    "nabhRate": 3163,
+    "nonNabhRate": 2750
+  },
+  {
+    "code": "1336",
+    "name": "Breath tests",
+    "nabhRate": 345,
+    "nonNabhRate": 300
+  },
+  {
+    "code": "1338",
+    "name": "Liver biopsy",
+    "nabhRate": 1428,
+    "nonNabhRate": 1242
+  },
+  {
+    "code": "1339",
+    "name": "Dental IOPA X-ray",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1340",
+    "name": "Occlusal X-ray",
+    "nabhRate": 90,
+    "nonNabhRate": 78
+  },
+  {
+    "code": "1341",
+    "name": "OPG X-ray",
+    "nabhRate": 225,
+    "nonNabhRate": 196
+  },
+  {
+    "code": "1342",
+    "name": "Lung Ventilation perfusion Scan (V/Q Scan)",
+    "nabhRate": 3726,
+    "nonNabhRate": 3240
+  },
+  {
+    "code": "1343",
+    "name": "Lung Perfusion Scan",
+    "nabhRate": 2300,
+    "nonNabhRate": 2000
+  },
+  {
+    "code": "1344",
+    "name": "Whole Body Bone Scan with SPECT.",
+    "nabhRate": 3541,
+    "nonNabhRate": 3079
+  },
+  {
+    "code": "1345",
+    "name": "Three phase whole body Bone Scan",
+    "nabhRate": 3565,
+    "nonNabhRate": 3100
+  },
+  {
+    "code": "1347",
+    "name": "Radionuclide Cisternography for CSF leak",
+    "nabhRate": 4301,
+    "nonNabhRate": 3740
+  },
+  {
+    "code": "1350",
+    "name": "Hepatobiliary Scintigraphy.",
+    "nabhRate": 2811,
+    "nonNabhRate": 2444
+  },
+  {
+    "code": "1351",
+    "name": "Meckel's Scan",
+    "nabhRate": 2248,
+    "nonNabhRate": 1955
+  },
+  {
+    "code": "1353",
+    "name": "Gastric emptying",
+    "nabhRate": 1320,
+    "nonNabhRate": 1148
+  },
+  {
+    "code": "1355",
+    "name": "Dynamic Renography.",
+    "nabhRate": 3541,
+    "nonNabhRate": 3079
+  },
+  {
+    "code": "1356",
+    "name": "Dynamic Renography with Diuretic.",
+    "nabhRate": 3541,
+    "nonNabhRate": 3079
+  },
+  {
+    "code": "1357",
+    "name": "Dynamic Renography with Captopril",
+    "nabhRate": 2254,
+    "nonNabhRate": 1960
+  },
+  {
+    "code": "1358",
+    "name": "Testicular Scan",
+    "nabhRate": 1686,
+    "nonNabhRate": 1466
+  },
+  {
+    "code": "1361",
+    "name": "Iodine-131 Whole Body Scan",
+    "nabhRate": 3373,
+    "nonNabhRate": 2933
+  },
+  {
+    "code": "1362",
+    "name": "Whole Body Scan with MIBG",
+    "nabhRate": 18211,
+    "nonNabhRate": 15836
+  },
+  {
+    "code": "1363",
+    "name": "Parathyroid Scan",
+    "nabhRate": 5621,
+    "nonNabhRate": 4888
+  },
+  {
+    "code": "1364",
+    "name": "131-lodine Therapy",
+    "nabhRate": 1760,
+    "nonNabhRate": 1530
+  },
+  {
+    "code": "1365",
+    "name": "131-lodine Therapy <15mCi",
+    "nabhRate": 4432,
+    "nonNabhRate": 3854
+  },
+  {
+    "code": "1366",
+    "name": "131-lodine Therapy 15-50mCi",
+    "nabhRate": 5175,
+    "nonNabhRate": 4500
+  },
+  {
+    "code": "1367",
+    "name": "131-lodine Therapy 51-100mCi",
+    "nabhRate": 12420,
+    "nonNabhRate": 10800
+  },
+  {
+    "code": "1368",
+    "name": "131-lodine Therapy >100mCi",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "1371",
+    "name": "Radiosynovectomy with Yttrium",
+    "nabhRate": 21994,
+    "nonNabhRate": 19125
+  },
+  {
+    "code": "1374",
+    "name": "Venography",
+    "nabhRate": 3795,
+    "nonNabhRate": 3300
+  },
+  {
+    "code": "1375",
+    "name": "Treadmill Test (TMT)",
+    "nabhRate": 562,
+    "nonNabhRate": 489
+  },
+  {
+    "code": "1376",
+    "name": "Transoesophageal Echocardiography (TEE)",
+    "nabhRate": 562,
+    "nonNabhRate": 489
+  },
+  {
+    "code": "1377",
+    "name": "Lymphangiography",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "1378",
+    "name": "Scintimammography.",
+    "nabhRate": 5175,
+    "nonNabhRate": 4500
+  },
+  {
+    "code": "1379",
+    "name": "Indium labelled octreotide Scan",
+    "nabhRate": 77625,
+    "nonNabhRate": 67500
+  },
+  {
+    "code": "1380",
+    "name": "FDG Whole body PET / CT Scan",
+    "nabhRate": 16100,
+    "nonNabhRate": 14000
+  },
+  {
+    "code": "1381",
+    "name": "Brain I Heart FDG PET / CT Scan",
+    "nabhRate": 15525,
+    "nonNabhRate": 13500
+  },
+  {
+    "code": "1384",
+    "name": "Urine Microalbumin",
+    "nabhRate": 72,
+    "nonNabhRate": 63
+  },
+  {
+    "code": "1385",
+    "name": "Stool routine",
+    "nabhRate": 38,
+    "nonNabhRate": 33
+  },
+  {
+    "code": "1386",
+    "name": "Stool occult blood",
+    "nabhRate": 25,
+    "nonNabhRate": 22
+  },
+  {
+    "code": "1387",
+    "name": "Post coital smear examination",
+    "nabhRate": 31,
+    "nonNabhRate": 27
+  },
+  {
+    "code": "1388",
+    "name": "Semen analysis",
+    "nabhRate": 40,
+    "nonNabhRate": 35
+  },
+  {
+    "code": "1389",
+    "name": "Haemoglobin (Hb)",
+    "nabhRate": 21,
+    "nonNabhRate": 18
+  },
+  {
+    "code": "1390",
+    "name": "Total Leucocytic Count (TLC)",
+    "nabhRate": 36,
+    "nonNabhRate": 31
+  },
+  {
+    "code": "1391",
+    "name": "Differential Leucocytic Count (DLC)",
+    "nabhRate": 36,
+    "nonNabhRate": 31
+  },
+  {
+    "code": "1392",
+    "name": "Erythrocyte Sedimentation Rate (ESR)",
+    "nabhRate": 29,
+    "nonNabhRate": 25
+  },
+  {
+    "code": "1395",
+    "name": "Platelet count",
+    "nabhRate": 49,
+    "nonNabhRate": 43
+  },
+  {
+    "code": "1396",
+    "name": "Reticulocyte count",
+    "nabhRate": 55,
+    "nonNabhRate": 48
+  },
+  {
+    "code": "1397",
+    "name": "Absolute Eosinophil count (AEC)",
+    "nabhRate": 49,
+    "nonNabhRate": 43
+  },
+  {
+    "code": "1398",
+    "name": "Packed Cell Volume (PCV)",
+    "nabhRate": 15,
+    "nonNabhRate": 13
+  },
+  {
+    "code": "1399",
+    "name": "Peripheral Smear Examination",
+    "nabhRate": 49,
+    "nonNabhRate": 43
+  },
+  {
+    "code": "1400",
+    "name": "Smear for Malaria parasite",
+    "nabhRate": 43,
+    "nonNabhRate": 37
+  },
+  {
+    "code": "1401",
+    "name": "Bleeding Time",
+    "nabhRate": 40,
+    "nonNabhRate": 35
+  },
+  {
+    "code": "1402",
+    "name": "Osmotic fragility Test",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1403",
+    "name": "Bone Marrow Smear Examination",
+    "nabhRate": 81,
+    "nonNabhRate": 70
+  },
+  {
+    "code": "1406",
+    "name": "Activated partial ThromboplastinTime (APTT)",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1407",
+    "name": "Rapid test for malaria(card test)",
+    "nabhRate": 51,
+    "nonNabhRate": 44
+  },
+  {
+    "code": "1410",
+    "name": "Factor Assays-Factor VIII",
+    "nabhRate": 828,
+    "nonNabhRate": 720
+  },
+  {
+    "code": "1411",
+    "name": "Factor Assays-Factor IX",
+    "nabhRate": 782,
+    "nonNabhRate": 680
+  },
+  {
+    "code": "1412",
+    "name": "Platelet Function test",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1414",
+    "name": "Tests for lupus anticoagulant",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1417",
+    "name": "Tests for Sickling / Hb HPLC)",
+    "nabhRate": 79,
+    "nonNabhRate": 69
+  },
+  {
+    "code": "1418",
+    "name": "Blood Group RH Type",
+    "nabhRate": 35,
+    "nonNabhRate": 30
+  },
+  {
+    "code": "1419",
+    "name": "Cross match",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1420",
+    "name": "Coomb\u2019s Test Direct",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "1421",
+    "name": "Coomb\u2019s Test Indirect",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1423",
+    "name": "11 cells panel for antibody identification",
+    "nabhRate": 196,
+    "nonNabhRate": 170
+  },
+  {
+    "code": "1424",
+    "name": "Hepatitis B surface antigen (HBsAg)",
+    "nabhRate": 117,
+    "nonNabhRate": 102
+  },
+  {
+    "code": "1425",
+    "name": "Hepatitis C virus (HCV)",
+    "nabhRate": 147,
+    "nonNabhRate": 128
+  },
+  {
+    "code": "1426",
+    "name": "Human immunodeficiency virus- HIV I and II",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1428",
+    "name": "RH Antibody titer",
+    "nabhRate": 92,
+    "nonNabhRate": 80
+  },
+  {
+    "code": "1429",
+    "name": "Platelet Concentrate",
+    "nabhRate": 64,
+    "nonNabhRate": 56
+  },
+  {
+    "code": "1432",
+    "name": "Routine-H E",
+    "nabhRate": 93,
+    "nonNabhRate": 81
+  },
+  {
+    "code": "1433",
+    "name": "special stain",
+    "nabhRate": 75,
+    "nonNabhRate": 65
+  },
+  {
+    "code": "1434",
+    "name": "Immunohistochemistry(IHC)",
+    "nabhRate": 805,
+    "nonNabhRate": 700
+  },
+  {
+    "code": "1435",
+    "name": "Frozen section",
+    "nabhRate": 807,
+    "nonNabhRate": 702
+  },
+  {
+    "code": "1436",
+    "name": "Paraffin section",
+    "nabhRate": 394,
+    "nonNabhRate": 343
+  },
+  {
+    "code": "1437",
+    "name": "Pap Smear",
+    "nabhRate": 155,
+    "nonNabhRate": 135
+  },
+  {
+    "code": "1438",
+    "name": "Body fluid for Malignant cells",
+    "nabhRate": 155,
+    "nonNabhRate": 135
+  },
+  {
+    "code": "1439",
+    "name": "Fine Needle Aspiration Cytology (FNAC)",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "1440",
+    "name": "Leukemia panel /Lymphoma panel",
+    "nabhRate": 1589,
+    "nonNabhRate": 1382
+  },
+  {
+    "code": "1443",
+    "name": "Fluorescent in situ hybridization (FISH)",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "1444",
+    "name": "Blood Glucose Random",
+    "nabhRate": 28,
+    "nonNabhRate": 24
+  },
+  {
+    "code": "1445",
+    "name": "24 hrs urine for Proteins,Sodium, creatinine",
+    "nabhRate": 52,
+    "nonNabhRate": 45
+  },
+  {
+    "code": "1446",
+    "name": "Blood Urea Nitrogen",
+    "nabhRate": 62,
+    "nonNabhRate": 54
+  },
+  {
+    "code": "1447",
+    "name": "Serum Creatinine",
+    "nabhRate": 63,
+    "nonNabhRate": 55
+  },
+  {
+    "code": "1448",
+    "name": "Urine Bile Pigment and Salt",
+    "nabhRate": 26,
+    "nonNabhRate": 23
+  },
+  {
+    "code": "1449",
+    "name": "Urine Urobilinogen",
+    "nabhRate": 21,
+    "nonNabhRate": 18
+  },
+  {
+    "code": "1450",
+    "name": "Urine Ketones",
+    "nabhRate": 31,
+    "nonNabhRate": 27
+  },
+  {
+    "code": "1451",
+    "name": "Urine Occult Blood",
+    "nabhRate": 37,
+    "nonNabhRate": 32
+  },
+  {
+    "code": "1452",
+    "name": "Urine total proteins",
+    "nabhRate": 18,
+    "nonNabhRate": 16
+  },
+  {
+    "code": "1453",
+    "name": "Rheumatoid Factor / Rh Factor test",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1454",
+    "name": "Bence Jones protein",
+    "nabhRate": 48,
+    "nonNabhRate": 42
+  },
+  {
+    "code": "1455",
+    "name": "Serum Uric Acid",
+    "nabhRate": 63,
+    "nonNabhRate": 55
+  },
+  {
+    "code": "1456",
+    "name": "Serum Bilirubin total direct",
+    "nabhRate": 92,
+    "nonNabhRate": 80
+  },
+  {
+    "code": "1457",
+    "name": "Serum Iron",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "1458",
+    "name": "C-reactive Protein (CRP)",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1459",
+    "name": "C-reactive Protein (CRP) Quantitative",
+    "nabhRate": 184,
+    "nonNabhRate": 160
+  },
+  {
+    "code": "1461",
+    "name": "Albumin.",
+    "nabhRate": 21,
+    "nonNabhRate": 18
+  },
+  {
+    "code": "1462",
+    "name": "Creatinine clearance.",
+    "nabhRate": 92,
+    "nonNabhRate": 80
+  },
+  {
+    "code": "1463",
+    "name": "Serum Cholesterol",
+    "nabhRate": 71,
+    "nonNabhRate": 62
+  },
+  {
+    "code": "1464",
+    "name": "Total Iron Binding Capacity (TIBC)",
+    "nabhRate": 92,
+    "nonNabhRate": 80
+  },
+  {
+    "code": "1465",
+    "name": "Glucose (Fasting PP)",
+    "nabhRate": 54,
+    "nonNabhRate": 47
+  },
+  {
+    "code": "1466",
+    "name": "Serum Calcium -Total",
+    "nabhRate": 69,
+    "nonNabhRate": 60
+  },
+  {
+    "code": "1467",
+    "name": "Serum Calcium -Ionic",
+    "nabhRate": 51,
+    "nonNabhRate": 44
+  },
+  {
+    "code": "1468",
+    "name": "Serum Phosphorus",
+    "nabhRate": 69,
+    "nonNabhRate": 60
+  },
+  {
+    "code": "1469",
+    "name": "Total Protein Alb/Glo Ratio",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1470",
+    "name": "Immunoglobulin G (IgG)",
+    "nabhRate": 276,
+    "nonNabhRate": 240
+  },
+  {
+    "code": "1471",
+    "name": "Immunoglobulin M(IgM)",
+    "nabhRate": 276,
+    "nonNabhRate": 240
+  },
+  {
+    "code": "1472",
+    "name": "Immunoglobulin A(IgA)",
+    "nabhRate": 276,
+    "nonNabhRate": 240
+  },
+  {
+    "code": "1473",
+    "name": "Antinuclear antibody (ANA)",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "1474",
+    "name": "Anti-double stranded DNA (anti-dsDNA)",
+    "nabhRate": 403,
+    "nonNabhRate": 350
+  },
+  {
+    "code": "1477",
+    "name": "Serum amylase",
+    "nabhRate": 135,
+    "nonNabhRate": 117
+  },
+  {
+    "code": "1478",
+    "name": "Serum Lipase",
+    "nabhRate": 150,
+    "nonNabhRate": 130
+  },
+  {
+    "code": "1479",
+    "name": "Serum Lactate",
+    "nabhRate": 83,
+    "nonNabhRate": 72
+  },
+  {
+    "code": "1480",
+    "name": "Serum Magnesium",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1481",
+    "name": "Serum Sodium",
+    "nabhRate": 58,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1482",
+    "name": "Serum Potassium",
+    "nabhRate": 52,
+    "nonNabhRate": 45
+  },
+  {
+    "code": "1483",
+    "name": "Serum Ammonia",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1484",
+    "name": "Anemia Profile",
+    "nabhRate": 235,
+    "nonNabhRate": 204
+  },
+  {
+    "code": "1485",
+    "name": "Serum Testosterone",
+    "nabhRate": 155,
+    "nonNabhRate": 135
+  },
+  {
+    "code": "1486",
+    "name": "Imprint Smear From Endoscopy",
+    "nabhRate": 248,
+    "nonNabhRate": 216
+  },
+  {
+    "code": "1487",
+    "name": "Triglycerides",
+    "nabhRate": 86,
+    "nonNabhRate": 75
+  },
+  {
+    "code": "1488",
+    "name": "Glucose Tolerance Test (GTT)",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "1489",
+    "name": "Triple Marker.",
+    "nabhRate": 828,
+    "nonNabhRate": 720
+  },
+  {
+    "code": "1491",
+    "name": "Foetal Haemoglobin (HbF)",
+    "nabhRate": 98,
+    "nonNabhRate": 85
+  },
+  {
+    "code": "1492",
+    "name": "Prothrombin Time (PT)",
+    "nabhRate": 114,
+    "nonNabhRate": 99
+  },
+  {
+    "code": "1493",
+    "name": "Lactate dehydrogenase (LDH)",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1494",
+    "name": "Alkaline Phosphatase",
+    "nabhRate": 69,
+    "nonNabhRate": 60
+  },
+  {
+    "code": "1495",
+    "name": "Acid Phosphatase",
+    "nabhRate": 81,
+    "nonNabhRate": 70
+  },
+  {
+    "code": "1496",
+    "name": "CPK MB/CK MB",
+    "nabhRate": 197,
+    "nonNabhRate": 171
+  },
+  {
+    "code": "1497",
+    "name": "CK MB Mass/CPK MB Mass",
+    "nabhRate": 161,
+    "nonNabhRate": 140
+  },
+  {
+    "code": "1498",
+    "name": "Troponin I",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1499",
+    "name": "Troponin T",
+    "nabhRate": 633,
+    "nonNabhRate": 550
+  },
+  {
+    "code": "1501",
+    "name": "Lithium",
+    "nabhRate": 150,
+    "nonNabhRate": 130
+  },
+  {
+    "code": "1502",
+    "name": "Dilantin (phenytoin)",
+    "nabhRate": 460,
+    "nonNabhRate": 400
+  },
+  {
+    "code": "1503",
+    "name": "Carbamazepine",
+    "nabhRate": 414,
+    "nonNabhRate": 360
+  },
+  {
+    "code": "1504",
+    "name": "Valproic acid",
+    "nabhRate": 345,
+    "nonNabhRate": 300
+  },
+  {
+    "code": "1508",
+    "name": "Urine pregnancy test",
+    "nabhRate": 75,
+    "nonNabhRate": 65
+  },
+  {
+    "code": "1510",
+    "name": "Glycosylated Haemoglobin (HbA1c)",
+    "nabhRate": 150,
+    "nonNabhRate": 130
+  },
+  {
+    "code": "1512",
+    "name": "Kidney Function Test (KFT)",
+    "nabhRate": 233,
+    "nonNabhRate": 203
+  },
+  {
+    "code": "1513",
+    "name": "Liver Function Test (LFT)",
+    "nabhRate": 259,
+    "nonNabhRate": 225
+  },
+  {
+    "code": "1515",
+    "name": "Serum Iron",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "1517",
+    "name": "Serum Ferritin",
+    "nabhRate": 115,
+    "nonNabhRate": 100
+  },
+  {
+    "code": "1518",
+    "name": "Vitamin B12 assay.",
+    "nabhRate": 288,
+    "nonNabhRate": 250
+  },
+  {
+    "code": "1519",
+    "name": "Folic Acid assay.",
+    "nabhRate": 345,
+    "nonNabhRate": 300
+  },
+  {
+    "code": "1521",
+    "name": "Apolipoprotein A1 (ApoA1)",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "1522",
+    "name": "Apolipoprotein B (Apo B)",
+    "nabhRate": 229,
+    "nonNabhRate": 199
+  },
+  {
+    "code": "1523",
+    "name": "Lipoprotein A / Lp A",
+    "nabhRate": 512,
+    "nonNabhRate": 445
+  },
+  {
+    "code": "1524",
+    "name": "CD 3,4 and 8 counts",
+    "nabhRate": 196,
+    "nonNabhRate": 170
+  },
+  {
+    "code": "1525",
+    "name": "CD 3,4 and 8 percentage",
+    "nabhRate": 196,
+    "nonNabhRate": 170
+  },
+  {
+    "code": "1526",
+    "name": "Low density lipoprotein (LDL)",
+    "nabhRate": 71,
+    "nonNabhRate": 62
+  },
+  {
+    "code": "1527",
+    "name": "Homocysteine.",
+    "nabhRate": 460,
+    "nonNabhRate": 400
+  },
+  {
+    "code": "1529",
+    "name": "Serum Electrophoresis.",
+    "nabhRate": 253,
+    "nonNabhRate": 220
+  },
+  {
+    "code": "1530",
+    "name": "Fibrinogen.",
+    "nabhRate": 171,
+    "nonNabhRate": 149
+  },
+  {
+    "code": "1531",
+    "name": "Chloride.",
+    "nabhRate": 62,
+    "nonNabhRate": 54
+  },
+  {
+    "code": "1532",
+    "name": "Magnesium.",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1533",
+    "name": "Gamma-Glutamyl Transpeptidase (GGTP)",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "1534",
+    "name": "Lipase.",
+    "nabhRate": 275,
+    "nonNabhRate": 239
+  },
+  {
+    "code": "1535",
+    "name": "Fructosamine.",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "1536",
+    "name": "Beta 2 microglobulin (B2M) /\u03b22 microglobulin",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "1537",
+    "name": "Catecholamines.",
+    "nabhRate": 1208,
+    "nonNabhRate": 1050
+  },
+  {
+    "code": "1539",
+    "name": "Prostate Specific antigen (PSA)- Total",
+    "nabhRate": 359,
+    "nonNabhRate": 312
+  },
+  {
+    "code": "1540",
+    "name": "Prostate-specific antigen (PSA) - Free",
+    "nabhRate": 389,
+    "nonNabhRate": 338
+  },
+  {
+    "code": "1541",
+    "name": "Alpha Fetoprotein (AFP)",
+    "nabhRate": 337,
+    "nonNabhRate": 293
+  },
+  {
+    "code": "1542",
+    "name": "Human chorionic gonadotropin (HCG)",
+    "nabhRate": 299,
+    "nonNabhRate": 260
+  },
+  {
+    "code": "1543",
+    "name": "Cancer Antigen 125 (CA 125)",
+    "nabhRate": 450,
+    "nonNabhRate": 391
+  },
+  {
+    "code": "1544",
+    "name": "Cancer Antigen 19.9 (CA 19.9)",
+    "nabhRate": 708,
+    "nonNabhRate": 616
+  },
+  {
+    "code": "1545",
+    "name": "Cancer Antigen 15.3 (CA 15.3)",
+    "nabhRate": 644,
+    "nonNabhRate": 560
+  },
+  {
+    "code": "1546",
+    "name": "Vanillylmandelic Acid (VMA)",
+    "nabhRate": 403,
+    "nonNabhRate": 350
+  },
+  {
+    "code": "1547",
+    "name": "Calcitonin",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "1548",
+    "name": "Carcinoembryonic Antigen (CEA)",
+    "nabhRate": 391,
+    "nonNabhRate": 340
+  },
+  {
+    "code": "1549",
+    "name": "Immunofluorescence",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1550",
+    "name": "Direct(Skin and kidney Disease)",
+    "nabhRate": 440,
+    "nonNabhRate": 383
+  },
+  {
+    "code": "1551",
+    "name": "Indirect (antids DNA Anti Smith ANCA)",
+    "nabhRate": 489,
+    "nonNabhRate": 425
+  },
+  {
+    "code": "1555",
+    "name": "Anti-Cyclic Citrullinated Peptide (Anti CCP)",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "1557",
+    "name": "Serum Erythropoetin",
+    "nabhRate": 489,
+    "nonNabhRate": 425
+  },
+  {
+    "code": "1558",
+    "name": "Adrenocorticotropic Hormone (ACTH)",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "1559",
+    "name": "T3, T4, TSH",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "1560",
+    "name": "Triiodothyronine- T3",
+    "nabhRate": 74,
+    "nonNabhRate": 64
+  },
+  {
+    "code": "1561",
+    "name": "Tetraiodothyronine T4",
+    "nabhRate": 74,
+    "nonNabhRate": 64
+  },
+  {
+    "code": "1562",
+    "name": "Thyroid stimulating hormone (TSH)",
+    "nabhRate": 104,
+    "nonNabhRate": 90
+  },
+  {
+    "code": "1563",
+    "name": "Luteinizing hormone (LH)",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1564",
+    "name": "Follicle stimulating hormone (FSH)",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1565",
+    "name": "Prolactin",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1566",
+    "name": "Cortisol",
+    "nabhRate": 288,
+    "nonNabhRate": 250
+  },
+  {
+    "code": "1567",
+    "name": "PTH(Paratharmone)",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "1568",
+    "name": "C-Peptide (C Peptide / Connecting Peptide)",
+    "nabhRate": 380,
+    "nonNabhRate": 330
+  },
+  {
+    "code": "1569",
+    "name": "Insulin.",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1570",
+    "name": "Progesterone.",
+    "nabhRate": 259,
+    "nonNabhRate": 225
+  },
+  {
+    "code": "1572",
+    "name": "Dehydroepiandrosterone sulfate (DHEAS)",
+    "nabhRate": 506,
+    "nonNabhRate": 440
+  },
+  {
+    "code": "1573",
+    "name": "Androstenedione",
+    "nabhRate": 690,
+    "nonNabhRate": 600
+  },
+  {
+    "code": "1574",
+    "name": "Growth Hormone.",
+    "nabhRate": 391,
+    "nonNabhRate": 340
+  },
+  {
+    "code": "1575",
+    "name": "Thyroid peroxidase antibody (TPO)",
+    "nabhRate": 345,
+    "nonNabhRate": 300
+  },
+  {
+    "code": "1576",
+    "name": "Throglobulin.",
+    "nabhRate": 345,
+    "nonNabhRate": 300
+  },
+  {
+    "code": "1577",
+    "name": "Hydatic Serology.",
+    "nabhRate": 366,
+    "nonNabhRate": 318
+  },
+  {
+    "code": "1578",
+    "name": "Anti Sperm Antibodies.",
+    "nabhRate": 437,
+    "nonNabhRate": 380
+  },
+  {
+    "code": "1579",
+    "name": "Hepatitis B Virus (HBV) DNA Qualitative",
+    "nabhRate": 2300,
+    "nonNabhRate": 2000
+  },
+  {
+    "code": "1580",
+    "name": "Hepatitis B Virus (HBV) DNA Quantitative.",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "1581",
+    "name": "Hepatitis C Virus (HCV) RNA Qualitative.",
+    "nabhRate": 1945,
+    "nonNabhRate": 1691
+  },
+  {
+    "code": "1582",
+    "name": "Human papillomaviruse (HPV) Serology",
+    "nabhRate": 251,
+    "nonNabhRate": 218
+  },
+  {
+    "code": "1583",
+    "name": "Rota Virus serology",
+    "nabhRate": 150,
+    "nonNabhRate": 130
+  },
+  {
+    "code": "1584",
+    "name": "PCR for Tuberculosis (TB)",
+    "nabhRate": 1035,
+    "nonNabhRate": 900
+  },
+  {
+    "code": "1586",
+    "name": "Chlamydae antigen",
+    "nabhRate": 880,
+    "nonNabhRate": 765
+  },
+  {
+    "code": "1587",
+    "name": "Chlamydae antibody",
+    "nabhRate": 274,
+    "nonNabhRate": 238
+  },
+  {
+    "code": "1588",
+    "name": "Brucella serology",
+    "nabhRate": 265,
+    "nonNabhRate": 230
+  },
+  {
+    "code": "1589",
+    "name": "Influenza A serology",
+    "nabhRate": 1084,
+    "nonNabhRate": 943
+  },
+  {
+    "code": "1590",
+    "name": "USG for Obstetrics - Anomalies scan",
+    "nabhRate": 886,
+    "nonNabhRate": 770
+  },
+  {
+    "code": "1591",
+    "name": "Abdomen USG",
+    "nabhRate": 267,
+    "nonNabhRate": 232
+  },
+  {
+    "code": "1592",
+    "name": "Pelvic USG ( prostate, gynae, infertility etc)",
+    "nabhRate": 293,
+    "nonNabhRate": 255
+  },
+  {
+    "code": "1594",
+    "name": "Neonatal head (Tranfontanellar)",
+    "nabhRate": 489,
+    "nonNabhRate": 425
+  },
+  {
+    "code": "1595",
+    "name": "Neonatal spine",
+    "nabhRate": 572,
+    "nonNabhRate": 497
+  },
+  {
+    "code": "1596",
+    "name": "Contrast enhanced USG",
+    "nabhRate": 932,
+    "nonNabhRate": 810
+  },
+  {
+    "code": "1597",
+    "name": "USG Breast",
+    "nabhRate": 401,
+    "nonNabhRate": 349
+  },
+  {
+    "code": "1598",
+    "name": "USG Hysterosalpingography (HSG)",
+    "nabhRate": 293,
+    "nonNabhRate": 255
+  },
+  {
+    "code": "1599",
+    "name": "Carotid Doppler",
+    "nabhRate": 978,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "1600",
+    "name": "Arterial Colour Doppler",
+    "nabhRate": 812,
+    "nonNabhRate": 706
+  },
+  {
+    "code": "1601",
+    "name": "Venous Colour Doppler",
+    "nabhRate": 812,
+    "nonNabhRate": 706
+  },
+  {
+    "code": "1603",
+    "name": "USG guided intervention- FNAC",
+    "nabhRate": 564,
+    "nonNabhRate": 490
+  },
+  {
+    "code": "1604",
+    "name": "USG guided intervention - biopsy",
+    "nabhRate": 828,
+    "nonNabhRate": 720
+  },
+  {
+    "code": "1605",
+    "name": "USG guided intervention - nephrostomy",
+    "nabhRate": 828,
+    "nonNabhRate": 720
+  },
+  {
+    "code": "1606",
+    "name": "Abdomen AP Supine or Erect (One film)",
+    "nabhRate": 132,
+    "nonNabhRate": 115
+  },
+  {
+    "code": "1607",
+    "name": "Abdomen Lateral view (one film)",
+    "nabhRate": 132,
+    "nonNabhRate": 115
+  },
+  {
+    "code": "1608",
+    "name": "Chest PA view (one film)",
+    "nabhRate": 69,
+    "nonNabhRate": 60
+  },
+  {
+    "code": "1609",
+    "name": "Chest Lateral (one film)",
+    "nabhRate": 69,
+    "nonNabhRate": 60
+  },
+  {
+    "code": "1610",
+    "name": "Mastoids: Towne view, oblique views (3 films)",
+    "nabhRate": 259,
+    "nonNabhRate": 225
+  },
+  {
+    "code": "1612",
+    "name": "Pelvis AP (one film)",
+    "nabhRate": 114,
+    "nonNabhRate": 99
+  },
+  {
+    "code": "1613",
+    "name": "Temporomandibular (TM) Joints (one film)",
+    "nabhRate": 114,
+    "nonNabhRate": 99
+  },
+  {
+    "code": "1614",
+    "name": "Abdomen pelvis for KUB",
+    "nabhRate": 132,
+    "nonNabhRate": 115
+  },
+  {
+    "code": "1615",
+    "name": "Skull AP Lateral (2 films)",
+    "nabhRate": 288,
+    "nonNabhRate": 250
+  },
+  {
+    "code": "1616",
+    "name": "Spine AP lateral (2 films)",
+    "nabhRate": 259,
+    "nonNabhRate": 225
+  },
+  {
+    "code": "1617",
+    "name": "PNS view (1 film)",
+    "nabhRate": 114,
+    "nonNabhRate": 99
+  },
+  {
+    "code": "1618",
+    "name": "Barium Swallow",
+    "nabhRate": 587,
+    "nonNabhRate": 510
+  },
+  {
+    "code": "1619",
+    "name": "Barium Upper GI study",
+    "nabhRate": 920,
+    "nonNabhRate": 800
+  },
+  {
+    "code": "1620",
+    "name": "Barium Upper GI study (Double contrast)",
+    "nabhRate": 1075,
+    "nonNabhRate": 935
+  },
+  {
+    "code": "1621",
+    "name": "Barium Meal follow through",
+    "nabhRate": 1075,
+    "nonNabhRate": 935
+  },
+  {
+    "code": "1623",
+    "name": "Small bowel enteroclysis",
+    "nabhRate": 1150,
+    "nonNabhRate": 1000
+  },
+  {
+    "code": "1627",
+    "name": "Intravenous Pyelography (IVP)",
+    "nabhRate": 1232,
+    "nonNabhRate": 1071
+  },
+  {
+    "code": "1628",
+    "name": "Micturating Cystourethrography (MCU)",
+    "nabhRate": 704,
+    "nonNabhRate": 612
+  },
+  {
+    "code": "1629",
+    "name": "Retrograde Urethrography (RGU)",
+    "nabhRate": 704,
+    "nonNabhRate": 612
+  },
+  {
+    "code": "1630",
+    "name": "Contrast Hystero-Salpingography (HSG)",
+    "nabhRate": 1056,
+    "nonNabhRate": 918
+  },
+  {
+    "code": "1631",
+    "name": "X-ray Arthrography",
+    "nabhRate": 805,
+    "nonNabhRate": 700
+  },
+  {
+    "code": "1632",
+    "name": "Cephalography",
+    "nabhRate": 173,
+    "nonNabhRate": 150
+  },
+  {
+    "code": "1633",
+    "name": "Myelography",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "1635",
+    "name": "X-ray Mammography",
+    "nabhRate": 362,
+    "nonNabhRate": 315
+  },
+  {
+    "code": "1636",
+    "name": "MRI Mammography",
+    "nabhRate": 2933,
+    "nonNabhRate": 2550
+  },
+  {
+    "code": "1637",
+    "name": "CT Scan Head-Without Contrast",
+    "nabhRate": 1035,
+    "nonNabhRate": 900
+  },
+  {
+    "code": "1639",
+    "name": "CT Scan Chest - without contrast (for lungs)",
+    "nabhRate": 1955,
+    "nonNabhRate": 1700
+  },
+  {
+    "code": "1642",
+    "name": "CT Scan Whole Abdomen Without Contrast",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "1643",
+    "name": "CT Scan Whole Abdomen With Contrast",
+    "nabhRate": 4658,
+    "nonNabhRate": 4050
+  },
+  {
+    "code": "1644",
+    "name": "Triple Phase CT abdomen",
+    "nabhRate": 4658,
+    "nonNabhRate": 4050
+  },
+  {
+    "code": "1646",
+    "name": "CT Scan Enteroclysis",
+    "nabhRate": 6325,
+    "nonNabhRate": 5500
+  },
+  {
+    "code": "1647",
+    "name": "CT Scan Neck - Without Contrast",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "1648",
+    "name": "CT Scan Neck - With Contrast",
+    "nabhRate": 2151,
+    "nonNabhRate": 1870
+  },
+  {
+    "code": "1649",
+    "name": "CT Scan Orbits - Without Contrast",
+    "nabhRate": 1369,
+    "nonNabhRate": 1190
+  },
+  {
+    "code": "1650",
+    "name": "CT Scan Orbits - With Contrast",
+    "nabhRate": 1857,
+    "nonNabhRate": 1615
+  },
+  {
+    "code": "1654",
+    "name": "CT Scan Temporal bone - without contrast",
+    "nabhRate": 1027,
+    "nonNabhRate": 893
+  },
+  {
+    "code": "1655",
+    "name": "CT Scan- Dental",
+    "nabhRate": 1466,
+    "nonNabhRate": 1275
+  },
+  {
+    "code": "1656",
+    "name": "CT Scan Limbs -Without Contrast",
+    "nabhRate": 1955,
+    "nonNabhRate": 1700
+  },
+  {
+    "code": "1658",
+    "name": "CT Guided intervention -FNAC",
+    "nabhRate": 1242,
+    "nonNabhRate": 1080
+  },
+  {
+    "code": "1659",
+    "name": "CT Guided Trucut Biopsy",
+    "nabhRate": 1380,
+    "nonNabhRate": 1200
+  },
+  {
+    "code": "1661",
+    "name": "MRI Head - Without Contrast",
+    "nabhRate": 2298,
+    "nonNabhRate": 1998
+  },
+  {
+    "code": "1663",
+    "name": "MRI Orbits - Without Contrast",
+    "nabhRate": 1662,
+    "nonNabhRate": 1445
+  },
+  {
+    "code": "1664",
+    "name": "MRI Orbits - With Contrast",
+    "nabhRate": 2300,
+    "nonNabhRate": 2000
+  },
+  {
+    "code": "1666",
+    "name": "MRI Nasopharynx and PNS - With Contrast",
+    "nabhRate": 4025,
+    "nonNabhRate": 3500
+  },
+  {
+    "code": "1667",
+    "name": "MR for Salivary Glands with Sialography",
+    "nabhRate": 3105,
+    "nonNabhRate": 2700
+  },
+  {
+    "code": "1668",
+    "name": "MRI Neck - Without Contrast",
+    "nabhRate": 3450,
+    "nonNabhRate": 3000
+  },
+  {
+    "code": "1669",
+    "name": "MRI Neck- with contrast",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1670",
+    "name": "MRI Shoulder - Without contrast",
+    "nabhRate": 2300,
+    "nonNabhRate": 2000
+  },
+  {
+    "code": "1671",
+    "name": "MRI Shoulder - With conntrast",
+    "nabhRate": 2990,
+    "nonNabhRate": 2600
+  },
+  {
+    "code": "1672",
+    "name": "MRI shoulder both Joints - Without contrast",
+    "nabhRate": 3163,
+    "nonNabhRate": 2750
+  },
+  {
+    "code": "1674",
+    "name": "MRI Wrist Single joint - Without contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1675",
+    "name": "MRI Wrist Single joint - With contrast",
+    "nabhRate": 4600,
+    "nonNabhRate": 4000
+  },
+  {
+    "code": "1676",
+    "name": "MRI Wrist both joints - Without contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1677",
+    "name": "MRI Wrist Both joints - With contrast",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1678",
+    "name": "MRI knee Single joint - Without contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1679",
+    "name": "MRI knee Single joint - With contrast",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1680",
+    "name": "MRI knee both joints - Without contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1681",
+    "name": "MRI knee both joints - With contrast",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1682",
+    "name": "MRI Ankle Single joint - Without contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1683",
+    "name": "MRI Ankle single joint - With contrast",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1684",
+    "name": "MRI Ankle both joints - With contrast",
+    "nabhRate": 5175,
+    "nonNabhRate": 4500
+  },
+  {
+    "code": "1685",
+    "name": "MRI Ankle both joints - Without contrast",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "1686",
+    "name": "MRI Hip - With contrast",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "1687",
+    "name": "MRI Hip - without contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1690",
+    "name": "MRI Extremities - With contrast",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1691",
+    "name": "MRI Extremities - Without contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1694",
+    "name": "MR Temporal Bone/ Inner ear with contrast",
+    "nabhRate": 4600,
+    "nonNabhRate": 4000
+  },
+  {
+    "code": "1696",
+    "name": "MRI Abdomen - Without Contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1697",
+    "name": "MRI Abdomen - With Contrast",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1698",
+    "name": "MRI Breast - With Contrast",
+    "nabhRate": 4888,
+    "nonNabhRate": 4250
+  },
+  {
+    "code": "1699",
+    "name": "MRI Breast - Without Contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1700",
+    "name": "MRI Spine Screening - Without Contrast",
+    "nabhRate": 1150,
+    "nonNabhRate": 1000
+  },
+  {
+    "code": "1701",
+    "name": "MRI Chest - Without Contrast",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1702",
+    "name": "MRI Chest - With Contrast",
+    "nabhRate": 4600,
+    "nonNabhRate": 4000
+  },
+  {
+    "code": "1709",
+    "name": "Whole body MRI (For oncological workup)",
+    "nabhRate": 5865,
+    "nonNabhRate": 5100
+  },
+  {
+    "code": "1710",
+    "name": "MR cholecysto-pancreatography/MRI MRCP",
+    "nabhRate": 5750,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1712",
+    "name": "MR Enteroclysis",
+    "nabhRate": 2444,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1713",
+    "name": "Dexa Scan Bone Densitometry - Two sites",
+    "nabhRate": 1553,
+    "nonNabhRate": 1350
+  },
+  {
+    "code": "1715",
+    "name": "Dexa Scan Bone Densitometry Whole body",
+    "nabhRate": 2588,
+    "nonNabhRate": 2250
+  },
+  {
+    "code": "1716",
+    "name": "Electroencephalogram (EEG)/ Video EEG",
+    "nabhRate": 343,
+    "nonNabhRate": 298
+  },
+  {
+    "code": "1717",
+    "name": "Electromyography (EMG)",
+    "nabhRate": 734,
+    "nonNabhRate": 638
+  },
+  {
+    "code": "1721",
+    "name": "Somatosensory evoked potentials (SSEP)",
+    "nabhRate": 734,
+    "nonNabhRate": 638
+  },
+  {
+    "code": "1722",
+    "name": "Polysomnography (PSG) / Sleep study",
+    "nabhRate": 734,
+    "nonNabhRate": 638
+  },
+  {
+    "code": "1723",
+    "name": "Brachial plexus study",
+    "nabhRate": 734,
+    "nonNabhRate": 638
+  },
+  {
+    "code": "1724",
+    "name": "Muscle biopsy",
+    "nabhRate": 440,
+    "nonNabhRate": 383
+  },
+  {
+    "code": "1725",
+    "name": "Acetylcholine receptor (AChR) antibody titre",
+    "nabhRate": 2125,
+    "nonNabhRate": 1848
+  },
+  {
+    "code": "1727",
+    "name": "Serum copper",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "1728",
+    "name": "Serum ceruloplasmin",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "1729",
+    "name": "Urinary copper",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "1730",
+    "name": "Serum homocysteine",
+    "nabhRate": 518,
+    "nonNabhRate": 450
+  },
+  {
+    "code": "1731",
+    "name": "Serum valproate level",
+    "nabhRate": 362,
+    "nonNabhRate": 315
+  },
+  {
+    "code": "1732",
+    "name": "Serum phenobarbitone level",
+    "nabhRate": 403,
+    "nonNabhRate": 350
+  },
+  {
+    "code": "1733",
+    "name": "Coagulation profile",
+    "nabhRate": 573,
+    "nonNabhRate": 498
+  },
+  {
+    "code": "1479",
+    "name": "for approved rate)",
+    "nabhRate": 83,
+    "nonNabhRate": 72
+  },
+  {
+    "code": "1737",
+    "name": "Special studies",
+    "nabhRate": 1035,
+    "nonNabhRate": 900
+  },
+  {
+    "code": "1738",
+    "name": "PCR for tuberculosis/ Herpes simplex",
+    "nabhRate": 1380,
+    "nonNabhRate": 1200
+  },
+  {
+    "code": "1739",
+    "name": "Bacterial culture and sensitivity",
+    "nabhRate": 207,
+    "nonNabhRate": 180
+  },
+  {
+    "code": "1740",
+    "name": "Mycobacterial culture and sensitivity",
+    "nabhRate": 207,
+    "nonNabhRate": 180
+  },
+  {
+    "code": "1741",
+    "name": "Fungal culture",
+    "nabhRate": 147,
+    "nonNabhRate": 128
+  },
+  {
+    "code": "1742",
+    "name": "Malignant cells",
+    "nabhRate": 74,
+    "nonNabhRate": 64
+  },
+  {
+    "code": "1744",
+    "name": "Viral culture",
+    "nabhRate": 293,
+    "nonNabhRate": 255
+  },
+  {
+    "code": "1746",
+    "name": "Oligoclonal band",
+    "nabhRate": 1380,
+    "nonNabhRate": 1200
+  },
+  {
+    "code": "1747",
+    "name": "Myelin Basic protein",
+    "nabhRate": 2152,
+    "nonNabhRate": 1871
+  },
+  {
+    "code": "1749",
+    "name": "Cryptococcal antigen",
+    "nabhRate": 1178,
+    "nonNabhRate": 1024
+  },
+  {
+    "code": "1750",
+    "name": "D-xylase test",
+    "nabhRate": 880,
+    "nonNabhRate": 765
+  },
+  {
+    "code": "1754",
+    "name": "HBV genotyping",
+    "nabhRate": 2588,
+    "nonNabhRate": 2250
+  },
+  {
+    "code": "1755",
+    "name": "HCV genotyping",
+    "nabhRate": 5046,
+    "nonNabhRate": 4388
+  },
+  {
+    "code": "1756",
+    "name": "Urinary vanillylmandelic acid (VMA)",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "1757",
+    "name": "Urinary metanephrine/Normetanephrine",
+    "nabhRate": 1309,
+    "nonNabhRate": 1138
+  },
+  {
+    "code": "1758",
+    "name": "Urinary free catecholamine",
+    "nabhRate": 1944,
+    "nonNabhRate": 1690
+  },
+  {
+    "code": "1759",
+    "name": "Serum catecholamine",
+    "nabhRate": 3910,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "1760",
+    "name": "Serum aldosterone",
+    "nabhRate": 1294,
+    "nonNabhRate": 1125
+  },
+  {
+    "code": "1761",
+    "name": "24 Hr urinary aldosterone",
+    "nabhRate": 1058,
+    "nonNabhRate": 920
+  },
+  {
+    "code": "1762",
+    "name": "Plasma renin activity",
+    "nabhRate": 1150,
+    "nonNabhRate": 1000
+  },
+  {
+    "code": "1763",
+    "name": "Serum aldosterone/renin ratio",
+    "nabhRate": 1380,
+    "nonNabhRate": 1200
+  },
+  {
+    "code": "1764",
+    "name": "Osmolality urine",
+    "nabhRate": 147,
+    "nonNabhRate": 128
+  },
+  {
+    "code": "1765",
+    "name": "Osmolality serum",
+    "nabhRate": 147,
+    "nonNabhRate": 128
+  },
+  {
+    "code": "1766",
+    "name": "Urinary sodium",
+    "nabhRate": 92,
+    "nonNabhRate": 80
+  },
+  {
+    "code": "1767",
+    "name": "Urinary Chloride",
+    "nabhRate": 49,
+    "nonNabhRate": 43
+  },
+  {
+    "code": "1768",
+    "name": "Urinary potassium",
+    "nabhRate": 92,
+    "nonNabhRate": 80
+  },
+  {
+    "code": "1769",
+    "name": "Urinary calcium",
+    "nabhRate": 83,
+    "nonNabhRate": 72
+  },
+  {
+    "code": "1770",
+    "name": "Thyroid binding globulin",
+    "nabhRate": 587,
+    "nonNabhRate": 510
+  },
+  {
+    "code": "1771",
+    "name": "24 hour urinary free cortisole",
+    "nabhRate": 230,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "1772",
+    "name": "Islet cell antibody",
+    "nabhRate": 863,
+    "nonNabhRate": 750
+  },
+  {
+    "code": "1774",
+    "name": "Insulin associated antibody",
+    "nabhRate": 516,
+    "nonNabhRate": 449
+  },
+  {
+    "code": "1775",
+    "name": "Insulin-like growth factor-1 (IGF-1)",
+    "nabhRate": 1553,
+    "nonNabhRate": 1350
+  },
+  {
+    "code": "1777",
+    "name": "Sex hormone binding globulin",
+    "nabhRate": 1533,
+    "nonNabhRate": 1333
+  },
+  {
+    "code": "1778",
+    "name": "USG guided FNAC thyroid gland",
+    "nabhRate": 445,
+    "nonNabhRate": 387
+  },
+  {
+    "code": "1779",
+    "name": "Estradiol (E2)",
+    "nabhRate": 239,
+    "nonNabhRate": 208
+  },
+  {
+    "code": "1780",
+    "name": "Thyroglobulin antibody",
+    "nabhRate": 675,
+    "nonNabhRate": 587
+  },
+  {
+    "code": "1782",
+    "name": "Serum IGE Level",
+    "nabhRate": 345,
+    "nonNabhRate": 300
+  },
+  {
+    "code": "1783",
+    "name": "NT-Pro BNP",
+    "nabhRate": 2070,
+    "nonNabhRate": 1800
+  },
+  {
+    "code": "1784",
+    "name": "CECT Chest",
+    "nabhRate": 2875,
+    "nonNabhRate": 2500
+  },
+  {
+    "code": "1785",
+    "name": "MRI-Prostate (Multi-parametric)",
+    "nabhRate": 6900,
+    "nonNabhRate": 6000
+  },
+  {
+    "code": "1786",
+    "name": "HCV RNA Quantitative",
+    "nabhRate": 1725,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "1787",
+    "name": "Tacrolimus",
+    "nabhRate": 2645,
+    "nonNabhRate": 2300
+  },
+  {
+    "code": "1788",
+    "name": "Protein Creatinine Ratio, Urine",
+    "nabhRate": 138,
+    "nonNabhRate": 120
+  },
+  {
+    "code": "1789",
+    "name": "Fibroscan Liver",
+    "nabhRate": 1150,
+    "nonNabhRate": 1000
+  },
+  {
+    "code": "1790",
+    "name": "HLA B27 (PCR)",
+    "nabhRate": 575,
+    "nonNabhRate": 500
+  },
+  {
+    "code": "1791",
+    "name": "Mantoux Test",
+    "nabhRate": 200,
+    "nonNabhRate": 175
+  },
+  {
+    "code": "1792",
+    "name": "Procalcitonin",
+    "nabhRate": 2070,
+    "nonNabhRate": 1800
+  },
+  {
+    "code": "1793",
+    "name": "TORCH Test",
+    "nabhRate": 1288,
+    "nonNabhRate": 1120
+  },
+  {
+    "code": "1794",
+    "name": "Intracoronary OCT (AIIMS Rates) + GST",
+    "nabhRate": 72800,
+    "nonNabhRate": 72800
+  },
+  {
+    "code": "1796",
+    "name": "Anti -Smooth Muscle Antibody Test (ASMA)",
+    "nabhRate": 1460,
+    "nonNabhRate": 1241
+  },
+  {
+    "code": "1797",
+    "name": "C ANCA-IFA",
+    "nabhRate": 1500,
+    "nonNabhRate": 1275
+  },
+  {
+    "code": "1798",
+    "name": "P ANCA-IFA",
+    "nabhRate": 1500,
+    "nonNabhRate": 1275
+  },
+  {
+    "code": "1799",
+    "name": "Angiotensin converting enzyme (ACE)",
+    "nabhRate": 1000,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "1802",
+    "name": "Chromogranin A",
+    "nabhRate": 5000,
+    "nonNabhRate": 4250
+  },
+  {
+    "code": "1803",
+    "name": "Faecal calprotectin (fecal calprotectin)",
+    "nabhRate": 2730,
+    "nonNabhRate": 2320
+  },
+  {
+    "code": "1804",
+    "name": "C3-COMPLEMENT",
+    "nabhRate": 650,
+    "nonNabhRate": 552
+  },
+  {
+    "code": "1805",
+    "name": "C4-COMPLEMENT",
+    "nabhRate": 650,
+    "nonNabhRate": 552
+  },
+  {
+    "code": "1806",
+    "name": "Genexpert Test",
+    "nabhRate": 1035,
+    "nonNabhRate": 880
+  },
+  {
+    "code": "1807",
+    "name": "DJ stent removal",
+    "nabhRate": 8700,
+    "nonNabhRate": 7395
+  },
+  {
+    "code": "1810",
+    "name": "CT Urography",
+    "nabhRate": 4500,
+    "nonNabhRate": 3825
+  },
+  {
+    "code": "1811",
+    "name": "Video Laryngoscopy",
+    "nabhRate": 6000,
+    "nonNabhRate": 5100
+  },
+  {
+    "code": "1812",
+    "name": "CT Angio-Neck Vessels",
+    "nabhRate": 6000,
+    "nonNabhRate": 5100
+  },
+  {
+    "code": "1813",
+    "name": "H1N1 (RT-PCR)",
+    "nabhRate": 1084,
+    "nonNabhRate": 921
+  },
+  {
+    "code": "1557",
+    "name": "for approved rate)",
+    "nabhRate": 489,
+    "nonNabhRate": 425
+  },
+  {
+    "code": "1815",
+    "name": "Anti HEV IgM",
+    "nabhRate": 1000,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "1816",
+    "name": "Anti HAV IgM",
+    "nabhRate": 750,
+    "nonNabhRate": 637
+  },
+  {
+    "code": "1817",
+    "name": "HBsAg Quantitative",
+    "nabhRate": 650,
+    "nonNabhRate": 552
+  },
+  {
+    "code": "1818",
+    "name": "Typhidot IgM",
+    "nabhRate": 400,
+    "nonNabhRate": 340
+  },
+  {
+    "code": "1820",
+    "name": "Anti HBs",
+    "nabhRate": 650,
+    "nonNabhRate": 552
+  },
+  {
+    "code": "1821",
+    "name": "Free Triiodothyronine (FT3)",
+    "nabhRate": 125,
+    "nonNabhRate": 106
+  },
+  {
+    "code": "1822",
+    "name": "Free Thyroxine (FT4)",
+    "nabhRate": 125,
+    "nonNabhRate": 106
+  },
+  {
+    "code": "1823",
+    "name": "Widal Test",
+    "nabhRate": 70,
+    "nonNabhRate": 60
+  },
+  {
+    "code": "1824",
+    "name": "Dengue Serology",
+    "nabhRate": 600,
+    "nonNabhRate": 510
+  },
+  {
+    "code": "1829",
+    "name": "Blood component charges - Cryoprecipitate",
+    "nabhRate": 200,
+    "nonNabhRate": 200
+  },
+  {
+    "code": "1833",
+    "name": "Interleukin 6 (IL 6)",
+    "nabhRate": 1600,
+    "nonNabhRate": 1360
+  },
+  {
+    "code": "1842",
+    "name": "Punctoplasty (Per eye for NON-NABH/L)",
+    "nabhRate": 6500,
+    "nonNabhRate": 5525
+  },
+  {
+    "code": "1844",
+    "name": "Laser Trabeculoplasty Gonioplasty Both eye",
+    "nabhRate": 16000,
+    "nonNabhRate": 13600
+  },
+  {
+    "code": "1846",
+    "name": "Glaucoma valve/Glaucoma Ahmed valve",
+    "nabhRate": 15000,
+    "nonNabhRate": 12750
+  },
+  {
+    "code": "1847",
+    "name": "Malyugin Ring",
+    "nabhRate": 10000,
+    "nonNabhRate": 8500
+  },
+  {
+    "code": "1848",
+    "name": "Globe exploration (eye surgery)",
+    "nabhRate": 10000,
+    "nonNabhRate": 8500
+  },
+  {
+    "code": "1849",
+    "name": "Scleral Fixation Tissue glue",
+    "nabhRate": 8400,
+    "nonNabhRate": 7140
+  },
+  {
+    "code": "1850",
+    "name": "Fibro optic Nasal Endoscopy",
+    "nabhRate": 2300,
+    "nonNabhRate": 1955
+  },
+  {
+    "code": "1851",
+    "name": "Video Stroboscopy",
+    "nabhRate": 5500,
+    "nonNabhRate": 4675
+  },
+  {
+    "code": "1862",
+    "name": "RITUXIMAB 100MG Injection(Pack Size 1*1)",
+    "nabhRate": 1730,
+    "nonNabhRate": 1730
+  },
+  {
+    "code": "1855",
+    "name": "Injection Ranibizumab",
+    "nabhRate": 9679,
+    "nonNabhRate": 9679
+  },
+  {
+    "code": "1856",
+    "name": "Injection Aflibercept",
+    "nabhRate": 40495,
+    "nonNabhRate": 40495
+  },
+  {
+    "code": "1857",
+    "name": "Injection Dexamethasone Intraviterial Implant",
+    "nabhRate": 18519,
+    "nonNabhRate": 18519
+  },
+  {
+    "code": "1859",
+    "name": "Injection Lucentis",
+    "nabhRate": 18379,
+    "nonNabhRate": 18379
+  },
+  {
+    "code": "1860",
+    "name": "Injection Visudyn",
+    "nabhRate": 71680,
+    "nonNabhRate": 71680
+  },
+  {
+    "code": "1861",
+    "name": "Injection Bevacizumb (Avastin)",
+    "nabhRate": 1500,
+    "nonNabhRate": 1500
+  },
+  {
+    "code": "1863",
+    "name": "RITUXIMAB 500MG Injection(Pack Size 1*1)",
+    "nabhRate": 7600,
+    "nonNabhRate": 7600
+  },
+  {
+    "code": "1864",
+    "name": "FESS",
+    "nabhRate": 11000,
+    "nonNabhRate": 11000
+  },
+  {
+    "code": "1865",
+    "name": "Partial Maxillectomy",
+    "nabhRate": 27000,
+    "nonNabhRate": 27000
+  },
+  {
+    "code": "1866",
+    "name": "Total Maxillectomy",
+    "nabhRate": 30000,
+    "nonNabhRate": 30000
+  },
+  {
+    "code": "1867",
+    "name": "Radical Maxillectomy",
+    "nabhRate": 33000,
+    "nonNabhRate": 33000
+  },
+  {
+    "code": "1868",
+    "name": "Orbital Exenteration",
+    "nabhRate": 15000,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "1869",
+    "name": "Anterior Skull Base (CSF Rhinorrhea Repair)",
+    "nabhRate": 52000,
+    "nonNabhRate": 52000
+  },
+  {
+    "code": "1870",
+    "name": "Black Fungus/Covid (Isolation)",
+    "nabhRate": 5500,
+    "nonNabhRate": 5000
+  },
+  {
+    "code": "1874",
+    "name": "COVID Rapid Antigen Test",
+    "nabhRate": 50,
+    "nonNabhRate": 50
+  },
+  {
+    "code": "1875",
+    "name": "COVID RT-PCR Test",
+    "nabhRate": 350,
+    "nonNabhRate": 350
+  },
+  {
+    "code": "1881",
+    "name": "Phototherapy",
+    "nabhRate": 405,
+    "nonNabhRate": 352
+  },
+  {
+    "code": "1883",
+    "name": "TVR REPAIR",
+    "nabhRate": 51800,
+    "nonNabhRate": 45043
+  },
+  {
+    "code": "1884",
+    "name": "VENOPLASTY/ DVT THROMBOLYSIS",
+    "nabhRate": 18000,
+    "nonNabhRate": 15652
+  },
+  {
+    "code": "1886",
+    "name": "OMENTECTOMY/Supracolic Omentectomy",
+    "nabhRate": 38000,
+    "nonNabhRate": 33043
+  },
+  {
+    "code": "1888",
+    "name": "Retroperitoneal clearance",
+    "nabhRate": 6000,
+    "nonNabhRate": 5217
+  },
+  {
+    "code": "1889",
+    "name": "laser ablation excision of pilinoidal /sinus",
+    "nabhRate": 17250,
+    "nonNabhRate": 15000
+  },
+  {
+    "code": "1890",
+    "name": "LASER LITHOTRIPSY (GASTRO)",
+    "nabhRate": 10200,
+    "nonNabhRate": 8870
+  },
+  {
+    "code": "1891",
+    "name": "Robotic Surgery (Without Procedures Rates)",
+    "nabhRate": 50000,
+    "nonNabhRate": 43478
+  },
+  {
+    "code": "1892",
+    "name": "OMMAYA RESERVOIR PLACEMENT",
+    "nabhRate": 38250,
+    "nonNabhRate": 33261
+  },
+  {
+    "code": "1894",
+    "name": "CYSTOCELE & RECTOCELE REPAIR",
+    "nabhRate": 5000,
+    "nonNabhRate": 4348
+  },
+  {
+    "code": "1895",
+    "name": "SYNOVECTOMY",
+    "nabhRate": 11800,
+    "nonNabhRate": 10261
+  },
+  {
+    "code": "1896",
+    "name": "ROTATOR CUFF REPAIR",
+    "nabhRate": 34425,
+    "nonNabhRate": 29935
+  },
+  {
+    "code": "1897",
+    "name": "OATS",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1899",
+    "name": "HINDFOOT FUSION",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1900",
+    "name": "DEFORMITY CORRECTION",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1901",
+    "name": "FIBULAR OSTEOTOMY",
+    "nabhRate": 7200,
+    "nonNabhRate": 6261
+  },
+  {
+    "code": "1902",
+    "name": "TA LENGTHENING",
+    "nabhRate": 6200,
+    "nonNabhRate": 5391
+  },
+  {
+    "code": "1903",
+    "name": "REVASULARIZATION DIGITS",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1904",
+    "name": "DESLOUGHINHG & SEQUESTRECTOMY",
+    "nabhRate": 10000,
+    "nonNabhRate": 8696
+  },
+  {
+    "code": "1906",
+    "name": "SUBACROMIAL DECOMPRESSSION",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1907",
+    "name": "LABRUM REPAIR",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1909",
+    "name": "Recession",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1910",
+    "name": "Medial calceno displacement osteotomy",
+    "nabhRate": 3825,
+    "nonNabhRate": 3326
+  },
+  {
+    "code": "1912",
+    "name": "CHONDROPLASTY",
+    "nabhRate": 11883,
+    "nonNabhRate": 10333
+  },
+  {
+    "code": "1913",
+    "name": "STERNAL ADHESIOLYSIS",
+    "nabhRate": 3825,
+    "nonNabhRate": 3326
+  },
+  {
+    "code": "1914",
+    "name": "Percutaneus sclerotherapy",
+    "nabhRate": 2250,
+    "nonNabhRate": 1957
+  },
+  {
+    "code": "1916",
+    "name": "Cochlear implant surgery",
+    "nabhRate": 30000,
+    "nonNabhRate": 26087
+  },
+  {
+    "code": "1931",
+    "name": "COLONOSCOPY/ILEOSCOPY",
+    "nabhRate": 1840,
+    "nonNabhRate": 1564
+  },
+  {
+    "code": "1933",
+    "name": "GRANUFOAM DRESSING SMALL",
+    "nabhRate": 1500,
+    "nonNabhRate": 1275
+  },
+  {
+    "code": "1934",
+    "name": "GRANUFOAM DRESSING MEDIUM",
+    "nabhRate": 2000,
+    "nonNabhRate": 1700
+  },
+  {
+    "code": "1935",
+    "name": "GRANUFOAM DRESSING LARGE",
+    "nabhRate": 2500,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1936",
+    "name": "VAC DRESSING SMALL",
+    "nabhRate": 6000,
+    "nonNabhRate": 5100
+  },
+  {
+    "code": "1937",
+    "name": "VAC DRESSING MEDIUM",
+    "nabhRate": 7000,
+    "nonNabhRate": 5950
+  },
+  {
+    "code": "1938",
+    "name": "VAC DRESSING LARGE",
+    "nabhRate": 8000,
+    "nonNabhRate": 6800
+  },
+  {
+    "code": "1939",
+    "name": "NEURO NAVIGATION",
+    "nabhRate": 30000,
+    "nonNabhRate": 25500
+  },
+  {
+    "code": "1940",
+    "name": "NEURO MONITORING",
+    "nabhRate": 15000,
+    "nonNabhRate": 12750
+  },
+  {
+    "code": "1941",
+    "name": "CUSA ASSISTANCE",
+    "nabhRate": 15000,
+    "nonNabhRate": 12750
+  },
+  {
+    "code": "1944",
+    "name": "ACROMIOPLASTY",
+    "nabhRate": 6000,
+    "nonNabhRate": 5100
+  },
+  {
+    "code": "1947",
+    "name": "THORACOSCOPY",
+    "nabhRate": 10000,
+    "nonNabhRate": 8500
+  },
+  {
+    "code": "1948",
+    "name": "THERAPEUTIC PLEUROSCOPY",
+    "nabhRate": 10000,
+    "nonNabhRate": 8500
+  },
+  {
+    "code": "1950",
+    "name": "STERNOTOMY",
+    "nabhRate": 30000,
+    "nonNabhRate": 25500
+  },
+  {
+    "code": "1952",
+    "name": "FRENULOPLASTY",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "1958",
+    "name": "LUNG TRANSPLANT SURGERY",
+    "nabhRate": 800000,
+    "nonNabhRate": 680000
+  },
+  {
+    "code": "1967",
+    "name": "ADRENALECTOMY",
+    "nabhRate": 85000,
+    "nonNabhRate": 72250
+  },
+  {
+    "code": "1971",
+    "name": "RENAL COLIC (ROUTINE WARD)",
+    "nabhRate": 1800,
+    "nonNabhRate": 1530
+  },
+  {
+    "code": "1984",
+    "name": "ANGIOTENSIN CONVERTING ENZYME",
+    "nabhRate": 3300,
+    "nonNabhRate": 2805
+  },
+  {
+    "code": "1985",
+    "name": "GANGLIOSIDE IGG ANTIBODY PANEL,",
+    "nabhRate": 7300,
+    "nonNabhRate": 6205
+  },
+  {
+    "code": "1986",
+    "name": "GANGLIOSIDE IGM ANTIBODY PANEL.",
+    "nabhRate": 3300,
+    "nonNabhRate": 2805
+  },
+  {
+    "code": "1988",
+    "name": "AUTOIMMUNE ENCEPHALITIS PANEL",
+    "nabhRate": 16400,
+    "nonNabhRate": 13940
+  },
+  {
+    "code": "1989",
+    "name": "ENCEPHALITIS PANEL(BIO FIRE)",
+    "nabhRate": 8200,
+    "nonNabhRate": 6970
+  },
+  {
+    "code": "1990",
+    "name": "COMPREHENSIVE BIO FIBRE PANEL",
+    "nabhRate": 12000,
+    "nonNabhRate": 10200
+  },
+  {
+    "code": "1991",
+    "name": "ANTI CARDIOLIPIN ANTIBODY",
+    "nabhRate": 800,
+    "nonNabhRate": 680
+  },
+  {
+    "code": "1992",
+    "name": "BETA D GLUCAN",
+    "nabhRate": 7210,
+    "nonNabhRate": 6129
+  },
+  {
+    "code": "1993",
+    "name": "WHOLE EXOME SEQUENCING (WES)",
+    "nabhRate": 22000,
+    "nonNabhRate": 18700
+  },
+  {
+    "code": "1994",
+    "name": "DYE TEST",
+    "nabhRate": 14000,
+    "nonNabhRate": 11900
+  },
+  {
+    "code": "1995",
+    "name": "FLOW CROSS MATCH",
+    "nabhRate": 5600,
+    "nonNabhRate": 4760
+  },
+  {
+    "code": "1996",
+    "name": "IHC MSI",
+    "nabhRate": 4873,
+    "nonNabhRate": 4142
+  },
+  {
+    "code": "1997",
+    "name": "BRAF MUTATION",
+    "nabhRate": 4702,
+    "nonNabhRate": 3997
+  },
+  {
+    "code": "1998",
+    "name": "NGS LUNG  PANEL",
+    "nabhRate": 21042,
+    "nonNabhRate": 17886
+  },
+  {
+    "code": "1999",
+    "name": "ALL INITIAL ASSESMENT PANEL",
+    "nabhRate": 8100,
+    "nonNabhRate": 6885
+  },
+  {
+    "code": "2000",
+    "name": "FLOWCYTOMETRY",
+    "nabhRate": 10530,
+    "nonNabhRate": 8951
+  },
+  {
+    "code": "2001",
+    "name": "CONVENTIONAL CYTOGENETICS",
+    "nabhRate": 2754,
+    "nonNabhRate": 2341
+  },
+  {
+    "code": "2002",
+    "name": "FISH FOR TRANSLOCATION",
+    "nabhRate": 8100,
+    "nonNabhRate": 6885
+  },
+  {
+    "code": "2003",
+    "name": "FISH FOR MMC",
+    "nabhRate": 10080,
+    "nonNabhRate": 8568
+  },
+  {
+    "code": "2004",
+    "name": "MMC PANEL",
+    "nabhRate": 6480,
+    "nonNabhRate": 5508
+  },
+  {
+    "code": "2005",
+    "name": "BRCA 1 & 2",
+    "nabhRate": 16200,
+    "nonNabhRate": 13770
+  },
+  {
+    "code": "2006",
+    "name": "REFLEX PANEL",
+    "nabhRate": 5265,
+    "nonNabhRate": 4475
+  },
+  {
+    "code": "2007",
+    "name": "EPO LEVEL",
+    "nabhRate": 1620,
+    "nonNabhRate": 1377
+  },
+  {
+    "code": "2008",
+    "name": "HLA TYPING",
+    "nabhRate": 12825,
+    "nonNabhRate": 10901
+  },
+  {
+    "code": "2009",
+    "name": "HLA ABDR",
+    "nabhRate": 4950,
+    "nonNabhRate": 4208
+  },
+  {
+    "code": "2010",
+    "name": "HLA LYMPHOCYTE CROSS MATCH",
+    "nabhRate": 1500,
+    "nonNabhRate": 1275
+  },
+  {
+    "code": "2011",
+    "name": "ENA PROFILE",
+    "nabhRate": 4212,
+    "nonNabhRate": 3580
+  },
+  {
+    "code": "2012",
+    "name": "B2 GLYCOPROTEIN",
+    "nabhRate": 2551,
+    "nonNabhRate": 2168
+  },
+  {
+    "code": "2013",
+    "name": "COMBO LEUKEMIA PANEL",
+    "nabhRate": 20250,
+    "nonNabhRate": 17213
+  },
+  {
+    "code": "2014",
+    "name": "IRMA BY NGS",
+    "nabhRate": 7290,
+    "nonNabhRate": 6197
+  },
+  {
+    "code": "2015",
+    "name": "ALL PROGENASTIC PANEL (CORE)",
+    "nabhRate": 6075,
+    "nonNabhRate": 5164
+  },
+  {
+    "code": "2017",
+    "name": "CAN ASSIST BREAST TEST",
+    "nabhRate": 54000,
+    "nonNabhRate": 45900
+  },
+  {
+    "code": "2018",
+    "name": "FISH FOR MULTIPLE MYELOMA",
+    "nabhRate": 10125,
+    "nonNabhRate": 8606
+  },
+  {
+    "code": "2019",
+    "name": "CHRONIC PROLIFERATIVE DISORDER",
+    "nabhRate": 11700,
+    "nonNabhRate": 9945
+  },
+  {
+    "code": "2020",
+    "name": "PD L-1 22C3 CLONE",
+    "nabhRate": 12960,
+    "nonNabhRate": 11016
+  },
+  {
+    "code": "2021",
+    "name": "POLYP NATURE BENING VS MALIGNANT",
+    "nabhRate": 8640,
+    "nonNabhRate": 7344
+  },
+  {
+    "code": "2022",
+    "name": "IGH, IP 19 Q CODETION TEST ON BLOCK",
+    "nabhRate": 15390,
+    "nonNabhRate": 13082
+  },
+  {
+    "code": "2023",
+    "name": "PDL-1",
+    "nabhRate": 2700,
+    "nonNabhRate": 2295
+  },
+  {
+    "code": "2024",
+    "name": "IGHV MUTATIONAL STUDY",
+    "nabhRate": 9800,
+    "nonNabhRate": 8330
+  },
+  {
+    "code": "2025",
+    "name": "FISH FOR CLL PANEL",
+    "nabhRate": 6900,
+    "nonNabhRate": 5865
+  },
+  {
+    "code": "2026",
+    "name": "MPN RELAX PANEL",
+    "nabhRate": 8000,
+    "nonNabhRate": 6800
+  },
+  {
+    "code": "2027",
+    "name": "BCR/ABL BY RTPCR",
+    "nabhRate": 4500,
+    "nonNabhRate": 3825
+  },
+  {
+    "code": "2028",
+    "name": "ALL COMPRESENSIVE PANEL",
+    "nabhRate": 8500,
+    "nonNabhRate": 7225
+  },
+  {
+    "code": "2029",
+    "name": "AML",
+    "nabhRate": 8500,
+    "nonNabhRate": 7225
+  },
+  {
+    "code": "2030",
+    "name": "HER 2 NEU BY FISH.",
+    "nabhRate": 5500,
+    "nonNabhRate": 4675
+  },
+  {
+    "code": "2031",
+    "name": "S. CHROMOGRANIN",
+    "nabhRate": 6273,
+    "nonNabhRate": 5332
+  },
+  {
+    "code": "2033",
+    "name": "HEREDITARY HEMOLYTIC PANEL",
+    "nabhRate": 20250,
+    "nonNabhRate": 17213
+  },
+  {
+    "code": "2034",
+    "name": "AML PROGNOSTIFICATION PANEL",
+    "nabhRate": 10125,
+    "nonNabhRate": 8606
+  },
+  {
+    "code": "2035",
+    "name": "EGFR",
+    "nabhRate": 7500,
+    "nonNabhRate": 6375
+  },
+  {
+    "code": "2036",
+    "name": "PDLI",
+    "nabhRate": 8400,
+    "nonNabhRate": 7140
+  },
+  {
+    "code": "2037",
+    "name": "ALK",
+    "nabhRate": 9720,
+    "nonNabhRate": 8262
+  },
+  {
+    "code": "2038",
+    "name": "ROS1",
+    "nabhRate": 8100,
+    "nonNabhRate": 6885
+  },
+  {
+    "code": "2039",
+    "name": "PCR FOR JAK2 MUTATION",
+    "nabhRate": 2000,
+    "nonNabhRate": 1700
+  },
+  {
+    "code": "2040",
+    "name": "CMV-DNA PCR QUANTITATIVE",
+    "nabhRate": 2750,
+    "nonNabhRate": 2338
+  },
+  {
+    "code": "2041",
+    "name": "EXAMINATION FOR C-DIFF TOXIN",
+    "nabhRate": 4032,
+    "nonNabhRate": 3427
+  },
+  {
+    "code": "2042",
+    "name": "PCR FOR CMV DNA QUALITATIVE",
+    "nabhRate": 880,
+    "nonNabhRate": 748
+  },
+  {
+    "code": "2043",
+    "name": "PDL1-IHC",
+    "nabhRate": 5670,
+    "nonNabhRate": 4820
+  },
+  {
+    "code": "2044",
+    "name": "HLA \u2013A B DR LOCI TYPING PCR DUO",
+    "nabhRate": 4950,
+    "nonNabhRate": 4208
+  },
+  {
+    "code": "2045",
+    "name": "DS CROSS MATCH",
+    "nabhRate": 6160,
+    "nonNabhRate": 5236
+  },
+  {
+    "code": "2047",
+    "name": "CA 19.9",
+    "nabhRate": 2333,
+    "nonNabhRate": 1983
+  },
+  {
+    "code": "2048",
+    "name": "IHC MARKER STUDY",
+    "nabhRate": 4275,
+    "nonNabhRate": 3634
+  },
+  {
+    "code": "2049",
+    "name": "CB SINGLE ANTIGEN ASSAY",
+    "nabhRate": 11200,
+    "nonNabhRate": 9520
+  },
+  {
+    "code": "2051",
+    "name": "IMMUNOFIXATION",
+    "nabhRate": 5721,
+    "nonNabhRate": 4863
+  },
+  {
+    "code": "2052",
+    "name": "CHROMOSOME ANALYSIS",
+    "nabhRate": 10125,
+    "nonNabhRate": 8606
+  },
+  {
+    "code": "2053",
+    "name": "GLIOMA PANEL",
+    "nabhRate": 4200,
+    "nonNabhRate": 3570
+  },
+  {
+    "code": "2054",
+    "name": "COMPREHENSIVE LEUKEMIA PANEL",
+    "nabhRate": 20250,
+    "nonNabhRate": 17213
+  },
+  {
+    "code": "2055",
+    "name": "AML COMBO",
+    "nabhRate": 9100,
+    "nonNabhRate": 7735
+  },
+  {
+    "code": "2057",
+    "name": "MPN MUTATIONAL PANEL MPL CALR",
+    "nabhRate": 7500,
+    "nonNabhRate": 6375
+  },
+  {
+    "code": "2058",
+    "name": "BCR-ABL BY PCR",
+    "nabhRate": 4500,
+    "nonNabhRate": 3825
+  },
+  {
+    "code": "2059",
+    "name": "SERUM PLASMA RENIN",
+    "nabhRate": 2800,
+    "nonNabhRate": 2380
+  },
+  {
+    "code": "2060",
+    "name": "SERUM RENIN ALDOSTERONE RATIO",
+    "nabhRate": 4200,
+    "nonNabhRate": 3570
+  },
+  {
+    "code": "2061",
+    "name": "IBD SCREENING PANEL",
+    "nabhRate": 6258,
+    "nonNabhRate": 5319
+  },
+  {
+    "code": "2062",
+    "name": "CYCLOSPRINE",
+    "nabhRate": 3549,
+    "nonNabhRate": 3017
+  },
+  {
+    "code": "2063",
+    "name": "MGM 1803 CMV DRUG RESISTANCE",
+    "nabhRate": 16170,
+    "nonNabhRate": 13745
+  },
+  {
+    "code": "2065",
+    "name": "BALL MRD",
+    "nabhRate": 9982,
+    "nonNabhRate": 8485
+  },
+  {
+    "code": "2066",
+    "name": "HLA B 27",
+    "nabhRate": 1000,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "2067",
+    "name": "HLA -ABC",
+    "nabhRate": 2000,
+    "nonNabhRate": 1700
+  },
+  {
+    "code": "2068",
+    "name": "HLA-DR.DQ",
+    "nabhRate": 800,
+    "nonNabhRate": 680
+  },
+  {
+    "code": "2071",
+    "name": "HLA-DQ BETA",
+    "nabhRate": 3000,
+    "nonNabhRate": 2550
+  },
+  {
+    "code": "2072",
+    "name": "MUTATION DETECTION - FV LEIDEN",
+    "nabhRate": 1000,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "2073",
+    "name": "MUTATION DETECTION - MTHFR",
+    "nabhRate": 1000,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "2074",
+    "name": "MUTATION DETECTION - P20210",
+    "nabhRate": 1000,
+    "nonNabhRate": 850
+  },
+  {
+    "code": "2075",
+    "name": "FMP",
+    "nabhRate": 8500,
+    "nonNabhRate": 7225
+  },
+  {
+    "code": "2076",
+    "name": "PML- RARA BY PCR",
+    "nabhRate": 3500,
+    "nonNabhRate": 2975
+  },
+  {
+    "code": "2077",
+    "name": "IHC FOR ER, PR HER2NEU",
+    "nabhRate": 2000,
+    "nonNabhRate": 1700
+  },
+  {
+    "code": "2078",
+    "name": "IHC NONHODGKIN LYMPHOMA PANEL",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "2079",
+    "name": "IHC EXTENDED PANEL",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "2080",
+    "name": "IHC SINGLE MARKER",
+    "nabhRate": 600,
+    "nonNabhRate": 510
+  },
+  {
+    "code": "2081",
+    "name": "IHC CNS TUMOUR PANEL",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "2082",
+    "name": "IHC HODGKIN LYMPHOMA PANEL",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "2083",
+    "name": "IHC FOR MMR",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "2084",
+    "name": "RESPIRATORY VIRAL PANEL",
+    "nabhRate": 3500,
+    "nonNabhRate": 2975
+  },
+  {
+    "code": "2085",
+    "name": "INFLUENZA PANEL",
+    "nabhRate": 4000,
+    "nonNabhRate": 3400
+  },
+  {
+    "code": "2086",
+    "name": "BIOFIRE RESPIRATORY PANEL",
+    "nabhRate": 8200,
+    "nonNabhRate": 6970
+  },
+  {
+    "code": "2087",
+    "name": "BIOFIRE PNEUMONIA PANEL PLUS",
+    "nabhRate": 8200,
+    "nonNabhRate": 6970
+  },
+  {
+    "code": "2088",
+    "name": "HCV RNA VIRAL LOAD",
+    "nabhRate": 2500,
+    "nonNabhRate": 2125
+  },
+  {
+    "code": "1880",
+    "name": "BIPAP / NON INVASIVE VENTILATOR",
+    "nabhRate": 31,
+    "nonNabhRate": 27
+  }
+]

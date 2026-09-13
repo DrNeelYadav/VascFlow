@@ -1,0 +1,29 @@
+SETTINGS,,,,,,,,,
+"Add new Procedure Types, Operators, Referring Doctors, or Payer Schemes below. They will automatically appear as dropdown options in Patient Log and as categories in Analytics.",,,,,,,,,
+,,,,,,,,,
+Procedure Type,Default Follow-up Type,Default Interval Number,Default Interval Unit,,Operator Name,,Referring Doctor,,Payer / Scheme
+TACE,Imaging (CT/MR/USG),6,Weeks,,,,,,Chiranjeevi
+TARE (Y90),Imaging (CT/MR/USG),3,Months,,,,,,Ayushman Bharat
+RFA,Imaging (CT/MR/USG),1,Months,,,,,,RGHS
+MWA,Imaging (CT/MR/USG),1,Months,,,,,,ECHS
+Cryoablation,Imaging (CT/MR/USG),1,Months,,,,,,Outside State
+PTBD,OPD Visit,2,Weeks,,,,,,Others
+PTGBD,OPD Visit,2,Weeks,,,,,,
+Nephrostomy (PCN),OPD Visit,2,Weeks,,,,,,
+DJ Stenting,OPD Visit,3,Months,,,,,,
+Renal Angioplasty,OPD Visit,1,Months,,,,,,
+Peripheral Angioplasty/Stenting,OPD Visit,1,Months,,,,,,
+Uterine Fibroid Embolization,Imaging (CT/MR/USG),3,Months,,,,,,
+Varicocele Embolization,OPD Visit,3,Months,,,,,,
+IVC Filter Placement,Imaging (CT/MR/USG),6,Weeks,,,,,,
+IVC Filter Retrieval,OPD Visit,2,Weeks,,,,,,
+Central Venous Catheter,OPD Visit,1,Months,,,,,,
+Portacath Insertion,OPD Visit,1,Months,,,,,,
+Liver Biopsy,Telephonic Call,1,Weeks,,,,,,
+Renal Biopsy,Telephonic Call,1,Weeks,,,,,,
+Lung Biopsy,Telephonic Call,1,Weeks,,,,,,
+Bone Biopsy,Telephonic Call,1,Weeks,,,,,,
+Sclerotherapy,OPD Visit,6,Weeks,,,,,,
+Gastrostomy/Jejunostomy,OPD Visit,2,Weeks,,,,,,
+GI Bleed Embolization,Imaging (CT/MR/USG),1,Months,,,,,,
+Other,OPD Visit,1,Months,,,,,,

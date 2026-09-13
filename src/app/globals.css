@@ -1,0 +1,113 @@
+@import "../styles/google-material.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 220 14% 13%; /* #202124 Google Ink */
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 14% 13%;
+    --primary: 217 89% 51%; /* #1A73E8 Google Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%; /* #F1F3F4 Google Surface Hover */
+    --secondary-foreground: 220 14% 13%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%; /* #5F6368 Google Subtext */
+    --accent: 217 89% 95%; /* #E8F0FE Google Blue Soft */
+    --accent-foreground: 217 89% 51%;
+    --destructive: 4 90% 58%; /* #D93025 Google Red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 87%; /* #DADCE0 Google Border */
+    --input: 220 13% 87%;
+    --ring: 217 89% 51%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    border-color: #DADCE0;
+  }
+
+  body {
+    background-color: #FFFFFF;
+    color: #202124;
+    font-family: 'Google Sans', 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+}
+
+/* Google Workspace Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8F9FA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DADCE0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #BDC1C6;
+}
+
+/* Google Focus Outline */
+:focus-visible {
+  outline: 2px solid #1A73E8;
+  outline-offset: 1px;
+}
+
+/* A4 Print Styles: SMS Medical College Official Records */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 12mm 12mm;
+  }
+
+  body {
+    background-color: #FFFFFF !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+  }
+
+  .no-print,
+  nav,
+  header,
+  aside,
+  button,
+  .clinical-fab,
+  .print-hide {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-container {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #FFFFFF !important;
+    color: #111827 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .print-header {
+    text-align: center;
+    border-bottom: 2px solid #111827;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+}

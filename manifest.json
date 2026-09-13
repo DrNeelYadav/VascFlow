@@ -1,0 +1,17 @@
+{
+  "name": "SMS Jaipur - Interventional Radiology Clinical Hub",
+  "short_name": "SMS IR Hub",
+  "description": "Clinical Intake, Note OCR, Biopsy Tracker, Case Simulator & Rajasthan IHMS Automation Suite for SMS Hospital Interventional Radiology.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0284c7",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230284c7'/><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' fill='white' font-size='42' font-family='sans-serif' font-weight='bold'>IR</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

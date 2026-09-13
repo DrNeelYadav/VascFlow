@@ -1,0 +1,140 @@
+# ===========================================================================
+# Vascule OS Production PostgreSQL High-Availability Cluster (CloudNativePG)
+# 1 Primary + 2 Synchronous Standby Replicas (Zero Data Loss RPO=0)
+# ===========================================================================
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: vascule-pg-cluster
+  namespace: default
+  labels:
+    app.kubernetes.io/name: vascule-postgres
+    app.kubernetes.io/part-of: vascule-os
+    vascule.io/tier: database
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.2
+
+  # -------------------------------------------------------------------------
+  # High Availability & Synchronous Replication Parameters
+  # -------------------------------------------------------------------------
+  minSyncReplicas: 1
+  maxSyncReplicas: 1
+
+  # PostgreSQL Engine Tuning for High Concurrency Clinical PACS/BFF
+  postgresql:
+    parameters:
+      max_connections: "300"
+      shared_buffers: "4GB"
+      effective_cache_size: "12GB"
+      maintenance_work_mem: "1GB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "64MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "32MB"
+      min_wal_size: "2GB"
+      max_wal_size: "16GB"
+      archive_timeout: "300s" # Flush WAL at least every 5 mins for RPO < 5 mins
+      synchronous_commit: "on"
+      hot_standby: "on"
+      hot_standby_feedback: "on"
+    pg_hba:
+      - hostssl vascule_os vascule_admin all md5
+      - hostssl vascule_os vascule_app all md5
+      - hostssl all all 10.0.0.0/8 md5
+
+  # -------------------------------------------------------------------------
+  # Storage Specification (NVMe / SSD Dedicated Volumes)
+  # -------------------------------------------------------------------------
+  storage:
+    size: 100Gi
+    storageClass: premium-rwo
+  walStorage:
+    size: 50Gi
+    storageClass: premium-rwo
+
+  # -------------------------------------------------------------------------
+  # Compute Resources Allocation
+  # -------------------------------------------------------------------------
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1000m"
+    limits:
+      memory: "8Gi"
+      cpu: "4000m"
+
+  # -------------------------------------------------------------------------
+  # Node Affinity & Fault-Domain Topology Spread (Multi-Zone HA)
+  # -------------------------------------------------------------------------
+  affinity:
+    topologyKey: topology.kubernetes.io/zone
+    enablePodAntiAffinity: true
+
+  # -------------------------------------------------------------------------
+  # Continuous WAL Archiving & S3/MinIO Backup Configuration (Barman)
+  # -------------------------------------------------------------------------
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://vascule-dr-backups-ap-south-1/wal-archive/
+      endpointURL: https://s3.ap-south-1.amazonaws.com
+      serverName: vascule-pg-cluster-prod
+      s3Credentials:
+        accessKeyId:
+          name: vascule-s3-backup-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: vascule-s3-backup-secret
+          key: SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+        maxParallel: 4
+      data:
+        compression: gzip
+        jobs: 2
+    retentionPolicy: "30d"
+
+  # -------------------------------------------------------------------------
+  # Integrated Prometheus Metrics Exporter
+  # -------------------------------------------------------------------------
+  monitoring:
+    enablePodMonitor: true
+---
+# ===========================================================================
+# PgBouncer Connection Pooler for Read-Write (Primary) and Read-Only (Replicas)
+# ===========================================================================
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: vascule-pg-pooler-rw
+  namespace: default
+spec:
+  cluster:
+    name: vascule-pg-cluster
+  instances: 3
+  type: rw
+  pgbouncer:
+    poolMode: transaction
+    parameters:
+      max_client_conn: "1000"
+      default_pool_size: "50"
+      reserve_pool_size: "10"
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: vascule-pg-pooler-ro
+  namespace: default
+spec:
+  cluster:
+    name: vascule-pg-cluster
+  instances: 3
+  type: ro
+  pgbouncer:
+    poolMode: transaction
+    parameters:
+      max_client_conn: "1500"
+      default_pool_size: "75"
+      reserve_pool_size: "15"

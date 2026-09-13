@@ -1,0 +1,23 @@
+{
+  "name": "@vascule/api-contracts",
+  "version": "1.0.0",
+  "description": "OpenAPI 3.1.0 specifications and API contract definitions for Vascule OS microservices",
+  "main": "openapi.yaml",
+  "types": "dist/index.d.ts",
+  "files": [
+    "openapi.yaml"
+  ],
+  "scripts": {
+    "validate": "npx @stoplight/spectral-cli lint openapi.yaml",
+    "format": "prettier --write openapi.yaml"
+  },
+  "keywords": [
+    "vascule",
+    "api-contracts",
+    "openapi",
+    "auth-service"
+  ],
+  "author": "Vascule OS Infrastructure Team",
+  "license": "UNLICENSED",
+  "private": true
+}

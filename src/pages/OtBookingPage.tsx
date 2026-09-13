@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useClinicalStore } from '../stores/useClinicalStore';
 import { RAJASTHAN_HOLIDAYS_2026, isHolidayOrSunday } from '../data/holidays2026';
-import { IR_PROCEDURES } from '../data/procedures';
+import { EXTENSIVE_IR_PROCEDURES, IR_PROCEDURES } from '../data/procedures';
 import { getTomorrowDateString } from '../lib/utils';
 import { BookingSlot } from '../types/clinical';
 import {
@@ -51,6 +51,8 @@ export const OtBookingPage: React.FC = () => {
   const [ipdNo, setIpdNo] = useState('');
   const [bedNo, setBedNo] = useState('Daycare Bed 04');
   const [selectedProcId, setSelectedProcId] = useState('tace');
+  const [procSearchTerm, setProcSearchTerm] = useState('');
+  const [procCategoryFilter, setProcCategoryFilter] = useState('All');
   const [slotTime, setSlotTime] = useState('09:00 AM (First Case)');
   const [diagnosis, setDiagnosis] = useState('');
   const [notes, setNotes] = useState('');
@@ -103,7 +105,7 @@ export const OtBookingPage: React.FC = () => {
 
   const handleCreateBooking = (e: React.FormEvent) => {
     e.preventDefault();
-    const proc = IR_PROCEDURES.find((p) => p.id === selectedProcId) || IR_PROCEDURES[0];
+    const proc = EXTENSIVE_IR_PROCEDURES.find((p) => p.id === selectedProcId) || EXTENSIVE_IR_PROCEDURES[0];
 
     const newSlot: BookingSlot = {
       id: `book-${Date.now()}`,
@@ -659,34 +661,103 @@ For any urgent query, contact the IR Resident Doctor on duty.
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2 p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+                <div className="flex items-center justify-between">
+                  <label className="block text-slate-300 font-semibold text-xs">
+                    Procedure Blueprint ({EXTENSIVE_IR_PROCEDURES.length} Total Procedures) *
+                  </label>
+                  <span className="text-[10px] text-slate-400">
+                    Filter by category & keyword
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Search procedure name, code, ICD-10..."
+                      value={procSearchTerm}
+                      onChange={(e) => setProcSearchTerm(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-crimson-600 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <select
+                      value={procCategoryFilter}
+                      onChange={(e) => setProcCategoryFilter(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 focus:outline-none focus:border-crimson-600 text-xs"
+                    >
+                      <option value="All">All Categories (290 Procedures)</option>
+                      <option value="Dialysis Access & Fistula">Dialysis Access & Fistula (35)</option>
+                      <option value="Rare Syndromes & Vascular Disorders">Rare Syndromes & Compression (35)</option>
+                      <option value="Hepatobiliary & Portal Hypertension">Hepatobiliary & Portal HTN (35)</option>
+                      <option value="Interventional Oncology">Interventional Oncology (35)</option>
+                      <option value="Arterial Embolization & Pelvic Interventions">Arterial Embolization & Pelvic (35)</option>
+                      <option value="Venous Thromboembolism & Non-Vascular Drainage">Venous & Drainage (35)</option>
+                      <option value="Aortic & Peripheral Arterial Interventions">Aortic & Peripheral PAD (35)</option>
+                      <option value="Neurointerventional & Lymphatic">Neuro & Lymphatics (35)</option>
+                      <option value="Vascular Embolization">Vascular Embolization (Core)</option>
+                      <option value="Biliary Interventions">Biliary Interventions (Core)</option>
+                      <option value="Urinary Interventions">Urinary Interventions (Core)</option>
+                      <option value="Portal Hypertension">Portal Hypertension (Core)</option>
+                      <option value="Superficial Venous">Superficial Venous (Core)</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-slate-400 mb-1">Procedure Blueprint *</label>
                   <select
                     value={selectedProcId}
-                    onChange={(e) => setSelectedProcId(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 focus:outline-none focus:border-crimson-600 font-medium"
+                    onChange={(e) => {
+                      const newId = e.target.value;
+                      setSelectedProcId(newId);
+                      const matched = EXTENSIVE_IR_PROCEDURES.find((p) => p.id === newId);
+                      if (matched && matched.indications && matched.indications.length > 0) {
+                        setDiagnosis(matched.indications[0]);
+                      }
+                    }}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:border-crimson-500 font-medium text-xs leading-normal"
+                    size={4}
                   >
-                    {IR_PROCEDURES.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} ({p.code})
+                    {EXTENSIVE_IR_PROCEDURES.filter((p) => {
+                      const matchesCategory = procCategoryFilter === 'All' || p.category === procCategoryFilter;
+                      const matchesSearch = !procSearchTerm ||
+                        p.name.toLowerCase().includes(procSearchTerm.toLowerCase()) ||
+                        p.code.toLowerCase().includes(procSearchTerm.toLowerCase()) ||
+                        (p.icd10 && p.icd10.toLowerCase().includes(procSearchTerm.toLowerCase())) ||
+                        p.category.toLowerCase().includes(procSearchTerm.toLowerCase());
+                      return matchesCategory && matchesSearch;
+                    }).map((p) => (
+                      <option key={p.id} value={p.id} className="py-1 px-1.5 hover:bg-slate-800 rounded">
+                        [{p.category}] {p.name} — {p.code} ({p.icd10})
                       </option>
                     ))}
                   </select>
+                  {selectedProcId && (
+                    <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                      <span>
+                        Selected: <b className="text-crimson-400">{EXTENSIVE_IR_PROCEDURES.find((p) => p.id === selectedProcId)?.name}</b>
+                      </span>
+                      <span className="font-mono text-slate-300">
+                        MAAY: ₹{EXTENSIVE_IR_PROCEDURES.find((p) => p.id === selectedProcId)?.maayTariffInr.toLocaleString('en-IN') || 'N/A'}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className="block text-slate-400 mb-1">Slot Timing</label>
-                  <select
-                    value={slotTime}
-                    onChange={(e) => setSlotTime(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 focus:outline-none focus:border-crimson-600"
-                  >
-                    <option value="09:00 AM (First Case)">09:00 AM (First Case)</option>
-                    <option value="11:00 AM (Second Slot)">11:00 AM (Second Slot)</option>
-                    <option value="01:30 PM (Afternoon)">01:30 PM (Afternoon)</option>
-                    <option value="Emergency On-Call">Emergency On-Call</option>
-                  </select>
-                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1">Slot Timing</label>
+                <select
+                  value={slotTime}
+                  onChange={(e) => setSlotTime(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 focus:outline-none focus:border-crimson-600"
+                >
+                  <option value="09:00 AM (First Case)">09:00 AM (First Case)</option>
+                  <option value="11:00 AM (Second Slot)">11:00 AM (Second Slot)</option>
+                  <option value="01:30 PM (Afternoon)">01:30 PM (Afternoon)</option>
+                  <option value="Emergency On-Call">Emergency On-Call</option>
+                </select>
               </div>
 
               <div>

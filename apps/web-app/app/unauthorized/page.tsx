@@ -63,7 +63,7 @@ function UnauthorizedContent() {
           <Button
             variant="cobalt"
             size="lg"
-            onClick={() => router.push("/login?callbackUrl=/admin")}
+            onClick={() => router.push("/?callbackUrl=/admin")}
             className="w-full sm:w-auto flex-1 gap-2 font-medium shadow-cobalt-glow cursor-pointer"
           >
             <KeyRound className="w-4 h-4" />

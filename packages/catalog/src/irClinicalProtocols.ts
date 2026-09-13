@@ -28,7 +28,10 @@ export interface IRClinicalProtocol {
     | "Peripheral Vascular"
     | "Aortic & Complex"
     | "Venous & Dialysis Access"
-    | "Pelvic & Genitourinary";
+    | "Pelvic & Genitourinary"
+    | "Musculoskeletal & Pain"
+    | "Neurovascular & Head/Neck"
+    | "Lymphatic & Soft Tissue";
   modality: "XA";
   clinicalCriteria: string;
   recommendedLabs: string[];
@@ -39,7 +42,12 @@ export interface IRClinicalProtocol {
   postOpCare: PostOpCarePlan;
 }
 
-export const IR_CLINICAL_PROTOCOLS: IRClinicalProtocol[] = [
+import { MSK_AND_NEURO_PROTOCOLS } from "./protocols/mskAndNeuro";
+import { IO_AND_THORACIC_PROTOCOLS } from "./protocols/ioAndThoracic";
+import { PELVIC_AND_ENDOVASCULAR_PROTOCOLS } from "./protocols/pelvicAndEndovascular";
+import { LYMPHATICS_AND_VASCULAR_PROTOCOLS } from "./protocols/lymphaticsAndVascular";
+
+const BASE_IR_PROTOCOLS: IRClinicalProtocol[] = [
   // =========================================================================
   // 1. LIVER & HEPATOBILIARY
   // =========================================================================
@@ -416,6 +424,21 @@ export const IR_CLINICAL_PROTOCOLS: IRClinicalProtocol[] = [
   },
 ];
 
+export const IR_CLINICAL_PROTOCOLS: IRClinicalProtocol[] = [
+  ...BASE_IR_PROTOCOLS,
+  ...MSK_AND_NEURO_PROTOCOLS,
+  ...IO_AND_THORACIC_PROTOCOLS,
+  ...PELVIC_AND_ENDOVASCULAR_PROTOCOLS,
+  ...LYMPHATICS_AND_VASCULAR_PROTOCOLS,
+];
+
 export function getProtocolByKey(key: string): IRClinicalProtocol | undefined {
   return IR_CLINICAL_PROTOCOLS.find((p) => p.key === key);
 }
+
+export {
+  MSK_AND_NEURO_PROTOCOLS,
+  IO_AND_THORACIC_PROTOCOLS,
+  PELVIC_AND_ENDOVASCULAR_PROTOCOLS,
+  LYMPHATICS_AND_VASCULAR_PROTOCOLS,
+};

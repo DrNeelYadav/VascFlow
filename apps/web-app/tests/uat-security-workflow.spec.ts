@@ -152,10 +152,10 @@ test.describe("Vascule OS - Clinical UAT & Security Penetration E2E", () => {
       // Attempt unauthorized privilege escalation to /admin
       await page.goto("/admin");
 
-      // Assert that edge RBAC middleware blocks Resident and redirects to /unauthorized or /login
+      // Assert that edge RBAC middleware blocks Resident and redirects to /unauthorized or / (landing page)
       const currentUrl = page.url();
       expect(
-        currentUrl.includes("/unauthorized") || currentUrl.includes("/login")
+        currentUrl.includes("/unauthorized") || currentUrl.endsWith("/") || currentUrl.includes("/?")
       ).toBe(true);
     });
 

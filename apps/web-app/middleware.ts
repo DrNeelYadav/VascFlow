@@ -133,11 +133,16 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/proxy") ||
-    pathname === "/login" ||
     pathname === "/unauthorized" ||
     pathname === "/favicon.ico"
   ) {
     return NextResponse.next();
+  }
+
+  // 1b. Permanently redirect any legacy /login requests to landing page
+  if (pathname === "/login") {
+    const landingUrl = new URL("/", request.url);
+    return NextResponse.redirect(landingUrl, { status: 308 });
   }
 
   // 2. Identify protected route zones
@@ -152,11 +157,11 @@ export async function middleware(request: NextRequest) {
   // 3. Extract authenticated session claims
   const session = await getSessionClaims(request);
 
-  // 4. Redirect unauthenticated users to institutional login
+  // 4. Redirect unauthenticated users to institutional login landing page
   if (!session.isAuthenticated) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
+    const landingUrl = new URL("/", request.url);
+    landingUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(landingUrl);
   }
 
   // 5. Enforce Admin & Faculty tier boundary for /admin routes

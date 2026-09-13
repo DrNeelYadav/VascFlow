@@ -1,6 +1,10 @@
 // ---------------------------------------------------------------------------
-// Vascule OS Scheme Billing & Tariff Types
+// Vascule OS Scheme Billing & Tariff Types (Official Rajasthan Government Masters)
+// Ingested from: RGHS_PACKAGE_CODE_MASTER_07_01_2025_250208_135048.pdf
+// and MAA-Yojana-New-Package-Master-MDP.pdf
 // ---------------------------------------------------------------------------
+
+import officialPackagesJson from "./officialSchemePackages.json";
 
 export type SchemeType = "MAAY" | "RGHS";
 
@@ -17,6 +21,7 @@ export interface SchemePackage {
   scheme: SchemeType;
   specialty: string;
   baseTariffINR: number;
+  nonNabhTariffINR?: number;
   implantsIncluded: boolean;
   authorizedImplants: AuthorizedImplant[];
   preAuthRequired: boolean;
@@ -35,7 +40,7 @@ export interface ParsedTpaNotification {
 }
 
 // ---------------------------------------------------------------------------
-// Master Tariff Directory (35+ MAAY & 33+ RGHS packages)
+// Master Implant Capping Master
 // ---------------------------------------------------------------------------
 
 export const MASTER_IMPLANTS: Record<string, AuthorizedImplant> = {
@@ -51,303 +56,16 @@ export const MASTER_IMPLANTS: Record<string, AuthorizedImplant> = {
   EMB_02: { implantCode: "EMB_02", name: "Gelfoam Sterile Absorbable Gelatin Sponge", category: "Embolic Agent", cappedPriceINR: 1800 },
 };
 
-export const SCHEME_PACKAGES: SchemePackage[] = [
-  // --- MAAY PACKAGES (Mukhyamantri Ayushman Arogya Yojana) ---
-  {
-    packageCode: "MAAY-IR-001",
-    packageName: "Transcatheter Arterial Chemoembolization (TACE) - Single Session",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 35000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.LIP_01, MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.EMB_01],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "Clinical Summary", "Triple Phase CT / MRI Liver", "Serum Creatinine / LFT"],
-  },
-  {
-    packageCode: "MAAY-IR-002",
-    packageName: "Bronchial Artery Embolization (BAE) - Massive Hemoptysis",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 32000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.EMB_01, MASTER_IMPLANTS.COIL_02],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "CT Angiography Chest", "Emergency Clinical Admission Note"],
-  },
-  {
-    packageCode: "MAAY-IR-003",
-    packageName: "Percutaneous Transhepatic Biliary Drainage (PTBD) - Unilateral",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 18000,
-    implantsIncluded: false,
-    authorizedImplants: [],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "MRCP / CECT Abdomen", "Total & Direct Bilirubin"],
-  },
-  {
-    packageCode: "MAAY-IR-004",
-    packageName: "PTBD with Biliary SEMS Placement (Stenting)",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 42000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.SEMS_01],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "MRCP / CECT Abdomen", "Pre-procedure Cholangiogram"],
-  },
-  {
-    packageCode: "MAAY-IR-005",
-    packageName: "Transjugular Intrahepatic Portosystemic Shunt (TIPS)",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 85000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.SEMS_01, MASTER_IMPLANTS.MIC_01],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "Doppler Ultrasound Portal Vein", "Endoscopy Report", "Echocardiogram"],
-  },
-  {
-    packageCode: "MAAY-IR-006",
-    packageName: "Balloon-occluded Retrograde Transvenous Obliteration (BRTO)",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 45000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.COIL_01, MASTER_IMPLANTS.PLUG_01],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "Triple Phase CT Abdomen", "Upper GI Endoscopy"],
-  },
-  {
-    packageCode: "MAAY-IR-007",
-    packageName: "Uterine Fibroid Embolization (UFE)",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 28000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.EMB_01],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "Pelvic MRI / USG Pelvis", "Gynecological Clearance Note"],
-  },
-  {
-    packageCode: "MAAY-IR-008",
-    packageName: "Percutaneous Nephrostomy (PCN) - Unilateral",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 12000,
-    implantsIncluded: true,
-    authorizedImplants: [],
-    preAuthRequired: false,
-    requiredDocuments: ["Jan Aadhaar Card", "USG KUB / CT Urography", "Serum Creatinine"],
-  },
-  {
-    packageCode: "MAAY-IR-009",
-    packageName: "Percutaneous Nephrostomy with Antegrade DJ Stenting",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 22000,
-    implantsIncluded: false,
-    authorizedImplants: [],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "NCCT KUB", "Renal Function Tests"],
-  },
-  {
-    packageCode: "MAAY-IR-010",
-    packageName: "CT-Guided Core Needle Biopsy - Deep Organ / Bone",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 6500,
-    implantsIncluded: true,
-    authorizedImplants: [],
-    preAuthRequired: false,
-    requiredDocuments: ["Jan Aadhaar Card", "CT / MRI Scan identifying lesion", "Coagulation Profile (PT/INR)"],
-  },
-  {
-    packageCode: "MAAY-IR-011",
-    packageName: "USG-Guided Core Needle Biopsy - Room 922",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 4200,
-    implantsIncluded: true,
-    authorizedImplants: [],
-    preAuthRequired: false,
-    requiredDocuments: ["Jan Aadhaar Card", "Initial Ultrasound Report", "Platelet Count & PT/INR"],
-  },
-  {
-    packageCode: "MAAY-IR-012",
-    packageName: "Ultrasound Guided Pigtail Catheter Drainage (Pleural/Ascitic)",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 5500,
-    implantsIncluded: true,
-    authorizedImplants: [],
-    preAuthRequired: false,
-    requiredDocuments: ["Jan Aadhaar Card", "Chest X-Ray / Diagnostic Sonogram"],
-  },
-  {
-    packageCode: "MAAY-IR-013",
-    packageName: "Peripheral Artery Angioplasty / Stenting",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 48000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.SEMS_01],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "Arterial Doppler / CT Angiogram", "Diabetic Foot Clinical Assessment"],
-  },
-  {
-    packageCode: "MAAY-IR-014",
-    packageName: "AV Fistula Venoplasty / Salvage for Hemodialysis",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 24000,
-    implantsIncluded: false,
-    authorizedImplants: [],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "Fistula Doppler Ultrasound", "Nephrology Dialysis Access Request"],
-  },
-  {
-    packageCode: "MAAY-IR-015",
-    packageName: "Transcatheter Gastrointestinal Bleeding Embolization",
-    scheme: "MAAY",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 36000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.COIL_02, MASTER_IMPLANTS.EMB_02],
-    preAuthRequired: true,
-    requiredDocuments: ["Jan Aadhaar Card", "CT Angiography GI Bleed", "Emergency Endoscopy Summary"],
-  },
-  // Populate up to 36 MAAY procedures...
-  ...Array.from({ length: 21 }).map((_, i) => {
-    const idx = 16 + i;
-    return {
-      packageCode: `MAAY-IR-0${idx < 10 ? "0" + idx : idx}`,
-      packageName: `MAAY IR Procedure Tier ${idx} - Interventional Protocol`,
-      scheme: "MAAY" as SchemeType,
-      specialty: "Interventional Radiology",
-      baseTariffINR: 15000 + i * 2500,
-      implantsIncluded: i % 2 === 0,
-      authorizedImplants: i % 3 === 0 ? [MASTER_IMPLANTS.MIC_01] : [],
-      preAuthRequired: i % 2 === 1,
-      requiredDocuments: ["Jan Aadhaar Card", "Departmental IR Work order"],
-    };
-  }),
+// ---------------------------------------------------------------------------
+// Official Packages Directory (4,955 Genuine Government Packages)
+// ---------------------------------------------------------------------------
 
-  // --- RGHS PACKAGES (Rajasthan Government Health Scheme) ---
-  {
-    packageCode: "RGHS-IR-001",
-    packageName: "Hepatic Chemoembolization / TACE with Drug Eluting Beads",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 42000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.LIP_01, MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.EMB_01],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "Doctor Prescription & OPD Slip", "CECT/MRI Liver", "Tumor Board Approval"],
-  },
-  {
-    packageCode: "RGHS-IR-002",
-    packageName: "Diagnostic Digital Subtraction Angiography (DSA) - Multi-vessel",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 18500,
-    implantsIncluded: true,
-    authorizedImplants: [],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "Referring Physician Referral", "Renal Function Assessment"],
-  },
-  {
-    packageCode: "RGHS-IR-003",
-    packageName: "Bronchial Artery Embolization with Microcoils / Gel",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 38000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.COIL_01, MASTER_IMPLANTS.COIL_02],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "CT Chest with IV Contrast", "Pulmonary Medicine Note"],
-  },
-  {
-    packageCode: "RGHS-IR-004",
-    packageName: "Percutaneous Biliary SEMS Uncovered / Covered",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 48000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.SEMS_01, MASTER_IMPLANTS.SEMS_02],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "Histopathology Biopsy Report", "MRCP Images"],
-  },
-  {
-    packageCode: "RGHS-IR-005",
-    packageName: "Transhepatic Portal Vein Embolization (PVE) for Liver Remnant",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 52000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.PLUG_01, MASTER_IMPLANTS.MIC_01],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "GI Surgery Tumor Volumetry Plan", "Triphasic CT Liver"],
-  },
-  {
-    packageCode: "RGHS-IR-006",
-    packageName: "Radiofrequency / Microwave Ablation (RFA/MWA) of Liver/Lung Tumor",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 65000,
-    implantsIncluded: false,
-    authorizedImplants: [],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "CT/MRI Tumor Localization", "Surgical Ineligibility Clearance"],
-  },
-  {
-    packageCode: "RGHS-IR-007",
-    packageName: "Varicocele Retrograde Embolization with Coils & Sclerosant",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 26000,
-    implantsIncluded: false,
-    authorizedImplants: [MASTER_IMPLANTS.COIL_02],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "Scrotal Doppler Ultrasound", "Semen Analysis"],
-  },
-  {
-    packageCode: "RGHS-IR-008",
-    packageName: "Thyroid Nodule Ultrasound-Guided RFA / Ablation",
-    scheme: "RGHS",
-    specialty: "Interventional Radiology",
-    baseTariffINR: 34000,
-    implantsIncluded: false,
-    authorizedImplants: [],
-    preAuthRequired: true,
-    requiredDocuments: ["RGHS Card / TID", "FNAC Bethesda Classification", "TFT (Thyroid Profile)"],
-  },
-  // Populate up to 34 RGHS packages...
-  ...Array.from({ length: 26 }).map((_, i) => {
-    const idx = 9 + i;
-    return {
-      packageCode: `RGHS-IR-0${idx < 10 ? "0" + idx : idx}`,
-      packageName: `RGHS Interventional Suite Tariff Package Grade ${idx}`,
-      scheme: "RGHS" as SchemeType,
-      specialty: "Interventional Radiology",
-      baseTariffINR: 19000 + i * 2200,
-      implantsIncluded: i % 2 === 0,
-      authorizedImplants: i % 4 === 0 ? [MASTER_IMPLANTS.MIC_01, MASTER_IMPLANTS.COIL_02] : [],
-      preAuthRequired: true,
-      requiredDocuments: ["RGHS Card / TID", "Treating Consultant OPD Requisition"],
-    };
-  }),
-];
+export const SCHEME_PACKAGES: SchemePackage[] = officialPackagesJson as unknown as SchemePackage[];
 
 // ---------------------------------------------------------------------------
 // TPA Portal / SMS Notification Parser
 // ---------------------------------------------------------------------------
 
-/**
- * Extracts TID, Card Number, Package Code, Approved Amount, and Patient Name
- * from pasted TPA portal notifications or SMS alerts.
- */
 export function parseTpaNotification(rawText: string): ParsedTpaNotification {
   const result: ParsedTpaNotification = {
     rawText,
@@ -359,7 +77,7 @@ export function parseTpaNotification(rawText: string): ParsedTpaNotification {
   }
 
   // Detect Scheme
-  if (/MAAY|Mukhya\s*mantri|Ayushman/i.test(rawText)) {
+  if (/MAAY|Mukhya\s*mantri|Ayushman|Chiranjeevi/i.test(rawText)) {
     result.schemeDetected = "MAAY";
   } else if (/RGHS|Rajasthan\s*Government\s*Health/i.test(rawText)) {
     result.schemeDetected = "RGHS";
@@ -375,29 +93,31 @@ export function parseTpaNotification(rawText: string): ParsedTpaNotification {
   }
 
   // Extract Transaction ID (TID)
-  // Matches: TID: 12345678, TID#TXN12345, Transaction ID : 987654
   const tidMatch = rawText.match(/(?:TID|Transaction\s*(?:ID|No|#)|Txn\s*ID)[\s:=#-]+([A-Za-z0-9_-]{5,24})/i);
   if (tidMatch) {
     result.transactionId = tidMatch[1].trim();
   }
 
   // Extract Card Number / Jan Aadhaar Number / RGHS ID
-  // Matches: Card: 1234567890, RGHS ID: RJ-1234567, Jan Aadhaar: 1234-5678-9012
   const cardMatch = rawText.match(/(?:Card\s*(?:No|#)|Jan\s*Aadhaar|RGHS\s*(?:ID|No)|Health\s*ID)[\s:=#-]+([A-Za-z0-9-]{7,24})/i);
   if (cardMatch) {
     result.cardNumber = cardMatch[1].trim();
   }
 
-  // Extract Package Code
-  // Matches: MAAY-IR-001, RGHS-IR-004, Code: PKG123
-  const pkgMatch = rawText.match(/((?:MAAY|RGHS)-IR-[0-9]{3})/i) ||
-                   rawText.match(/(?:Package\s*(?:Code|ID)|Pkg\s*Code)[\s:=#-]+([A-Za-z0-9_-]+)/i);
-  if (pkgMatch) {
-    result.packageCode = pkgMatch[1].trim().toUpperCase();
+  // Extract Package Code (Prioritizing explicit 'Package: ...' or 'Package Code: ...')
+  const explicitPkgMatch = rawText.match(/(?:Package\s*(?:Code|ID)|Package|Pkg\s*Code)[\s:=#-]+([A-Za-z0-9_-]+)/i);
+  if (explicitPkgMatch) {
+    result.packageCode = explicitPkgMatch[1].trim().toUpperCase();
+  } else {
+    const pkgPatternMatch =
+      rawText.match(/((?:MAAY|RGHS)-[A-Za-z0-9_-]+)/i) ||
+      rawText.match(/([12]\d{3}-[A-Z]{2}\d{3}[A-Z0-9]*(?:RJ)?)/i);
+    if (pkgPatternMatch) {
+      result.packageCode = pkgPatternMatch[1].trim().toUpperCase();
+    }
   }
 
   // Extract Approved Amount
-  // Matches: Rs. 35,000, INR 42000, Amount: 32000/-, Sanctioned: 85,000
   const amtMatch = rawText.match(/(?:Rs\.?|INR|Amount|Sanctioned|Approved(?:\s*Amount)?)[\s:=]+([0-9,]+)(?:\.\d{2})?(?:\/-)?/i);
   if (amtMatch) {
     const numericStr = amtMatch[1].replace(/,/g, "");
@@ -408,11 +128,9 @@ export function parseTpaNotification(rawText: string): ParsedTpaNotification {
   }
 
   // Extract Patient Name
-  // Matches: Patient: Sharma, Rajesh or Beneficiary: Rajesh Sharma under MAAY scheme.
   const nameMatch = rawText.match(/(?:Patient(?:\s*Name)?|Beneficiary|Name)[\s:=]+([A-Za-z^.,\s]{3,35})(?:\r|\n|,|\.|;|$)/i);
   if (nameMatch) {
     let candidateName = nameMatch[1].trim();
-    // Strip trailing connectors like "under ..."
     candidateName = candidateName.replace(/\s+(?:under|for|in|with|scheme|at)\b.*$/i, "").trim();
     if (!/^(None|NA|Unknown|TID|RGHS|MAAY)$/i.test(candidateName)) {
       result.patientName = candidateName;
@@ -427,7 +145,22 @@ export function parseTpaNotification(rawText: string): ParsedTpaNotification {
  */
 export function findMatchingPackage(packageCode?: string): SchemePackage | undefined {
   if (!packageCode) return undefined;
+  const normalized = packageCode.toUpperCase().trim();
+
+  // Alias lookup for common clinical abbreviations
+  if (normalized === "MAAY-IR-001" || normalized === "TACE" || normalized === "CTACE") {
+    return SCHEME_PACKAGES.find((p) => p.packageCode === "2849-IN061A") || SCHEME_PACKAGES[0];
+  }
+  if (normalized === "MAAY-IR-002" || normalized === "BAE") {
+    return SCHEME_PACKAGES.find((p) => p.packageCode === "2849-MC018A");
+  }
+  if (normalized === "RGHS-IR-004" || normalized === "BILIARY_SEMS") {
+    return SCHEME_PACKAGES.find((p) => p.packageCode === "2849-IN006A") || SCHEME_PACKAGES.find((p) => p.packageCode === "RGHS-1308");
+  }
+
   return SCHEME_PACKAGES.find(
-    (p) => p.packageCode.toUpperCase() === packageCode.toUpperCase()
+    (p) =>
+      p.packageCode.toUpperCase() === normalized ||
+      p.packageCode.toUpperCase().replace("RGHS-", "") === normalized
   );
 }

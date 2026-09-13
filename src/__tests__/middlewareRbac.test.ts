@@ -108,9 +108,8 @@ describe("Edge Route Guarding & RBAC Middleware Suite", () => {
   });
 
   describe("Middleware Route Interception & Access Control", () => {
-    it("bypasses public routes without authentication", async () => {
+    it("bypasses public routes without authentication and redirects /login to landing page", async () => {
       const publicPaths = [
-        "http://localhost:3000/login",
         "http://localhost:3000/unauthorized",
         "http://localhost:3000/_next/static/chunk.js",
         "http://localhost:3000/api/auth/providers",
@@ -124,26 +123,32 @@ describe("Edge Route Guarding & RBAC Middleware Suite", () => {
         // NextResponse.next() returns response with null redirect
         expect(res.headers.get("location")).toBeNull();
       }
+
+      // Legacy /login URL is permanently redirected to landing page
+      const loginReq = new NextRequest("http://localhost:3000/login");
+      const loginRes = await middleware(loginReq);
+      expect(loginRes.status).toBe(308);
+      expect(loginRes.headers.get("location")).toBe("http://localhost:3000/");
     });
 
-    it("redirects unauthenticated requests on /dashboard to /login with callbackUrl", async () => {
+    it("redirects unauthenticated requests on /dashboard to landing page with callbackUrl", async () => {
       const req = new NextRequest("http://localhost:3000/dashboard/suite-1");
       const res = await middleware(req);
 
       expect(res.status).toBe(307);
       const location = res.headers.get("location");
-      expect(location).toContain("/login");
       expect(location).toContain("callbackUrl=%2Fdashboard%2Fsuite-1");
+      expect(location).toBe("http://localhost:3000/?callbackUrl=%2Fdashboard%2Fsuite-1");
     });
 
-    it("redirects unauthenticated requests on /admin to /login with callbackUrl", async () => {
+    it("redirects unauthenticated requests on /admin to landing page with callbackUrl", async () => {
       const req = new NextRequest("http://localhost:3000/admin/cluster");
       const res = await middleware(req);
 
       expect(res.status).toBe(307);
       const location = res.headers.get("location");
-      expect(location).toContain("/login");
       expect(location).toContain("callbackUrl=%2Fadmin%2Fcluster");
+      expect(location).toBe("http://localhost:3000/?callbackUrl=%2Fadmin%2Fcluster");
     });
 
     it("allows Resident access to /dashboard", async () => {

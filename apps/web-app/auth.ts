@@ -209,8 +209,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 24 * 60 * 60, // 24 hours to match backend token TTL
   },
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/",
+    error: "/",
   },
   providers: [
     CredentialsProvider({

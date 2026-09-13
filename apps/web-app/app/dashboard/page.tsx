@@ -9,7 +9,6 @@ import {
   ModalityType,
   BookedCaseRecord,
   BedRecord,
-  BedStatus,
 } from "./useEndoflowStore";
 import {
   IR_CLINICAL_PROTOCOLS,
@@ -21,6 +20,12 @@ import {
   StaffAccount,
   getStaffPermissions,
 } from "../lib/staffAccounts";
+import {
+  RAJASTHAN_HOLIDAYS_2026,
+  getHolidayForDate,
+  isDateElectiveBlocked,
+} from "../lib/rajasthanHolidays2026";
+import { RAJASTHAN_DISTRICTS } from "../lib/rajasthanDistricts";
 import {
   Activity,
   Calendar,
@@ -51,11 +56,16 @@ import {
   CheckSquare,
   Square,
   ChevronRight,
+  ChevronLeft,
   Building,
   User,
   LogOut,
   MapPin,
   ClipboardList,
+  AlertTriangle,
+  CalendarDays,
+  ListFilter,
+  Check,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -71,17 +81,12 @@ export default function DashboardPage() {
     advanceStage,
     callPatientToLab,
     completeProcedureAndTransfer,
-    dischargePatient,
     setSearchQuery,
     setFilterModality,
-    resetToDefaultPatients,
     bookCase,
     rescheduleCase,
-    updateCaseHardwareItem,
-    addCustomHardwareItem,
     getTomorrowReminders,
-    updateBed,
-    transferPatientBed,
+    screenCaseChecklist,
   } = useEndoflowStore();
 
   // Load session if present in localStorage
@@ -113,10 +118,20 @@ export default function DashboardPage() {
     INSTITUTIONAL_STAFF_ACCOUNTS[0];
   const permissions = getStaffPermissions(activeStaff.role);
 
-  // Tab State for Doctors (DM Case Booking, Cath-Lab, 8 Beds, Master Worklist)
+  // Tab State for Doctors (Booking Diary, Cath-Lab Console, Master Worklist)
   const [doctorActiveTab, setDoctorActiveTab] = useState<
-    "booking" | "cathlab" | "beds" | "worklist"
+    "booking" | "cathlab" | "worklist"
   >("booking");
+
+  // Booking View Mode: List Diary vs Calendar View
+  const [bookingViewMode, setBookingViewMode] = useState<"list" | "calendar">("list");
+
+  // Calendar Navigation State (Default to current month / year or 2026)
+  const [calendarYear, setCalendarYear] = useState<number>(2026);
+  const [calendarMonth, setCalendarMonth] = useState<number>(8); // 0-indexed: 8 = September 2026
+
+  // Role Switcher Modal
+  const [showRoleSwitcher, setShowRoleSwitcher] = useState<boolean>(false);
 
   // Reminders for tomorrow
   const tomorrowReminders = useMemo(() => {
@@ -131,8 +146,6 @@ export default function DashboardPage() {
   const [rescheduleReason, setRescheduleReason] = useState<string>("");
   const [printSummaryCase, setPrintSummaryCase] =
     useState<BookedCaseRecord | null>(null);
-  const [transferModalBed, setTransferModalBed] = useState<BedRecord | null>(null);
-  const [targetTransferBedId, setTargetTransferBedId] = useState<string>("Ward-04");
 
   // Booking Form State
   const [formPatientName, setFormPatientName] = useState<string>("Ramswaroop Meena");
@@ -140,7 +153,7 @@ export default function DashboardPage() {
   const [formSex, setFormSex] = useState<"Male" | "Female">("Male");
   const [formContact, setFormContact] = useState<string>("9829012345");
   const [formSso, setFormSso] = useState<string>("SMS-2026-089");
-  const [formLocation, setFormLocation] = useState<string>("Sikar, Rajasthan");
+  const [formLocation, setFormLocation] = useState<string>("Sikar");
   const [formScheduledDate, setFormScheduledDate] = useState<string>(
     new Date(Date.now() + 86400000).toISOString().split("T")[0]
   );
@@ -201,6 +214,11 @@ export default function DashboardPage() {
       );
     }
   }, [activeProtocol]);
+
+  // Check holiday warning for selected booking date
+  const selectedDateHoliday = useMemo(() => {
+    return getHolidayForDate(formScheduledDate);
+  }, [formScheduledDate]);
 
   // Technician OPD Intake State
   const [techIntakeName, setTechIntakeName] = useState<string>("");
@@ -289,7 +307,7 @@ export default function DashboardPage() {
       sex: formSex,
       contactNumber: formContact,
       ssoNumber: formSso,
-      location: formLocation,
+      location: `${formLocation}, Rajasthan`,
       scheduledDate: formScheduledDate,
       organSystem: formOrganSystem,
       diseaseKey: formDiseaseKey,
@@ -343,21 +361,57 @@ export default function DashboardPage() {
     return patients.find((p) => p.status === "In Cath-Lab") || patients[0];
   }, [patients, activeCaseId]);
 
+  // Generate Calendar Days for Current Month
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const calendarDays = useMemo(() => {
+    const firstDayIndex = new Date(calendarYear, calendarMonth, 1).getDay(); // 0 = Sun
+    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    const days = [];
+
+    // Prepend empty padding for previous month days
+    for (let i = 0; i < firstDayIndex; i++) {
+      days.push(null);
+    }
+
+    // Days in current month
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const holidayInfo = getHolidayForDate(dateStr);
+      const casesOnDate = bookedCases.filter((c) => c.scheduledDate === dateStr);
+      days.push({
+        dayNumber: d,
+        dateStr,
+        holidayInfo,
+        cases: casesOnDate,
+      });
+    }
+
+    return days;
+  }, [calendarYear, calendarMonth, bookedCases]);
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      {/* 1. Decluttered Google Workspace Header: Staff Identity & Switcher */}
+      {/* 1. Official Department Header: Decluttered & Professional */}
       <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-full bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC] flex items-center justify-center font-bold text-sm shadow-xs">
-            {activeStaff.avatar}
+          <div className="w-12 h-12 rounded-xl bg-[#1A73E8] text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+            SMS
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-base sm:text-lg font-bold text-[#202124] tracking-tight">
-                {activeStaff.name}
+                Department of Radiodiagnosis & Interventional Radiology
               </h1>
+            </div>
+            <p className="text-xs text-[#5F6368] mt-0.5 flex items-center gap-1.5 flex-wrap">
+              <span>SMS Medical College & Attached Hospitals, Jaipur</span>
+              <span>•</span>
               <span
-                className={`px-2.5 py-0.5 text-[11px] font-bold uppercase rounded-full ${
+                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
                   activeStaff.role === "DOCTOR"
                     ? "bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]"
                     : activeStaff.role === "NURSE"
@@ -365,53 +419,50 @@ export default function DashboardPage() {
                     : "bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]"
                 }`}
               >
-                {activeStaff.role} ({activeStaff.code})
+                {activeStaff.title} [{activeStaff.code}]
               </span>
-            </div>
-            <p className="text-xs text-[#5F6368] mt-0.5">
-              {activeStaff.title} • {activeStaff.department}
             </p>
           </div>
         </div>
 
-        {/* Switch Profile / Logout */}
-        <div className="flex items-center gap-2 self-end sm:self-auto">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
+        {/* In-Dashboard Role Switcher & Reset */}
+        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          <button
+            onClick={() => setShowRoleSwitcher(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
           >
-            <User className="w-3.5 h-3.5 text-[#5F6368]" />
-            <span>Switch Role</span>
-          </Link>
-          <Link
-            href="/"
+            <User className="w-3.5 h-3.5 text-[#1A73E8]" />
+            <span>Switch Role ({activeStaff.code})</span>
+          </button>
+          <button
             onClick={() => {
               try {
                 localStorage.removeItem("vascule_staff_session");
-                document.cookie = "vascule_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                const defaultDoctor = INSTITUTIONAL_STAFF_ACCOUNTS.find((s) => s.code === "DM01") || INSTITUTIONAL_STAFF_ACCOUNTS[0];
+                setCurrentStaff(defaultDoctor);
               } catch {}
             }}
             className="p-2 rounded-full border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#FCE8E6] text-[#5F6368] hover:text-[#C5221F] transition-colors cursor-pointer"
-            title="Institutional Logout"
+            title="Reset Staff Session"
           >
             <LogOut className="w-3.5 h-3.5" />
-          </Link>
+          </button>
         </div>
       </div>
 
-      {/* 2. Top 1-Day Advance Reminder Alert Banner (For Doctors when cases scheduled for tomorrow) */}
+      {/* 2. Advance 1-Day Reminder Alert & 4-Point Checklist (When Cases Scheduled for Tomorrow) */}
       {permissions.isDoctor && tomorrowReminders.length > 0 && (
         <div className="bg-[#FEF7E0] border border-[#FEEFC3] rounded-2xl p-4 sm:p-5 shadow-xs">
           <div className="flex items-start gap-3.5">
-            <div className="p-2 rounded-xl bg-[#FBBC04]/20 text-[#B06000] shrink-0 mt-0.5">
+            <div className="p-2.5 rounded-xl bg-[#FBBC04]/20 text-[#B06000] shrink-0 mt-0.5">
               <Bell className="w-5 h-5 animate-bounce" />
             </div>
-            <div className="flex-1 space-y-2">
+            <div className="flex-1 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <h3 className="text-sm font-bold text-[#202124] flex items-center gap-2">
-                  <span>Cath-Lab 1-Day Advance Resident Alert</span>
-                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[#F29900] text-white">
-                    {tomorrowReminders.length} Case Tomorrow
+                  <span>Cath-Lab Advance 1-Day Pre-Op Screening Queue</span>
+                  <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#F29900] text-white">
+                    {tomorrowReminders.length} Case Scheduled for Tomorrow
                   </span>
                 </h3>
                 <span className="text-xs font-mono text-[#5F6368]">
@@ -422,46 +473,195 @@ export default function DashboardPage() {
               {tomorrowReminders.map((c) => (
                 <div
                   key={c.id}
-                  className="bg-[#FFFFFF] border border-[#FEEFC3] rounded-xl p-3 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs"
+                  className="bg-[#FFFFFF] border border-[#FEEFC3] rounded-xl p-4 text-xs space-y-3 shadow-2xs"
                 >
-                  <div className="space-y-1">
-                    <p className="font-bold text-[#202124] text-sm">
-                      Call <span className="text-[#1A73E8]">{c.patientName}</span> ({c.contactNumber}, {c.location}) today for tomorrow&apos;s Cath-Lab slot!
-                    </p>
-                    <p className="text-[#5F6368]">
-                      Procedure: <span className="font-semibold text-[#202124]">{c.procedureTitle}</span> • CR/SSO: <span className="font-mono">{c.ssoNumber}</span>
-                    </p>
-                    <p className="text-[#B06000] font-medium flex items-center gap-1.5">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                      Orders Required: 6-hour NPO fasting, LFT, RFT, Coagulation Profile, and verify blood products.
-                    </p>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#FEEFC3] pb-2.5">
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-[#202124] text-sm flex items-center gap-2">
+                        <span>{c.patientName}</span>
+                        <span className="text-xs font-normal text-[#5F6368]">
+                          ({c.age}y / {c.sex})
+                        </span>
+                        <span className="px-2 py-0.5 text-[10px] font-mono bg-[#F1F3F4] rounded border border-[#DADCE0]">
+                          CR: {c.ssoNumber}
+                        </span>
+                      </p>
+                      <p className="text-xs text-[#1A73E8] font-semibold">
+                        {c.procedureTitle} • {c.location}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={`tel:${c.contactNumber}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#E6F4EA] border border-[#CEEAD6] text-[#137333] hover:bg-[#CEEAD6] font-semibold text-xs transition-colors cursor-pointer"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>Call ({c.contactNumber})</span>
+                      </a>
+                      <button
+                        onClick={() => {
+                          setRescheduleModalCase(c);
+                          setNewRescheduleDate(c.scheduledDate);
+                        }}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#FFFFFF] border border-[#DADCE0] text-[#3C4043] hover:bg-[#F1F3F4] font-semibold text-xs transition-colors cursor-pointer"
+                      >
+                        <CalendarClock className="w-3.5 h-3.5 text-[#5F6368]" />
+                        <span>Reschedule</span>
+                      </button>
+                      <button
+                        onClick={() => setPrintSummaryCase(c)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1A73E8] text-white hover:bg-[#1557B0] font-semibold text-xs transition-colors cursor-pointer"
+                      >
+                        <ClipboardList className="w-3.5 h-3.5" />
+                        <span>Review Protocol</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    <a
-                      href={`tel:${c.contactNumber}`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#E6F4EA] border border-[#CEEAD6] text-[#137333] hover:bg-[#CEEAD6] font-semibold text-xs transition-colors cursor-pointer"
-                    >
-                      <Phone className="w-3.5 h-3.5" />
-                      <span>Call Patient</span>
-                    </a>
-                    <button
-                      onClick={() => {
-                        setRescheduleModalCase(c);
-                        setNewRescheduleDate(c.scheduledDate);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFFFFF] border border-[#DADCE0] text-[#3C4043] hover:bg-[#F1F3F4] font-semibold text-xs transition-colors cursor-pointer"
-                    >
-                      <CalendarClock className="w-3.5 h-3.5 text-[#5F6368]" />
-                      <span>Reschedule</span>
-                    </button>
-                    <button
-                      onClick={() => setPrintSummaryCase(c)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1A73E8] text-white hover:bg-[#1557B0] font-semibold text-xs transition-colors cursor-pointer"
-                    >
-                      <ClipboardList className="w-3.5 h-3.5" />
-                      <span>Review Protocol</span>
-                    </button>
+                  {/* 4-Point Mandatory Pre-Op Resident Screening Checklist */}
+                  <div className="space-y-2">
+                    <p className="font-bold text-[#B06000] text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      Mandatory 4-Point Screening Checklist (Dr. Neel / Dr. Nilesh Sign-off):
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                      {/* Checkbox 1: 6h NPO */}
+                      <label
+                        className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors cursor-pointer ${
+                          c.npoVerified
+                            ? "bg-[#E6F4EA] border-[#CEEAD6] text-[#137333]"
+                            : "bg-[#F8F9FA] border-[#DADCE0] text-[#3C4043] hover:bg-[#F1F3F4]"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={c.npoVerified}
+                          onChange={(e) =>
+                            screenCaseChecklist(
+                              c.id,
+                              "npo",
+                              e.target.checked,
+                              activeStaff.name
+                            )
+                          }
+                          className="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-0 cursor-pointer"
+                        />
+                        <div className="text-[11px]">
+                          <span className="font-bold block">1. 6-Hour NPO Fasting</span>
+                          <span className="text-[10px] text-[#5F6368]">
+                            Verified with patient / attendant
+                          </span>
+                        </div>
+                      </label>
+
+                      {/* Checkbox 2: Labs Checked */}
+                      <label
+                        className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors cursor-pointer ${
+                          c.labsVerified
+                            ? "bg-[#E6F4EA] border-[#CEEAD6] text-[#137333]"
+                            : "bg-[#F8F9FA] border-[#DADCE0] text-[#3C4043] hover:bg-[#F1F3F4]"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={c.labsVerified}
+                          onChange={(e) =>
+                            screenCaseChecklist(
+                              c.id,
+                              "labs",
+                              e.target.checked,
+                              activeStaff.name
+                            )
+                          }
+                          className="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-0 cursor-pointer"
+                        />
+                        <div className="text-[11px]">
+                          <span className="font-bold block">2. LFT, RFT & Coagulation</span>
+                          <span className="text-[10px] text-[#5F6368]">
+                            PT-INR, Platelets, Creatinine OK
+                          </span>
+                        </div>
+                      </label>
+
+                      {/* Checkbox 3: Blood Products */}
+                      <label
+                        className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors cursor-pointer ${
+                          c.bloodProductsVerified
+                            ? "bg-[#E6F4EA] border-[#CEEAD6] text-[#137333]"
+                            : "bg-[#F8F9FA] border-[#DADCE0] text-[#3C4043] hover:bg-[#F1F3F4]"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={c.bloodProductsVerified}
+                          onChange={(e) =>
+                            screenCaseChecklist(
+                              c.id,
+                              "bloodProducts",
+                              e.target.checked,
+                              activeStaff.name
+                            )
+                          }
+                          className="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-0 cursor-pointer"
+                        />
+                        <div className="text-[11px]">
+                          <span className="font-bold block">3. Blood Products Reserved</span>
+                          <span className="text-[10px] text-[#5F6368]">
+                            PRBC / FFP crossmatched
+                          </span>
+                        </div>
+                      </label>
+
+                      {/* Checkbox 4: Hardware Available */}
+                      <label
+                        className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors cursor-pointer ${
+                          c.hardwareVerified
+                            ? "bg-[#E6F4EA] border-[#CEEAD6] text-[#137333]"
+                            : "bg-[#F8F9FA] border-[#DADCE0] text-[#3C4043] hover:bg-[#F1F3F4]"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={c.hardwareVerified}
+                          onChange={(e) =>
+                            screenCaseChecklist(
+                              c.id,
+                              "hardware",
+                              e.target.checked,
+                              activeStaff.name
+                            )
+                          }
+                          className="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-0 cursor-pointer"
+                        />
+                        <div className="text-[11px]">
+                          <span className="font-bold block">4. Hardware & Implants</span>
+                          <span className="text-[10px] text-[#5F6368]">
+                            Sheaths, wires & stents in stock
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+
+                    {/* Screening Clearance Status Banner */}
+                    {c.keptForTomorrow ? (
+                      <div className="p-2.5 rounded-lg bg-[#E6F4EA] border border-[#CEEAD6] text-[#137333] flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-[#137333] shrink-0" />
+                          <span className="font-semibold text-xs">
+                            Screening Complete • Kept for Tomorrow + Admission Card & Code Addition Updated
+                          </span>
+                        </div>
+                        <span className="text-[11px] font-bold text-[#137333]">
+                          Screened by {c.screenedBy || activeStaff.name}
+                        </span>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-[#5F6368] italic">
+                        * Check all 4 items to mark case as &ldquo;Kept for Tomorrow + Admission &amp; Code Addition&rdquo; and clear alert.
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -478,7 +678,7 @@ export default function DashboardPage() {
       {permissions.isDoctor && (
         <div className="space-y-6">
           {/* Doctor Navigation Tabs */}
-          <div className="flex items-center justify-between border-b border-[#DADCE0] pb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#DADCE0] pb-2 gap-3">
             <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
               <button
                 onClick={() => setDoctorActiveTab("booking")}
@@ -501,16 +701,6 @@ export default function DashboardPage() {
                 Active Cath-Lab Console
               </button>
               <button
-                onClick={() => setDoctorActiveTab("beds")}
-                className={`pb-2.5 px-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                  doctorActiveTab === "beds"
-                    ? "border-[#1A73E8] text-[#1A73E8]"
-                    : "border-transparent text-[#5F6368] hover:text-[#202124]"
-                }`}
-              >
-                8-Bed Ward/ICU Board
-              </button>
-              <button
                 onClick={() => setDoctorActiveTab("worklist")}
                 className={`pb-2.5 px-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                   doctorActiveTab === "worklist"
@@ -523,17 +713,45 @@ export default function DashboardPage() {
             </div>
 
             {doctorActiveTab === "booking" && (
-              <button
-                onClick={() => setShowBookingModal(true)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Book New Cath-Lab Case</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {/* View Mode Toggle */}
+                <div className="flex items-center bg-[#F1F3F4] rounded-full p-0.5 border border-[#DADCE0]">
+                  <button
+                    onClick={() => setBookingViewMode("list")}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                      bookingViewMode === "list"
+                        ? "bg-[#FFFFFF] text-[#1A73E8] shadow-xs"
+                        : "text-[#5F6368] hover:text-[#202124]"
+                    }`}
+                  >
+                    <ListFilter className="w-3.5 h-3.5" />
+                    <span>List Diary</span>
+                  </button>
+                  <button
+                    onClick={() => setBookingViewMode("calendar")}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                      bookingViewMode === "calendar"
+                        ? "bg-[#FFFFFF] text-[#1A73E8] shadow-xs"
+                        : "text-[#5F6368] hover:text-[#202124]"
+                    }`}
+                  >
+                    <CalendarDays className="w-3.5 h-3.5" />
+                    <span>2026 Calendar</span>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setShowBookingModal(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Book Cath-Lab Case</span>
+                </button>
+              </div>
             )}
           </div>
 
-          {/* TAB 1: DM Case Booking & Protocols (OPD Diary) */}
+          {/* TAB 1: DM Case Booking & Protocols (OPD Diary & Calendar View) */}
           {doctorActiveTab === "booking" && (
             <div className="space-y-6">
               {/* Summary Stats */}
@@ -549,7 +767,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-                  <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Scheduled This Week</p>
+                  <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Scheduled Cases</p>
                   <p className="text-xl font-bold text-[#137333] mt-0.5">
                     {bookedCases.filter((c) => c.status === "Scheduled").length}
                   </p>
@@ -562,117 +780,298 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Booked Cases List (OPD Diary) */}
-              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl overflow-hidden shadow-xs">
-                <div className="p-4 border-b border-[#DADCE0] flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#202124]">
-                      DM Resident Cath-Lab Case Diary
-                    </h3>
-                    <p className="text-xs text-[#5F6368]">
-                      Organized by probable date • Zero lost contact records • 1-Click date rescheduling
-                    </p>
-                  </div>
-                  <span className="text-xs text-[#5F6368]">
-                    Showing {bookedCases.length} records
-                  </span>
-                </div>
-
-                <div className="divide-y divide-[#DADCE0]">
-                  {bookedCases.map((c) => (
-                    <div
-                      key={c.id}
-                      className="p-4 hover:bg-[#F8F9FA] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
-                    >
-                      <div className="space-y-1.5 max-w-2xl">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-sm text-[#202124]">
-                            {c.patientName}
-                          </span>
-                          <span className="text-xs text-[#5F6368]">
-                            ({c.age}y / {c.sex})
-                          </span>
-                          <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-md bg-[#F1F3F4] text-[#3C4043] border border-[#DADCE0]">
-                            SSO: {c.ssoNumber}
-                          </span>
-                          <span
-                            className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
-                              c.status === "Scheduled"
-                                ? "bg-[#E6F4EA] text-[#137333]"
-                                : c.status === "Rescheduled"
-                                ? "bg-[#FEF7E0] text-[#B06000]"
-                                : "bg-[#E8F0FE] text-[#1A73E8]"
-                            }`}
-                          >
-                            {c.status}
-                          </span>
-                        </div>
-
-                        <p className="text-xs text-[#1A73E8] font-semibold">
-                          {c.procedureTitle}
-                        </p>
-
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-[#5F6368]">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5 text-[#1A73E8]" />
-                            <strong className="text-[#202124]">{c.scheduledDate}</strong>
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Phone className="w-3.5 h-3.5 text-[#137333]" />
-                            <a href={`tel:${c.contactNumber}`} className="hover:underline text-[#202124]">
-                              {c.contactNumber}
-                            </a>
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5 text-[#EA4335]" />
-                            {c.location}
-                          </span>
-                          <span>• Booked by: {c.bookedBy}</span>
-                        </div>
-
-                        {c.rotterdamScore && (
-                          <div className="inline-flex items-center gap-2 text-[11px] px-2 py-1 rounded bg-[#F1F3F4] text-[#3C4043]">
-                            <span className="font-bold">Rotterdam Score:</span>
-                            <span className="font-mono text-[#C5221F] font-bold">
-                              {c.rotterdamScore.score} ({c.rotterdamScore.classLevel})
-                            </span>
-                            <span>• 1-Yr Survival: {c.rotterdamScore.oneYearSurvival}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Case Actions */}
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          onClick={() => {
-                            setRescheduleModalCase(c);
-                            setNewRescheduleDate(c.scheduledDate);
-                          }}
-                          className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
-                        >
-                          Reschedule
-                        </button>
-                        <button
-                          onClick={() => setPrintSummaryCase(c)}
-                          className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] flex items-center gap-1.5 transition-colors cursor-pointer"
-                        >
-                          <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
-                          <span>Summary</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            callPatientToLab(c.id);
-                            setDoctorActiveTab("cathlab");
-                          }}
-                          className="px-3 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
-                        >
-                          Send to Cath-Lab
-                        </button>
-                      </div>
+              {/* CALENDAR VIEW: Official 2026 Rajasthan Holiday Calendar Engine */}
+              {bookingViewMode === "calendar" && (
+                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+                  {/* Calendar Header with Month Navigation */}
+                  <div className="flex items-center justify-between border-b border-[#DADCE0] pb-3">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-base font-bold text-[#202124] flex items-center gap-2">
+                        <span>{monthNames[calendarMonth]} {calendarYear}</span>
+                        <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]">
+                          Official 2026 Rajasthan Master
+                        </span>
+                      </h3>
                     </div>
-                  ))}
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          if (calendarMonth === 0) {
+                            setCalendarMonth(11);
+                            setCalendarYear((y) => y - 1);
+                          } else {
+                            setCalendarMonth((m) => m - 1);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-[#3C4043] cursor-pointer"
+                        title="Previous Month"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCalendarMonth(8);
+                          setCalendarYear(2026);
+                        }}
+                        className="px-2.5 py-1 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] cursor-pointer"
+                      >
+                        Sept 2026
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (calendarMonth === 11) {
+                            setCalendarMonth(0);
+                            setCalendarYear((y) => y + 1);
+                          } else {
+                            setCalendarMonth((m) => m + 1);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-[#3C4043] cursor-pointer"
+                        title="Next Month"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Day Names Header */}
+                  <div className="grid grid-cols-7 gap-1 text-center font-bold text-xs text-[#5F6368] py-1 border-b border-[#DADCE0]">
+                    <span className="text-[#C5221F]">Sun</span>
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                  </div>
+
+                  {/* Calendar 7-Column Grid */}
+                  <div className="grid grid-cols-7 gap-1.5">
+                    {calendarDays.map((cell, idx) => {
+                      if (!cell) {
+                        return (
+                          <div
+                            key={`empty-${idx}`}
+                            className="min-h-[90px] rounded-xl bg-[#F8F9FA]/40 border border-transparent p-1.5"
+                          />
+                        );
+                      }
+
+                      const isSun = cell.holidayInfo.isSunday;
+                      const isGazetted = cell.holidayInfo.type === "Gazetted";
+                      const isOptional = cell.holidayInfo.type === "Optional";
+                      const hasCases = cell.cases.length > 0;
+
+                      return (
+                        <div
+                          key={cell.dateStr}
+                          onClick={() => {
+                            setFormScheduledDate(cell.dateStr);
+                            setShowBookingModal(true);
+                          }}
+                          className={`min-h-[100px] rounded-xl border p-2 flex flex-col justify-between transition-all cursor-pointer ${
+                            isSun
+                              ? "bg-[#FCE8E6]/30 border-[#F5C2C7]"
+                              : isGazetted
+                              ? "bg-[#FEF7E0]/40 border-[#FEEFC3]"
+                              : isOptional
+                              ? "bg-[#F3E8FD]/30 border-[#E9D5FF]"
+                              : "bg-[#FFFFFF] border-[#DADCE0] hover:border-[#1A73E8] hover:shadow-xs"
+                          }`}
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span
+                                className={`text-xs font-bold ${
+                                  isSun || isGazetted ? "text-[#C5221F]" : "text-[#202124]"
+                                }`}
+                              >
+                                {cell.dayNumber}
+                              </span>
+
+                              {isGazetted && (
+                                <span className="px-1 py-0.2 text-[8px] font-bold uppercase rounded bg-[#FCE8E6] text-[#C5221F]">
+                                  Gazetted
+                                </span>
+                              )}
+                              {isSun && !isGazetted && (
+                                <span className="px-1 py-0.2 text-[8px] font-bold uppercase rounded bg-[#F1F3F4] text-[#C5221F]">
+                                  Sunday
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Holiday Title if present */}
+                            {cell.holidayInfo.name && (
+                              <p className="text-[10px] font-medium text-[#B06000] leading-tight line-clamp-2">
+                                🏛️ {cell.holidayInfo.name}
+                              </p>
+                            )}
+
+                            {/* Booked Cases Chips */}
+                            {hasCases && (
+                              <div className="space-y-1 pt-1">
+                                {cell.cases.map((c) => (
+                                  <div
+                                    key={c.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setPrintSummaryCase(c);
+                                    }}
+                                    className="p-1 rounded bg-[#E8F0FE] border border-[#D2E3FC] text-[10px] font-medium text-[#1A73E8] truncate hover:bg-[#D2E3FC]"
+                                    title={`${c.patientName} (${c.procedureTitle})`}
+                                  >
+                                    • {c.patientName.split(" ")[0]}: {c.procedureTitle.slice(0, 18)}...
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          <span className="text-[9px] text-[#80868B] text-right block self-end">
+                            + Book
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Calendar Legend */}
+                  <div className="flex flex-wrap items-center gap-4 text-xs pt-3 border-t border-[#DADCE0] text-[#5F6368]">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-sm bg-[#FFFFFF] border border-[#DADCE0]" />
+                      <span>Elective Cath-Lab Open</span>
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-sm bg-[#FCE8E6] border border-[#F5C2C7]" />
+                      <span>Sunday / Rajasthan Gazetted Holiday (Emergency Only)</span>
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-sm bg-[#FEF7E0] border border-[#FEEFC3]" />
+                      <span>Optional / Festival Holiday</span>
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-sm bg-[#E8F0FE] border border-[#D2E3FC]" />
+                      <span>Booked Cath-Lab Case</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* LIST VIEW: Booked Cases (OPD Diary) */}
+              {bookingViewMode === "list" && (
+                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl overflow-hidden shadow-xs">
+                  <div className="p-4 border-b border-[#DADCE0] flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-[#202124]">
+                        DM Resident Cath-Lab Case Diary
+                      </h3>
+                      <p className="text-xs text-[#5F6368]">
+                        Organized by probable date • Verified contact records • 1-Click date rescheduling
+                      </p>
+                    </div>
+                    <span className="text-xs text-[#5F6368]">
+                      Showing {bookedCases.length} records
+                    </span>
+                  </div>
+
+                  <div className="divide-y divide-[#DADCE0]">
+                    {bookedCases.map((c) => (
+                      <div
+                        key={c.id}
+                        className="p-4 hover:bg-[#F8F9FA] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1.5 max-w-2xl">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-[#202124]">
+                              {c.patientName}
+                            </span>
+                            <span className="text-xs text-[#5F6368]">
+                              ({c.age}y / {c.sex})
+                            </span>
+                            <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-md bg-[#F1F3F4] text-[#3C4043] border border-[#DADCE0]">
+                              SSO: {c.ssoNumber}
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
+                                c.status === "Scheduled"
+                                  ? "bg-[#E6F4EA] text-[#137333]"
+                                  : c.status === "Rescheduled"
+                                  ? "bg-[#FEF7E0] text-[#B06000]"
+                                  : "bg-[#E8F0FE] text-[#1A73E8]"
+                              }`}
+                            >
+                              {c.status}
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-[#1A73E8] font-semibold">
+                            {c.procedureTitle}
+                          </p>
+
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-[#5F6368]">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3.5 h-3.5 text-[#1A73E8]" />
+                              <strong className="text-[#202124]">{c.scheduledDate}</strong>
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Phone className="w-3.5 h-3.5 text-[#137333]" />
+                              <a href={`tel:${c.contactNumber}`} className="hover:underline text-[#202124]">
+                                {c.contactNumber}
+                              </a>
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-3.5 h-3.5 text-[#EA4335]" />
+                              {c.location}
+                            </span>
+                            <span>• Booked by: {c.bookedBy}</span>
+                          </div>
+
+                          {c.rotterdamScore && (
+                            <div className="inline-flex items-center gap-2 text-[11px] px-2 py-1 rounded bg-[#F1F3F4] text-[#3C4043]">
+                              <span className="font-bold">Rotterdam Score:</span>
+                              <span className="font-mono text-[#C5221F] font-bold">
+                                {c.rotterdamScore.score} ({c.rotterdamScore.classLevel})
+                              </span>
+                              <span>• 1-Yr Survival: {c.rotterdamScore.oneYearSurvival}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Case Actions */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => {
+                              setRescheduleModalCase(c);
+                              setNewRescheduleDate(c.scheduledDate);
+                            }}
+                            className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
+                          >
+                            Reschedule
+                          </button>
+                          <button
+                            onClick={() => setPrintSummaryCase(c)}
+                            className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] flex items-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
+                            <span>Summary</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              callPatientToLab(c.id);
+                              setDoctorActiveTab("cathlab");
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+                          >
+                            Send to Cath-Lab
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -762,7 +1161,7 @@ export default function DashboardPage() {
                         completeProcedureAndTransfer(activeInRoomPatient.id, "ICU-01", {
                           instructions: "Procedure successful. Transferred to ICU-01. Hemostasis intact.",
                         });
-                        setDoctorActiveTab("beds");
+                        setDoctorActiveTab("worklist");
                       }}
                       className="w-full py-2.5 px-4 rounded-lg bg-[#1E8E3E] hover:bg-[#137333] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
                     >
@@ -774,143 +1173,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* TAB 3: 8-Bed Ward & ICU Matrix */}
-          {doctorActiveTab === "beds" && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#202124]">
-                    8-Bed Inpatient Care Matrix
-                  </h3>
-                  <p className="text-xs text-[#5F6368]">
-                    3 Dedicated ICU Beds (ICU-01 to ICU-03) & 5 Dedicated Ward Beds (Ward-01 to Ward-05)
-                  </p>
-                </div>
-                <span className="text-xs font-bold text-[#1A73E8] bg-[#E8F0FE] px-3 py-1 rounded-full border border-[#D2E3FC]">
-                  {beds.filter((b) => b.status === "occupied").length} / 8 Beds Occupied
-                </span>
-              </div>
-
-              {/* 3 ICU Beds */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#C5221F] flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5" />
-                  High-Acuity ICU Unit (3 Beds)
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {beds
-                    .filter((b) => b.type === "ICU")
-                    .map((bed) => (
-                      <div
-                        key={bed.id}
-                        className={`rounded-xl border p-4 transition-all bg-[#FFFFFF] ${
-                          bed.status === "occupied"
-                            ? "border-[#DADCE0] shadow-xs"
-                            : "border-[#DADCE0] border-dashed opacity-80"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-bold text-sm text-[#202124]">{bed.id}</span>
-                          <span
-                            className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
-                              bed.status === "occupied"
-                                ? "bg-[#FCE8E6] text-[#C5221F]"
-                                : "bg-[#E6F4EA] text-[#137333]"
-                            }`}
-                          >
-                            {bed.status}
-                          </span>
-                        </div>
-
-                        <div className="text-xs space-y-1">
-                          <p className="font-bold text-[#202124]">
-                            {bed.status === "occupied" ? bed.ptName : "Bed Available"}
-                          </p>
-                          <p className="text-[#5F6368] line-clamp-2">{bed.diag}</p>
-                          {bed.status === "occupied" && (
-                            <>
-                              <p className="text-[11px] text-[#1A73E8] font-medium">
-                                Doctor: {bed.doctor}
-                              </p>
-                              <div className="pt-2 border-t border-[#DADCE0] flex items-center justify-between text-[11px]">
-                                <span className="text-[#137333] font-semibold">
-                                  Pulses: {bed.distalPulses}
-                                </span>
-                                <button
-                                  onClick={() => setTransferModalBed(bed)}
-                                  className="text-[#1A73E8] hover:underline font-semibold cursor-pointer"
-                                >
-                                  Transfer Bed
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              {/* 5 Ward Beds */}
-              <div className="space-y-2 pt-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] flex items-center gap-1.5">
-                  <BedDouble className="w-3.5 h-3.5" />
-                  IR Recovery Ward (5 Beds)
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-                  {beds
-                    .filter((b) => b.type === "Ward")
-                    .map((bed) => (
-                      <div
-                        key={bed.id}
-                        className={`rounded-xl border p-3.5 transition-all bg-[#FFFFFF] ${
-                          bed.status === "occupied"
-                            ? "border-[#DADCE0] shadow-xs"
-                            : "border-[#DADCE0] border-dashed opacity-80"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-bold text-xs text-[#202124]">{bed.id}</span>
-                          <span
-                            className={`px-1.5 py-0.5 text-[9px] font-bold uppercase rounded-full ${
-                              bed.status === "occupied"
-                                ? "bg-[#E8F0FE] text-[#1A73E8]"
-                                : "bg-[#E6F4EA] text-[#137333]"
-                            }`}
-                          >
-                            {bed.status}
-                          </span>
-                        </div>
-
-                        <div className="text-xs space-y-1">
-                          <p className="font-bold text-[#202124] truncate">
-                            {bed.status === "occupied" ? bed.ptName : "Vacant"}
-                          </p>
-                          <p className="text-[11px] text-[#5F6368] line-clamp-2">
-                            {bed.diag}
-                          </p>
-                          {bed.status === "occupied" && (
-                            <div className="pt-1.5 border-t border-[#DADCE0] flex items-center justify-between text-[10px]">
-                              <span className="text-[#137333] font-semibold truncate">
-                                {bed.distalPulses}
-                              </span>
-                              <button
-                                onClick={() => setTransferModalBed(bed)}
-                                className="text-[#1A73E8] hover:underline font-semibold cursor-pointer shrink-0"
-                              >
-                                Transfer
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: Master Worklist */}
+          {/* TAB 3: Master Worklist */}
           {doctorActiveTab === "worklist" && (
             <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl overflow-hidden shadow-xs space-y-4 p-4">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -1085,14 +1348,19 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-semibold text-[#3C4043] mb-1">
-                      District / City
+                      District (Rajasthan)
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={techIntakeCity}
                       onChange={(e) => setTechIntakeCity(e.target.value)}
                       className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
-                    />
+                    >
+                      {RAJASTHAN_DISTRICTS.map((d) => (
+                        <option key={d} value={d}>
+                          {d}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-[#3C4043] mb-1">
@@ -1230,28 +1498,17 @@ export default function DashboardPage() {
                         </p>
                         <p className="text-[#5F6368]">{bed.diag}</p>
                         {bed.status === "occupied" && (
-                          <>
-                            <div className="p-2 rounded bg-[#F8F9FA] border border-[#DADCE0] space-y-1 text-[11px]">
-                              <p className="text-[#202124]">
-                                <strong>Vitals:</strong> {bed.vitals}
-                              </p>
-                              <p className="text-[#137333]">
-                                <strong>Puncture Site:</strong> {bed.hemostasisIntact ? "Hemostasis Intact (Dry)" : "Monitoring"}
-                              </p>
-                              <p className="text-[#1A73E8]">
-                                <strong>Distal Pulses:</strong> {bed.distalPulses}
-                              </p>
-                            </div>
-                            <div className="pt-2 flex items-center justify-between text-xs">
-                              <span className="text-[#5F6368]">Doc: {bed.doctor}</span>
-                              <button
-                                onClick={() => setTransferModalBed(bed)}
-                                className="px-2.5 py-1 rounded bg-[#FFFFFF] border border-[#DADCE0] hover:bg-[#F1F3F4] text-[#1A73E8] font-bold cursor-pointer"
-                              >
-                                Transfer Bed
-                              </button>
-                            </div>
-                          </>
+                          <div className="p-2 rounded bg-[#F8F9FA] border border-[#DADCE0] space-y-1 text-[11px]">
+                            <p className="text-[#202124]">
+                              <strong>Vitals:</strong> {bed.vitals}
+                            </p>
+                            <p className="text-[#137333]">
+                              <strong>Puncture Site:</strong> {bed.hemostasisIntact ? "Hemostasis Intact (Dry)" : "Monitoring"}
+                            </p>
+                            <p className="text-[#1A73E8]">
+                              <strong>Distal Pulses:</strong> {bed.distalPulses}
+                            </p>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1291,19 +1548,6 @@ export default function DashboardPage() {
                           {bed.status === "occupied" ? bed.ptName : "Vacant"}
                         </p>
                         <p className="text-[11px] text-[#5F6368] line-clamp-2">{bed.diag}</p>
-                        {bed.status === "occupied" && (
-                          <div className="pt-1.5 border-t border-[#DADCE0] flex items-center justify-between text-[10px]">
-                            <span className="text-[#137333] font-semibold truncate">
-                              {bed.distalPulses}
-                            </span>
-                            <button
-                              onClick={() => setTransferModalBed(bed)}
-                              className="text-[#1A73E8] hover:underline font-bold cursor-pointer"
-                            >
-                              Transfer
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -1314,7 +1558,7 @@ export default function DashboardPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* 4. MODALS: CASE BOOKING, RESCHEDULING, PRINT SUMMARY, BED TRANSFER */}
+      {/* 4. MODALS: CASE BOOKING, RESCHEDULING, PRINT SUMMARY, ROLE SWITCHER */}
       {/* ========================================================================= */}
 
       {/* MODAL 1: DM Resident Case Booking Form with Protocols Engine */}
@@ -1412,14 +1656,19 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <label className="block font-semibold text-[#3C4043] mb-1">
-                      Location / District
+                      District (50 Rajasthan Districts)
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={formLocation}
                       onChange={(e) => setFormLocation(e.target.value)}
                       className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
-                    />
+                    >
+                      {RAJASTHAN_DISTRICTS.map((dist) => (
+                        <option key={dist} value={dist}>
+                          {dist}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block font-semibold text-[#3C4043] mb-1">
@@ -1434,6 +1683,21 @@ export default function DashboardPage() {
                     />
                   </div>
                 </div>
+
+                {/* Real-Time Rajasthan Holiday / Sunday Warning */}
+                {(selectedDateHoliday.isHoliday || selectedDateHoliday.isSunday) && (
+                  <div className="p-3 rounded-lg bg-[#FEF7E0] border border-[#FEEFC3] text-[#B06000] flex items-start gap-2 text-xs">
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-[#F29900]" />
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-[#202124]">
+                        ⚠️ {selectedDateHoliday.type === "Gazetted" ? "Rajasthan Gazetted Holiday" : selectedDateHoliday.isSunday ? "Sunday" : "Optional Holiday"}: {selectedDateHoliday.name || "Sunday (Cath-Lab Closed)"}
+                      </p>
+                      <p className="text-[11px] text-[#5F6368]">
+                        Official elective Cath-Lab lists are closed. Emergency and STAT on-call procedures only.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Section 2: Multi-Layered DSA Hierarchy Selector */}
@@ -1465,6 +1729,10 @@ export default function DashboardPage() {
                       <option value="Peripheral Vascular">Peripheral Vascular</option>
                       <option value="Pelvic & Genitourinary">Pelvic & Genitourinary</option>
                       <option value="Venous & Dialysis Access">Venous & Dialysis Access</option>
+                      <option value="Musculoskeletal & Pain">Musculoskeletal & Pain</option>
+                      <option value="Neurovascular & Head/Neck">Neurovascular & Head/Neck</option>
+                      <option value="Aortic & Complex">Aortic & Complex</option>
+                      <option value="Lymphatic & Soft Tissue">Lymphatic & Soft Tissue</option>
                     </select>
                   </div>
 
@@ -1961,64 +2229,190 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* MODAL 4: Bed Transfer Modal */}
-      {transferModalBed && (
+      {/* MODAL 4: In-Dashboard Role Switcher Modal */}
+      {showRoleSwitcher && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl w-full max-w-sm shadow-xl p-5 relative">
+          <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl w-full max-w-2xl shadow-xl p-5 relative max-h-[85vh] overflow-y-auto">
             <button
-              onClick={() => setTransferModalBed(null)}
+              onClick={() => setShowRoleSwitcher(false)}
               className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <h3 className="text-base font-bold text-[#202124] mb-1">Transfer Inpatient Bed</h3>
-            <p className="text-xs text-[#5F6368] mb-4">
-              Patient: <strong>{transferModalBed.ptName}</strong> from <strong>{transferModalBed.id}</strong>
-            </p>
+            <div className="border-b border-[#DADCE0] pb-3 mb-4">
+              <h3 className="text-base font-bold text-[#202124]">
+                Switch Institutional Clinical Role
+              </h3>
+              <p className="text-xs text-[#5F6368]">
+                Instant inline role elevation without leaving the dashboard
+              </p>
+            </div>
 
-            <div className="space-y-3 text-xs">
+            <div className="space-y-4">
+              {/* Faculty Category */}
               <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
-                  Select Target Destination Bed:
-                </label>
-                <select
-                  value={targetTransferBedId}
-                  onChange={(e) => setTargetTransferBedId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-semibold"
-                >
-                  {beds
-                    .filter((b) => b.id !== transferModalBed.id && b.status === "vacant")
-                    .map((b) => (
-                      <option key={b.id} value={b.id}>
-                        {b.id} ({b.title}) - Vacant
-                      </option>
-                    ))}
-                </select>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] mb-2">
+                  Faculty (FC01 - FC04)
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("FC")).map((staff) => (
+                    <button
+                      key={staff.code}
+                      onClick={() => {
+                        setCurrentStaff(staff);
+                        try {
+                          localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
+                        } catch {}
+                        setShowRoleSwitcher(false);
+                      }}
+                      className={`p-2.5 rounded-xl border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
+                        activeStaff.code === staff.code
+                          ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8]"
+                          : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
+                      }`}
+                    >
+                      <div>
+                        <p className="font-bold">{staff.name}</p>
+                        <p className="text-[11px] text-[#5F6368]">{staff.title} ({staff.code})</p>
+                      </div>
+                      {activeStaff.code === staff.code && (
+                        <Check className="w-4 h-4 text-[#1A73E8]" />
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setTransferModalBed(null)}
-                  className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#3C4043] hover:bg-[#F1F3F4] font-semibold cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    transferPatientBed(
-                      transferModalBed.ptId || transferModalBed.ptName,
-                      transferModalBed.id,
-                      targetTransferBedId
-                    );
-                    setTransferModalBed(null);
-                  }}
-                  className="px-4 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold cursor-pointer"
-                >
-                  Execute Transfer
-                </button>
+              {/* DM Residents Category */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] mb-2">
+                  DM Residents (DM01 - DM02)
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("DM")).map((staff) => (
+                    <button
+                      key={staff.code}
+                      onClick={() => {
+                        setCurrentStaff(staff);
+                        try {
+                          localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
+                        } catch {}
+                        setShowRoleSwitcher(false);
+                      }}
+                      className={`p-2.5 rounded-xl border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
+                        activeStaff.code === staff.code
+                          ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8]"
+                          : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
+                      }`}
+                    >
+                      <div>
+                        <p className="font-bold">{staff.name}</p>
+                        <p className="text-[11px] text-[#5F6368]">{staff.title} ({staff.code})</p>
+                      </div>
+                      {activeStaff.code === staff.code && (
+                        <Check className="w-4 h-4 text-[#1A73E8]" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Senior Residents Category */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] mb-2">
+                  Senior Residents (SR01 - SR02)
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("SR")).map((staff) => (
+                    <button
+                      key={staff.code}
+                      onClick={() => {
+                        setCurrentStaff(staff);
+                        try {
+                          localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
+                        } catch {}
+                        setShowRoleSwitcher(false);
+                      }}
+                      className={`p-2.5 rounded-xl border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
+                        activeStaff.code === staff.code
+                          ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8]"
+                          : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
+                      }`}
+                    >
+                      <div>
+                        <p className="font-bold">{staff.name}</p>
+                        <p className="text-[11px] text-[#5F6368]">{staff.title} ({staff.code})</p>
+                      </div>
+                      {activeStaff.code === staff.code && (
+                        <Check className="w-4 h-4 text-[#1A73E8]" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Nursing Officers & Technicians */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#137333] mb-2">
+                    Nursing Officers (NO01 - NO06)
+                  </h4>
+                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                    {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("NO")).map((staff) => (
+                      <button
+                        key={staff.code}
+                        onClick={() => {
+                          setCurrentStaff(staff);
+                          try {
+                            localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
+                          } catch {}
+                          setShowRoleSwitcher(false);
+                        }}
+                        className={`w-full p-2 rounded-lg border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
+                          activeStaff.code === staff.code
+                            ? "bg-[#E6F4EA] border-[#137333] text-[#137333]"
+                            : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
+                        }`}
+                      >
+                        <span className="font-semibold">{staff.name} ({staff.code})</span>
+                        {activeStaff.code === staff.code && (
+                          <Check className="w-3.5 h-3.5 text-[#137333]" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#B06000] mb-2">
+                    Radiology Technicians (TC01 - TC06)
+                  </h4>
+                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                    {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("TC")).map((staff) => (
+                      <button
+                        key={staff.code}
+                        onClick={() => {
+                          setCurrentStaff(staff);
+                          try {
+                            localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
+                          } catch {}
+                          setShowRoleSwitcher(false);
+                        }}
+                        className={`w-full p-2 rounded-lg border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
+                          activeStaff.code === staff.code
+                            ? "bg-[#FEF7E0] border-[#B06000] text-[#B06000]"
+                            : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
+                        }`}
+                      >
+                        <span className="font-semibold">{staff.name} ({staff.code})</span>
+                        {activeStaff.code === staff.code && (
+                          <Check className="w-3.5 h-3.5 text-[#B06000]" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

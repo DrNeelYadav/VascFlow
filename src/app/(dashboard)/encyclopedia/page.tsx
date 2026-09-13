@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IR_PROCEDURES } from '@/data/procedures';
+import { EXTENSIVE_IR_PROCEDURES } from '@/data/procedures';
 import { ProcedureBlueprint } from '@/types/clinical';
 import {
   Search,
@@ -26,16 +26,16 @@ import { cn } from '@/lib/utils';
 export default function EncyclopediaPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [activeProcedureId, setActiveProcedureId] = useState<string>(IR_PROCEDURES[0].id);
+  const [activeProcedureId, setActiveProcedureId] = useState<string>(EXTENSIVE_IR_PROCEDURES[0].id);
   const [checkedSteps, setCheckedSteps] = useState<Record<string, boolean>>({});
 
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(IR_PROCEDURES.map((p) => p.category)));
+    const cats = Array.from(new Set(EXTENSIVE_IR_PROCEDURES.map((p) => p.category)));
     return ['All', ...cats];
   }, []);
 
   const filteredProcedures = useMemo(() => {
-    return IR_PROCEDURES.filter((proc) => {
+    return EXTENSIVE_IR_PROCEDURES.filter((proc) => {
       const matchesSearch =
         proc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         proc.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,7 +46,7 @@ export default function EncyclopediaPage() {
   }, [searchTerm, selectedCategory]);
 
   const activeProcedure = useMemo(() => {
-    return IR_PROCEDURES.find((p) => p.id === activeProcedureId) || IR_PROCEDURES[0];
+    return EXTENSIVE_IR_PROCEDURES.find((p) => p.id === activeProcedureId) || EXTENSIVE_IR_PROCEDURES[0];
   }, [activeProcedureId]);
 
   const toggleStep = (procId: string, index: number) => {
@@ -70,7 +70,7 @@ export default function EncyclopediaPage() {
             <h1 className="font-heading font-medium text-lg text-[#202124] flex items-center gap-2">
               <span>SMS IR Procedure Master Encyclopedia</span>
               <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#E8F0FE] text-[#1A73E8]">
-                10 Core Blueprints
+                {EXTENSIVE_IR_PROCEDURES.length} Comprehensive Procedures
               </span>
             </h1>
             <p className="text-xs text-[#5F6368]">

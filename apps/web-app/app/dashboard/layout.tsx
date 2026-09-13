@@ -9,8 +9,6 @@ import {
   HelpCircle,
   Settings,
   ShieldCheck,
-  User,
-  LogOut,
   Hospital,
   Activity,
   Plus,
@@ -25,14 +23,6 @@ export default function DashboardLayout({
 }) {
   const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
   const [modalStatus, setModalStatus] = useState<string | null>(null);
-
-  const handleLogout = () => {
-    document.cookie =
-      "authjs.session-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie =
-      "vascule_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    window.location.href = "/login";
-  };
 
   const handleQuickBook = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,14 +89,6 @@ export default function DashboardLayout({
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Admit / Book</span>
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="p-2 rounded-full text-[#5F6368] hover:text-[#C5221F] hover:bg-[#FCE8E6] transition-colors cursor-pointer"
-            title="Institutional Logout"
-          >
-            <LogOut className="w-4 h-4" />
           </button>
         </div>
       </header>

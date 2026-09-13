@@ -757,6 +757,15 @@ export const BookedCaseSchema = z.object({
   }).optional(),
   postOpPlan: z.string().default("Post-procedure monitoring, analgesia, and hydration."),
   status: z.enum(["Scheduled", "Cath-Lab", "Completed", "Rescheduled"]).default("Scheduled"),
+  npoVerified: z.boolean().default(false),
+  labsVerified: z.boolean().default(false),
+  bloodProductsVerified: z.boolean().default(false),
+  hardwareVerified: z.boolean().default(false),
+  screenedBy: z.string().nullable().default(null),
+  screenedAt: z.string().nullable().default(null),
+  keptForTomorrow: z.boolean().default(false),
+  admissionCardUpdated: z.boolean().default(false),
+  codeAdditionStatus: z.enum(["Pending", "Added", "Verified"]).default("Pending"),
   rescheduleHistory: z.array(
     z.object({
       previousDate: z.string(),
@@ -767,10 +776,97 @@ export const BookedCaseSchema = z.object({
   ).default([]),
 });
 
+export const BookedCaseInputSchema = BookedCaseSchema.omit({
+  id: true,
+  bookedAt: true,
+  status: true,
+  rescheduleHistory: true,
+});
+
 export type BookedCaseRecord = z.infer<typeof BookedCaseSchema>;
+export type BookedCaseInput = z.input<typeof BookedCaseInputSchema>;
+
+// ============================================================================
+// OPD CT REVIEW QUEUE (PATIENTS AWAITING CATH-LAB CT IMAGING CORRELATION)
+// ============================================================================
+
+export const CtReviewSchema = z.object({
+  id: z.string(),
+  patientName: z.string(),
+  age: z.number(),
+  sex: z.enum(["Male", "Female"]),
+  date: z.string(),
+  primaryDiagnosis: z.string(),
+  ctNumber: z.string(),
+  ctReviewNotes: z.string(),
+  smsBillId: z.string(),
+  hospitalSource: z.string().default("SMS Hospital"),
+  contactNumber: z.string().default("9829000000"),
+  status: z.enum(["Pending Review", "Reviewed - Ready to Book", "Booked in Cath-Lab"]).default("Pending Review"),
+  bookedCaseId: z.string().optional(),
+  organSystem: z.string().optional(),
+  diseaseKey: z.string().optional(),
+  procedureTitle: z.string().optional(),
+});
+
+export type CtReviewRecord = z.infer<typeof CtReviewSchema>;
+
+export const INITIAL_CT_REVIEWS: CtReviewRecord[] = [
+  {
+    id: "CT-REV-001",
+    patientName: "Bhanwar Lal Gurjar",
+    age: 58,
+    sex: "Male",
+    date: new Date().toISOString().split("T")[0],
+    primaryDiagnosis: "Cirrhosis with recurrent refractory UGI variceal bleeding",
+    ctNumber: "SONIE-PACS-99214",
+    ctReviewNotes: "Review triple-phase CECT: Check main portal vein patency, assess splenic vein caliber and gastrorenal shunt for potential BRTO/TIPS.",
+    smsBillId: "SMS-BILL-2026-8812",
+    hospitalSource: "Sonie Hospital",
+    contactNumber: "9829144321",
+    status: "Pending Review",
+    organSystem: "Liver & Hepatobiliary",
+    diseaseKey: "brto_parto_gastric_varices",
+    procedureTitle: "Balloon-Occluded Retrograde Transvenous Obliteration (BRTO)",
+  },
+  {
+    id: "CT-REV-002",
+    patientName: "Shanti Devi Agarwal",
+    age: 64,
+    sex: "Female",
+    date: new Date().toISOString().split("T")[0],
+    primaryDiagnosis: "Right lung mass with active intermittent hemoptysis",
+    ctNumber: "SMS-CT-2026-4402",
+    ctReviewNotes: "Review CT Thorax Angio: Identify hypertrophied right bronchial artery origin (T5/T6) and non-bronchial systemic collaterals.",
+    smsBillId: "SMS-BILL-2026-9041",
+    hospitalSource: "SMS Hospital",
+    contactNumber: "9414233890",
+    status: "Pending Review",
+    organSystem: "Thoracic & Pulmonary",
+    diseaseKey: "bronchial_artery_embo_bae",
+    procedureTitle: "Bronchial Artery Embolization (BAE) - Massive Hemoptysis",
+  },
+  {
+    id: "CT-REV-003",
+    patientName: "Mangi Lal Kumawat",
+    age: 52,
+    sex: "Male",
+    date: new Date().toISOString().split("T")[0],
+    primaryDiagnosis: "Malignant obstructive jaundice (Hilar Cholangiocarcinoma)",
+    ctNumber: "SONIE-PACS-98741",
+    ctReviewNotes: "Review CECT Abdomen: Assess Bismuth-Corlette level (Type IIIa) and right vs left ductal dilatation for unilateral/bilateral PTBD.",
+    smsBillId: "SMS-BILL-2026-7721",
+    hospitalSource: "Sonie Hospital",
+    contactNumber: "9829567123",
+    status: "Reviewed - Ready to Book",
+    organSystem: "Liver & Hepatobiliary",
+    diseaseKey: "ptbd_biliary_stenting",
+    procedureTitle: "Percutaneous Transhepatic Biliary Drainage (PTBD) & SEMS Stenting",
+  },
+];
 
 export const INITIAL_BOOKED_CASES: BookedCaseRecord[] = [
-  {
+  BookedCaseSchema.parse({
     id: "BC-2026-001",
     patientName: "Ramswaroop Meena",
     age: 56,
@@ -822,8 +918,8 @@ export const INITIAL_BOOKED_CASES: BookedCaseRecord[] = [
     postOpPlan: "Therapeutic LMWH (Enoxaparin 1 mg/kg s/c q12h) 4h post-sheath removal. Oral Apixaban 5mg BD from POD 2. 24h Doppler for shunt patency.",
     status: "Scheduled",
     rescheduleHistory: [],
-  },
-  {
+  }),
+  BookedCaseSchema.parse({
     id: "BC-2026-002",
     patientName: "Kamla Devi Sharma",
     age: 62,
@@ -856,7 +952,7 @@ export const INITIAL_BOOKED_CASES: BookedCaseRecord[] = [
     postOpPlan: "Dual Antiplatelet Therapy (DAPT): Aspirin 75 mg + Clopidogrel 75 mg OD x 6 months. Distal DP/PT pulse palpation q2h.",
     status: "Scheduled",
     rescheduleHistory: [],
-  },
+  }),
 ];
 
 // ============================================================================
@@ -881,12 +977,30 @@ export interface EndoflowState {
   // Booked Cases (DM Resident OPD Diary)
   bookedCases: BookedCaseRecord[];
   bookCase: (
-    record: Omit<BookedCaseRecord, "id" | "bookedAt" | "status" | "rescheduleHistory">
+    record: BookedCaseInput
   ) => { success: boolean; id?: string; error?: string };
   rescheduleCase: (caseId: string, newDate: string, reason?: string) => void;
   updateCaseHardwareItem: (caseId: string, hardwareId: string, checked: boolean) => void;
   addCustomHardwareItem: (caseId: string, item: string, spec: string) => void;
   getTomorrowReminders: () => BookedCaseRecord[];
+  screenCaseChecklist: (
+    caseId: string,
+    checklistKey: "npo" | "labs" | "bloodProducts" | "hardware",
+    value: boolean,
+    staffName: string
+  ) => void;
+
+  // OPD CT Review Queue
+  ctReviews: CtReviewRecord[];
+  addCtReview: (review: Omit<CtReviewRecord, "id" | "status">) => void;
+  updateCtReview: (id: string, updates: Partial<CtReviewRecord>) => void;
+  convertCtReviewToBooking: (
+    reviewId: string,
+    scheduledDate: string,
+    diseaseKey: string,
+    procedureTitle: string,
+    staffName: string
+  ) => { success: boolean; id?: string };
 
   // State Actions
   advanceStage: (patientId: string, nextStatus: ClinicalStage) => void;
@@ -1159,15 +1273,13 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
   bookedCases: INITIAL_BOOKED_CASES,
   bookCase: (rawRecord) => {
     const newId = `BC-2026-${String(get().bookedCases.length + 1).padStart(3, "0")}`;
-    const newCaseRecord: BookedCaseRecord = {
+    const parsed = BookedCaseSchema.safeParse({
       ...rawRecord,
       id: newId,
       bookedAt: new Date().toISOString(),
       status: "Scheduled",
       rescheduleHistory: [],
-    };
-
-    const parsed = BookedCaseSchema.safeParse(newCaseRecord);
+    });
     if (!parsed.success) {
       const errorMsg = parsed.error.issues
         ? parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
@@ -1242,6 +1354,111 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
     );
   },
 
+  screenCaseChecklist: (
+    caseId: string,
+    checklistKey: "npo" | "labs" | "bloodProducts" | "hardware",
+    value: boolean,
+    staffName: string
+  ) => {
+    set((state) => ({
+      bookedCases: state.bookedCases.map((c) => {
+        if (c.id !== caseId) return c;
+        const npo = checklistKey === "npo" ? value : c.npoVerified;
+        const labs = checklistKey === "labs" ? value : c.labsVerified;
+        const blood = checklistKey === "bloodProducts" ? value : c.bloodProductsVerified;
+        const hw = checklistKey === "hardware" ? value : c.hardwareVerified;
+
+        const allChecked = npo && labs && blood && hw;
+
+        return {
+          ...c,
+          npoVerified: npo,
+          labsVerified: labs,
+          bloodProductsVerified: blood,
+          hardwareVerified: hw,
+          screenedBy: allChecked ? staffName : c.screenedBy,
+          screenedAt: allChecked ? new Date().toISOString() : c.screenedAt,
+          keptForTomorrow: allChecked,
+          admissionCardUpdated: allChecked,
+          codeAdditionStatus: allChecked ? "Added" : c.codeAdditionStatus,
+        };
+      }),
+    }));
+  },
+
+  ctReviews: INITIAL_CT_REVIEWS,
+  addCtReview: (review) => {
+    const newId = `CT-REV-${String(get().ctReviews.length + 1).padStart(3, "0")}`;
+    const newRecord: CtReviewRecord = {
+      ...review,
+      id: newId,
+      status: "Pending Review",
+    };
+    set((state) => ({
+      ctReviews: [newRecord, ...state.ctReviews],
+    }));
+  },
+
+  updateCtReview: (id, updates) => {
+    set((state) => ({
+      ctReviews: state.ctReviews.map((r) => (r.id === id ? { ...r, ...updates } : r)),
+    }));
+  },
+
+  convertCtReviewToBooking: (reviewId, scheduledDate, diseaseKey, procedureTitle, staffName) => {
+    const target = get().ctReviews.find((r) => r.id === reviewId);
+    if (!target) return { success: false };
+
+    const bookingResult = get().bookCase({
+      patientName: target.patientName,
+      age: target.age,
+      sex: target.sex,
+      contactNumber: target.contactNumber,
+      ssoNumber: target.smsBillId,
+      location: "Jaipur",
+      scheduledDate,
+      organSystem: target.organSystem || "Liver & Hepatobiliary",
+      diseaseKey,
+      procedureTitle,
+      bookedBy: staffName,
+      orderedLabs: [
+        "Liver Function Tests (Total & Direct Bilirubin, AST, ALT, Albumin)",
+        "Renal Function Tests (Serum Creatinine, BUN, Electrolytes)",
+        "Coagulation Profile (PT, INR, aPTT)",
+        "Complete Blood Count (Hb, TLC, Platelets)",
+      ],
+      specialInvestigations: [`CT Review: ${target.ctNumber} - ${target.ctReviewNotes}`],
+      preScanAnatomy: {},
+      hardwareChecklist: [
+        { id: "h1", item: "Vascular Access Sheath", spec: "6F 45cm Destination Sheath", checked: true },
+        { id: "h2", item: "Selective Diagnostic Catheter", spec: "5F Cobra C2 / Simmons 1", checked: true },
+        { id: "h3", item: "Hydrophilic Guidewire", spec: "0.035\" 260cm Terumo Glidewire", checked: true },
+      ],
+      postOpPlan: "Admit in IR Ward under protocol. Routine pre-procedure hydration.",
+      npoVerified: false,
+      labsVerified: false,
+      bloodProductsVerified: false,
+      hardwareVerified: false,
+      screenedBy: null,
+      screenedAt: null,
+      keptForTomorrow: false,
+      admissionCardUpdated: false,
+      codeAdditionStatus: "Pending",
+    });
+
+    if (bookingResult.success) {
+      set((state) => ({
+        ctReviews: state.ctReviews.map((r) =>
+          r.id === reviewId
+            ? { ...r, status: "Booked in Cath-Lab", bookedCaseId: bookingResult.id }
+            : r
+        ),
+      }));
+    }
+
+    return bookingResult;
+  },
+
   setSearchQuery: (query: string) => set({ searchQuery: query }),
   setFilterModality: (modality: string) => set({ filterModality: modality }),
   resetToDefaultPatients: () =>
@@ -1250,6 +1467,7 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
       activeCaseId: "PT03",
       beds: INITIAL_8_BEDS,
       bookedCases: INITIAL_BOOKED_CASES,
+      ctReviews: INITIAL_CT_REVIEWS,
     }),
 }));
 

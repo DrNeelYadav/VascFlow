@@ -414,3 +414,41 @@ export const IR_PROCEDURES: ProcedureBlueprint[] = [
     vendorContacts: ['Biolitec India (+91 98297 88990)']
   }
 ];
+
+import { DIALYSIS_AND_FISTULA_PROCEDURES } from './procedures/dialysisAndFistula';
+import { SYNDROMES_AND_VASCULAR_PROCEDURES } from './procedures/syndromesAndVascular';
+import { HBP_AND_PORTAL_HTN_PROCEDURES } from './procedures/hbpAndPortalHtn';
+import { INTERVENTIONAL_ONCOLOGY_PROCEDURES } from './procedures/interventionalOncology';
+import { ARTERIAL_EMBOLIZATION_PROCEDURES } from './procedures/arterialEmbolization';
+import { VENOUS_AND_DRAINAGE_PROCEDURES } from './procedures/venousAndDrainage';
+import { AORTIC_AND_PERIPHERAL_PROCEDURES } from './procedures/aorticAndPeripheral';
+import { NEURO_AND_LYMPHATIC_PROCEDURES } from './procedures/neuroAndLymphatic';
+
+export {
+  DIALYSIS_AND_FISTULA_PROCEDURES,
+  SYNDROMES_AND_VASCULAR_PROCEDURES,
+  HBP_AND_PORTAL_HTN_PROCEDURES,
+  INTERVENTIONAL_ONCOLOGY_PROCEDURES,
+  ARTERIAL_EMBOLIZATION_PROCEDURES,
+  VENOUS_AND_DRAINAGE_PROCEDURES,
+  AORTIC_AND_PERIPHERAL_PROCEDURES,
+  NEURO_AND_LYMPHATIC_PROCEDURES
+};
+
+/**
+ * Complete Interventional Radiology Procedures Library (290 Total Procedures)
+ * Covers all clinical domains, rare vascular syndromes, dialysis fistula interventions,
+ * hepatobiliary, oncology, aortic, peripheral, venous, and neurovascular procedures.
+ */
+export const EXTENSIVE_IR_PROCEDURES: ProcedureBlueprint[] = [
+  ...IR_PROCEDURES,
+  ...DIALYSIS_AND_FISTULA_PROCEDURES,
+  ...SYNDROMES_AND_VASCULAR_PROCEDURES,
+  ...HBP_AND_PORTAL_HTN_PROCEDURES,
+  ...INTERVENTIONAL_ONCOLOGY_PROCEDURES,
+  ...ARTERIAL_EMBOLIZATION_PROCEDURES,
+  ...VENOUS_AND_DRAINAGE_PROCEDURES,
+  ...AORTIC_AND_PERIPHERAL_PROCEDURES,
+  ...NEURO_AND_LYMPHATIC_PROCEDURES
+];
+

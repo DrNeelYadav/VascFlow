@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useEndoflowStore } from "../useEndoflowStore";
+import { useEndoflowStore, EndoflowPatient } from "../useEndoflowStore";
 import {
   IhmsDischargeSummaryData,
   SUNIL_KUMAR_DISCHARGE,
   ANJUM_NISHA_DISCHARGE,
   generateIhmsDischargeForPatient,
+  ProceduralImageAttachment,
 } from "./ihmsDischargeTemplates";
 import {
   Printer,
@@ -29,10 +30,15 @@ import {
   Trash2,
   ExternalLink,
   Info,
+  Camera,
+  Save,
+  Image as ImageIcon,
 } from "lucide-react";
 
 export default function DischargeSummaryPage() {
   const patients = useEndoflowStore((s) => s.patients);
+  const updatePatient = useEndoflowStore((s) => s.updatePatient);
+  const admitPatient = useEndoflowStore((s) => s.admitPatient);
 
   // Pre-generate summaries for all patients
   const generatedPatientSummaries = useMemo(() => {
@@ -55,6 +61,7 @@ export default function DischargeSummaryPage() {
         scheme: p.scheme,
         ipd: p.ipd,
         labs: p.labs,
+        attachments: p.attachments,
       });
     });
     return map;
@@ -193,6 +200,572 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${summary
     showNotification("History card parsed and applied to discharge summary!");
   };
 
+  // Save & Sync to Patient Dossier in store
+  const handleSaveAndSyncToDossier = () => {
+    const matchingPt = patients.find((p) => p.id === selectedPatientId);
+    if (matchingPt) {
+      updatePatient(selectedPatientId, {
+        summary: summaryData.caseSummary.caseHistory,
+        procedure:
+          summaryData.procedureDetails[0]?.surgicalProcedure || matchingPt.procedure,
+        attachments: summaryData.attachments,
+      });
+      showNotification(
+        `Discharge card & attachments synced to ${matchingPt.name}'s dossier!`
+      );
+    } else {
+      // For EX01, EX02, or a new case, admit/persist into the store
+      const newPt: EndoflowPatient = {
+        id: selectedPatientId,
+        name: summaryData.admissionDetails.patientName,
+        age: parseInt(String(summaryData.admissionDetails.age), 10) || 50,
+        sex: (summaryData.admissionDetails.gender === "F" ? "Female" : "Male") as
+          | "Male"
+          | "Female",
+        hid: summaryData.admissionDetails.hid,
+        scanId: `PACS-IR-${
+          summaryData.admissionDetails.hid.replace(/[^0-9]/g, "").slice(0, 5) || "901"
+        }`,
+        phone: "9829000000",
+        unit: summaryData.admissionDetails.departmentName,
+        postedBy: summaryData.admissionDetails.unitHead,
+        time: "10:00 AM",
+        summary: summaryData.caseSummary.caseHistory,
+        procedureKey:
+          selectedPatientId === "EX01"
+            ? "varicose_veins_venaseal"
+            : "budd_chiari_dips",
+        procedure:
+          summaryData.procedureDetails[0]?.surgicalProcedure ||
+          "Interventional Radiology Procedure",
+        modality: (summaryData.attachments[0]?.modality === "CT"
+          ? "CT"
+          : summaryData.attachments[0]?.modality === "US"
+          ? "US"
+          : "XA") as "XA" | "CT" | "US" | "ROSE",
+        status: "Discharged",
+        scheme: summaryData.admissionDetails.patientCategory.includes("MAAY")
+          ? "MAAY"
+          : "RGHS",
+        schemeTid: "TID-2026-9901",
+        beneficiaryId: "Jan Aadhaar 7821-9482-10",
+        preAuthStatus: "Approved",
+        ipd: {
+          admissionType: "IPD",
+          ward: summaryData.admissionDetails.wardBed,
+          bed: summaryData.admissionDetails.wardBed.split("/")[1] || "Bed 01",
+          podDay: "Discharged",
+        },
+        labs: {
+          ast: 35,
+          alt: 32,
+          bili: 1.0,
+          ldh: 210,
+          alb: 3.8,
+          creat: 0.85,
+          inr: 1.1,
+          plt: 240000,
+          fib: 280,
+          protc: 85,
+          prots: 88,
+          ascitesGrade: "none",
+        },
+        preOp: {
+          bedLocation: summaryData.admissionDetails.wardBed,
+          npoHours: 6,
+          inrChecked: true,
+          creatinineChecked: true,
+          consentSigned: true,
+          ivCannulaGauge: "18G Green",
+          calledToLab: true,
+          labCleared: true,
+        },
+        attachments: summaryData.attachments,
+      };
+      admitPatient(newPt);
+      showNotification(
+        `Saved & synced ${newPt.name} with all procedural attachments to Dossier!`
+      );
+    }
+  };
+
+  // Upload local image file
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const cleanName = file.name
+        .replace(/\.[^/.]+$/, "")
+        .replace(/[-_]/g, " ");
+      const modalityDetected = file.name.toLowerCase().includes("ct")
+        ? "CT"
+        : file.name.toLowerCase().includes("us") ||
+          file.name.toLowerCase().includes("doppler")
+        ? "US"
+        : file.name.toLowerCase().includes("mri")
+        ? "MRI"
+        : "XA";
+
+      const newAtt: ProceduralImageAttachment = {
+        id: `ATT-UP-${Date.now()}`,
+        title: cleanName.charAt(0).toUpperCase() + cleanName.slice(1),
+        modality: modalityDetected,
+        capturedAt:
+          new Date().toLocaleDateString("en-IN") +
+          " " +
+          new Date().toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        dataUrl: result,
+        caption: `SMS Medical College Angiosuite: Procedural image '${file.name}' attached to official clinical record. Technical confirmation documented.`,
+      };
+      setSummaryData((prev) => ({
+        ...prev,
+        attachments: [...(prev.attachments || []), newAtt],
+      }));
+      showNotification(`Uploaded & attached '${file.name}'!`);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  // Attach authentic Jaipur Angiosuite run preset
+  const handleAttachSampleRun = (presetKey: string) => {
+    let preset: ProceduralImageAttachment;
+    const nowStr =
+      new Date().toLocaleDateString("en-IN") +
+      " " +
+      new Date().toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+    if (presetKey === "dips") {
+      preset = {
+        id: `ATT-DIPS-${Date.now()}`,
+        title: "SMS Angiosuite 1: DIPS Transcaval Shunt Portogram",
+        modality: "XA",
+        capturedAt: nowStr,
+        dataUrl: "",
+        caption:
+          "SMS Medical College Angiosuite: Transcaval puncture into intrahepatic portal vein branch. Splenoportogram demonstrates widely patent 10mm x 7cm Viatorr stent with brisk flow and portosystemic gradient reduction from 22 to 6 mmHg.",
+      };
+    } else if (presetKey === "venaseal") {
+      preset = {
+        id: `ATT-VENA-${Date.now()}`,
+        title: "SMS Angiosuite 1: Post-Venaseal Left GSV Glue Cast Doppler",
+        modality: "US",
+        capturedAt: nowStr,
+        dataUrl: "",
+        caption:
+          "SMS Hospital Ultrasound: Longitudinal Color Doppler showing complete occlusion and non-compressibility of left Great Saphenous Vein with hyperechoic cyanoacrylate glue cast. Zero reflux. Common femoral vein patent.",
+      };
+    } else if (presetKey === "bae") {
+      preset = {
+        id: `ATT-BAE-${Date.now()}`,
+        title: "SMS Angiosuite 2: Bronchial Artery Embolization (BAE) Check",
+        modality: "XA",
+        capturedAt: nowStr,
+        dataUrl: "",
+        caption:
+          "Sawai Man Singh Hospital Cath-Lab: Superselective catheterization of hypertrophied right intercostobronchial trunk with 2.4F Progreat microcatheter. Post-PVA and microcoil embolization angiogram demonstrates complete devascularization.",
+      };
+    } else if (presetKey === "sfa") {
+      preset = {
+        id: `ATT-SFA-${Date.now()}`,
+        title: "SMS Angiosuite 2: SFA Nitinol Stent Completion Run",
+        modality: "XA",
+        capturedAt: nowStr,
+        dataUrl: "",
+        caption:
+          "SMS Medical College Cath-Lab: Contralateral crossover access. Post-stenting completion angiogram demonstrates full luminal restoration of right superficial femoral artery with brisk 2-vessel runoff to ankle.",
+      };
+    } else {
+      preset = {
+        id: `ATT-CECT-${Date.now()}`,
+        title: "SMS SSH: Triphasic CECT Caudate Hypertrophy",
+        modality: "CT",
+        capturedAt: nowStr,
+        dataUrl: "",
+        caption:
+          "SMS Super Speciality Hospital: Axial portal venous phase CECT showing marked caudate lobe hypertrophy, non-visualization of middle and right hepatic veins, and prominent retroperitoneal collateralization.",
+      };
+    }
+
+    setSummaryData((prev) => ({
+      ...prev,
+      attachments: [...(prev.attachments || []), preset],
+    }));
+    showNotification(`Attached ${preset.title}!`);
+  };
+
+  const handleUpdateAttachment = (
+    index: number,
+    updates: Partial<ProceduralImageAttachment>
+  ) => {
+    setSummaryData((prev) => {
+      const copy = [...(prev.attachments || [])];
+      copy[index] = { ...copy[index], ...updates };
+      return { ...prev, attachments: copy };
+    });
+  };
+
+  const handleDeleteAttachment = (index: number) => {
+    setSummaryData((prev) => {
+      const copy = [...(prev.attachments || [])];
+      copy.splice(index, 1);
+      return { ...prev, attachments: copy };
+    });
+    showNotification("Attachment removed.");
+  };
+
+  // Render Visual Attachment (Uploaded Image or High-Fidelity SVG Simulation)
+  const renderAttachmentVisual = (att: ProceduralImageAttachment) => {
+    if (
+      att.dataUrl &&
+      (att.dataUrl.startsWith("data:image/") ||
+        att.dataUrl.startsWith("http") ||
+        att.dataUrl.startsWith("blob:"))
+    ) {
+      return (
+        <img
+          src={att.dataUrl}
+          alt={att.title}
+          className="w-full max-h-56 object-contain rounded bg-black border border-[#3C4043]"
+        />
+      );
+    }
+
+    // Authentic Jaipur Angiosuite SVG Visualizations
+    if (att.modality === "XA") {
+      return (
+        <svg
+          viewBox="0 0 400 240"
+          className="w-full h-48 bg-[#050811] rounded select-none font-mono text-[9px]"
+        >
+          <defs>
+            <radialGradient id={`xaGlow-${att.id}`} cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#1E293B" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#050811" stopOpacity="1" />
+            </radialGradient>
+            <filter id={`glow-${att.id}`}>
+              <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Intensifier Field */}
+          <rect width="400" height="240" fill={`url(#xaGlow-${att.id})`} />
+          <circle
+            cx="200"
+            cy="120"
+            r="110"
+            fill="none"
+            stroke="#334155"
+            strokeWidth="1"
+            strokeDasharray="4 4"
+            opacity="0.4"
+          />
+
+          {/* Bony Landmarks Silhouette */}
+          <path d="M190 20 L210 20 L212 55 L188 55 Z" fill="#1E293B" opacity="0.3" />
+          <path d="M188 60 L212 60 L215 95 L185 95 Z" fill="#1E293B" opacity="0.3" />
+          <path d="M185 100 L215 100 L217 135 L183 135 Z" fill="#1E293B" opacity="0.3" />
+          <path d="M183 140 L217 140 L219 175 L181 175 Z" fill="#1E293B" opacity="0.3" />
+          <path d="M181 180 L219 180 L220 215 L180 215 Z" fill="#1E293B" opacity="0.3" />
+
+          {/* Contrast-filled Vascular Tree */}
+          <g filter={`url(#glow-${att.id})`}>
+            <path
+              d="M 200 230 Q 202 180 198 140 Q 195 110 215 80"
+              fill="none"
+              stroke="#F8FAFC"
+              strokeWidth="5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 198 140 Q 160 130 135 105 Q 115 85 90 70"
+              fill="none"
+              stroke="#E2E8F0"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 198 140 Q 240 135 270 120 Q 295 105 320 85"
+              fill="none"
+              stroke="#E2E8F0"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            {/* Selective Catheter with Radiopaque Tip */}
+            <path
+              d="M 200 235 Q 201 190 197 145 Q 195 125 180 115"
+              fill="none"
+              stroke="#F59E0B"
+              strokeWidth="1.5"
+              strokeDasharray="8 2"
+            />
+            <circle cx="180" cy="115" r="2.5" fill="#FBBF24" />
+
+            {/* Stent Mesh or Embolic Coil Cast */}
+            <rect
+              x="188"
+              y="110"
+              width="26"
+              height="40"
+              rx="3"
+              fill="none"
+              stroke="#38BDF8"
+              strokeWidth="1.5"
+              strokeDasharray="2 2"
+            />
+            <path
+              d="M 188 110 L 214 150 M 214 110 L 188 150"
+              stroke="#38BDF8"
+              strokeWidth="0.8"
+              opacity="0.7"
+            />
+          </g>
+
+          {/* Calibration Overlay */}
+          <text x="12" y="20" fill="#4ADE80" fontWeight="bold">
+            SMS JAIPUR • ANGIOSUITE 1
+          </text>
+          <text x="12" y="32" fill="#94A3B8">
+            XA / DSA FLUOROSCOPY
+          </text>
+          <text x="270" y="20" fill="#4ADE80" textAnchor="end">
+            LAO 30° / CRA 15°
+          </text>
+          <text x="388" y="20" fill="#FBBF24" textAnchor="end">
+            FRAME 28/48
+          </text>
+
+          <text x="12" y="215" fill="#94A3B8">
+            AIR KERMA: 38 mGy
+          </text>
+          <text x="12" y="227" fill="#94A3B8">
+            DAP: 18.4 Gy·cm²
+          </text>
+          <text x="388" y="215" fill="#38BDF8" textAnchor="end">
+            kV: 76 • mA: 320
+          </text>
+          <text x="388" y="227" fill="#4ADE80" textAnchor="end">
+            HEMOSTASIS VERIFIED
+          </text>
+
+          <line x1="195" y1="120" x2="205" y2="120" stroke="#EF4444" strokeWidth="1" />
+          <line x1="200" y1="115" x2="200" y2="125" stroke="#EF4444" strokeWidth="1" />
+        </svg>
+      );
+    }
+
+    if (att.modality === "US") {
+      return (
+        <svg
+          viewBox="0 0 400 240"
+          className="w-full h-48 bg-[#020617] rounded select-none font-mono text-[9px]"
+        >
+          <defs>
+            <linearGradient id={`usBeam-${att.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#1E293B" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#0B0F19" stopOpacity="0.4" />
+            </linearGradient>
+            <linearGradient id={`dopplerRed-${att.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#DC2626" />
+              <stop offset="100%" stopColor="#EA580C" />
+            </linearGradient>
+          </defs>
+
+          <rect width="400" height="240" fill="#020617" />
+          <polygon
+            points="60,25 340,25 385,215 15,215"
+            fill={`url(#usBeam-${att.id})`}
+          />
+
+          <line
+            x1="60"
+            y1="65"
+            x2="340"
+            y2="65"
+            stroke="#334155"
+            strokeWidth="0.5"
+            strokeDasharray="3 3"
+            opacity="0.3"
+          />
+          <line
+            x1="45"
+            y1="115"
+            x2="355"
+            y2="115"
+            stroke="#334155"
+            strokeWidth="0.5"
+            strokeDasharray="3 3"
+            opacity="0.3"
+          />
+          <line
+            x1="30"
+            y1="165"
+            x2="370"
+            y2="165"
+            stroke="#334155"
+            strokeWidth="0.5"
+            strokeDasharray="3 3"
+            opacity="0.3"
+          />
+
+          {/* Longitudinal Vessel Walls */}
+          <path
+            d="M 40 100 Q 200 95 360 105"
+            fill="none"
+            stroke="#94A3B8"
+            strokeWidth="2.5"
+          />
+          <path
+            d="M 40 145 Q 200 140 360 150"
+            fill="none"
+            stroke="#94A3B8"
+            strokeWidth="2.5"
+          />
+
+          {/* Color Doppler Flow Box & Cast */}
+          <rect
+            x="140"
+            y="85"
+            width="130"
+            height="75"
+            fill="none"
+            stroke="#EAB308"
+            strokeWidth="1"
+            strokeDasharray="4 2"
+          />
+          <path
+            d="M 142 105 Q 200 102 268 110 L 268 138 Q 200 132 142 140 Z"
+            fill={`url(#dopplerRed-${att.id})`}
+            opacity="0.85"
+          />
+          <circle cx="165" cy="120" r="2.5" fill="#FFFFFF" />
+          <circle cx="185" cy="116" r="3" fill="#FFFFFF" />
+          <circle cx="210" cy="122" r="2" fill="#FFFFFF" />
+          <circle cx="235" cy="118" r="2.5" fill="#FFFFFF" />
+
+          {/* Caliper Measurement */}
+          <line
+            x1="200"
+            y1="98"
+            x2="200"
+            y2="142"
+            stroke="#38BDF8"
+            strokeWidth="1"
+            strokeDasharray="2 2"
+          />
+          <text x="206" y="122" fill="#38BDF8" fontWeight="bold">
+            D: 6.4 mm
+          </text>
+
+          {/* Overlay text */}
+          <text x="12" y="18" fill="#FACC15" fontWeight="bold">
+            SMS MEDICAL COLLEGE • USG 1
+          </text>
+          <text x="12" y="29" fill="#94A3B8">
+            9L4 LINEAR • COLOR DOPPLER
+          </text>
+          <text x="388" y="18" fill="#4ADE80" textAnchor="end">
+            PRF: 2.5 kHz
+          </text>
+          <text x="388" y="29" fill="#94A3B8" textAnchor="end">
+            GAIN: 68%
+          </text>
+
+          <text x="12" y="230" fill="#94A3B8">
+            DEPTH: 4.5 cm
+          </text>
+          <text x="200" y="230" fill="#FACC15" textAnchor="middle">
+            GSV OCCLUDED • CFV PATENT
+          </text>
+          <text x="388" y="230" fill="#4ADE80" textAnchor="end">
+            VEL: 0.0 cm/s (OCCLUDED)
+          </text>
+        </svg>
+      );
+    }
+
+    // Default CT / MRI Slice Simulation
+    return (
+      <svg
+        viewBox="0 0 400 240"
+        className="w-full h-48 bg-[#080C14] rounded select-none font-mono text-[9px]"
+      >
+        <defs>
+          <radialGradient id={`ctSoft-${att.id}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#334155" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#080C14" stopOpacity="1" />
+          </radialGradient>
+        </defs>
+
+        <rect width="400" height="240" fill="#080C14" />
+        <ellipse
+          cx="200"
+          cy="120"
+          rx="140"
+          ry="90"
+          fill={`url(#ctSoft-${att.id})`}
+          stroke="#475569"
+          strokeWidth="1"
+        />
+
+        {/* Vertebral Body */}
+        <ellipse cx="200" cy="180" rx="22" ry="16" fill="#F1F5F9" stroke="#E2E8F0" strokeWidth="1" />
+        <circle cx="200" cy="172" r="7" fill="#080C14" />
+
+        {/* Aorta & IVC */}
+        <circle cx="185" cy="155" r="9" fill="#FFFFFF" />
+        <ellipse cx="218" cy="153" rx="12" ry="7" fill="#CBD5E1" />
+
+        {/* Liver Contour & Caudate */}
+        <path
+          d="M 130 90 Q 200 65 290 85 Q 320 130 280 170 Q 220 160 190 145 Q 160 130 130 90 Z"
+          fill="#1E293B"
+          stroke="#64748B"
+          strokeWidth="1"
+          opacity="0.7"
+        />
+        <ellipse cx="210" cy="135" rx="20" ry="14" fill="#475569" stroke="#94A3B8" strokeWidth="1" />
+        <text x="210" y="137" fill="#FFFFFF" textAnchor="middle" fontSize="7">
+          CAUDATE
+        </text>
+
+        {/* Overlay */}
+        <text x="12" y="18" fill="#38BDF8" fontWeight="bold">
+          SMS SSH JAIPUR • 128 SLICE
+        </text>
+        <text x="12" y="29" fill="#94A3B8">
+          CECT ABDOMEN • PORTAL PHASE
+        </text>
+        <text x="388" y="18" fill="#4ADE80" textAnchor="end">
+          WW: 350 • WL: 40
+        </text>
+        <text x="388" y="29" fill="#94A3B8" textAnchor="end">
+          120 kVp • 250 mAs
+        </text>
+
+        <text x="12" y="230" fill="#94A3B8">
+          THICKNESS: 5.0 mm
+        </text>
+        <text x="388" y="230" fill="#FBBF24" textAnchor="end">
+          CAUDATE RATIO: 0.78 (HIGH)
+        </text>
+      </svg>
+    );
+  };
+
   return (
     <div className="space-y-4 max-w-6xl mx-auto pb-16">
       {/* Toast Notification */}
@@ -235,6 +808,15 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${summary
           >
             <Copy className="w-3.5 h-3.5" />
             <span>Copy for IHMS Portal</span>
+          </button>
+
+          <button
+            onClick={handleSaveAndSyncToDossier}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#137333] hover:bg-[#0D652D] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+            title="Save discharge summary and sync procedural image attachments to patient dossier"
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>Save &amp; Sync to Dossier</span>
           </button>
 
           <button
@@ -652,6 +1234,71 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${summary
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Procedural Imaging & Angiogram Exhibit */}
+          <div className="space-y-2 border border-[#DADCE0] p-3.5 sm:p-4 bg-[#FFFFFF] rounded-xl print:border print:border-[#202124] print:break-inside-avoid">
+            <div className="flex items-center justify-between border-b border-[#DADCE0] pb-2">
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#202124] flex items-center gap-1.5">
+                  <Camera className="w-3.5 h-3.5 text-[#1A73E8]" />
+                  PROCEDURAL IMAGING &amp; ANGIOGRAM EXHIBIT (SMS HOSPITAL JAIPUR)
+                </h4>
+                <p className="text-[10px] text-[#5F6368]">
+                  Cath-Lab Angiosuite Documentation &bull; Intra-procedural &amp; Completion Imaging Proof
+                </p>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F1F3F4] text-[#3C4043] font-semibold border border-[#DADCE0]">
+                {summaryData.attachments?.length || 0} Exhibit(s)
+              </span>
+            </div>
+
+            {(!summaryData.attachments || summaryData.attachments.length === 0) ? (
+              <div className="p-4 text-center text-xs text-[#80868B] italic">
+                No procedural imaging or angiogram runs attached to this discharge card.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                {summaryData.attachments.map((att, idx) => (
+                  <div
+                    key={att.id || idx}
+                    className="border border-[#DADCE0] rounded-lg overflow-hidden bg-[#FAFAFA] flex flex-col print:border-[#202124] print:break-inside-avoid shadow-2xs"
+                  >
+                    {/* Exhibit Card Header */}
+                    <div className="px-3 py-1.5 bg-[#F1F3F4] border-b border-[#DADCE0] flex items-center justify-between text-[10px]">
+                      <div className="flex items-center gap-1.5 font-bold text-[#202124] truncate">
+                        <span className="px-1.5 py-0.2 rounded font-mono font-bold bg-[#1A73E8] text-white">
+                          [{att.modality}]
+                        </span>
+                        <span className="truncate">{att.title}</span>
+                      </div>
+                      <span className="text-[#5F6368] font-mono shrink-0 text-[9px]">
+                        {att.capturedAt}
+                      </span>
+                    </div>
+
+                    {/* Exhibit Visual Canvas / Image */}
+                    <div className="p-2 bg-black flex items-center justify-center">
+                      {renderAttachmentVisual(att)}
+                    </div>
+
+                    {/* Exhibit Caption & Verification */}
+                    <div className="p-2.5 text-[11px] space-y-1.5 bg-white flex-1 border-t border-[#DADCE0]">
+                      <p className="text-[#202124] leading-relaxed">
+                        <strong className="text-[#3C4043]">Findings:</strong> {att.caption}
+                      </p>
+                      <div className="pt-1.5 flex items-center justify-between text-[9px] text-[#5F6368] border-t border-[#F1F3F4]">
+                        <span>Sawai Man Singh Hospital, Jaipur &bull; Angiosuite</span>
+                        <span className="font-semibold text-[#137333] flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-[#137333]" />
+                          Technical Result Verified
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Patient Discharge Details & Signatures */}
@@ -1134,6 +1781,154 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${summary
                 className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
               />
             </div>
+          </div>
+
+          {/* Section 6: Procedural Images & Angiogram Attachments */}
+          <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F1F3F4] pb-3">
+              <div>
+                <h3 className="font-bold text-xs uppercase tracking-wider text-[#1A73E8] flex items-center gap-1.5">
+                  <Camera className="w-4 h-4" />
+                  6. Procedural Images &amp; Angiogram Attachments
+                </h3>
+                <p className="text-[11px] text-[#5F6368]">
+                  Attach fluoroscopy angiograms, ultrasound Doppler checks, or CECT scans to include in official SMS Hospital A4 printout
+                </p>
+              </div>
+
+              {/* Attachment Actions */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#DADCE0] bg-white hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] cursor-pointer transition-colors shadow-2xs">
+                  <Upload className="w-3.5 h-3.5 text-[#1A73E8]" />
+                  <span>Upload Image File</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                </label>
+
+                <select
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAttachSampleRun(e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-full border border-[#DADCE0] bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] text-xs font-semibold cursor-pointer transition-colors"
+                  defaultValue=""
+                >
+                  <option value="" disabled>+ Attach Sample Jaipur Run...</option>
+                  <option value="dips">DIPS Shunt Portogram (XA)</option>
+                  <option value="venaseal">Venaseal GSV Glue Cast Doppler (US)</option>
+                  <option value="bae">Bronchial Artery Embo Run (XA)</option>
+                  <option value="sfa">SFA Nitinol Stent Run (XA)</option>
+                  <option value="cect">Triphasic CECT Caudate Slice (CT)</option>
+                </select>
+              </div>
+            </div>
+
+            {(!summaryData.attachments || summaryData.attachments.length === 0) ? (
+              <div className="p-6 text-center border-2 border-dashed border-[#DADCE0] rounded-xl text-xs text-[#5F6368] space-y-2">
+                <Camera className="w-8 h-8 text-[#80868B] mx-auto" />
+                <p className="font-semibold text-[#202124]">No Procedural Imaging Attached</p>
+                <p className="text-[11px]">
+                  Click &ldquo;Upload Image File&rdquo; or select a sample Jaipur Angiosuite run above to document proof of technical success.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {summaryData.attachments.map((att, idx) => (
+                  <div
+                    key={att.id || idx}
+                    className="p-3.5 border border-[#DADCE0] rounded-xl bg-[#F8F9FA] space-y-3"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DADCE0] pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-[#1A73E8] text-white flex items-center justify-center text-xs font-bold">
+                          {idx + 1}
+                        </span>
+                        <span className="text-xs font-bold text-[#202124]">{att.title}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-[#5F6368] font-mono">{att.capturedAt}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAttachment(idx)}
+                          className="p-1 rounded text-[#EA4335] hover:bg-[#FCE8E6] transition-colors cursor-pointer"
+                          title="Delete attachment"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                      {/* Visual Preview Thumbnail */}
+                      <div className="md:col-span-1 rounded-lg overflow-hidden border border-[#DADCE0] bg-black flex items-center justify-center max-h-40">
+                        {renderAttachmentVisual(att)}
+                      </div>
+
+                      {/* Editing Fields */}
+                      <div className="md:col-span-3 space-y-2.5">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          <div className="sm:col-span-2">
+                            <label className="block text-[10px] font-semibold text-[#5F6368] mb-0.5">
+                              Attachment Title / Label
+                            </label>
+                            <input
+                              type="text"
+                              value={att.title}
+                              onChange={(e) =>
+                                handleUpdateAttachment(idx, { title: e.target.value })
+                              }
+                              className="w-full px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white font-medium text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-semibold text-[#5F6368] mb-0.5">
+                              Modality
+                            </label>
+                            <select
+                              value={att.modality}
+                              onChange={(e) =>
+                                handleUpdateAttachment(idx, {
+                                  modality: e.target.value as "XA" | "CT" | "US" | "MRI" | "PHOTO",
+                                })
+                              }
+                              className="w-full px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white font-semibold text-xs text-[#1A73E8]"
+                            >
+                              <option value="XA">XA (Angiography / DSA)</option>
+                              <option value="US">US (Doppler / Ultrasound)</option>
+                              <option value="CT">CT (CECT / Scan)</option>
+                              <option value="MRI">MRI (Magnetic Resonance)</option>
+                              <option value="PHOTO">PHOTO (Clinical Wound / Site)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-semibold text-[#5F6368] mb-0.5">
+                            Clinical Findings &amp; Technical Caption
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={att.caption}
+                            onChange={(e) =>
+                              handleUpdateAttachment(idx, { caption: e.target.value })
+                            }
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs leading-relaxed"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

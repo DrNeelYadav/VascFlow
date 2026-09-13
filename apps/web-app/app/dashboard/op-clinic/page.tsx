@@ -77,14 +77,16 @@ export default function OpCtReviewQueuePage() {
   const [newContact, setNewContact] = useState<string>("");
   const [newSmsBillId, setNewSmsBillId] = useState<string>("");
   const [newCtNumber, setNewCtNumber] = useState<string>("");
-  const [newCenter, setNewCenter] = useState<string>("Sonie Hospital");
+  const [newCenter, setNewCenter] = useState<string>("SONI Hospital");
   const [newDiagnosis, setNewDiagnosis] = useState<string>("");
+  const [newClinicalHistory, setNewClinicalHistory] = useState<string>("");
   const [newReviewNotes, setNewReviewNotes] = useState<string>("");
   const [newOrganSystem, setNewOrganSystem] = useState<string>("Liver & Hepatobiliary");
   const [newDiseaseKey, setNewDiseaseKey] = useState<string>("budd_chiari_dips");
 
   // Edit Review Notes State
   const [editNotes, setEditNotes] = useState<string>("");
+  const [editClinicalHistory, setEditClinicalHistory] = useState<string>("");
   const [editStatus, setEditStatus] = useState<CtReviewRecord["status"]>("Reviewed by Neel / Nilesh");
 
   // Booking Conversion Form State
@@ -117,6 +119,7 @@ export default function OpCtReviewQueuePage() {
           r.ctNumber.toLowerCase().includes(q) ||
           r.smsBillId.toLowerCase().includes(q) ||
           r.primaryDiagnosis.toLowerCase().includes(q) ||
+          (r.clinicalHistory && r.clinicalHistory.toLowerCase().includes(q)) ||
           r.contactNumber.includes(q) ||
           r.ctReviewNotes.toLowerCase().includes(q)
         );
@@ -138,6 +141,7 @@ export default function OpCtReviewQueuePage() {
       sex: newSex,
       date: new Date().toISOString().split("T")[0],
       primaryDiagnosis: newDiagnosis.trim() || "Suspected Vascular / Biliary Pathology",
+      clinicalHistory: newClinicalHistory.trim() || "Patient presented to OPD with symptomatic vascular/biliary disease.",
       ctNumber: newCtNumber.trim(),
       ctReviewNotes: newReviewNotes.trim() || "Review cross-sectional anatomy for catheter intervention feasibility.",
       smsBillId: newSmsBillId.trim() || `SMS-BILL-2026-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -158,6 +162,7 @@ export default function OpCtReviewQueuePage() {
     setNewSmsBillId("");
     setNewCtNumber("");
     setNewDiagnosis("");
+    setNewClinicalHistory("");
     setNewReviewNotes("");
   };
 
@@ -168,11 +173,12 @@ export default function OpCtReviewQueuePage() {
 
     updateCtReview(reviewingItem.id, {
       ctReviewNotes: editNotes,
+      clinicalHistory: editClinicalHistory,
       status: editStatus,
     });
 
     setReviewingItem(null);
-    setSuccessToast(`CT Review notes updated for ${reviewingItem.patientName}.`);
+    setSuccessToast(`CT Review notes & status updated for ${reviewingItem.patientName}.`);
     setTimeout(() => setSuccessToast(null), 3000);
   };
 
@@ -302,7 +308,7 @@ export default function OpCtReviewQueuePage() {
             className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-xs font-semibold text-[#3C4043] focus:border-[#1A73E8] focus:outline-none"
           >
             <option value="all">All Imaging Centers</option>
-            <option value="Sonie Hospital">Sonie Hospital PACS</option>
+            <option value="SONI Hospital">SONI Hospital PACS</option>
             <option value="SMS Hospital">SMS Hospital CT</option>
             <option value="External PACS">External / Other</option>
           </select>
@@ -391,6 +397,7 @@ export default function OpCtReviewQueuePage() {
                     onClick={() => {
                       setReviewingItem(item);
                       setEditNotes(item.ctReviewNotes);
+                      setEditClinicalHistory(item.clinicalHistory || "");
                       setEditStatus(item.status);
                     }}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
@@ -419,12 +426,23 @@ export default function OpCtReviewQueuePage() {
                 </div>
               </div>
 
-              {/* Diagnosis & "What to Review on CT" Box */}
+              {/* Diagnosis, Clinical History & "What to Review on CT" Box */}
               <div className="space-y-2 text-xs">
-                <div>
-                  <span className="font-semibold text-[#5F6368]">Primary Diagnosis: </span>
-                  <span className="font-bold text-[#202124]">{item.primaryDiagnosis}</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <div>
+                    <span className="font-semibold text-[#5F6368]">Primary Diagnosis: </span>
+                    <span className="font-bold text-[#202124]">{item.primaryDiagnosis}</span>
+                  </div>
                 </div>
+
+                {item.clinicalHistory && (
+                  <div className="p-2.5 rounded-lg bg-[#F1F3F4]/70 border border-[#DADCE0] text-xs space-y-0.5">
+                    <span className="font-bold text-[11px] text-[#3C4043] uppercase tracking-wider block">
+                      Full Clinical History &amp; Presentation:
+                    </span>
+                    <p className="text-[#202124] leading-relaxed">{item.clinicalHistory}</p>
+                  </div>
+                )}
 
                 <div className="p-3.5 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] space-y-1">
                   <p className="font-bold text-[11px] text-[#1A73E8] uppercase tracking-wider flex items-center gap-1.5">
@@ -550,7 +568,7 @@ export default function OpCtReviewQueuePage() {
                     onChange={(e) => setNewCenter(e.target.value)}
                     className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
                   >
-                    <option value="Sonie Hospital">Sonie Hospital PACS</option>
+                    <option value="SONI Hospital">SONI Hospital PACS</option>
                     <option value="SMS Hospital">SMS Hospital CT</option>
                     <option value="External PACS">External / Other Center</option>
                   </select>
@@ -580,6 +598,20 @@ export default function OpCtReviewQueuePage() {
                   onChange={(e) => setNewDiagnosis(e.target.value)}
                   placeholder="e.g. Cirrhosis with recurrent gastric variceal hemorrhage"
                   className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#3C4043] mb-1">
+                  Complete Clinical History &amp; Presentation *
+                </label>
+                <textarea
+                  rows={2}
+                  required
+                  value={newClinicalHistory}
+                  onChange={(e) => setNewClinicalHistory(e.target.value)}
+                  placeholder="e.g. 52-year-old male with decompensated NASH cirrhosis, recurrent variceal bleed requiring 4 units PRBC, melena 3 days ago..."
+                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none leading-relaxed"
                 />
               </div>
 
@@ -680,6 +712,19 @@ export default function OpCtReviewQueuePage() {
             <form onSubmit={handleEditNotesSubmit} className="space-y-4 text-xs">
               <div>
                 <label className="block font-semibold text-[#3C4043] mb-1">
+                  Clinical History &amp; Presentation:
+                </label>
+                <textarea
+                  rows={2}
+                  value={editClinicalHistory}
+                  onChange={(e) => setEditClinicalHistory(e.target.value)}
+                  placeholder="Enter or refine clinical history..."
+                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#3C4043] mb-1">
                   CT Review Notes &amp; Anatomical Findings:
                 </label>
                 <textarea
@@ -693,17 +738,17 @@ export default function OpCtReviewQueuePage() {
 
               <div>
                 <label className="block font-semibold text-[#3C4043] mb-1">
-                  Queue Status:
+                  Review Status (3-State Workflow):
                 </label>
                 <select
                   value={editStatus}
                   onChange={(e) => setEditStatus(e.target.value as CtReviewRecord["status"])}
                   className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-semibold"
                 >
-                  <option value="Pending Review">Pending Review</option>
                   <option value="Reviewed by Neel / Nilesh">Reviewed by Neel / Nilesh</option>
                   <option value="To be reviewed by consultant">To be reviewed by consultant</option>
                   <option value="Booking Cath-Lab on next available date">Booking Cath-Lab on next available date</option>
+                  <option value="Pending Review">Pending Review</option>
                   <option value="Booked in Cath-Lab">Booked in Cath-Lab</option>
                 </select>
               </div>

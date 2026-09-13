@@ -130,6 +130,15 @@ export interface PatientDischargeDetails {
   dischargePreparedBy: string;
 }
 
+export interface ProceduralImageAttachment {
+  id: string;
+  title: string;
+  modality: "XA" | "CT" | "US" | "MRI" | "PHOTO";
+  capturedAt: string;
+  dataUrl: string; // Base64 or Image URL / SVG representation
+  caption: string;
+}
+
 export interface IhmsDischargeSummaryData {
   id: string;
   patientId: string;
@@ -142,6 +151,7 @@ export interface IhmsDischargeSummaryData {
   ddcDrugs: DdcDrugItem[];
   dischargeMedications: DischargeMedicationItem[];
   dischargeDetails: PatientDischargeDetails;
+  attachments: ProceduralImageAttachment[];
 }
 
 // ============================================================================
@@ -272,6 +282,24 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     approvedBy: "DR Meenu Bagarhatta",
     dischargePreparedBy: "Dr Alok Verma",
   },
+  attachments: [
+    {
+      id: "ATT-001",
+      title: "Post-Venaseal Ultrasound Doppler Confirmation",
+      modality: "US",
+      capturedAt: "31-08-2026 10:45 AM",
+      dataUrl: "",
+      caption: "SMS Medical College Angiosuite 1: High-resolution B-mode & Color Doppler demonstrating complete occlusion and non-compressibility of left GSV with echogenic glue cast. Deep venous system (CFV & Popliteal) widely patent.",
+    },
+    {
+      id: "ATT-002",
+      title: "Intra-procedural Left GSV Venogram",
+      modality: "XA",
+      capturedAt: "31-08-2026 10:15 AM",
+      dataUrl: "",
+      caption: "Digital Subtraction Angiogram: 7F delivery catheter positioned 5.0 cm distal to saphenofemoral junction (SFJ). No non-target glue migration.",
+    },
+  ],
 };
 
 export const ANJUM_NISHA_DISCHARGE: IhmsDischargeSummaryData = {
@@ -410,6 +438,24 @@ export const ANJUM_NISHA_DISCHARGE: IhmsDischargeSummaryData = {
     approvedBy: "DR RUPESH KUMAR POKHARNA",
     dischargePreparedBy: "Dr Sudhir Maharshi",
   },
+  attachments: [
+    {
+      id: "ATT-AN-01",
+      title: "Triphasic CECT Abdomen: Caudate Lobe Hypertrophy",
+      modality: "CT",
+      capturedAt: "14-08-2026 02:30 PM",
+      dataUrl: "",
+      caption: "SMS Super Speciality Hospital CECT: Heterogeneous mosaic parenchymal perfusion, caudate hypertrophy, non-visualization of hepatic veins, and prominent retroperitoneal collateralization.",
+    },
+    {
+      id: "ATT-AN-02",
+      title: "Color Doppler Shunt Mapping & Portal Flow",
+      modality: "US",
+      capturedAt: "26-08-2026 11:45 AM",
+      dataUrl: "",
+      caption: "Ultrasound Color Doppler: Attenuated intrahepatic IVC caliber (6.2 mm), recanalized umbilical vein with hepatofugal collaterals.",
+    },
+  ],
 };
 
 // ============================================================================
@@ -438,6 +484,7 @@ export function generateIhmsDischargeForPatient(patient: {
     inr: number;
     plt: number;
   };
+  attachments?: ProceduralImageAttachment[];
 }): IhmsDischargeSummaryData {
   const isBuddChiari = patient.procedureKey.includes("budd") || patient.procedureKey.includes("dips");
   const isVaricose = patient.procedureKey.includes("varicose") || patient.procedureKey.includes("glue");
@@ -619,5 +666,27 @@ export function generateIhmsDischargeForPatient(patient: {
       approvedBy: "DR MEENU BAGARHATTA",
       dischargePreparedBy: patient.postedBy || "Dr Neel Yadav",
     },
+    attachments:
+      patient.attachments && patient.attachments.length > 0
+        ? patient.attachments
+        : [
+            {
+              id: `ATT-${patient.id}-01`,
+              title: `Pre-Procedure Diagnostic Angiogram / Roadmap`,
+              modality: isBuddChiari || isArterial || isBae ? "XA" : "US",
+              capturedAt:
+                new Date(Date.now() - 86400000).toLocaleDateString("en-IN") + " 10:00 AM",
+              dataUrl: "",
+              caption: `SMS Medical College Angiosuite: Pre-intervention roadmap for ${patient.procedure}. Target anatomy identified with selective catheterization.`,
+            },
+            {
+              id: `ATT-${patient.id}-02`,
+              title: `Post-Procedure Completion Image & Hemostasis`,
+              modality: isBuddChiari || isArterial || isBae ? "XA" : "US",
+              capturedAt: new Date().toLocaleDateString("en-IN") + " 11:15 AM",
+              dataUrl: "",
+              caption: `SMS Medical College Angiosuite: Post-procedure check verifying technical success, prompt flow, and complete devascularization/stent expansion.`,
+            },
+          ],
   };
 }

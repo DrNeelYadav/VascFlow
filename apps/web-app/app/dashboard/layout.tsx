@@ -100,13 +100,13 @@ export default function DashboardLayout({
             <span>8 Beds Synced</span>
           </div>
 
-          <button
-            onClick={() => setShowBookingModal(true)}
+          <Link
+            href="/dashboard?view=calendar"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-medium shadow-sm transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Admit / Book</span>
-          </button>
+          </Link>
         </div>
       </header>
 

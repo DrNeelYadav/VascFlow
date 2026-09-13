@@ -90,6 +90,16 @@ export const PostOpMonitoringSchema = z.object({
 });
 export type PostOpMonitoring = z.infer<typeof PostOpMonitoringSchema>;
 
+export const ProceduralAttachmentSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  modality: z.enum(["XA", "CT", "US", "MRI", "PHOTO"]).default("XA"),
+  capturedAt: z.string(),
+  dataUrl: z.string(),
+  caption: z.string(),
+});
+export type ProceduralAttachment = z.infer<typeof ProceduralAttachmentSchema>;
+
 export const EndoflowPatientSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -115,6 +125,7 @@ export const EndoflowPatientSchema = z.object({
   preOp: PreOpPrepSchema,
   inRoom: InRoomTelemetrySchema.optional(),
   postOp: PostOpMonitoringSchema.optional(),
+  attachments: z.array(ProceduralAttachmentSchema).optional(),
 });
 export type EndoflowPatient = z.infer<typeof EndoflowPatientSchema>;
 

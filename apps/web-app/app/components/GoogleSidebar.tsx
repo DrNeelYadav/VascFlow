@@ -6,17 +6,10 @@ import { usePathname } from "next/navigation";
 import {
   Calendar,
   CalendarCheck,
-  BedDouble,
-  Users,
   FileText,
   Kanban,
   Activity,
-  HeartPulse,
-  Microscope,
-  Radiation,
-  Syringe,
   Database,
-  Radio,
   Plus,
   ChevronLeft,
   ChevronRight,
@@ -45,28 +38,12 @@ const HOSPITAL_WORKLISTS: NavItem[] = [
     name: "OPD CT Review",
     href: "/dashboard/op-clinic",
     icon: CalendarCheck,
-    badge: "CT Queue",
-    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
-  },
-  {
-    id: "scheme-codes",
-    name: "Scheme Tariffs & Codes",
-    href: "/dashboard/schemes",
-    icon: FileText,
-    badge: "MAAY/RGHS",
-    badgeColor: "bg-[#E6F4EA] text-[#137333]",
-  },
-  {
-    id: "discharge-cards",
-    name: "IHMS Discharge Cards",
-    href: "/dashboard/discharge",
-    icon: FileText,
-    badge: "IHMS",
+    badge: "CT",
     badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
   },
   {
     id: "pipeline",
-    name: "Turnaround Pipeline",
+    name: "Cath-Lab Pipeline",
     href: "/dashboard/pipeline",
     icon: Kanban,
   },
@@ -77,61 +54,37 @@ const HOSPITAL_WORKLISTS: NavItem[] = [
     icon: Activity,
   },
   {
-    id: "data-tools",
-    name: "Data Tools",
-    href: "#",
-    icon: Layers,
+    id: "discharge-cards",
+    name: "IHMS Discharge Cards",
+    href: "/dashboard/discharge",
+    icon: FileText,
+    badge: "IHMS",
+    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
   },
 ];
 
-const MODALITY_CATALOGS: NavItem[] = [
-  {
-    id: "dsa-angio",
-    name: "DSA & Angio",
-    href: "/dashboard/catalog?domain=arterial",
-    icon: HeartPulse,
-    badge: "XA",
-    badgeColor: "bg-[#FCE8E6] text-[#C5221F]",
-  },
-  {
-    id: "us-biopsies",
-    name: "All Biopsies",
-    href: "/dashboard/catalog?domain=biopsy",
-    icon: Microscope,
-    badge: "US",
-    badgeColor: "bg-[#E6F4EA] text-[#137333]",
-  },
-  {
-    id: "ct-guided",
-    name: "CT-Guided Biopsy",
-    href: "/dashboard/catalog?domain=biopsy&modality=CT",
-    icon: Radiation,
-    badge: "CT",
-    badgeColor: "bg-[#FEF7E0] text-[#B06000]",
-  },
-  {
-    id: "fnac-clinic",
-    name: "FNAC Clinic",
-    href: "/dashboard/catalog?domain=biopsy&modality=ROSE",
-    icon: Syringe,
-    badge: "ROSE",
-    badgeColor: "bg-[#F3E8FD] text-[#7E22CE]",
-  },
+const CLINICAL_TOOLS: NavItem[] = [
   {
     id: "ir-registry",
-    name: "100 IR Registry",
+    name: "100 IR Catalog",
     href: "/dashboard/catalog",
     icon: Database,
     badge: "100",
     badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
   },
   {
-    id: "hardware-gateway",
-    name: "C-Arm Gateway",
-    href: "/dashboard/hardware",
-    icon: Radio,
-    badge: ":11112",
-    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
+    id: "scheme-codes",
+    name: "Scheme Tariffs",
+    href: "/dashboard/schemes",
+    icon: ShieldCheck,
+    badge: "MAAY/RGHS",
+    badgeColor: "bg-[#E6F4EA] text-[#137333]",
+  },
+  {
+    id: "data-tools",
+    name: "Data & Export Tools",
+    href: "#",
+    icon: Layers,
   },
 ];
 
@@ -287,18 +240,36 @@ export function GoogleSidebar({
           </div>
         </div>
 
-        {/* Section 2: Procedure Modalities & 100 IR Catalog */}
+        {/* Section 2: Clinical Tools & Reference */}
         <div className="space-y-1 pt-2 border-t border-[#F1F3F4]">
           {!isCollapsed && (
             <p className="text-[10px] font-bold uppercase tracking-wider text-[#80868B] px-3 mb-1.5">
-              Procedure Modalities
+              Tools &amp; Reference
             </p>
           )}
 
           <div className="space-y-0.5">
-            {MODALITY_CATALOGS.map((item) => {
-              const active = isLinkActive(item.href);
+            {CLINICAL_TOOLS.map((item) => {
+              const active = item.href !== "#" && isLinkActive(item.href);
               const Icon = item.icon;
+
+              if (item.id === "data-tools") {
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onOpenDataTools?.()}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs transition-colors group text-[#3C4043] hover:bg-[#F1F3F4] hover:text-[#202124] ${
+                      isCollapsed ? "justify-center px-0" : ""
+                    } cursor-pointer`}
+                    title={item.name}
+                  >
+                    <Icon className="w-4 h-4 shrink-0 text-[#5F6368] group-hover:text-[#202124]" />
+                    {!isCollapsed && (
+                      <span className="flex-1 truncate text-left">{item.name}</span>
+                    )}
+                  </button>
+                );
+              }
 
               return (
                 <Link

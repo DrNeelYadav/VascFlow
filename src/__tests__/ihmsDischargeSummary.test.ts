@@ -55,10 +55,24 @@ describe("Rajasthan IHMS e-Hospital Discharge Summary Studio Suite", () => {
       expect(card.dischargeMedications.some((m) => m.medicine.includes("Spironolactone"))).toBe(true);
       expect(card.dischargeDetails.generalAdvise).toContain("High protein, low salt diet");
     });
+
+    it("verifies authentic Jaipur Angiosuite procedural image attachments in Sunil Kumar and Anjum Nisha", () => {
+      expect(SUNIL_KUMAR_DISCHARGE.attachments).toBeDefined();
+      expect(SUNIL_KUMAR_DISCHARGE.attachments.length).toBeGreaterThanOrEqual(2);
+      expect(SUNIL_KUMAR_DISCHARGE.attachments[0].modality).toBe("US");
+      expect(SUNIL_KUMAR_DISCHARGE.attachments[0].title).toContain("Venaseal");
+      expect(SUNIL_KUMAR_DISCHARGE.attachments[1].modality).toBe("XA");
+
+      expect(ANJUM_NISHA_DISCHARGE.attachments).toBeDefined();
+      expect(ANJUM_NISHA_DISCHARGE.attachments.length).toBeGreaterThanOrEqual(2);
+      expect(ANJUM_NISHA_DISCHARGE.attachments[0].modality).toBe("CT");
+      expect(ANJUM_NISHA_DISCHARGE.attachments[0].title).toContain("CECT");
+      expect(ANJUM_NISHA_DISCHARGE.attachments[1].modality).toBe("US");
+    });
   });
 
   describe("Automated Discharge Generator Engine", () => {
-    it("generates an authentic compliant IHMS discharge summary for a Budd-Chiari DIPS patient", () => {
+    it("generates an authentic compliant IHMS discharge summary for a Budd-Chiari DIPS patient with attachments", () => {
       const generated = generateIhmsDischargeForPatient({
         id: "PT01",
         name: "Ramswaroop Meena",
@@ -83,6 +97,42 @@ describe("Rajasthan IHMS e-Hospital Discharge Summary Studio Suite", () => {
       expect(generated.procedureDetails[0].procedureDetail).toContain("Gore Viatorr");
       expect(generated.dischargeMedications.some((m) => m.medicine.includes("Apixaban"))).toBe(true);
       expect(generated.dischargeDetails.approvedBy).toBe("DR MEENU BAGARHATTA");
+      expect(generated.attachments).toHaveLength(2);
+      expect(generated.attachments[0].title).toContain("Roadmap");
+    });
+
+    it("generates an authentic compliant IHMS discharge summary preserving custom procedural attachments", () => {
+      const customAttachments = [
+        {
+          id: "ATT-CUSTOM-01",
+          title: "SMS Angiosuite 1: DIPS Completion Portogram",
+          modality: "XA" as const,
+          capturedAt: "13-09-2026 11:30 AM",
+          dataUrl: "data:image/png;base64,mockDipsImageData",
+          caption: "Viatorr stent widely patent with robust portosystemic decompression.",
+        },
+      ];
+
+      const generated = generateIhmsDischargeForPatient({
+        id: "PT01",
+        name: "Ramswaroop Meena",
+        age: 56,
+        sex: "Male",
+        hid: "SMS-2026-089",
+        unit: "Gastroenterology / IR",
+        postedBy: "Dr Neel Yadav",
+        summary: "Primary Budd-Chiari syndrome.",
+        procedure: "Direct Intrahepatic Portosystemic Shunt (DIPS)",
+        procedureKey: "budd_chiari_dips",
+        scheme: "MAAY",
+        ipd: { ward: "Liver ICU", bed: "LICU-04", podDay: "POD 1" },
+        labs: { ast: 142, alt: 118, bili: 2.8, alb: 2.9, creat: 0.92, inr: 1.45, plt: 184000 },
+        attachments: customAttachments,
+      });
+
+      expect(generated.attachments).toHaveLength(1);
+      expect(generated.attachments[0].id).toBe("ATT-CUSTOM-01");
+      expect(generated.attachments[0].dataUrl).toBe("data:image/png;base64,mockDipsImageData");
     });
 
     it("generates an authentic compliant IHMS discharge summary for a BAE hemoptysis patient", () => {
@@ -106,6 +156,40 @@ describe("Rajasthan IHMS e-Hospital Discharge Summary Studio Suite", () => {
       expect(generated.procedureDetails[0].procedureDetail).toContain("Mikaelsson");
       expect(generated.procedureDetails[0].procedureDetail).toContain("PVA particles");
       expect(generated.admissionDetails.patientCategory).toBe("RGHS");
+    });
+  });
+
+  describe("Endoflow Store Patient Dossier & Attachment Synchronization", () => {
+    it("updates patient record in useEndoflowStore with procedural attachments", async () => {
+      const { useEndoflowStore } = await import(
+        "../../apps/web-app/app/dashboard/useEndoflowStore"
+      );
+
+      const store = useEndoflowStore.getState();
+      const testPatient = store.patients[0];
+      expect(testPatient).toBeDefined();
+
+      const newAttachment = {
+        id: "ATT-TEST-SYNC-01",
+        title: "Check Fluoroscopy Run",
+        modality: "XA" as const,
+        capturedAt: "13-09-2026 12:00 PM",
+        dataUrl: "",
+        caption: "Technical check completed with prompt contrast clearance.",
+      };
+
+      store.updatePatient(testPatient.id, {
+        attachments: [newAttachment],
+        summary: "Updated clinical summary with procedural attachments verified.",
+      });
+
+      const updated = useEndoflowStore
+        .getState()
+        .patients.find((p) => p.id === testPatient.id);
+      expect(updated).toBeDefined();
+      expect(updated?.attachments).toHaveLength(1);
+      expect(updated?.attachments?.[0].title).toBe("Check Fluoroscopy Run");
+      expect(updated?.summary).toContain("Updated clinical summary");
     });
   });
 });

@@ -2,6 +2,19 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  compress: true,
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-label',
+      '@radix-ui/react-slot',
+      'framer-motion',
+      '@tanstack/react-query',
+      'zustand',
+    ],
+  },
   pageExtensions: ['page.tsx', 'page.ts', 'route.ts'],
   turbopack: {},
   headers: async () => [

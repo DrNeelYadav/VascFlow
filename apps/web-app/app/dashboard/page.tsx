@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   useEndoflowStore,
   EndoflowPatient,
@@ -70,7 +71,7 @@ import {
   Check,
 } from "lucide-react";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const {
     patients,
     activeCaseId,
@@ -120,13 +121,22 @@ export default function DashboardPage() {
     INSTITUTIONAL_STAFF_ACCOUNTS[0];
   const permissions = getStaffPermissions(activeStaff.role);
 
-  // Tab State for Doctors (Booking Diary, Cath-Lab Console, Master Worklist)
-  const [doctorActiveTab, setDoctorActiveTab] = useState<
-    "booking" | "cathlab" | "worklist"
-  >("booking");
+  // Tab State for Doctors: Default & Only view is Vascule Booking Diary
+  const [doctorActiveTab, setDoctorActiveTab] = useState<"booking">("booking");
+
+  const searchParams = useSearchParams();
+  const urlView = searchParams.get("view");
 
   // Booking View Mode: List Diary vs Calendar View
-  const [bookingViewMode, setBookingViewMode] = useState<"list" | "calendar">("list");
+  const [bookingViewMode, setBookingViewMode] = useState<"list" | "calendar">(
+    urlView === "calendar" ? "calendar" : "list"
+  );
+
+  useEffect(() => {
+    if (urlView === "calendar") {
+      setBookingViewMode("calendar");
+    }
+  }, [urlView]);
 
   // Calendar Navigation State (Default to current month / year or 2026)
   const [calendarYear, setCalendarYear] = useState<number>(2026);
@@ -135,10 +145,28 @@ export default function DashboardPage() {
   // Role Switcher Modal
   const [showRoleSwitcher, setShowRoleSwitcher] = useState<boolean>(false);
 
-  // Reminders for tomorrow
+  // Reminders for tomorrow: Only show patients where NOT ALL 4 screening points are verified!
+  // Once all 4 points are ticked, the patient goes away. When all cases are screened, the entire box disappears.
   const tomorrowReminders = useMemo(() => {
-    return getTomorrowReminders();
+    const raw = getTomorrowReminders();
+    return raw.filter((c) => {
+      const allFourScreened =
+        c.npoVerified &&
+        c.labsVerified &&
+        c.bloodProductsVerified &&
+        c.hardwareVerified;
+      return !allFourScreened;
+    });
   }, [getTomorrowReminders, bookedCases]);
+
+  // Today's date string and today's patients for the dashboard home page
+  const todayDateStr = useMemo(() => {
+    return new Date().toISOString().split("T")[0];
+  }, []);
+
+  const todayCases = useMemo(() => {
+    return bookedCases.filter((c) => c.scheduledDate === todayDateStr);
+  }, [bookedCases, todayDateStr]);
 
   // Modals
   const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
@@ -182,6 +210,17 @@ export default function DashboardPage() {
   >([]);
   const [customHardwareItem, setCustomHardwareItem] = useState<string>("");
   const [customHardwareSpec, setCustomHardwareSpec] = useState<string>("");
+
+  // IR Scheme & Approved Implant Selection State
+  const [selectedSchemeCode, setSelectedSchemeCode] = useState<string>("2849-IN061A");
+  const [selectedImplants, setSelectedImplants] = useState<string[]>(["2849-IN061A IMP 38", "2849-IN061A IMP 39"]);
+
+  const activeSchemePackage = useMemo(() => {
+    return (
+      IR_SCHEME_PACKAGES.find((pkg) => pkg.packageCode === selectedSchemeCode) ||
+      IR_SCHEME_PACKAGES[0]
+    );
+  }, [selectedSchemeCode]);
 
   // Rotterdam Calculator Inputs
   const [calcEnceph, setCalcEnceph] = useState<number>(0);
@@ -681,578 +720,441 @@ export default function DashboardPage() {
       {/* ===================== VIEW A: DOCTORS (FACULTY, DM, SR) ===================== */}
       {permissions.isDoctor && (
         <div className="space-y-6">
-          {/* Doctor Navigation Tabs */}
+          {/* Doctor Navigation Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#DADCE0] pb-2 gap-3">
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
-                onClick={() => setDoctorActiveTab("booking")}
+                onClick={() => setBookingViewMode("list")}
                 className={`pb-2.5 px-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                  doctorActiveTab === "booking"
+                  bookingViewMode === "list"
                     ? "border-[#1A73E8] text-[#1A73E8]"
                     : "border-transparent text-[#5F6368] hover:text-[#202124]"
                 }`}
               >
-                DM Case Booking (OPD Diary)
-              </button>
-              <button
-                onClick={() => setDoctorActiveTab("cathlab")}
-                className={`pb-2.5 px-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                  doctorActiveTab === "cathlab"
-                    ? "border-[#1A73E8] text-[#1A73E8]"
-                    : "border-transparent text-[#5F6368] hover:text-[#202124]"
-                }`}
-              >
-                Active Cath-Lab Console
-              </button>
-              <button
-                onClick={() => setDoctorActiveTab("worklist")}
-                className={`pb-2.5 px-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                  doctorActiveTab === "worklist"
-                    ? "border-[#1A73E8] text-[#1A73E8]"
-                    : "border-transparent text-[#5F6368] hover:text-[#202124]"
-                }`}
-              >
-                Master Worklist
+                Vascule Booking Diary
               </button>
             </div>
 
-            {doctorActiveTab === "booking" && (
-              <div className="flex items-center gap-2">
-                {/* View Mode Toggle */}
-                <div className="flex items-center bg-[#F1F3F4] rounded-full p-0.5 border border-[#DADCE0]">
-                  <button
-                    onClick={() => setBookingViewMode("list")}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                      bookingViewMode === "list"
-                        ? "bg-[#FFFFFF] text-[#1A73E8] shadow-xs"
-                        : "text-[#5F6368] hover:text-[#202124]"
-                    }`}
-                  >
-                    <ListFilter className="w-3.5 h-3.5" />
-                    <span>List Diary</span>
-                  </button>
-                  <button
-                    onClick={() => setBookingViewMode("calendar")}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                      bookingViewMode === "calendar"
-                        ? "bg-[#FFFFFF] text-[#1A73E8] shadow-xs"
-                        : "text-[#5F6368] hover:text-[#202124]"
-                    }`}
-                  >
-                    <CalendarDays className="w-3.5 h-3.5" />
-                    <span>2026 Calendar</span>
-                  </button>
-                </div>
-
+            <div className="flex items-center gap-2">
+              {/* View Mode Toggle */}
+              <div className="flex items-center bg-[#F1F3F4] rounded-full p-0.5 border border-[#DADCE0]">
                 <button
-                  onClick={() => setShowBookingModal(true)}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer shrink-0"
+                  onClick={() => setBookingViewMode("list")}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                    bookingViewMode === "list"
+                      ? "bg-[#FFFFFF] text-[#1A73E8] shadow-xs"
+                      : "text-[#5F6368] hover:text-[#202124]"
+                  }`}
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Book Cath-Lab Case</span>
+                  <ListFilter className="w-3.5 h-3.5" />
+                  <span>List Diary</span>
+                </button>
+                <button
+                  onClick={() => setBookingViewMode("calendar")}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                    bookingViewMode === "calendar"
+                      ? "bg-[#FFFFFF] text-[#1A73E8] shadow-xs"
+                      : "text-[#5F6368] hover:text-[#202124]"
+                  }`}
+                >
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  <span>2026 Calendar</span>
                 </button>
               </div>
-            )}
+
+              <button
+                onClick={() => {
+                  setBookingViewMode("calendar");
+                }}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Admit / Book Case</span>
+              </button>
+            </div>
           </div>
 
-          {/* TAB 1: DM Case Booking & Protocols (OPD Diary & Calendar View) */}
-          {doctorActiveTab === "booking" && (
-            <div className="space-y-6">
-              {/* Summary Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-                  <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Total Booked Cases</p>
-                  <p className="text-xl font-bold text-[#202124] mt-0.5">{bookedCases.length}</p>
+          {/* VASCULE BOOKING DIARY & CALENDAR */}
+          <div className="space-y-6">
+            {/* Summary Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
+                <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Total Booked Cases</p>
+                <p className="text-xl font-bold text-[#202124] mt-0.5">{bookedCases.length}</p>
+              </div>
+              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
+                <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Today&apos;s Patients</p>
+                <p className="text-xl font-bold text-[#1E8E3E] mt-0.5">
+                  {todayCases.length}
+                </p>
+              </div>
+              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
+                <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Scheduled Future</p>
+                <p className="text-xl font-bold text-[#1A73E8] mt-0.5">
+                  {bookedCases.filter((c) => c.status === "Scheduled").length}
+                </p>
+              </div>
+              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
+                <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Rescheduled</p>
+                <p className="text-xl font-bold text-[#B06000] mt-0.5">
+                  {bookedCases.filter((c) => c.status === "Rescheduled").length}
+                </p>
+              </div>
+            </div>
+
+            {/* Prominent Today's Patients Section (Dashboard Home View) */}
+            <div className="bg-[#FFFFFF] border-2 border-[#CEEAD6] rounded-2xl overflow-hidden shadow-xs">
+              <div className="p-4 bg-[#E6F4EA]/60 border-b border-[#CEEAD6] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full bg-[#1E8E3E] animate-pulse" />
+                  <h3 className="text-sm font-bold text-[#137333] uppercase tracking-wide">
+                    Today&apos;s Cath-Lab Patients ({todayDateStr})
+                  </h3>
                 </div>
-                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-                  <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Liver / BCS Protocols</p>
-                  <p className="text-xl font-bold text-[#1A73E8] mt-0.5">
-                    {bookedCases.filter((c) => c.organSystem === "Liver & Hepatobiliary").length}
-                  </p>
-                </div>
-                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-                  <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Scheduled Cases</p>
-                  <p className="text-xl font-bold text-[#137333] mt-0.5">
-                    {bookedCases.filter((c) => c.status === "Scheduled").length}
-                  </p>
-                </div>
-                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-                  <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Rescheduled</p>
-                  <p className="text-xl font-bold text-[#B06000] mt-0.5">
-                    {bookedCases.filter((c) => c.status === "Rescheduled").length}
-                  </p>
-                </div>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#1E8E3E] text-white">
+                  {todayCases.length} {todayCases.length === 1 ? "Patient" : "Patients"} Today
+                </span>
               </div>
 
-              {/* CALENDAR VIEW: Official 2026 Rajasthan Holiday Calendar Engine */}
-              {bookingViewMode === "calendar" && (
-                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-                  {/* Calendar Header with Month Navigation */}
-                  <div className="flex items-center justify-between border-b border-[#DADCE0] pb-3">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-base font-bold text-[#202124] flex items-center gap-2">
-                        <span>{monthNames[calendarMonth]} {calendarYear}</span>
-                        <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]">
-                          Official 2026 Rajasthan Master
-                        </span>
-                      </h3>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => {
-                          if (calendarMonth === 0) {
-                            setCalendarMonth(11);
-                            setCalendarYear((y) => y - 1);
-                          } else {
-                            setCalendarMonth((m) => m - 1);
-                          }
-                        }}
-                        className="p-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-[#3C4043] cursor-pointer"
-                        title="Previous Month"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setCalendarMonth(8);
-                          setCalendarYear(2026);
-                        }}
-                        className="px-2.5 py-1 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] cursor-pointer"
-                      >
-                        Sept 2026
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (calendarMonth === 11) {
-                            setCalendarMonth(0);
-                            setCalendarYear((y) => y + 1);
-                          } else {
-                            setCalendarMonth((m) => m + 1);
-                          }
-                        }}
-                        className="p-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-[#3C4043] cursor-pointer"
-                        title="Next Month"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Day Names Header */}
-                  <div className="grid grid-cols-7 gap-1 text-center font-bold text-xs text-[#5F6368] py-1 border-b border-[#DADCE0]">
-                    <span className="text-[#C5221F]">Sun</span>
-                    <span>Mon</span>
-                    <span>Tue</span>
-                    <span>Wed</span>
-                    <span>Thu</span>
-                    <span>Fri</span>
-                    <span>Sat</span>
-                  </div>
-
-                  {/* Calendar 7-Column Grid */}
-                  <div className="grid grid-cols-7 gap-1.5">
-                    {calendarDays.map((cell, idx) => {
-                      if (!cell) {
-                        return (
-                          <div
-                            key={`empty-${idx}`}
-                            className="min-h-[90px] rounded-xl bg-[#F8F9FA]/40 border border-transparent p-1.5"
-                          />
-                        );
-                      }
-
-                      const isSun = cell.holidayInfo.isSunday;
-                      const isGazetted = cell.holidayInfo.type === "Gazetted";
-                      const isOptional = cell.holidayInfo.type === "Optional";
-                      const hasCases = cell.cases.length > 0;
-
-                      return (
-                        <div
-                          key={cell.dateStr}
-                          onClick={() => {
-                            setFormScheduledDate(cell.dateStr);
-                            setShowBookingModal(true);
-                          }}
-                          className={`min-h-[100px] rounded-xl border p-2 flex flex-col justify-between transition-all cursor-pointer ${
-                            isSun
-                              ? "bg-[#FCE8E6]/30 border-[#F5C2C7]"
-                              : isGazetted
-                              ? "bg-[#FEF7E0]/40 border-[#FEEFC3]"
-                              : isOptional
-                              ? "bg-[#F3E8FD]/30 border-[#E9D5FF]"
-                              : "bg-[#FFFFFF] border-[#DADCE0] hover:border-[#1A73E8] hover:shadow-xs"
-                          }`}
-                        >
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-between">
-                              <span
-                                className={`text-xs font-bold ${
-                                  isSun || isGazetted ? "text-[#C5221F]" : "text-[#202124]"
-                                }`}
-                              >
-                                {cell.dayNumber}
-                              </span>
-
-                              {isGazetted && (
-                                <span className="px-1 py-0.2 text-[8px] font-bold uppercase rounded bg-[#FCE8E6] text-[#C5221F]">
-                                  Gazetted
-                                </span>
-                              )}
-                              {isSun && !isGazetted && (
-                                <span className="px-1 py-0.2 text-[8px] font-bold uppercase rounded bg-[#F1F3F4] text-[#C5221F]">
-                                  Sunday
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Holiday Title if present */}
-                            {cell.holidayInfo.name && (
-                              <p className="text-[10px] font-medium text-[#B06000] leading-tight line-clamp-2">
-                                🏛️ {cell.holidayInfo.name}
-                              </p>
-                            )}
-
-                            {/* Booked Cases Chips */}
-                            {hasCases && (
-                              <div className="space-y-1 pt-1">
-                                {cell.cases.map((c) => (
-                                  <div
-                                    key={c.id}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setPrintSummaryCase(c);
-                                    }}
-                                    className="p-1 rounded bg-[#E8F0FE] border border-[#D2E3FC] text-[10px] font-medium text-[#1A73E8] truncate hover:bg-[#D2E3FC]"
-                                    title={`${c.patientName} (${c.procedureTitle})`}
-                                  >
-                                    • {c.patientName.split(" ")[0]}: {c.procedureTitle.slice(0, 18)}...
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-
-                          <span className="text-[9px] text-[#80868B] text-right block self-end">
-                            + Book
+              {todayCases.length === 0 ? (
+                <div className="p-6 text-center text-xs text-[#5F6368] space-y-2">
+                  <CheckCircle2 className="w-6 h-6 text-[#1E8E3E] mx-auto opacity-70" />
+                  <p className="font-semibold text-[#202124]">No Elective Cases Scheduled for Today</p>
+                  <p>All emergency and call cases can be admitted directly via Admit / Book.</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-[#DADCE0]">
+                  {todayCases.map((c) => (
+                    <div
+                      key={c.id}
+                      className="p-4 hover:bg-[#F8F9FA] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      <div className="space-y-1.5 max-w-2xl">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-[#202124]">
+                            {c.patientName}
+                          </span>
+                          <span className="text-xs text-[#5F6368]">
+                            ({c.age}y / {c.sex})
+                          </span>
+                          <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-md bg-[#F1F3F4] text-[#3C4043] border border-[#DADCE0]">
+                            CR: {c.ssoNumber}
+                          </span>
+                          <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]">
+                            Today&apos;s Case
                           </span>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <p className="text-xs text-[#1A73E8] font-bold">
+                          {c.procedureTitle}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-[#5F6368]">
+                          <span className="flex items-center gap-1">
+                            <Phone className="w-3.5 h-3.5 text-[#137333]" />
+                            <a href={`tel:${c.contactNumber}`} className="hover:underline text-[#202124]">
+                              {c.contactNumber}
+                            </a>
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-[#EA4335]" />
+                            {c.location}
+                          </span>
+                          <span>• Booked by: {c.bookedBy}</span>
+                        </div>
+                      </div>
 
-                  {/* Calendar Legend */}
-                  <div className="flex flex-wrap items-center gap-4 text-xs pt-3 border-t border-[#DADCE0] text-[#5F6368]">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 rounded-sm bg-[#FFFFFF] border border-[#DADCE0]" />
-                      <span>Elective Cath-Lab Open</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 rounded-sm bg-[#FCE8E6] border border-[#F5C2C7]" />
-                      <span>Sunday / Rajasthan Gazetted Holiday (Emergency Only)</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 rounded-sm bg-[#FEF7E0] border border-[#FEEFC3]" />
-                      <span>Optional / Festival Holiday</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 rounded-sm bg-[#E8F0FE] border border-[#D2E3FC]" />
-                      <span>Booked Cath-Lab Case</span>
-                    </span>
-                  </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => setPrintSummaryCase(c)}
+                          className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] flex items-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                          <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
+                          <span>Summary</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setRescheduleModalCase(c);
+                            setNewRescheduleDate(c.scheduledDate);
+                          }}
+                          className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
+                        >
+                          Reschedule
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
+            </div>
 
-              {/* LIST VIEW: Booked Cases (OPD Diary) */}
-              {bookingViewMode === "list" && (
-                <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl overflow-hidden shadow-xs">
-                  <div className="p-4 border-b border-[#DADCE0] flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm font-bold text-[#202124]">
-                        DM Resident Cath-Lab Case Diary
-                      </h3>
-                      <p className="text-xs text-[#5F6368]">
-                        Organized by probable date • Verified contact records • 1-Click date rescheduling
-                      </p>
-                    </div>
-                    <span className="text-xs text-[#5F6368]">
-                      Showing {bookedCases.length} records
-                    </span>
+            {/* CALENDAR VIEW: Complete Full-Page 2026 Calendar View */}
+            {bookingViewMode === "calendar" && (
+              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+                {/* Calendar Header with Month Navigation */}
+                <div className="flex items-center justify-between border-b border-[#DADCE0] pb-3">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-base font-bold text-[#202124] flex items-center gap-2">
+                      <span>{monthNames[calendarMonth]} {calendarYear}</span>
+                      <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]">
+                        Official 2026 Rajasthan Master
+                      </span>
+                    </h3>
                   </div>
 
-                  <div className="divide-y divide-[#DADCE0]">
-                    {bookedCases.map((c) => (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        if (calendarMonth === 0) {
+                          setCalendarMonth(11);
+                          setCalendarYear((y) => y - 1);
+                        } else {
+                          setCalendarMonth((m) => m - 1);
+                        }
+                      }}
+                      className="p-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-[#3C4043] cursor-pointer"
+                      title="Previous Month"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCalendarMonth(8);
+                        setCalendarYear(2026);
+                      }}
+                      className="px-2.5 py-1 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] cursor-pointer"
+                    >
+                      Sept 2026
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (calendarMonth === 11) {
+                          setCalendarMonth(0);
+                          setCalendarYear((y) => y + 1);
+                        } else {
+                          setCalendarMonth((m) => m + 1);
+                        }
+                      }}
+                      className="p-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-[#3C4043] cursor-pointer"
+                      title="Next Month"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Day Names Header */}
+                <div className="grid grid-cols-7 gap-1 text-center font-bold text-xs text-[#5F6368] py-1 border-b border-[#DADCE0]">
+                  <span className="text-[#C5221F]">Sun</span>
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                  <span>Sat</span>
+                </div>
+
+                {/* Calendar 7-Column Grid: Gazetted Holidays & Sundays in Red */}
+                <div className="grid grid-cols-7 gap-1.5">
+                  {calendarDays.map((cell, idx) => {
+                    if (!cell) {
+                      return (
+                        <div
+                          key={`empty-${idx}`}
+                          className="min-h-[95px] rounded-xl bg-[#F8F9FA]/40 border border-transparent p-1.5"
+                        />
+                      );
+                    }
+
+                    const isSun = cell.holidayInfo.isSunday;
+                    const isGazetted = cell.holidayInfo.type === "Gazetted";
+                    const isHolidayRed = isSun || isGazetted;
+                    const hasCases = cell.cases.length > 0;
+
+                    return (
                       <div
-                        key={c.id}
-                        className="p-4 hover:bg-[#F8F9FA] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
+                        key={cell.dateStr}
+                        onClick={() => {
+                          setFormScheduledDate(cell.dateStr);
+                          setShowBookingModal(true);
+                        }}
+                        className={`min-h-[105px] rounded-xl border p-2 flex flex-col justify-between transition-all cursor-pointer ${
+                          isHolidayRed
+                            ? "bg-[#FCE8E6]/40 border-[#F5C2C7]"
+                            : "bg-[#FFFFFF] border-[#DADCE0] hover:border-[#1A73E8] hover:shadow-xs"
+                        }`}
                       >
-                        <div className="space-y-1.5 max-w-2xl">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-[#202124]">
-                              {c.patientName}
-                            </span>
-                            <span className="text-xs text-[#5F6368]">
-                              ({c.age}y / {c.sex})
-                            </span>
-                            <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-md bg-[#F1F3F4] text-[#3C4043] border border-[#DADCE0]">
-                              SSO: {c.ssoNumber}
-                            </span>
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
                             <span
-                              className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
-                                c.status === "Scheduled"
-                                  ? "bg-[#E6F4EA] text-[#137333]"
-                                  : c.status === "Rescheduled"
-                                  ? "bg-[#FEF7E0] text-[#B06000]"
-                                  : "bg-[#E8F0FE] text-[#1A73E8]"
+                              className={`text-xs font-bold ${
+                                isHolidayRed ? "text-[#C5221F]" : "text-[#202124]"
                               }`}
                             >
-                              {c.status}
+                              {cell.dayNumber}
                             </span>
-                          </div>
 
-                          <p className="text-xs text-[#1A73E8] font-semibold">
-                            {c.procedureTitle}
-                          </p>
-
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-[#5F6368]">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3.5 h-3.5 text-[#1A73E8]" />
-                              <strong className="text-[#202124]">{c.scheduledDate}</strong>
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Phone className="w-3.5 h-3.5 text-[#137333]" />
-                              <a href={`tel:${c.contactNumber}`} className="hover:underline text-[#202124]">
-                                {c.contactNumber}
-                              </a>
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3.5 h-3.5 text-[#EA4335]" />
-                              {c.location}
-                            </span>
-                            <span>• Booked by: {c.bookedBy}</span>
-                          </div>
-
-                          {c.rotterdamScore && (
-                            <div className="inline-flex items-center gap-2 text-[11px] px-2 py-1 rounded bg-[#F1F3F4] text-[#3C4043]">
-                              <span className="font-bold">Rotterdam Score:</span>
-                              <span className="font-mono text-[#C5221F] font-bold">
-                                {c.rotterdamScore.score} ({c.rotterdamScore.classLevel})
+                            {isGazetted && (
+                              <span className="px-1.5 py-0.2 text-[8px] font-bold uppercase rounded bg-[#FCE8E6] text-[#C5221F] border border-[#F5C2C7]">
+                                Gazetted Holiday
                               </span>
-                              <span>• 1-Yr Survival: {c.rotterdamScore.oneYearSurvival}</span>
+                            )}
+                            {isSun && !isGazetted && (
+                              <span className="px-1.5 py-0.2 text-[8px] font-bold uppercase rounded bg-[#FCE8E6] text-[#C5221F] border border-[#F5C2C7]">
+                                Sunday
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Booked Cases Chips without festival names */}
+                          {hasCases && (
+                            <div className="space-y-1 pt-1">
+                              {cell.cases.map((c) => (
+                                <div
+                                  key={c.id}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setPrintSummaryCase(c);
+                                  }}
+                                  className="p-1 rounded bg-[#E8F0FE] border border-[#D2E3FC] text-[10px] font-medium text-[#1A73E8] truncate hover:bg-[#D2E3FC]"
+                                  title={`${c.patientName} (${c.procedureTitle})`}
+                                >
+                                  • {c.patientName.split(" ")[0]}: {c.procedureTitle.slice(0, 18)}...
+                                </div>
+                              ))}
                             </div>
                           )}
                         </div>
 
-                        {/* Case Actions */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button
-                            onClick={() => {
-                              setRescheduleModalCase(c);
-                              setNewRescheduleDate(c.scheduledDate);
-                            }}
-                            className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
-                          >
-                            Reschedule
-                          </button>
-                          <button
-                            onClick={() => setPrintSummaryCase(c)}
-                            className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] flex items-center gap-1.5 transition-colors cursor-pointer"
-                          >
-                            <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
-                            <span>Summary</span>
-                          </button>
-                          <button
-                            onClick={() => {
-                              callPatientToLab(c.id);
-                              setDoctorActiveTab("cathlab");
-                            }}
-                            className="px-3 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
-                          >
-                            Send to Cath-Lab
-                          </button>
-                        </div>
+                        <span className="text-[9px] text-[#1A73E8] font-semibold text-right block self-end">
+                          + Book Case
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-              )}
-            </div>
-          )}
 
-          {/* TAB 2: Active Cath-Lab Console */}
-          {doctorActiveTab === "cathlab" && (
-            <div className="space-y-6">
-              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-6 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#DADCE0] pb-4 mb-5">
+                {/* Calendar Legend: Strictly Red for Gazetted & Sunday */}
+                <div className="flex flex-wrap items-center gap-4 text-xs pt-3 border-t border-[#DADCE0] text-[#5F6368]">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-[#FFFFFF] border border-[#DADCE0]" />
+                    <span>Working Day (Elective Cath-Lab Open)</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-[#FCE8E6] border border-[#F5C2C7]" />
+                    <span className="text-[#C5221F] font-semibold">Sundays &amp; Rajasthan Gazetted Holidays (Red)</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-[#E8F0FE] border border-[#D2E3FC]" />
+                    <span>Booked Cath-Lab Case</span>
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* LIST VIEW: Booked Cases (Vascule Booking Diary) */}
+            {bookingViewMode === "list" && (
+              <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl overflow-hidden shadow-xs">
+                <div className="p-4 border-b border-[#DADCE0] flex items-center justify-between">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#EA4335] animate-pulse" />
-                      <h2 className="text-base font-bold text-[#202124]">
-                        Angiosuite 1 • Live Procedure In Progress
-                      </h2>
-                    </div>
-                    <p className="text-xs text-[#5F6368] mt-0.5">
-                      Siemens Artis Q Biplane • Radiation & Hemodynamic Telemetry
+                    <h3 className="text-sm font-bold text-[#202124]">
+                      Vascule Booking Diary
+                    </h3>
+                    <p className="text-xs text-[#5F6368]">
+                      Organized by probable procedure date • Verified contact records • 1-Click date rescheduling
                     </p>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-[#FCE8E6] text-[#C5221F] border border-[#F5C2C7] text-xs font-bold font-mono">
-                    LIVE FLUOROSCOPY ON
+                  <span className="text-xs text-[#5F6368]">
+                    Showing {bookedCases.length} records
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div className="md:col-span-2 space-y-4">
-                    <div className="p-4 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] space-y-2">
-                      <p className="text-xs font-bold text-[#5F6368] uppercase">Active Patient</p>
-                      <h3 className="text-lg font-bold text-[#202124]">
-                        {activeInRoomPatient.name} ({activeInRoomPatient.age}y / {activeInRoomPatient.sex})
-                      </h3>
-                      <p className="text-xs font-semibold text-[#1A73E8]">
-                        {activeInRoomPatient.procedure}
-                      </p>
-                      <p className="text-xs text-[#5F6368] leading-relaxed">
-                        {activeInRoomPatient.summary}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 text-xs">
-                      <div className="p-3 rounded-lg border border-[#DADCE0] bg-[#FFFFFF]">
-                        <span className="text-[#5F6368] block">Active Vascular Access:</span>
-                        <span className="font-bold text-[#202124] text-xs">
-                          {activeInRoomPatient.inRoom?.activeSheathAccess || "6F Right Femoral Artery Sheath"}
-                        </span>
-                      </div>
-                      <div className="p-3 rounded-lg border border-[#DADCE0] bg-[#FFFFFF]">
-                        <span className="text-[#5F6368] block">Vital Signs:</span>
-                        <span className="font-bold text-[#137333] text-xs">
-                          {activeInRoomPatient.inRoom?.vitals || "124/80 mmHg, HR 74, SpO2 98%"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Radiation & Contrast Gauge */}
-                  <div className="space-y-3">
-                    <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#DADCE0] space-y-2">
-                      <p className="text-xs font-bold text-[#5F6368] uppercase flex items-center gap-1.5">
-                        <Radiation className="w-4 h-4 text-[#E37400]" />
-                        Fluoroscopy Timer
-                      </p>
-                      <p className="text-2xl font-mono font-extrabold text-[#202124]">
-                        {Math.floor((activeInRoomPatient.inRoom?.elapsedFluoroSeconds || 878) / 60)}m{" "}
-                        {(activeInRoomPatient.inRoom?.elapsedFluoroSeconds || 878) % 60}s
-                      </p>
-                      <p className="text-[11px] text-[#5F6368]">Cumulative Dose: 342 mGy (Alert: 2000 mGy)</p>
-                    </div>
-
-                    <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#DADCE0] space-y-2">
-                      <p className="text-xs font-bold text-[#5F6368] uppercase flex items-center gap-1.5">
-                        <Syringe className="w-4 h-4 text-[#1A73E8]" />
-                        Contrast Clearance
-                      </p>
-                      <p className="text-2xl font-mono font-extrabold text-[#1A73E8]">
-                        {activeInRoomPatient.inRoom?.contrastInjectedMl || 48} mL
-                        <span className="text-xs font-normal text-[#5F6368]">
-                          {" "}
-                          / {activeInRoomPatient.inRoom?.macdThresholdMl || 220} mL MACD
-                        </span>
-                      </p>
-                      <p className="text-[11px] text-[#137333] font-semibold">Safe contrast margin intact</p>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        completeProcedureAndTransfer(activeInRoomPatient.id, "ICU-01", {
-                          instructions: "Procedure successful. Transferred to ICU-01. Hemostasis intact.",
-                        });
-                        setDoctorActiveTab("worklist");
-                      }}
-                      className="w-full py-2.5 px-4 rounded-lg bg-[#1E8E3E] hover:bg-[#137333] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                <div className="divide-y divide-[#DADCE0]">
+                  {bookedCases.map((c) => (
+                    <div
+                      key={c.id}
+                      className="p-4 hover:bg-[#F8F9FA] transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
                     >
-                      Complete & Transfer to Recovery
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+                      <div className="space-y-1.5 max-w-2xl">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-[#202124]">
+                            {c.patientName}
+                          </span>
+                          <span className="text-xs text-[#5F6368]">
+                            ({c.age}y / {c.sex})
+                          </span>
+                          <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-md bg-[#F1F3F4] text-[#3C4043] border border-[#DADCE0]">
+                            SSO: {c.ssoNumber}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
+                              c.status === "Scheduled"
+                                ? "bg-[#E6F4EA] text-[#137333]"
+                                : c.status === "Rescheduled"
+                                ? "bg-[#FEF7E0] text-[#B06000]"
+                                : "bg-[#E8F0FE] text-[#1A73E8]"
+                            }`}
+                          >
+                            {c.status}
+                          </span>
+                        </div>
 
-          {/* TAB 3: Master Worklist */}
-          {doctorActiveTab === "worklist" && (
-            <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl overflow-hidden shadow-xs space-y-4 p-4">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="relative w-full sm:max-w-md">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#5F6368]" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search patients, procedures, CR No..."
-                    className="w-full bg-[#F1F3F4] text-xs rounded-full pl-9 pr-4 py-2 border border-transparent focus:border-[#1A73E8] focus:bg-[#FFFFFF] focus:outline-none"
-                  />
-                </div>
+                        <p className="text-xs text-[#1A73E8] font-semibold">
+                          {c.procedureTitle}
+                        </p>
 
-                <div className="flex items-center gap-1 text-xs">
-                  {["all", "XA", "CT", "US"].map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => setFilterModality(m)}
-                      className={`px-3 py-1 rounded-full text-xs font-semibold uppercase transition-colors cursor-pointer ${
-                        filterModality === m
-                          ? "bg-[#1A73E8] text-white"
-                          : "bg-[#FFFFFF] text-[#3C4043] border border-[#DADCE0] hover:bg-[#F1F3F4]"
-                      }`}
-                    >
-                      {m}
-                    </button>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-[#5F6368]">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5 text-[#1A73E8]" />
+                            <strong className="text-[#202124]">{c.scheduledDate}</strong>
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Phone className="w-3.5 h-3.5 text-[#137333]" />
+                            <a href={`tel:${c.contactNumber}`} className="hover:underline text-[#202124]">
+                              {c.contactNumber}
+                            </a>
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-[#EA4335]" />
+                            {c.location}
+                          </span>
+                          <span>• Booked by: {c.bookedBy}</span>
+                        </div>
+
+                        {c.rotterdamScore && (
+                          <div className="inline-flex items-center gap-2 text-[11px] px-2 py-1 rounded bg-[#F1F3F4] text-[#3C4043]">
+                            <span className="font-bold">Rotterdam Score:</span>
+                            <span className="font-mono text-[#C5221F] font-bold">
+                              {c.rotterdamScore.score} ({c.rotterdamScore.classLevel})
+                            </span>
+                            <span>• 1-Yr Survival: {c.rotterdamScore.oneYearSurvival}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Case Actions */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => {
+                            setRescheduleModalCase(c);
+                            setNewRescheduleDate(c.scheduledDate);
+                          }}
+                          className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
+                        >
+                          Reschedule
+                        </button>
+                        <button
+                          onClick={() => setPrintSummaryCase(c)}
+                          className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] flex items-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                          <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
+                          <span>Summary</span>
+                        </button>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
-
-              <div className="divide-y divide-[#DADCE0]">
-                {filteredWorklist.map((pt) => (
-                  <div
-                    key={pt.id}
-                    className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#202124] text-sm">{pt.name}</span>
-                        <span className="text-[#5F6368]">
-                          ({pt.age}y / {pt.sex})
-                        </span>
-                        <span className="px-2 py-0.5 font-mono text-[10px] rounded bg-[#F1F3F4] text-[#3C4043]">
-                          {pt.hid}
-                        </span>
-                        <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-[#E8F0FE] text-[#1A73E8]">
-                          {pt.status}
-                        </span>
-                      </div>
-                      <p className="text-[#1A73E8] font-medium mt-0.5">{pt.procedure}</p>
-                      <p className="text-[#5F6368] text-[11px]">
-                        Unit: {pt.unit} • Doctor: {pt.postedBy} • Bed: {pt.ipd.bed}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2 self-end sm:self-auto">
-                      <button
-                        onClick={() => setSelectedDossierPatient(pt)}
-                        className="px-3 py-1.5 rounded-lg bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] font-semibold transition-colors cursor-pointer"
-                      >
-                        View Dossier
-                      </button>
-                      <button
-                        onClick={() => callPatientToLab(pt.id)}
-                        className="px-3 py-1.5 rounded-lg bg-[#FFFFFF] border border-[#DADCE0] hover:bg-[#F1F3F4] text-[#3C4043] font-semibold transition-colors cursor-pointer"
-                      >
-                        Advance Status
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
@@ -1769,6 +1671,100 @@ export default function DashboardPage() {
                 <div className="p-3 rounded-lg bg-[#F8F9FA] border border-[#DADCE0] text-[#5F6368] text-[11px] leading-relaxed">
                   <strong>SIR Indication:</strong> {activeProtocol.clinicalCriteria}
                 </div>
+              </div>
+
+              {/* Section 2B: Rajasthan Government MAAY / RGHS IR Code & Approved Implants */}
+              <div className="space-y-3 pt-2 border-t border-[#DADCE0]">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-[#202124] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#137333]" />
+                    2B. Official Rajasthan Government MAAY / RGHS IR Scheme Codes &amp; Implants
+                  </h4>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]">
+                    Pure IR Codes • Pre-Auth
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-semibold text-[#3C4043] mb-1">
+                      Official IR Package Tariff Code *
+                    </label>
+                    <select
+                      value={selectedSchemeCode}
+                      onChange={(e) => {
+                        const newCode = e.target.value;
+                        setSelectedSchemeCode(newCode);
+                        const matchedPkg = IR_SCHEME_PACKAGES.find((p) => p.packageCode === newCode);
+                        if (matchedPkg && matchedPkg.approvedImplants.length > 0) {
+                          setSelectedImplants(matchedPkg.approvedImplants.map((i) => i.implantCode));
+                        } else {
+                          setSelectedImplants([]);
+                        }
+                      }}
+                      className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-semibold text-xs"
+                    >
+                      {IR_SCHEME_PACKAGES.map((pkg) => (
+                        <option key={pkg.packageCode} value={pkg.packageCode}>
+                          [{pkg.packageCode}] {pkg.procedureName} (₹{pkg.baseTariffINR.toLocaleString("en-IN")})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-[#E6F4EA]/40 border border-[#CEEAD6] flex flex-col justify-center space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-[#5F6368] font-medium">Scheme Coverage:</span>
+                      <span className="font-bold text-[#137333]">
+                        {activeSchemePackage.scheme} ({activeSchemePackage.category})
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-[#5F6368] font-medium">Base Package Tariff:</span>
+                      <span className="font-bold text-[#202124]">
+                        ₹{activeSchemePackage.baseTariffINR.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                    {activeSchemePackage.notes && (
+                      <p className="text-[10px] text-[#B06000] italic">
+                        Notice: {activeSchemePackage.notes}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Approved Scheme Implants Checkboxes */}
+                {activeSchemePackage.approvedImplants.length > 0 && (
+                  <div className="p-3 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] space-y-2">
+                    <p className="font-bold text-[#202124] text-[11px] flex items-center justify-between">
+                      <span>Official Approved Implants (Capped Reimbursement Rates):</span>
+                      <span className="text-[#137333] font-semibold">Pre-authorized hardware</span>
+                    </p>
+                    <div className="space-y-1.5">
+                      {activeSchemePackage.approvedImplants.map((imp) => (
+                        <label key={imp.implantCode} className="flex items-start gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedImplants.includes(imp.implantCode)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedImplants([...selectedImplants, imp.implantCode]);
+                              } else {
+                                setSelectedImplants(selectedImplants.filter((c) => c !== imp.implantCode));
+                              }
+                            }}
+                            className="mt-0.5 rounded border-[#DADCE0] text-[#137333] focus:ring-0 cursor-pointer"
+                          />
+                          <div className="text-xs">
+                            <span className="font-bold text-[#202124]">{imp.name}</span>
+                            <span className="text-[#137333] font-semibold"> • [Code: {imp.implantCode}] </span>
+                            <span className="text-[#5F6368] font-mono">₹{imp.cappedPriceINR.toLocaleString("en-IN")}</span>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Section 3: Disease-Specific Automated Guidance */}
@@ -2439,3 +2435,21 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="flex items-center gap-2 text-sm text-[#5F6368]">
+            <div className="w-5 h-5 border-2 border-[#1A73E8] border-t-transparent rounded-full animate-spin" />
+            <span>Loading VascFlow Dashboard...</span>
+          </div>
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
+  );
+}
+

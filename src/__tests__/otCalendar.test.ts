@@ -56,3 +56,45 @@ describe('Rajasthan 2026 Gazetted Holidays & Scheduler Conflict Engine', () => {
     expect(emptyCheck.holidayName).toBeNull();
   });
 });
+
+import { EXTENSIVE_IR_PROCEDURES } from '../data/procedures';
+
+describe('Extensive Interventional Radiology Procedures Library (250+ Target)', () => {
+  it('contains at least 250 procedures (actual 290)', () => {
+    expect(EXTENSIVE_IR_PROCEDURES.length).toBeGreaterThanOrEqual(250);
+    expect(EXTENSIVE_IR_PROCEDURES.length).toBe(290);
+  });
+
+  it('guarantees unique IDs across all 290 procedures', () => {
+    const ids = EXTENSIVE_IR_PROCEDURES.map((p) => p.id);
+    const uniqueIds = new Set(ids);
+    expect(uniqueIds.size).toBe(EXTENSIVE_IR_PROCEDURES.length);
+  });
+
+  it('includes core rare syndromes and vascular compression procedures', () => {
+    const procedureNames = EXTENSIVE_IR_PROCEDURES.map((p) => p.name.toLowerCase());
+    expect(procedureNames.some((n) => n.includes('budd-chiari'))).toBe(true);
+    expect(procedureNames.some((n) => n.includes('may-thurner'))).toBe(true);
+    expect(procedureNames.some((n) => n.includes('nutcracker'))).toBe(true);
+    expect(procedureNames.some((n) => n.includes('fistula') || n.includes('fistuloplasty'))).toBe(true);
+    expect(procedureNames.some((n) => n.includes('klippel-trenaunay'))).toBe(true);
+  });
+
+  it('verifies clinical blueprint schema for every procedure', () => {
+    EXTENSIVE_IR_PROCEDURES.forEach((proc) => {
+      expect(proc.id).toBeTruthy();
+      expect(proc.name).toBeTruthy();
+      expect(proc.category).toBeTruthy();
+      expect(proc.code).toBeTruthy();
+      expect(proc.icd10).toBeTruthy();
+      expect(Array.isArray(proc.indications)).toBe(true);
+      expect(proc.indications.length).toBeGreaterThan(0);
+      expect(Array.isArray(proc.hardware)).toBe(true);
+      expect(proc.hardware.length).toBeGreaterThan(0);
+      expect(Array.isArray(proc.techniqueSteps)).toBe(true);
+      expect(proc.techniqueSteps.length).toBeGreaterThan(0);
+      expect(proc.maayTariffInr).toBeGreaterThan(0);
+    });
+  });
+});
+

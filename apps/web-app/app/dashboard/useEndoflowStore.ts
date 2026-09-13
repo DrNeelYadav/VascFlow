@@ -811,6 +811,175 @@ export const CtReviewSchema = z.object({
 
 export type CtReviewRecord = z.infer<typeof CtReviewSchema>;
 
+// ============================================================================
+// DOPPLER SURVEILLANCE RECORDS (1-Month & 3-Month Shunt/Stent Patency)
+// ============================================================================
+
+export const DopplerRecordSchema = z.object({
+  id: z.string(),
+  ptId: z.string(),
+  name: z.string(),
+  age: z.number(),
+  sex: z.enum(["M", "F"]),
+  crNo: z.string(),
+  proc: z.string(),
+  implant: z.string(),
+  interval: z.enum(["1m", "3m", "completed"]),
+  intervalLabel: z.string(),
+  dueDate: z.string(),
+  targetVessel: z.string(),
+  targetVelocity: z.string(),
+  status: z.enum(["Scheduled", "Due This Week", "Completed"]),
+  lastPsv: z.number(),
+  lastMpv: z.number(),
+  patency: z.string(),
+  notes: z.string(),
+});
+export type DopplerRecord = z.infer<typeof DopplerRecordSchema>;
+
+export const INITIAL_DOPPLER_RECORDS: DopplerRecord[] = [
+  {
+    id: "DOP01",
+    ptId: "PT01",
+    name: "Ramswaroop Meena",
+    age: 56,
+    sex: "M",
+    crNo: "SMS-2026-089",
+    proc: "Direct Intrahepatic Portosystemic Shunt (DIPS)",
+    implant: "Viatorr 10mm x 7cm covered",
+    interval: "1m",
+    intervalLabel: "1-Month Post-Op",
+    dueDate: "01/10/2026",
+    targetVessel: "Viatorr Shunt & Main PV",
+    targetVelocity: "PSV: 90-190 cm/s | PV >30 cm/s",
+    status: "Scheduled",
+    lastPsv: 135.0,
+    lastMpv: 36.5,
+    patency: "Widely Patent (Normal Velocity)",
+    notes: "Pre-discharge Doppler shows widely patent shunt. Scheduled for 1-Month surveillance.",
+  },
+  {
+    id: "DOP02",
+    ptId: "PT02",
+    name: "Govind Ram",
+    age: 52,
+    sex: "M",
+    crNo: "SMS-2026-077",
+    proc: "TIPS for Refractory Variceal Bleed",
+    implant: "Viatorr 8mm x 8cm",
+    interval: "1m",
+    intervalLabel: "1-Month Post-Op",
+    dueDate: "04/09/2026",
+    targetVessel: "TIPS Shunt Tract",
+    targetVelocity: "PSV: 90-190 cm/s",
+    status: "Due This Week",
+    lastPsv: 142.0,
+    lastMpv: 34.0,
+    patency: "Widely Patent (Normal Velocity)",
+    notes: "Due for 1-month post-op Doppler check this week.",
+  },
+  {
+    id: "DOP03",
+    ptId: "PT03",
+    name: "Kailash Chand",
+    age: 48,
+    sex: "M",
+    crNo: "SMS-2026-081",
+    proc: "Budd-Chiari: Hepatic Vein Balloon Cavoplasty",
+    implant: "Atlas 12mm High-Pressure Balloon",
+    interval: "3m",
+    intervalLabel: "3-Month Post-Op",
+    dueDate: "05/09/2026",
+    targetVessel: "Right Hepatic Vein & IVC",
+    targetVelocity: "Continuous hepatofugal flow",
+    status: "Due This Week",
+    lastPsv: 88.0,
+    lastMpv: 28.0,
+    patency: "Widely Patent (Normal Velocity)",
+    notes: "Due for 3-month surveillance to rule out elastic recoil or restenosis.",
+  },
+  {
+    id: "DOP04",
+    ptId: "PT04",
+    name: "Kamla Devi Sharma",
+    age: 62,
+    sex: "F",
+    crNo: "SMS-2026-092",
+    proc: "SFA Angioplasty & Nitinol Stenting",
+    implant: "EverFlex 6mm x 100mm Nitinol Stent",
+    interval: "1m",
+    intervalLabel: "1-Month Post-Op",
+    dueDate: "02/10/2026",
+    targetVessel: "Superficial Femoral Artery",
+    targetVelocity: "PSV <150 cm/s | PSVR <2.0",
+    status: "Scheduled",
+    lastPsv: 110.0,
+    lastMpv: 0,
+    patency: "Widely Patent (Normal Velocity)",
+    notes: "Bilateral pedal pulses bounding. Next check in 1 month.",
+  },
+  {
+    id: "DOP05",
+    ptId: "PT05",
+    name: "Manish Saini",
+    age: 34,
+    sex: "M",
+    crNo: "SMS-2026-SUR-402",
+    proc: "May-Thurner Left Iliac Venous Stenting",
+    implant: "Wallstent 14mm x 90mm",
+    interval: "1m",
+    intervalLabel: "1-Month Post-Op",
+    dueDate: "06/09/2026",
+    targetVessel: "Left Common Iliac Vein",
+    targetVelocity: "Phasic venous flow with respiration",
+    status: "Due This Week",
+    lastPsv: 70.0,
+    lastMpv: 0,
+    patency: "Widely Patent (Normal Velocity)",
+    notes: "Due this week for 1-month venous duplex check to evaluate in-stent flow.",
+  },
+  {
+    id: "DOP06",
+    ptId: "PT06",
+    name: "Santosh Meena",
+    age: 58,
+    sex: "F",
+    crNo: "SMS-2026-107",
+    proc: "Dialysis Brachiocephalic AVF Fistuloplasty",
+    implant: "Conquest 6mm x 40mm Balloon",
+    interval: "3m",
+    intervalLabel: "3-Month Post-Op",
+    dueDate: "07/09/2026",
+    targetVessel: "Brachial Artery & Cephalic Vein",
+    targetVelocity: "Volume Flow >600 mL/min",
+    status: "Due This Week",
+    lastPsv: 220.0,
+    lastMpv: 0,
+    patency: "Widely Patent (Normal Velocity)",
+    notes: "Due this week for 3-month volume flow and thrill assessment.",
+  },
+  {
+    id: "DOP07",
+    ptId: "PT07",
+    name: "Anita Jain",
+    age: 55,
+    sex: "F",
+    crNo: "SMS-2026-099",
+    proc: "PTBD & Biliary SEMS Stenting",
+    implant: "Niti-S 10mm x 80mm Biliary Stent",
+    interval: "completed",
+    intervalLabel: "1-Month Post-Op",
+    dueDate: "28/08/2026",
+    targetVessel: "Common Bile Duct",
+    targetVelocity: "IHBR Decompressed | Caliber 6mm",
+    status: "Completed",
+    lastPsv: 0,
+    lastMpv: 0,
+    patency: "Widely Patent (Normal Velocity)",
+    notes: "Ultrasound verified complete biliary decompression and normal bilirubin (0.9 mg/dL).",
+  },
+];
+
 export const INITIAL_CT_REVIEWS: CtReviewRecord[] = [
   {
     id: "CT-REV-001",
@@ -1001,6 +1170,14 @@ export interface EndoflowState {
     procedureTitle: string,
     staffName: string
   ) => { success: boolean; id?: string };
+
+  // Doppler Surveillance Records
+  dopplerRecords: DopplerRecord[];
+  addDopplerRecord: (record: Omit<DopplerRecord, "id">) => void;
+  updateDopplerRecord: (id: string, updates: Partial<DopplerRecord>) => void;
+
+  // Patient Updates
+  updatePatient: (id: string, updates: Partial<EndoflowPatient>) => void;
 
   // State Actions
   advanceStage: (patientId: string, nextStatus: ClinicalStage) => void;
@@ -1459,6 +1636,31 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
     return bookingResult;
   },
 
+  // Doppler Surveillance Records
+  dopplerRecords: INITIAL_DOPPLER_RECORDS,
+  addDopplerRecord: (record) => {
+    const newId = `DOP${String(get().dopplerRecords.length + 1).padStart(2, "0")}`;
+    set((state) => ({
+      dopplerRecords: [...state.dopplerRecords, { ...record, id: newId }],
+    }));
+  },
+  updateDopplerRecord: (id, updates) => {
+    set((state) => ({
+      dopplerRecords: state.dopplerRecords.map((d) =>
+        d.id === id ? { ...d, ...updates } : d
+      ),
+    }));
+  },
+
+  // Patient Updates
+  updatePatient: (id, updates) => {
+    set((state) => ({
+      patients: state.patients.map((pt) =>
+        pt.id === id ? { ...pt, ...updates } : pt
+      ),
+    }));
+  },
+
   setSearchQuery: (query: string) => set({ searchQuery: query }),
   setFilterModality: (modality: string) => set({ filterModality: modality }),
   resetToDefaultPatients: () =>
@@ -1468,6 +1670,6 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
       beds: INITIAL_8_BEDS,
       bookedCases: INITIAL_BOOKED_CASES,
       ctReviews: INITIAL_CT_REVIEWS,
+      dopplerRecords: INITIAL_DOPPLER_RECORDS,
     }),
 }));
-

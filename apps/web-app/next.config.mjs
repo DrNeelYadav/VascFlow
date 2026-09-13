@@ -9,6 +9,15 @@ const nextConfig = {
     '@vascule/feature-ot-scheduling',
     '@vascule/feature-dicom-viewer',
   ],
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -65,14 +65,20 @@ const HOSPITAL_WORKLISTS: NavItem[] = [
   {
     id: "pipeline",
     name: "Turnaround Pipeline",
-    href: "/dashboard",
+    href: "/dashboard/pipeline",
     icon: Kanban,
   },
   {
     id: "doppler-tracker",
     name: "Doppler Tracker",
-    href: "/dashboard/analytics",
+    href: "/dashboard/doppler",
     icon: Activity,
+  },
+  {
+    id: "data-tools",
+    name: "Data Tools",
+    href: "#",
+    icon: Layers,
   },
 ];
 
@@ -129,8 +135,10 @@ const MODALITY_CATALOGS: NavItem[] = [
 
 export function GoogleSidebar({
   onOpenBookingModal,
+  onOpenDataTools,
 }: {
   onOpenBookingModal?: () => void;
+  onOpenDataTools?: () => void;
 }) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
@@ -223,6 +231,25 @@ export function GoogleSidebar({
             {HOSPITAL_WORKLISTS.map((item) => {
               const active = isLinkActive(item.href);
               const Icon = item.icon;
+
+              // Data Tools is a button, not a link
+              if (item.id === "data-tools") {
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onOpenDataTools?.()}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs transition-colors group text-[#3C4043] hover:bg-[#F1F3F4] hover:text-[#202124] ${
+                      isCollapsed ? "justify-center px-0" : ""
+                    } cursor-pointer`}
+                    title={item.name}
+                  >
+                    <Icon className="w-4 h-4 shrink-0 text-[#5F6368] group-hover:text-[#202124]" />
+                    {!isCollapsed && (
+                      <span className="flex-1 truncate text-left">{item.name}</span>
+                    )}
+                  </button>
+                );
+              }
 
               return (
                 <Link

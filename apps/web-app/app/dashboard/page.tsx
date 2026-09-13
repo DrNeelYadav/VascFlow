@@ -10,6 +10,7 @@ import {
   BookedCaseRecord,
   BedRecord,
 } from "./useEndoflowStore";
+import { PatientDossierModal } from "../components/PatientDossierModal";
 import {
   IR_CLINICAL_PROTOCOLS,
   calculateRotterdam,
@@ -146,6 +147,8 @@ export default function DashboardPage() {
   const [rescheduleReason, setRescheduleReason] = useState<string>("");
   const [printSummaryCase, setPrintSummaryCase] =
     useState<BookedCaseRecord | null>(null);
+  const [selectedDossierPatient, setSelectedDossierPatient] =
+    useState<EndoflowPatient | null>(null);
 
   // Booking Form State
   const [formPatientName, setFormPatientName] = useState<string>("Ramswaroop Meena");
@@ -1231,6 +1234,12 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center gap-2 self-end sm:self-auto">
+                      <button
+                        onClick={() => setSelectedDossierPatient(pt)}
+                        className="px-3 py-1.5 rounded-lg bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] font-semibold transition-colors cursor-pointer"
+                      >
+                        View Dossier
+                      </button>
                       <button
                         onClick={() => callPatientToLab(pt.id)}
                         className="px-3 py-1.5 rounded-lg bg-[#FFFFFF] border border-[#DADCE0] hover:bg-[#F1F3F4] text-[#3C4043] font-semibold transition-colors cursor-pointer"
@@ -2417,6 +2426,14 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+      )}
+      {/* Patient Clinical Dossier Modal */}
+      {selectedDossierPatient && (
+        <PatientDossierModal
+          patient={selectedDossierPatient}
+          isOpen={true}
+          onClose={() => setSelectedDossierPatient(null)}
+        />
       )}
     </div>
   );

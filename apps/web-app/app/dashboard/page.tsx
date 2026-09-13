@@ -27,6 +27,7 @@ import {
   isDateElectiveBlocked,
 } from "../lib/rajasthanHolidays2026";
 import { RAJASTHAN_DISTRICTS } from "../lib/rajasthanDistricts";
+import { IR_SCHEME_PACKAGES, IrSchemePackage } from "../lib/irSchemeCodes";
 import {
   Activity,
   Calendar,

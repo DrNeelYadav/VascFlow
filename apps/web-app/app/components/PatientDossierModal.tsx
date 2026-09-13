@@ -1482,6 +1482,13 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
           </div>
 
           <div className="flex items-center gap-2">
+            <a
+              href="/dashboard/discharge"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#D2E3FC] bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] text-xs font-semibold transition-colors cursor-pointer"
+            >
+              <FileText className="w-3.5 h-3.5 text-[#1A73E8]" />
+              <span>IHMS Discharge Card</span>
+            </a>
             <button
               onClick={handlePrint}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-xs font-semibold transition-colors cursor-pointer"

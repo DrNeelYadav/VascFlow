@@ -58,9 +58,11 @@ const HOSPITAL_WORKLISTS: NavItem[] = [
   },
   {
     id: "discharge-cards",
-    name: "Discharge Cards",
-    href: "/dashboard/report/STUDY-SMS-2026-001",
+    name: "IHMS Discharge Cards",
+    href: "/dashboard/discharge",
     icon: FileText,
+    badge: "IHMS",
+    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
   },
   {
     id: "pipeline",

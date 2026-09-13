@@ -85,7 +85,7 @@ export default function OpCtReviewQueuePage() {
 
   // Edit Review Notes State
   const [editNotes, setEditNotes] = useState<string>("");
-  const [editStatus, setEditStatus] = useState<"Pending Review" | "Reviewed - Ready to Book" | "Booked in Cath-Lab">("Reviewed - Ready to Book");
+  const [editStatus, setEditStatus] = useState<CtReviewRecord["status"]>("Reviewed by Neel / Nilesh");
 
   // Booking Conversion Form State
   const [bookingDate, setBookingDate] = useState<string>(
@@ -270,7 +270,7 @@ export default function OpCtReviewQueuePage() {
         <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
           <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Reviewed (Ready to Book)</p>
           <p className="text-xl font-bold text-[#1A73E8] mt-0.5">
-            {ctReviews.filter((r) => r.status === "Reviewed - Ready to Book").length}
+            {ctReviews.filter((r) => r.status !== "Pending Review" && r.status !== "Booked in Cath-Lab").length}
           </p>
         </div>
         <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
@@ -315,7 +315,9 @@ export default function OpCtReviewQueuePage() {
           >
             <option value="all">All Statuses</option>
             <option value="Pending Review">Pending Review</option>
-            <option value="Reviewed - Ready to Book">Reviewed (Ready to Book)</option>
+            <option value="Reviewed by Neel / Nilesh">Reviewed by Neel / Nilesh</option>
+            <option value="To be reviewed by consultant">To be reviewed by consultant</option>
+            <option value="Booking Cath-Lab on next available date">Booking Cath-Lab on next available date</option>
             <option value="Booked in Cath-Lab">Booked in Cath-Lab</option>
           </select>
         </div>
@@ -352,9 +354,9 @@ export default function OpCtReviewQueuePage() {
                       className={`px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full ${
                         item.status === "Booked in Cath-Lab"
                           ? "bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]"
-                          : item.status === "Reviewed - Ready to Book"
-                          ? "bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]"
-                          : "bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]"
+                          : item.status === "Pending Review"
+                          ? "bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]"
+                          : "bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]"
                       }`}
                     >
                       {item.status}
@@ -695,11 +697,13 @@ export default function OpCtReviewQueuePage() {
                 </label>
                 <select
                   value={editStatus}
-                  onChange={(e) => setEditStatus(e.target.value as typeof editStatus)}
+                  onChange={(e) => setEditStatus(e.target.value as CtReviewRecord["status"])}
                   className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-semibold"
                 >
                   <option value="Pending Review">Pending Review</option>
-                  <option value="Reviewed - Ready to Book">Reviewed - Ready to Book in Cath-Lab</option>
+                  <option value="Reviewed by Neel / Nilesh">Reviewed by Neel / Nilesh</option>
+                  <option value="To be reviewed by consultant">To be reviewed by consultant</option>
+                  <option value="Booking Cath-Lab on next available date">Booking Cath-Lab on next available date</option>
                   <option value="Booked in Cath-Lab">Booked in Cath-Lab</option>
                 </select>
               </div>

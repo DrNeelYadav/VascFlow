@@ -103,7 +103,14 @@ export default function RootErrorBoundary({ error, reset }: ErrorBoundaryProps) 
             <Button
               variant="cobalt"
               size="lg"
-              onClick={() => reset()}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  // If error is chunk load failure, do a hard cache-busting reload
+                  window.location.reload();
+                } else {
+                  reset();
+                }
+              }}
               className="w-full sm:w-auto flex-1 gap-2 font-medium shadow-cobalt-glow cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />

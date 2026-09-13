@@ -90,7 +90,7 @@ export default function DashboardLayout({
 
           <div className="hidden sm:flex items-center gap-2 bg-[#FFFFFF] border border-[#DADCE0] px-3 py-1 rounded-full text-[11px] font-medium text-[#3C4043]">
             <Activity className="w-3.5 h-3.5 text-[#1A73E8]" />
-            <span>28 Beds Synced</span>
+            <span>8 Beds Synced</span>
           </div>
 
           <button

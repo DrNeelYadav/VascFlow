@@ -52,7 +52,7 @@ const HOSPITAL_WORKLISTS: NavItem[] = [
     name: "IP Bed Board",
     href: "/dashboard/bed-board",
     icon: BedDouble,
-    badge: "28 Beds",
+    badge: "8 Beds",
     badgeColor: "bg-[#E6F4EA] text-[#137333]",
   },
   {

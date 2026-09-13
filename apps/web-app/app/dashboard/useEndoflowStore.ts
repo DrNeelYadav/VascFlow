@@ -1,5 +1,9 @@
 import { create } from "zustand";
 import { z } from "zod";
+import {
+  StaffAccount,
+  INSTITUTIONAL_STAFF_ACCOUNTS,
+} from "../lib/staffAccounts";
 
 // ============================================================================
 // STRICT ZOD VALIDATION SCHEMAS & TYPES (ZERO VULNERABILITIES)
@@ -572,6 +576,290 @@ export const INITIAL_ENDOFLOW_PATIENTS: EndoflowPatient[] = [
 ];
 
 // ============================================================================
+// 8-BED INPATIENT MATRIX (3 ICU BEDS & 5 WARD BEDS)
+// ============================================================================
+
+export const BedStatusSchema = z.enum(["occupied", "vacant", "cleaning"]);
+export type BedStatus = z.infer<typeof BedStatusSchema>;
+
+export interface BedRecord {
+  id: string;
+  type: "ICU" | "Ward";
+  title: string;
+  status: BedStatus;
+  ptName: string;
+  crNo: string;
+  diag: string;
+  doctor: string;
+  vitals?: string;
+  hemostasisIntact?: boolean;
+  distalPulses?: string;
+  ptId?: string;
+}
+
+export const INITIAL_8_BEDS: BedRecord[] = [
+  // 3 ICU Beds
+  {
+    id: "ICU-01",
+    type: "ICU",
+    title: "Liver ICU Bed 01",
+    status: "occupied",
+    ptName: "Govind Ram",
+    crNo: "SMS-2026-077",
+    diag: "Post-TIPS POD 1 • Portosystemic Gradient 6 mmHg",
+    doctor: "Dr. Neel Yadav",
+    vitals: "122/78 mmHg, HR 74, SpO2 98%",
+    hemostasisIntact: true,
+    distalPulses: "Strong (+++)",
+    ptId: "PT01",
+  },
+  {
+    id: "ICU-02",
+    type: "ICU",
+    title: "Liver ICU Bed 02",
+    status: "occupied",
+    ptName: "Kailash Chand",
+    crNo: "SMS-2026-081",
+    diag: "Acute BCS Post-Angioplasty POD 2",
+    doctor: "Dr. Nilesh Bansal",
+    vitals: "118/74 mmHg, HR 80, SpO2 99%",
+    hemostasisIntact: true,
+    distalPulses: "Palpable (++)",
+  },
+  {
+    id: "ICU-03",
+    type: "ICU",
+    title: "Liver ICU Bed 03",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Ready for Emergency STAT Admission",
+    doctor: "-",
+    vitals: "-",
+    hemostasisIntact: true,
+    distalPulses: "-",
+  },
+
+  // 5 Ward Beds
+  {
+    id: "Ward-01",
+    type: "Ward",
+    title: "IR Ward Bed 01",
+    status: "occupied",
+    ptName: "Kamla Devi Sharma",
+    crNo: "SMS-2026-092",
+    diag: "SFA Critical Limb Ischemia • Scheduled Stenting",
+    doctor: "Dr. Pragati Sharma",
+    vitals: "130/84 mmHg, HR 68, SpO2 97%",
+    hemostasisIntact: true,
+    distalPulses: "Weak (+) - Doppler Verified",
+    ptId: "PT02",
+  },
+  {
+    id: "Ward-02",
+    type: "Ward",
+    title: "IR Ward Bed 02",
+    status: "occupied",
+    ptName: "Anita Bairwa",
+    crNo: "SMS-2026-104",
+    diag: "Symptomatic Uterine Fibroids • Pre-UAE",
+    doctor: "Dr. Sahil Verma",
+    vitals: "116/72 mmHg, HR 72, SpO2 100%",
+    hemostasisIntact: true,
+    distalPulses: "Strong (+++)",
+    ptId: "PT05",
+  },
+  {
+    id: "Ward-03",
+    type: "Ward",
+    title: "IR Ward Bed 03",
+    status: "occupied",
+    ptName: "Mahesh Choudhary",
+    crNo: "SMS-2026-111",
+    diag: "BPH / LUTS • Planned PAE",
+    doctor: "Dr. Neel Yadav",
+    vitals: "128/80 mmHg, HR 76, SpO2 98%",
+    hemostasisIntact: true,
+    distalPulses: "Strong (+++)",
+    ptId: "PT06",
+  },
+  {
+    id: "Ward-04",
+    type: "Ward",
+    title: "IR Ward Bed 04",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Sterilized & Available for Elective Admission",
+    doctor: "-",
+    vitals: "-",
+    hemostasisIntact: true,
+    distalPulses: "-",
+  },
+  {
+    id: "Ward-05",
+    type: "Ward",
+    title: "IR Ward Bed 05",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Sterilized & Available for Elective Admission",
+    doctor: "-",
+    vitals: "-",
+    hemostasisIntact: true,
+    distalPulses: "-",
+  },
+];
+
+// ============================================================================
+// DM RESIDENT OPD BOOKED CASES & REMINDERS
+// ============================================================================
+
+export function getTomorrowDateString(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split("T")[0];
+}
+
+export function getTodayDateString(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
+export const BookedCaseSchema = z.object({
+  id: z.string().min(1),
+  patientName: z.string().min(1),
+  age: z.number().min(0).max(130),
+  sex: z.enum(["Male", "Female"]),
+  contactNumber: z.string().min(5),
+  ssoNumber: z.string().min(1),
+  location: z.string().default("Jaipur"),
+  scheduledDate: z.string().min(1), // YYYY-MM-DD
+  organSystem: z.string().default("Liver & Hepatobiliary"),
+  diseaseKey: z.string().min(1),
+  procedureTitle: z.string().min(1),
+  bookedBy: z.string().default("Dr. Neel Yadav (DM01)"),
+  bookedAt: z.string().default(new Date().toISOString()),
+  orderedLabs: z.array(z.string()).default([]),
+  specialInvestigations: z.array(z.string()).default([]),
+  preScanAnatomy: z.record(z.string(), z.string()).default({}),
+  hardwareChecklist: z.array(
+    z.object({
+      id: z.string(),
+      item: z.string(),
+      spec: z.string(),
+      checked: z.boolean().default(false),
+    })
+  ).default([]),
+  rotterdamScore: z.object({
+    score: z.number(),
+    classLevel: z.string(),
+    oneYearSurvival: z.string(),
+  }).optional(),
+  postOpPlan: z.string().default("Post-procedure monitoring, analgesia, and hydration."),
+  status: z.enum(["Scheduled", "Cath-Lab", "Completed", "Rescheduled"]).default("Scheduled"),
+  rescheduleHistory: z.array(
+    z.object({
+      previousDate: z.string(),
+      newDate: z.string(),
+      rescheduledAt: z.string(),
+      reason: z.string().optional(),
+    })
+  ).default([]),
+});
+
+export type BookedCaseRecord = z.infer<typeof BookedCaseSchema>;
+
+export const INITIAL_BOOKED_CASES: BookedCaseRecord[] = [
+  {
+    id: "BC-2026-001",
+    patientName: "Ramswaroop Meena",
+    age: 56,
+    sex: "Male",
+    contactNumber: "9829012345",
+    ssoNumber: "SMS-2026-089",
+    location: "Sikar, Rajasthan",
+    scheduledDate: getTomorrowDateString(),
+    organSystem: "Liver & Hepatobiliary",
+    diseaseKey: "budd_chiari_dips",
+    procedureTitle: "Budd-Chiari Syndrome: Transcaval DIPS / Recanalization",
+    bookedBy: "Dr. Neel Yadav (DM01)",
+    bookedAt: new Date().toISOString(),
+    orderedLabs: [
+      "Liver Function Tests (Total & Direct Bilirubin, AST, ALT, Albumin)",
+      "Renal Function Tests (Serum Creatinine, BUN, Electrolytes)",
+      "Coagulation Profile (PT, INR, aPTT, Platelet Count, Fibrinogen)",
+      "Complete Blood Count (Hb, TLC, Platelets)",
+      "Blood Grouping & Crossmatching (4 Units PRBC, 4 Units FFP reserved)",
+    ],
+    specialInvestigations: [
+      "JAK2 V617F Mutation Assay (Screening for Polycythemia Vera)",
+      "Protein C Activity & Protein S Free Antigen",
+      "Antithrombin III Functional Assay",
+      "Factor V Leiden (G1691A) Mutation",
+      "Serum Homocysteine",
+    ],
+    preScanAnatomy: {
+      rhv: "Thrombotic Occlusion",
+      mhv: "Patent (Target for Venoplasty)",
+      lhv: "Thrombotic Occlusion",
+      ivc_status: "Short Segment Suprahepatic Web",
+      caudate: "Marked Hypertrophy (>3.5 cm)",
+      right_ijv: "Patent & Fully Compressible (>10 mm)",
+    },
+    hardwareChecklist: [
+      { id: "h1", item: "Transjugular Sheath", spec: "10F 45cm Ansel / Flexor Hydrophilic Guiding Sheath", checked: true },
+      { id: "h2", item: "Colapinto Puncture Needle", spec: "RUPS-100 Colapinto Transcaval Access Set (10F)", checked: true },
+      { id: "h3", item: "Extra-Stiff Guidewires", spec: "0.035\" 260cm Amplatz Extra-Stiff + 0.035\" Terumo Glidewire", checked: true },
+      { id: "h4", item: "High-Pressure Angioplasty Balloons", spec: "Conquest / Atlas 8x40 mm & 10x40 mm Non-Compliant", checked: true },
+      { id: "h5", item: "Viatorr TIPS Stent-Graft", spec: "Gore Viatorr Covered Stent: 10 mm diameter (7 cm covered + 2 cm bare)", checked: true },
+      { id: "h6", item: "Intra-op Pressure Manometer", spec: "Electronic Transducer for Portal & Right Atrial Gradient", checked: true },
+    ],
+    rotterdamScore: {
+      score: 1.42,
+      classLevel: "Class III (High Risk)",
+      oneYearSurvival: "63% without decompressive intervention",
+    },
+    postOpPlan: "Therapeutic LMWH (Enoxaparin 1 mg/kg s/c q12h) 4h post-sheath removal. Oral Apixaban 5mg BD from POD 2. 24h Doppler for shunt patency.",
+    status: "Scheduled",
+    rescheduleHistory: [],
+  },
+  {
+    id: "BC-2026-002",
+    patientName: "Kamla Devi Sharma",
+    age: 62,
+    sex: "Female",
+    contactNumber: "9829023456",
+    ssoNumber: "SMS-2026-092",
+    location: "Jaipur, Rajasthan",
+    scheduledDate: "2026-09-16",
+    organSystem: "Peripheral Vascular",
+    diseaseKey: "sfa_stenting",
+    procedureTitle: "Superficial Femoral Artery (SFA) Recanalization & Stenting",
+    bookedBy: "Dr. Nilesh Bansal (DM02)",
+    bookedAt: new Date().toISOString(),
+    orderedLabs: [
+      "Coagulation Profile (PT, INR, aPTT, Platelets)",
+      "Renal Function Tests & eGFR (Serum Creatinine)",
+      "Lipid Profile & HbA1c",
+    ],
+    specialInvestigations: ["Lower Extremity Arterial Duplex Mapping"],
+    preScanAnatomy: {
+      lesion_length: "Long Segment (>15 cm TASC-D)",
+      calcification: "Moderate Circumferential Calcification",
+      run_off: "2-Vessel Runoff (Anterior Tibial + Peroneal Patent)",
+    },
+    hardwareChecklist: [
+      { id: "h1", item: "Femoral Introducer Sheath", spec: "6F 45cm Destination / Parent Guiding Sheath", checked: true },
+      { id: "h2", item: "Crossing Guidewire", spec: "0.035\" 300cm Terumo Glidewire Advantage / Command 0.014\"", checked: true },
+      { id: "h3", item: "Drug-Eluting Stent (DES)", spec: "Eluvia / Zilver PTX 6 mm x 120 mm Paclitaxel-Eluting", checked: true },
+    ],
+    postOpPlan: "Dual Antiplatelet Therapy (DAPT): Aspirin 75 mg + Clopidogrel 75 mg OD x 6 months. Distal DP/PT pulse palpation q2h.",
+    status: "Scheduled",
+    rescheduleHistory: [],
+  },
+];
+
+// ============================================================================
 // ENDOFLOW STATE INTERFACE
 // ============================================================================
 
@@ -580,6 +868,25 @@ export interface EndoflowState {
   activeCaseId: string | null;
   searchQuery: string;
   filterModality: string;
+
+  // Staff & RBAC
+  currentStaff: StaffAccount | null;
+  setCurrentStaff: (staff: StaffAccount | null) => void;
+
+  // 8-Bed Inpatient Matrix
+  beds: BedRecord[];
+  updateBed: (bedId: string, updates: Partial<BedRecord>) => void;
+  transferPatientBed: (ptId: string, fromBedId: string, toBedId: string) => void;
+
+  // Booked Cases (DM Resident OPD Diary)
+  bookedCases: BookedCaseRecord[];
+  bookCase: (
+    record: Omit<BookedCaseRecord, "id" | "bookedAt" | "status" | "rescheduleHistory">
+  ) => { success: boolean; id?: string; error?: string };
+  rescheduleCase: (caseId: string, newDate: string, reason?: string) => void;
+  updateCaseHardwareItem: (caseId: string, hardwareId: string, checked: boolean) => void;
+  addCustomHardwareItem: (caseId: string, item: string, spec: string) => void;
+  getTomorrowReminders: () => BookedCaseRecord[];
 
   // State Actions
   advanceStage: (patientId: string, nextStatus: ClinicalStage) => void;
@@ -599,6 +906,7 @@ export interface EndoflowState {
   setFilterModality: (modality: string) => void;
   resetToDefaultPatients: () => void;
 }
+
 
 // ============================================================================
 // ZUSTAND STORE IMPLEMENTATION
@@ -802,7 +1110,146 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
     return { success: true };
   },
 
+  currentStaff: INSTITUTIONAL_STAFF_ACCOUNTS.find((s) => s.code === "DM01") || null,
+  setCurrentStaff: (staff: StaffAccount | null) => set({ currentStaff: staff }),
+
+  beds: INITIAL_8_BEDS,
+  updateBed: (bedId: string, updates: Partial<BedRecord>) => {
+    set((state) => ({
+      beds: state.beds.map((b) => (b.id === bedId ? { ...b, ...updates } : b)),
+    }));
+  },
+  transferPatientBed: (ptId: string, fromBedId: string, toBedId: string) => {
+    set((state) => {
+      const fromBed = state.beds.find((b) => b.id === fromBedId);
+      if (!fromBed) return state;
+
+      const updatedBeds = state.beds.map((b) => {
+        if (b.id === fromBedId) {
+          return {
+            ...b,
+            status: "vacant" as BedStatus,
+            ptName: "-",
+            crNo: "-",
+            diag: "Available",
+            doctor: "-",
+            vitals: "-",
+            ptId: undefined,
+          };
+        }
+        if (b.id === toBedId) {
+          return {
+            ...b,
+            status: "occupied" as BedStatus,
+            ptName: fromBed.ptName,
+            crNo: fromBed.crNo,
+            diag: fromBed.diag,
+            doctor: fromBed.doctor,
+            vitals: fromBed.vitals,
+            ptId: fromBed.ptId,
+          };
+        }
+        return b;
+      });
+
+      return { beds: updatedBeds };
+    });
+  },
+
+  bookedCases: INITIAL_BOOKED_CASES,
+  bookCase: (rawRecord) => {
+    const newId = `BC-2026-${String(get().bookedCases.length + 1).padStart(3, "0")}`;
+    const newCaseRecord: BookedCaseRecord = {
+      ...rawRecord,
+      id: newId,
+      bookedAt: new Date().toISOString(),
+      status: "Scheduled",
+      rescheduleHistory: [],
+    };
+
+    const parsed = BookedCaseSchema.safeParse(newCaseRecord);
+    if (!parsed.success) {
+      const errorMsg = parsed.error.issues
+        ? parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
+        : parsed.error.message;
+      return { success: false, error: errorMsg };
+    }
+
+    set((state) => ({
+      bookedCases: [parsed.data, ...state.bookedCases],
+    }));
+    return { success: true, id: newId };
+  },
+
+  rescheduleCase: (caseId: string, newDate: string, reason?: string) => {
+    set((state) => ({
+      bookedCases: state.bookedCases.map((c) => {
+        if (c.id !== caseId) return c;
+        return {
+          ...c,
+          scheduledDate: newDate,
+          status: "Rescheduled",
+          rescheduleHistory: [
+            {
+              previousDate: c.scheduledDate,
+              newDate,
+              rescheduledAt: new Date().toISOString(),
+              reason: reason || "OPD Rescheduled by Resident",
+            },
+            ...c.rescheduleHistory,
+          ],
+        };
+      }),
+    }));
+  },
+
+  updateCaseHardwareItem: (caseId: string, hardwareId: string, checked: boolean) => {
+    set((state) => ({
+      bookedCases: state.bookedCases.map((c) => {
+        if (c.id !== caseId) return c;
+        return {
+          ...c,
+          hardwareChecklist: c.hardwareChecklist.map((h) =>
+            h.id === hardwareId ? { ...h, checked } : h
+          ),
+        };
+      }),
+    }));
+  },
+
+  addCustomHardwareItem: (caseId: string, item: string, spec: string) => {
+    set((state) => ({
+      bookedCases: state.bookedCases.map((c) => {
+        if (c.id !== caseId) return c;
+        const newItem = {
+          id: `custom-${Date.now()}`,
+          item,
+          spec,
+          checked: true,
+        };
+        return {
+          ...c,
+          hardwareChecklist: [...c.hardwareChecklist, newItem],
+        };
+      }),
+    }));
+  },
+
+  getTomorrowReminders: () => {
+    const tomorrowStr = getTomorrowDateString();
+    return get().bookedCases.filter(
+      (c) => c.scheduledDate === tomorrowStr && c.status !== "Completed"
+    );
+  },
+
   setSearchQuery: (query: string) => set({ searchQuery: query }),
   setFilterModality: (modality: string) => set({ filterModality: modality }),
-  resetToDefaultPatients: () => set({ patients: INITIAL_ENDOFLOW_PATIENTS, activeCaseId: "PT03" }),
+  resetToDefaultPatients: () =>
+    set({
+      patients: INITIAL_ENDOFLOW_PATIENTS,
+      activeCaseId: "PT03",
+      beds: INITIAL_8_BEDS,
+      bookedCases: INITIAL_BOOKED_CASES,
+    }),
 }));
+

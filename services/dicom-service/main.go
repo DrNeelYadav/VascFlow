@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -600,13 +601,15 @@ func (r *StudyRepository) Query(f QueryFilter) []StudyRecord {
 
 // Server holds application state and dependencies.
 type Server struct {
-	repo *StudyRepository
+	repo       *StudyRepository
+	hwRegistry *HardwareStreamRegistry
 }
 
 // NewServer creates a new server instance.
 func NewServer(repo *StudyRepository) *Server {
 	return &Server{
-		repo: repo,
+		repo:       repo,
+		hwRegistry: NewHardwareStreamRegistry(),
 	}
 }
 
@@ -940,6 +943,79 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(sb.String()))
 }
 
+// handleHardwareStreams handles GET /api/v1/hardware/streams.
+func (s *Server) handleHardwareStreams(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		writeError(w, r, http.StatusMethodNotAllowed, "Method Not Allowed", "Only GET is supported on /api/v1/hardware/streams", "")
+		return
+	}
+
+	streams := s.hwRegistry.GetAllStreams()
+	writeJSON(w, http.StatusOK, streams, "application/json; charset=utf-8")
+}
+
+// handleHardwarePing handles POST /api/v1/hardware/ping.
+func (s *Server) handleHardwarePing(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, r, http.StatusMethodNotAllowed, "Method Not Allowed", "Only POST is supported on /api/v1/hardware/ping", "")
+		return
+	}
+
+	var req struct {
+		IP string `json:"ip"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.IP == "" {
+		req.IP = "192.168.42.10"
+	}
+
+	latency, reachable := s.hwRegistry.SimulatePing(req.IP)
+	resp := map[string]interface{}{
+		"targetIp":  req.IP,
+		"latencyMs": latency,
+		"reachable": reachable,
+		"status":    "REACHABLE",
+		"timestamp": time.Now().UTC().Format(time.RFC3339),
+	}
+	writeJSON(w, http.StatusOK, resp, "application/json; charset=utf-8")
+}
+
+// handleCStoreRDSR handles POST /api/v1/cstore/rdsr.
+func (s *Server) handleCStoreRDSR(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, r, http.StatusMethodNotAllowed, "Method Not Allowed", "Only POST is supported on /api/v1/cstore/rdsr", "")
+		return
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil || len(body) == 0 {
+		writeError(w, r, http.StatusBadRequest, "Bad Request", "Missing RDSR body payload", "")
+		return
+	}
+
+	parsed, err := ParseRDSR(body)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "Bad Request", fmt.Sprintf("Failed to parse RDSR: %v", err), "")
+		return
+	}
+
+	suiteID := r.URL.Query().Get("suiteId")
+	if suiteID == "" {
+		suiteID = "angio-suite-1"
+	}
+
+	s.hwRegistry.RecordRDSR(suiteID, parsed)
+
+	resp := map[string]interface{}{
+		"status":          "INGESTED",
+		"message":         "Radiation Dose Structured Report (RDSR) successfully parsed and recorded",
+		"suiteId":         suiteID,
+		"parsedDose":      parsed.AccumulatedDose,
+		"device":          parsed.Device,
+		"ingestTimestamp": time.Now().UTC().Format(time.RFC3339),
+	}
+	writeJSON(w, http.StatusCreated, resp, "application/json; charset=utf-8")
+}
+
 // BuildHandler constructs the complete HTTP handler pipeline with all middleware.
 func BuildHandler(server *Server) http.Handler {
 	mux := http.NewServeMux()
@@ -947,6 +1023,11 @@ func BuildHandler(server *Server) http.Handler {
 	// Diagnostic health check and Prometheus telemetry
 	mux.HandleFunc("/health", server.handleHealth)
 	mux.HandleFunc("/metrics", server.handleMetrics)
+
+	// Hardware Streams & C-STORE RDSR Ingestion
+	mux.HandleFunc("/api/v1/hardware/streams", server.handleHardwareStreams)
+	mux.HandleFunc("/api/v1/hardware/ping", server.handleHardwarePing)
+	mux.HandleFunc("/api/v1/cstore/rdsr", server.handleCStoreRDSR)
 
 	// DICOMweb QIDO-RS endpoints
 	mux.HandleFunc("/api/v1/studies", server.handleStudies)
@@ -976,6 +1057,16 @@ func main() {
 	server := NewServer(repo)
 	handler := BuildHandler(server)
 
+	// Boot native DICOM C-STORE Service Class Provider (SCP) for Cath Lab fluoroscopy units
+	cstorePort := os.Getenv("CSTORE_PORT")
+	if cstorePort == "" {
+		cstorePort = DefaultCStorePort
+	}
+	cstoreCleanup, cstoreErr := StartCStoreListener(cstorePort, server.hwRegistry)
+	if cstoreErr != nil {
+		log.Printf("[WARN] C-STORE SCP listener could not bind to :%s (will proceed with HTTP ingestion): %v", cstorePort, cstoreErr)
+	}
+
 	addr := ":" + port
 	httpServer := &http.Server{
 		Addr:              addr,
@@ -1004,6 +1095,10 @@ func main() {
 
 	sig := <-shutdownSignal
 	log.Printf("[SHUTDOWN] Captured signal '%v'. Initiating graceful shutdown...", sig)
+
+	if cstoreCleanup != nil {
+		cstoreCleanup()
+	}
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), ShutdownTimeoutSec*time.Second)
 	defer shutdownCancel()

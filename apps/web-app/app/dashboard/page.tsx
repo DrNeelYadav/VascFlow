@@ -137,6 +137,14 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-3">
             <Link
+              href="/dashboard/hardware"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#090A0F] border border-[#1E293B] text-xs font-mono text-[#94A3B8] hover:text-white hover:border-[#2563EB] transition-colors"
+            >
+              <Activity className="w-3.5 h-3.5 text-[#10B981]" />
+              Hardware C-Arm
+            </Link>
+
+            <Link
               href="/admin"
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#090A0F] border border-[#1E293B] text-xs font-mono text-[#94A3B8] hover:text-white hover:border-[#2563EB] transition-colors"
             >

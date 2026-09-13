@@ -18,6 +18,7 @@ model Tenant {
   patients      Patient[]
   scheduleSlots ScheduleSlot[]
   auditLogs     AuditLog[]
+  uatFeedbacks  UatFeedback[]
 }
 
 model Staff {
@@ -92,4 +93,27 @@ model AuditLog {
 
   @@index([tenantId])
   @@index([staffId])
+}
+
+model UatFeedback {
+  id              String   @id @default(cuid())
+  tenantId        String   @default("tenant_sms_jaipur")
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  staffId         String
+  staffName       String
+  roleTier        String
+  deviceType      String
+  clinicalModule  String
+  workflowRating  Int
+  uiClutterRating Int
+  feedbackText    String
+  category        String
+  priority        String
+  status          String   @default("OPEN")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([clinicalModule])
+  @@index([status])
 }

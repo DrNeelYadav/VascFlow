@@ -1,0 +1,100 @@
+name: Vascule OS - Automated Security Audit & Vulnerability Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * 1' # Weekly automated security sweep on Monday at 03:00 UTC
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  sast-node:
+    name: SAST - Node.js Dependency & Secret Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Monorepo Dependencies
+        run: npm ci
+
+      - name: Run Node Dependency Vulnerability Audit
+        run: npm audit --audit-level=high
+
+      - name: Scan for Plaintext Secrets & Cryptographic Keys (HIPAA § 164.312)
+        run: |
+          echo "Auditing workspace for unencrypted private keys or API tokens..."
+          if grep -rnE "BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY" --exclude-dir={node_modules,.git,.next,dist} .; then
+            echo "CRITICAL SECURITY ALERT: Leaked private key detected in repository!"
+            exit 1
+          fi
+          if grep -rnE "(ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16})" --exclude-dir={node_modules,.git,.next,dist} .; then
+            echo "CRITICAL SECURITY ALERT: Leaked access token detected!"
+            exit 1
+          fi
+          echo "Secret scan passed. Zero plaintext credentials detected."
+
+  sast-golang:
+    name: SAST - Go Microservices Vulnerability Scan (govulncheck)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go 1.22
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          check-latest: true
+
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Scan services/auth-service
+        run: cd services/auth-service && govulncheck ./...
+
+      - name: Scan services/fhir-service
+        run: cd services/fhir-service && govulncheck ./...
+
+      - name: Scan services/dicom-service
+        run: cd services/dicom-service && govulncheck ./...
+
+      - name: Scan services/ai-agent-service
+        run: cd services/ai-agent-service && govulncheck ./...
+
+      - name: Scan services/notification-service
+        run: cd services/notification-service && govulncheck ./...
+
+  container-security:
+    name: Container Security - Trivy Vulnerability Scan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth-service, fhir-service, dicom-service, ai-agent-service, notification-service]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Service Container
+        run: docker build -t vascule/${{ matrix.service }}:security-test -f services/${{ matrix.service }}/Dockerfile services/${{ matrix.service }}
+
+      - name: Run Trivy Container Security Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: vascule/${{ matrix.service }}:security-test
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

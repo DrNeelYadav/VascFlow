@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Vascule Rounds",
+    "slug": "vascule-rounds",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#000000",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "org.hospital.vascule.rounds"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#000000"
+      },
+      "package": "org.hospital.vascule.rounds"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiBaseUrl": "http://10.0.2.2:3000/api/proxy",
+      "tenantId": "tenant_sms_jaipur"
+    }
+  }
+}

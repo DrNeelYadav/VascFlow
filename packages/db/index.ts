@@ -18,5 +18,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export * from "./logAuditTrail";
+export * from "./tenantContext";
 export * from "@prisma/client";
 export default prisma;

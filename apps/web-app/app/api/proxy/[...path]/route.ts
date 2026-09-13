@@ -173,6 +173,17 @@ export function getDegradedClinicalFallback(path: string, traceId: string) {
     };
   }
 
+  if (path.includes("notifications")) {
+    return {
+      status: "degraded",
+      circuitBreaker: "OPEN-FALLBACK",
+      message: "Push notification service unavailable. Storing alert in local queue.",
+      traceId,
+      dispatched: false,
+      degradedMode: true,
+    };
+  }
+
   return {
     status: "degraded",
     circuitBreaker: "OPEN-FALLBACK",
@@ -218,6 +229,11 @@ async function handleProxy(request: NextRequest, context: RouteContext) {
     pathSegments[0] === "ai"
   ) {
     targetBase = process.env.AI_AGENT_SERVICE_INTERNAL_URL || "http://127.0.0.1:8083";
+  } else if (
+    joinedPath.startsWith("api/v1/notifications") ||
+    pathSegments[0] === "notifications"
+  ) {
+    targetBase = process.env.NOTIFICATION_SERVICE_INTERNAL_URL || "http://127.0.0.1:8084";
   }
 
   const cleanBase = targetBase.replace(/\/+$/, "");
@@ -276,6 +292,11 @@ async function handleProxy(request: NextRequest, context: RouteContext) {
     request.headers.get("host") || url.host
   );
   forwardHeaders.set("x-trace-id", traceId);
+  const tenantId =
+    request.headers.get("x-tenant-id") ||
+    request.cookies.get("vascule_tenant_id")?.value ||
+    "tenant_sms_jaipur";
+  forwardHeaders.set("x-tenant-id", tenantId);
 
   // 5. Resolve and attach Bearer token
   let bearerToken: string | undefined;

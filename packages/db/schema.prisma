@@ -7,8 +7,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Tenant {
+  id            String         @id @default(cuid())
+  hospitalName  String
+  region        String
+  activeStatus  Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  staff         Staff[]
+  patients      Patient[]
+  scheduleSlots ScheduleSlot[]
+  auditLogs     AuditLog[]
+}
+
 model Staff {
   id         String     @id @default(cuid())
+  tenantId   String     @default("tenant_sms_jaipur")
+  tenant     Tenant     @relation(fields: [tenantId], references: [id])
   roleCode   String
   name       String
   title      String
@@ -18,10 +33,14 @@ model Staff {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   auditLogs  AuditLog[]
+
+  @@index([tenantId])
 }
 
 model Patient {
   id              String   @id @default(cuid())
+  tenantId        String   @default("tenant_sms_jaipur")
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
   crNo            String   @unique
   ipdNo           String
   name            String
@@ -35,10 +54,32 @@ model Patient {
   sodiumMeqL      Float
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+model ScheduleSlot {
+  id            String   @id @default(cuid())
+  tenantId      String   @default("tenant_sms_jaipur")
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  suiteName     String
+  patientId     String
+  procedureType String
+  operatorName  String
+  priority      String   @default("ELECTIVE")
+  scheduledTime DateTime
+  status        String   @default("SCHEDULED")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([patientId])
 }
 
 model AuditLog {
   id          String   @id @default(cuid())
+  tenantId    String   @default("tenant_sms_jaipur")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
   action      String
   entityType  String
   entityId    String
@@ -48,4 +89,7 @@ model AuditLog {
   userAgent   String
   detailsJson String
   timestamp   DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([staffId])
 }

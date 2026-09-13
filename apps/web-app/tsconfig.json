@@ -56,6 +56,12 @@
       ],
       "@vascule/feature-scheme-billing/*": [
         "../../packages/features/scheme-billing/src/*"
+      ],
+      "@vascule/catalog": [
+        "../../packages/catalog/src"
+      ],
+      "@vascule/catalog/*": [
+        "../../packages/catalog/src/*"
       ]
     }
   },

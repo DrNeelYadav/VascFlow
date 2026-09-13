@@ -38,6 +38,10 @@ export default defineConfig({
         find: '@vascule/feature-scheme-billing',
         replacement: path.resolve(__dirname, './packages/features/scheme-billing/src'),
       },
+      {
+        find: '@vascule/catalog',
+        replacement: path.resolve(__dirname, './packages/catalog/src'),
+      },
     ],
   },
   base: './',

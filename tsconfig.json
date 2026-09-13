@@ -44,6 +44,12 @@
       ],
       "@vascule/feature-ot-scheduling/*": [
         "packages/features/ot-scheduling/src/*"
+      ],
+      "@vascule/catalog": [
+        "packages/catalog/src"
+      ],
+      "@vascule/catalog/*": [
+        "packages/catalog/src/*"
       ]
     },
     "allowJs": true,

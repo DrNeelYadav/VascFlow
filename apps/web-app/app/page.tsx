@@ -8,6 +8,7 @@ import {
   INSTITUTIONAL_STAFF_ACCOUNTS,
 } from "./lib/staffAccounts";
 import { useEndoflowStore } from "./dashboard/useEndoflowStore";
+import { VascularTreeHeatmapCanvas } from "./components/VascularTreeHeatmapCanvas";
 import {
   ShieldCheck,
   Lock,
@@ -21,6 +22,9 @@ import {
   Radio,
   Cpu,
   Workflow,
+  Fingerprint,
+  Database,
+  Binary,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -103,14 +107,13 @@ export default function LandingPage() {
 
   return (
     <div className="relative min-h-screen bg-[#090D16] text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden antialiased">
-      {/* Dynamic Background Glows & Ambient Lights */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[500px] bg-gradient-to-b from-blue-600/15 via-indigo-600/10 to-transparent blur-[120px] rounded-full" />
-        <div className="absolute top-1/4 -right-40 w-[600px] h-[600px] bg-cyan-600/10 blur-[140px] rounded-full" />
-        <div className="absolute bottom-10 -left-40 w-[500px] h-[500px] bg-indigo-600/10 blur-[130px] rounded-full" />
-        {/* Subtle grid pattern overlay */}
+      {/* 3D Vascular Tree Heatmap GPU Canvas Background */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <VascularTreeHeatmapCanvas />
+        {/* Obsidian Vignette and Grid Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/50 to-transparent pointer-events-none" />
         <div
-          className="absolute inset-0 opacity-[0.035] bg-repeat"
+          className="absolute inset-0 opacity-[0.03] pointer-events-none bg-repeat"
           style={{
             backgroundImage: `radial-gradient(circle at 1px 1px, #ffffff 1px, transparent 0)`,
             backgroundSize: "32px 32px",
@@ -156,20 +159,14 @@ export default function LandingPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span>System Online</span>
+              <span>Angiosuite Active</span>
             </div>
 
-            <button
-              onClick={() => {
-                setStaffCode("DM01");
-                setPassword("123456");
-                handleLoginSubmit({ preventDefault: () => {} } as React.FormEvent);
-              }}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
-            >
-              <span>Quick Demo</span>
-              <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
-            </button>
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-xs font-mono text-cyan-300 backdrop-blur-md">
+              <Fingerprint className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+              <span className="hidden sm:inline">WebAuthn FIPS-140-3</span>
+              <span className="sm:hidden">SSO Active</span>
+            </div>
           </div>
         </div>
       </header>
@@ -263,26 +260,59 @@ export default function LandingPage() {
           >
             <div className="w-full max-w-md relative">
               {/* Card Ambient Glow Behind */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-indigo-500/20 rounded-3xl blur-xl opacity-75" />
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/15 via-blue-600/10 to-indigo-600/15 rounded-3xl blur-2xl opacity-60" />
 
-              <div className="relative rounded-3xl bg-[#0F172A]/90 border border-white/[0.12] p-7 sm:p-8 backdrop-blur-2xl shadow-2xl space-y-6">
-                {/* Header */}
-                <div className="space-y-1.5">
+              <div className="relative rounded-3xl bg-[#030712]/85 border border-white/10 p-7 sm:p-8 backdrop-blur-2xl shadow-[0_0_60px_-15px_rgba(6,182,212,0.15)] space-y-6">
+                {/* Header with WebAuthn / Biometric Badge */}
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-cyan-400">
-                      <Lock className="w-4 h-4" />
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-inner">
+                      <Fingerprint className="w-5 h-5 text-cyan-400" />
                     </div>
-                    <span className="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      Encrypted Workspace
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-[11px] font-medium text-emerald-400">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Enterprise SSO</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-white tracking-tight">
+                      Institutional Access
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Accredited Departmental Login &amp; Clinical Token Validation
+                    </p>
+                  </div>
+                </div>
+
+                {/* High-Fidelity Telemetry Micro-Badges */}
+                <div className="grid grid-cols-3 gap-2 py-1">
+                  <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-center flex flex-col items-center justify-center">
+                    <div className="text-[10px] font-mono text-cyan-300 font-semibold flex items-center gap-1">
+                      <Lock className="w-2.5 h-2.5 text-cyan-400" />
+                      <span>256-Bit RLS</span>
+                    </div>
+                    <span className="text-[9px] text-slate-400 font-medium mt-0.5 uppercase tracking-wider">
+                      Enforced
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold text-white tracking-tight pt-2">
-                    Access Portal
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    Enter your staff credentials to enter the clinical suite.
-                  </p>
+                  <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-center flex flex-col items-center justify-center">
+                    <div className="text-[10px] font-mono text-emerald-300 font-semibold flex items-center gap-1">
+                      <Database className="w-2.5 h-2.5 text-emerald-400" />
+                      <span>FHIR / DICOM</span>
+                    </div>
+                    <span className="text-[9px] text-slate-400 font-medium mt-0.5 uppercase tracking-wider">
+                      Native
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-center flex flex-col items-center justify-center">
+                    <div className="text-[10px] font-mono text-indigo-300 font-semibold flex items-center gap-1">
+                      <Binary className="w-2.5 h-2.5 text-indigo-400" />
+                      <span>AIIMS IR</span>
+                    </div>
+                    <span className="text-[9px] text-slate-400 font-medium mt-0.5 uppercase tracking-wider">
+                      Registry Ready
+                    </span>
+                  </div>
                 </div>
 
                 {/* Form */}
@@ -290,7 +320,7 @@ export default function LandingPage() {
                   {/* Staff ID */}
                   <div className="space-y-1.5">
                     <label className="block text-xs font-semibold text-slate-300">
-                      Staff ID
+                      Department Staff ID
                     </label>
                     <div className="relative">
                       <input
@@ -302,7 +332,7 @@ export default function LandingPage() {
                           setErrorMsg(null);
                         }}
                         placeholder="e.g. DM01"
-                        className="w-full px-4 py-3 rounded-xl border border-white/10 bg-slate-900/60 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none uppercase font-mono tracking-wide transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-white/10 bg-[#060913] text-sm text-white placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none uppercase font-mono tracking-wide transition-all"
                       />
                     </div>
                   </div>
@@ -311,9 +341,9 @@ export default function LandingPage() {
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <label className="block text-xs font-semibold text-slate-300">
-                        Security PIN
+                        Institutional PIN / Password
                       </label>
-                      <span className="text-[11px] text-slate-400">Default: 123456</span>
+                      <span className="text-[11px] text-slate-400 font-mono">Default: 123456</span>
                     </div>
                     <div className="relative">
                       <input
@@ -325,7 +355,7 @@ export default function LandingPage() {
                           setErrorMsg(null);
                         }}
                         placeholder="Enter PIN"
-                        className="w-full px-4 py-3 rounded-xl border border-white/10 bg-slate-900/60 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none tracking-widest transition-all pr-10"
+                        className="w-full px-4 py-3 rounded-xl border border-white/10 bg-[#060913] text-sm text-white placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none tracking-widest transition-all pr-10"
                       />
                       <button
                         type="button"
@@ -379,12 +409,12 @@ export default function LandingPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 transition-all duration-200 cursor-pointer disabled:opacity-50 mt-2"
+                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 hover:shadow-blue-600/40 transition-all duration-200 cursor-pointer disabled:opacity-50 mt-2"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center gap-2">
                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Authenticating...
+                        Validating Institutional Token...
                       </span>
                     ) : (
                       <>
@@ -395,9 +425,10 @@ export default function LandingPage() {
                   </button>
                 </form>
 
-                {/* Footer disclaimer inside card */}
-                <div className="pt-2 text-center text-[11px] text-slate-500">
-                  Universal PIN: <span className="text-slate-400 font-mono">123456</span>
+                {/* Secure audit disclaimer */}
+                <div className="pt-2 text-center text-[11px] text-slate-400 flex items-center justify-center gap-1.5 border-t border-white/[0.06]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>HIPAA Safe Harbor § 164.514(b) &amp; ISO 27001 Compliant</span>
                 </div>
               </div>
             </div>

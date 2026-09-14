@@ -5,13 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   CalendarDays,
-  Users2,
   BookOpen,
   FileCheck2,
   Microscope,
   GraduationCap,
   CreditCard,
-  Calculator,
   Pill,
   ChevronLeft,
   ChevronRight,
@@ -39,12 +37,6 @@ export const NAV_ITEMS: NavItem[] = [
     name: 'Schedule',
     path: '/ot-booking',
     icon: CalendarDays,
-  },
-  {
-    id: 'roster',
-    name: 'Roster',
-    path: '/roster',
-    icon: Users2,
   },
   {
     id: 'encyclopedia',
@@ -81,12 +73,6 @@ export const NAV_ITEMS: NavItem[] = [
     name: 'Tariffs',
     path: '/schemes',
     icon: CreditCard,
-  },
-  {
-    id: 'calculators',
-    name: 'Calculators',
-    path: '/calculators',
-    icon: Calculator,
   },
   {
     id: 'protocols',

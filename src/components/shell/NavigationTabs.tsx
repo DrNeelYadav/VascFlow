@@ -9,8 +9,8 @@ import {
   Microscope,
   GraduationCap,
   CreditCard,
-  Calculator,
-  Pill
+  Pill,
+  Eye
 } from 'lucide-react';
 
 export const NavigationTabs: React.FC = () => {
@@ -53,6 +53,12 @@ export const NavigationTabs: React.FC = () => {
       badgeWarn: true
     },
     {
+      to: '/education',
+      label: 'Education & Guidelines',
+      icon: Eye,
+      badge: null
+    },
+    {
       to: '/simulations',
       label: 'Academic Rounds',
       icon: GraduationCap,
@@ -65,12 +71,6 @@ export const NavigationTabs: React.FC = () => {
       badge: null
     },
     {
-      to: '/calculators',
-      label: 'Safety Calculators',
-      icon: Calculator,
-      badge: null
-    },
-    {
       to: '/protocols',
       label: 'Drug Protocols & Rx',
       icon: Pill,
@@ -79,7 +79,7 @@ export const NavigationTabs: React.FC = () => {
   ];
 
   return (
-    <nav className="w-full bg-slate-950 border-b border-slate-800/90 px-4 overflow-x-auto no-scrollbar">
+    <nav className="w-full bg-white border-b border-[#DADCE0] px-4 overflow-x-auto no-scrollbar">
       <div className="max-w-7xl mx-auto flex items-center gap-1 py-1.5 min-w-max">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -91,8 +91,8 @@ export const NavigationTabs: React.FC = () => {
               className={({ isActive }) =>
                 `flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
                   isActive
-                    ? 'bg-crimson-600 text-white shadow-md shadow-crimson-900/30 font-bold'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/90'
+                    ? 'bg-[#1A73E8] text-white shadow-xs font-bold'
+                    : 'bg-white text-[#3C4043] hover:text-[#202124] hover:bg-[#F1F3F4]'
                 }`
               }
             >
@@ -102,8 +102,8 @@ export const NavigationTabs: React.FC = () => {
                 <span
                   className={`ml-0.5 px-1.5 py-0.2 rounded-full font-mono text-[10px] font-bold ${
                     tab.badgeWarn
-                      ? 'bg-amber-400/20 text-amber-300 border border-amber-500/40'
-                      : 'bg-white/20 text-white'
+                      ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                      : 'bg-[#E8F0FE] text-[#1A73E8]'
                   }`}
                 >
                   {tab.badge}

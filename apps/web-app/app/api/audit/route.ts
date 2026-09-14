@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma, logAuditTrail, verifyAuditIntegrity } from "@vascule/db";
+import { auth } from "@/auth";
 
 interface NormalizedAuditLog {
   id: string;
@@ -200,6 +201,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const session = await auth();
+    const serverVerifiedStaff =
+      session?.user?.email ||
+      session?.user?.id ||
+      (staffId ? `${staffId} [client-tagged]` : "authenticated-staff");
+
     const clientIp =
       ipAddress ||
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -207,7 +214,7 @@ export async function POST(request: NextRequest) {
     const clientAgent = userAgent || request.headers.get("user-agent") || "Vascule-Client";
 
     const record = await logAuditTrail({
-      actorStaffId: staffId || "anonymous",
+      actorStaffId: serverVerifiedStaff,
       action: action.toUpperCase(),
       entityType,
       entityId,

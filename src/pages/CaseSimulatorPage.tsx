@@ -245,25 +245,25 @@ export const CaseSimulatorPage: React.FC = () => {
       {/* Top Banner */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-crimson-500" />
+          <h1 className="text-lg font-bold text-[#202124] flex items-center gap-2">
+            <GraduationCap className="w-5 h-5 text-[#1A73E8]" />
             <span>Morning Academic Rounds & Interactive Case Simulator</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-[#5F6368] mt-0.5">
             Step-by-step clinical decision trees • Evidence-based CIRSE/SIR guidelines • Resident academic scoring
           </p>
         </div>
 
         {/* Case Switcher Tabs */}
-        <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+        <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-[#DADCE0] text-xs font-semibold shadow-xs">
           {ACADEMIC_CASES.map((cs, idx) => (
             <button
               key={cs.id}
               onClick={() => handleRestartCase(idx)}
-              className={`px-3 py-1.5 rounded-lg transition ${
+              className={`px-3 py-1.5 rounded-lg transition shadow-xs ${
                 activeCaseIndex === idx
-                  ? 'bg-crimson-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                  ? 'bg-[#1A73E8] text-white'
+                  : 'bg-white text-[#3C4043] hover:bg-[#F8F9FA] hover:text-[#202124] border border-[#DADCE0]'
               }`}
             >
               {cs.id.toUpperCase()}
@@ -273,37 +273,37 @@ export const CaseSimulatorPage: React.FC = () => {
       </div>
 
       {/* Case Header Card */}
-      <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm space-y-3">
-        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-800">
-          <h2 className="text-sm font-bold text-slate-100">{currentCase.title}</h2>
-          <span className="text-[11px] font-mono text-emerald-400 font-semibold bg-slate-950 px-2.5 py-0.5 rounded-full border border-slate-800">
+      <div className="p-5 rounded-2xl bg-white border border-[#DADCE0] shadow-xs space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#DADCE0]">
+          <h2 className="text-sm font-bold text-[#202124]">{currentCase.title}</h2>
+          <span className="text-[11px] font-mono text-emerald-700 font-semibold bg-[#E6F4EA] px-2.5 py-0.5 rounded-full border border-emerald-300">
             {currentCase.schemeCode}
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
-            <span className="text-slate-400 font-bold block text-[11px]">Clinical Presentation:</span>
-            <p className="text-slate-300 leading-relaxed">{currentCase.clinicalPresentation}</p>
+          <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] space-y-1">
+            <span className="text-[#5F6368] font-bold block text-[11px]">Clinical Presentation:</span>
+            <p className="text-[#202124] leading-relaxed">{currentCase.clinicalPresentation}</p>
           </div>
-          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
-            <span className="text-slate-400 font-bold block text-[11px]">Diagnostic Imaging Findings:</span>
-            <p className="text-slate-300 leading-relaxed">{currentCase.imagingFindings}</p>
+          <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] space-y-1">
+            <span className="text-[#5F6368] font-bold block text-[11px]">Diagnostic Imaging Findings:</span>
+            <p className="text-[#202124] leading-relaxed">{currentCase.imagingFindings}</p>
           </div>
         </div>
       </div>
 
       {/* Active Step Question or Completed Summary */}
       {!isCompleted ? (
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm space-y-4">
-          <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
-            <span className="font-bold text-slate-200 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-white border border-[#DADCE0] shadow-xs space-y-4">
+          <div className="flex items-center justify-between text-xs text-[#5F6368] pb-2 border-b border-[#DADCE0]">
+            <span className="font-bold text-[#202124] uppercase tracking-wider">
               Question {currentStepIndex + 1} of {currentCase.steps.length}
             </span>
-            <span className="font-mono">Current Score: {score}</span>
+            <span className="font-mono font-semibold text-[#1A73E8]">Current Score: {score}</span>
           </div>
 
-          <h3 className="text-sm font-bold text-slate-100 leading-relaxed">
+          <h3 className="text-sm font-bold text-[#202124] leading-relaxed">
             {currentStep.question}
           </h3>
 
@@ -317,28 +317,28 @@ export const CaseSimulatorPage: React.FC = () => {
                   <button
                     onClick={() => handleSelectOption(idx)}
                     disabled={hasAnswered}
-                    className={`w-full text-left p-3 rounded-xl border text-xs leading-relaxed transition flex items-start justify-between gap-3 ${
+                    className={`w-full text-left p-3.5 rounded-xl border text-xs leading-relaxed transition flex items-start justify-between gap-3 shadow-xs ${
                       hasAnswered
                         ? opt.correct
-                          ? 'bg-emerald-950/60 border-emerald-700 text-emerald-200'
+                          ? 'bg-[#E6F4EA] border-[#34A853] text-[#137333] font-medium'
                           : isSelected
-                          ? 'bg-red-950/60 border-red-700 text-red-200'
-                          : 'bg-slate-950/40 border-slate-800 text-slate-500'
-                        : 'bg-slate-950 hover:bg-slate-850 border-slate-800 text-slate-200 hover:border-slate-700'
+                          ? 'bg-[#FCE8E6] border-[#EA4335] text-[#C5221F] font-medium'
+                          : 'bg-[#F8F9FA] border-[#DADCE0] text-[#70757A]'
+                        : 'bg-white hover:bg-[#F8F9FA] border-[#DADCE0] text-[#202124] hover:border-[#1A73E8]'
                     }`}
                   >
                     <span>{opt.text}</span>
-                    {hasAnswered && opt.correct && <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />}
-                    {hasAnswered && isSelected && !opt.correct && <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />}
+                    {hasAnswered && opt.correct && <CheckCircle2 className="w-4 h-4 text-[#34A853] flex-shrink-0" />}
+                    {hasAnswered && isSelected && !opt.correct && <XCircle className="w-4 h-4 text-[#EA4335] flex-shrink-0" />}
                   </button>
 
                   {/* Feedback on selection */}
                   {isSelected && (
                     <div
-                      className={`p-3 rounded-xl text-xs leading-relaxed border ${
+                      className={`p-3 rounded-xl text-xs leading-relaxed border shadow-xs ${
                         opt.correct
-                          ? 'bg-emerald-950/40 border-emerald-800 text-emerald-300'
-                          : 'bg-red-950/40 border-red-800 text-red-300'
+                          ? 'bg-[#E6F4EA] border-[#34A853] text-[#137333]'
+                          : 'bg-[#FCE8E6] border-[#EA4335] text-[#C5221F]'
                       }`}
                     >
                       {opt.feedback}
@@ -350,10 +350,10 @@ export const CaseSimulatorPage: React.FC = () => {
           </div>
 
           {selectedOptionIndex !== null && (
-            <div className="flex justify-end pt-3 border-t border-slate-800">
+            <div className="flex justify-end pt-3 border-t border-[#DADCE0]">
               <button
                 onClick={handleNextStep}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-crimson-600 hover:bg-crimson-500 text-white font-bold text-xs shadow-md shadow-crimson-900/30 transition"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold text-xs shadow-xs transition"
               >
                 <span>{currentStepIndex + 1 < currentCase.steps.length ? 'Next Step' : 'View Case Summary'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -363,46 +363,46 @@ export const CaseSimulatorPage: React.FC = () => {
         </div>
       ) : (
         /* Case Completion Summary */
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-5 text-xs">
+        <div className="p-6 rounded-2xl bg-white border border-[#DADCE0] shadow-md space-y-5 text-xs">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-emerald-950 border border-emerald-800 text-emerald-400">
+            <div className="p-3 rounded-2xl bg-[#E6F4EA] border border-emerald-300 text-emerald-700">
               <Award className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-100">
+              <h3 className="text-base font-bold text-[#202124]">
                 Academic Simulation Completed!
               </h3>
-              <p className="text-xs text-slate-400">
-                Final Score: <b className="text-emerald-400 font-mono">{score} / {currentCase.steps.length}</b> correct answers
+              <p className="text-xs text-[#5F6368]">
+                Final Score: <b className="text-emerald-700 font-mono">{score} / {currentCase.steps.length}</b> correct answers
               </p>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-            <div className="font-bold text-slate-200 text-xs flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-400" />
+          <div className="p-4 rounded-xl bg-[#FEF7E0] border border-[#FEEFC3] space-y-2">
+            <div className="font-bold text-[#202124] text-xs flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-amber-600" />
               <span>SMS Interventional Radiology Clinical Pearl</span>
             </div>
-            <p className="text-slate-300 leading-relaxed text-xs">
+            <p className="text-[#3C4043] leading-relaxed text-xs">
               {currentCase.clinicalPearl}
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 text-slate-400 text-[11px] font-mono">
-            Citation: <span className="text-slate-300">{currentCase.guidelineCitation}</span>
+          <div className="p-3.5 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] text-[#5F6368] text-[11px] font-mono">
+            Citation: <span className="text-[#202124]">{currentCase.guidelineCitation}</span>
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-2">
             <button
               onClick={() => handleRestartCase(activeCaseIndex)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white hover:bg-[#F8F9FA] text-[#3C4043] text-xs font-semibold transition shadow-xs"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Retry Case</span>
             </button>
             <button
               onClick={() => handleRestartCase((activeCaseIndex + 1) % ACADEMIC_CASES.length)}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-crimson-600 hover:bg-crimson-500 text-white font-bold text-xs transition shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold text-xs transition shadow-xs"
             >
               <span>Next Scenario</span>
               <ArrowRight className="w-3.5 h-3.5" />

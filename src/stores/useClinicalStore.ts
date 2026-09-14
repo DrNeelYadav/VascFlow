@@ -11,16 +11,16 @@ import {
 import { getTomorrowDateString } from '../lib/utils';
 
 export const STAFF_PERSONAS: Record<StaffRoleCode, StaffPersona> = {
-  FC01: { code: 'FC01', name: 'Prof. & HOD', title: 'Prof. & Head of Department', role: 'Finalizing Consultant', tier: 'Faculty', badgeClass: 'bg-red-900/60 text-red-200 border-red-700', dept: 'Interventional Radiology', desc: 'Faculty Sign-off' },
-  FC02: { code: 'FC02', name: 'Dr. Gupta', title: 'Dr. Gupta (Assoc. Prof.)', role: 'Consultant Interventionalist', tier: 'Faculty', badgeClass: 'bg-red-900/60 text-red-200 border-red-700', dept: 'Interventional Radiology', desc: 'Consultant Review' },
-  DM01: { code: 'DM01', name: 'Dr. Sharma', title: 'Dr. Sharma (DM Fellow)', role: 'Senior Interventional Fellow', tier: 'Resident', badgeClass: 'bg-blue-900/60 text-blue-200 border-blue-700', dept: 'Cath Lab Suite', desc: 'Senior Call' },
-  DM02: { code: 'DM02', name: 'Dr. Verma', title: 'Dr. Verma (DM Fellow)', role: 'Junior Fellow / Logger', tier: 'Resident', badgeClass: 'bg-blue-900/60 text-blue-200 border-blue-700', dept: 'Cath Lab Suite', desc: 'Junior Call' },
-  SR01: { code: 'SR01', name: 'Dr. Choudhary', title: 'Dr. Choudhary (Senior Resident)', role: 'Senior Resident', tier: 'Resident', badgeClass: 'bg-indigo-900/60 text-indigo-200 border-indigo-700', dept: 'Angio Suite', desc: 'Procedure Execution' },
-  NO01: { code: 'NO01', name: 'Sister Sunita', title: 'Sr. Sister Sunita (NO)', role: 'Cath Lab In-Charge', tier: 'Nursing', badgeClass: 'bg-emerald-900/60 text-emerald-200 border-emerald-700', dept: 'Angio Suite', desc: 'Vitals & Fasting' },
-  NO02: { code: 'NO02', name: 'Staff Nurse Anita', title: 'Staff Nurse Anita (NO)', role: 'Daycare In-Charge', tier: 'Nursing', badgeClass: 'bg-emerald-900/60 text-emerald-200 border-emerald-700', dept: 'IR Daycare', desc: 'Recovery Care' },
-  TC01: { code: 'TC01', name: 'Vikram Singh', title: 'Vikram Singh (Technician)', role: 'Chief Cath Lab Tech', tier: 'Technician', badgeClass: 'bg-amber-900/60 text-amber-200 border-amber-700', dept: 'DSA Lab 1', desc: 'DSA & Hardware' },
-  TC02: { code: 'TC02', name: 'Ramesh Kumar', title: 'Ramesh Kumar (Technician)', role: 'Asst. Radiographer', tier: 'Technician', badgeClass: 'bg-amber-900/60 text-amber-200 border-amber-700', dept: 'DSA Lab 1', desc: 'Inventory Prep' },
-  CR01: { code: 'CR01', name: 'Rajesh Meena', title: 'Rajesh Meena (Counter)', role: 'Scheme Desk In-Charge', tier: 'Counter', badgeClass: 'bg-purple-900/60 text-purple-200 border-purple-700', dept: 'Registration Desk', desc: 'MAAY / RGHS Pre-Auth' }
+  FC01: { code: 'FC01', name: 'Prof. & HOD', title: 'Prof. & Head of Department', role: 'Finalizing Consultant', tier: 'Faculty', badgeClass: 'bg-red-50 text-red-700 border-red-200', dept: 'Interventional Radiology', desc: 'Faculty Sign-off' },
+  FC02: { code: 'FC02', name: 'Dr. Gupta', title: 'Dr. Gupta (Assoc. Prof.)', role: 'Consultant Interventionalist', tier: 'Faculty', badgeClass: 'bg-red-50 text-red-700 border-red-200', dept: 'Interventional Radiology', desc: 'Consultant Review' },
+  DM01: { code: 'DM01', name: 'Dr. Sharma', title: 'Dr. Sharma (DM Fellow)', role: 'Senior Interventional Fellow', tier: 'Resident', badgeClass: 'bg-blue-50 text-blue-700 border-blue-200', dept: 'Cath Lab Suite', desc: 'Senior Call' },
+  DM02: { code: 'DM02', name: 'Dr. Verma', title: 'Dr. Verma (DM Fellow)', role: 'Junior Fellow / Logger', tier: 'Resident', badgeClass: 'bg-blue-50 text-blue-700 border-blue-200', dept: 'Cath Lab Suite', desc: 'Junior Call' },
+  SR01: { code: 'SR01', name: 'Dr. Choudhary', title: 'Dr. Choudhary (Senior Resident)', role: 'Senior Resident', tier: 'Resident', badgeClass: 'bg-indigo-50 text-indigo-700 border-indigo-200', dept: 'Angio Suite', desc: 'Procedure Execution' },
+  NO01: { code: 'NO01', name: 'Sister Sunita', title: 'Sr. Sister Sunita (NO)', role: 'Cath Lab In-Charge', tier: 'Nursing', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200', dept: 'Angio Suite', desc: 'Vitals & Fasting' },
+  NO02: { code: 'NO02', name: 'Staff Nurse Anita', title: 'Staff Nurse Anita (NO)', role: 'Daycare In-Charge', tier: 'Nursing', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200', dept: 'IR Daycare', desc: 'Recovery Care' },
+  TC01: { code: 'TC01', name: 'Vikram Singh', title: 'Vikram Singh (Technician)', role: 'Chief Cath Lab Tech', tier: 'Technician', badgeClass: 'bg-amber-50 text-amber-800 border-amber-200', dept: 'DSA Lab 1', desc: 'DSA & Hardware' },
+  TC02: { code: 'TC02', name: 'Ramesh Kumar', title: 'Ramesh Kumar (Technician)', role: 'Asst. Radiographer', tier: 'Technician', badgeClass: 'bg-amber-50 text-amber-800 border-amber-200', dept: 'DSA Lab 1', desc: 'Inventory Prep' },
+  CR01: { code: 'CR01', name: 'Rajesh Meena', title: 'Rajesh Meena (Counter)', role: 'Scheme Desk In-Charge', tier: 'Counter', badgeClass: 'bg-purple-50 text-purple-700 border-purple-200', dept: 'Registration Desk', desc: 'MAAY / RGHS Pre-Auth' }
 };
 
 export const DEFAULT_ACTIVE_PATIENT: PatientSafetyProfile = {

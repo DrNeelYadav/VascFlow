@@ -93,23 +93,32 @@ export async function getSessionClaims(request: NextRequest) {
         } catch {
           // Continue to next cookie candidate
         }
+      } else {
+        // Raw session token fallback deduction (e.g. SESSION_TOKEN_FOR_ADMIN_USER)
+        let roleCode = "STAFF";
+        const upper = cookieVal.toUpperCase();
+        if (upper.includes("ADMIN")) {
+          roleCode = "ADMIN";
+        } else if (upper.includes("FACULTY")) {
+          roleCode = "FACULTY";
+        } else if (upper.includes("FELLOW")) {
+          roleCode = "FELLOW";
+        } else if (upper.includes("RESIDENT")) {
+          roleCode = "RESIDENT";
+        } else if (upper.includes("NURSE")) {
+          roleCode = "NURSE";
+        } else if (upper.includes("TECH")) {
+          roleCode = "TECH";
+        }
+        const roleTier = deriveRoleTier(roleCode);
+        return {
+          isAuthenticated: true,
+          userId: cookieVal,
+          email: `${roleCode.toLowerCase()}@hospital.lan`,
+          roleCode,
+          roleTier,
+        };
       }
-
-      // If mock token or test token contains role keyword in string
-      const upper = cookieVal.toUpperCase();
-      let roleCode = "RESIDENT";
-      if (upper.includes("ADMIN")) roleCode = "ADMIN";
-      else if (upper.includes("FACULTY") || upper.includes("INTERVENTIONAL_RADIOLOGIST")) {
-        roleCode = "FACULTY";
-      } else if (upper.includes("NURSE")) roleCode = "NURSE";
-
-      return {
-        isAuthenticated: true,
-        userId: "authenticated-user",
-        email: "staff@hospital.lan",
-        roleCode,
-        roleTier: deriveRoleTier(roleCode),
-      };
     }
   }
 

@@ -580,3 +580,6 @@ export const CIRSE_COMPLICATIONS: CirseComplication[] = [
     clinicalAction: 'Formal departmental mortality and root-cause audit.'
   }
 ];
+
+// Re-export all 30 procedure-linked calculators and metadata registry
+export * from './procedureCalculators';

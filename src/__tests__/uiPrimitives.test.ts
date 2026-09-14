@@ -36,23 +36,23 @@ describe('UI & Navigation Primitives (Google Workspace MD3 Standard)', () => {
   });
 
   describe('Sanitized Navigation Items (Decluttered & AI Slot Removal)', () => {
-    it('defines 11 core IR clinical modules', () => {
-      expect(NAV_ITEMS).toHaveLength(11);
+    it('defines 9 core IR clinical modules (with roster removed and calculators in protocols)', () => {
+      expect(NAV_ITEMS).toHaveLength(9);
     });
 
-    it('contains all mandatory clinical routes', () => {
+    it('contains all mandatory clinical routes and excludes roster and standalone calculators tab', () => {
       const paths = NAV_ITEMS.map((item) => item.path);
       expect(paths).toContain('/');
       expect(paths).toContain('/ot-booking');
-      expect(paths).toContain('/roster');
       expect(paths).toContain('/encyclopedia');
       expect(paths).toContain('/discharge');
       expect(paths).toContain('/biopsies');
       expect(paths).toContain('/education');
       expect(paths).toContain('/simulations');
       expect(paths).toContain('/schemes');
-      expect(paths).toContain('/calculators');
       expect(paths).toContain('/protocols');
+      expect(paths).not.toContain('/roster');
+      expect(paths).not.toContain('/calculators');
     });
 
     it('enforces strictly one-word tab names without clutter', () => {

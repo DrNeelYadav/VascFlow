@@ -62,7 +62,6 @@ import {
   ChevronLeft,
   Building,
   User,
-  LogOut,
   MapPin,
   ClipboardList,
   AlertTriangle,
@@ -141,9 +140,6 @@ function DashboardContent() {
   // Calendar Navigation State (Default to current month / year or 2026)
   const [calendarYear, setCalendarYear] = useState<number>(2026);
   const [calendarMonth, setCalendarMonth] = useState<number>(8); // 0-indexed: 8 = September 2026
-
-  // Role Switcher Modal
-  const [showRoleSwitcher, setShowRoleSwitcher] = useState<boolean>(false);
 
   // Reminders for tomorrow: Only show patients where NOT ALL 4 screening points are verified!
   // Once all 4 points are ticked, the patient goes away. When all cases are screened, the entire box disappears.
@@ -452,44 +448,8 @@ function DashboardContent() {
             </div>
             <p className="text-xs text-[#5F6368] mt-0.5 flex items-center gap-1.5 flex-wrap">
               <span>SMS Medical College & Attached Hospitals, Jaipur</span>
-              <span>•</span>
-              <span
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
-                  activeStaff.role === "DOCTOR"
-                    ? "bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]"
-                    : activeStaff.role === "NURSE"
-                    ? "bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]"
-                    : "bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]"
-                }`}
-              >
-                {activeStaff.title} [{activeStaff.code}]
-              </span>
             </p>
           </div>
-        </div>
-
-        {/* In-Dashboard Role Switcher & Reset */}
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-          <button
-            onClick={() => setShowRoleSwitcher(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
-          >
-            <User className="w-3.5 h-3.5 text-[#1A73E8]" />
-            <span>Switch Role ({activeStaff.code})</span>
-          </button>
-          <button
-            onClick={() => {
-              try {
-                localStorage.removeItem("vascule_staff_session");
-                const defaultDoctor = INSTITUTIONAL_STAFF_ACCOUNTS.find((s) => s.code === "DM01") || INSTITUTIONAL_STAFF_ACCOUNTS[0];
-                setCurrentStaff(defaultDoctor);
-              } catch {}
-            }}
-            className="p-2 rounded-full border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#FCE8E6] text-[#5F6368] hover:text-[#C5221F] transition-colors cursor-pointer"
-            title="Reset Staff Session"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
 
@@ -2235,195 +2195,6 @@ function DashboardContent() {
         </div>
       )}
 
-      {/* MODAL 4: In-Dashboard Role Switcher Modal */}
-      {showRoleSwitcher && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl w-full max-w-2xl shadow-xl p-5 relative max-h-[85vh] overflow-y-auto">
-            <button
-              onClick={() => setShowRoleSwitcher(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="border-b border-[#DADCE0] pb-3 mb-4">
-              <h3 className="text-base font-bold text-[#202124]">
-                Switch Institutional Clinical Role
-              </h3>
-              <p className="text-xs text-[#5F6368]">
-                Instant inline role elevation without leaving the dashboard
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {/* Faculty Category */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] mb-2">
-                  Faculty (FC01 - FC04)
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("FC")).map((staff) => (
-                    <button
-                      key={staff.code}
-                      onClick={() => {
-                        setCurrentStaff(staff);
-                        try {
-                          localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
-                        } catch {}
-                        setShowRoleSwitcher(false);
-                      }}
-                      className={`p-2.5 rounded-xl border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
-                        activeStaff.code === staff.code
-                          ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8]"
-                          : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
-                      }`}
-                    >
-                      <div>
-                        <p className="font-bold">{staff.name}</p>
-                        <p className="text-[11px] text-[#5F6368]">{staff.title} ({staff.code})</p>
-                      </div>
-                      {activeStaff.code === staff.code && (
-                        <Check className="w-4 h-4 text-[#1A73E8]" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* DM Residents Category */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] mb-2">
-                  DM Residents (DM01 - DM02)
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("DM")).map((staff) => (
-                    <button
-                      key={staff.code}
-                      onClick={() => {
-                        setCurrentStaff(staff);
-                        try {
-                          localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
-                        } catch {}
-                        setShowRoleSwitcher(false);
-                      }}
-                      className={`p-2.5 rounded-xl border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
-                        activeStaff.code === staff.code
-                          ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8]"
-                          : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
-                      }`}
-                    >
-                      <div>
-                        <p className="font-bold">{staff.name}</p>
-                        <p className="text-[11px] text-[#5F6368]">{staff.title} ({staff.code})</p>
-                      </div>
-                      {activeStaff.code === staff.code && (
-                        <Check className="w-4 h-4 text-[#1A73E8]" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Senior Residents Category */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] mb-2">
-                  Senior Residents (SR01 - SR02)
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("SR")).map((staff) => (
-                    <button
-                      key={staff.code}
-                      onClick={() => {
-                        setCurrentStaff(staff);
-                        try {
-                          localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
-                        } catch {}
-                        setShowRoleSwitcher(false);
-                      }}
-                      className={`p-2.5 rounded-xl border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
-                        activeStaff.code === staff.code
-                          ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8]"
-                          : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
-                      }`}
-                    >
-                      <div>
-                        <p className="font-bold">{staff.name}</p>
-                        <p className="text-[11px] text-[#5F6368]">{staff.title} ({staff.code})</p>
-                      </div>
-                      {activeStaff.code === staff.code && (
-                        <Check className="w-4 h-4 text-[#1A73E8]" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Nursing Officers & Technicians */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#137333] mb-2">
-                    Nursing Officers (NO01 - NO06)
-                  </h4>
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-                    {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("NO")).map((staff) => (
-                      <button
-                        key={staff.code}
-                        onClick={() => {
-                          setCurrentStaff(staff);
-                          try {
-                            localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
-                          } catch {}
-                          setShowRoleSwitcher(false);
-                        }}
-                        className={`w-full p-2 rounded-lg border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
-                          activeStaff.code === staff.code
-                            ? "bg-[#E6F4EA] border-[#137333] text-[#137333]"
-                            : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
-                        }`}
-                      >
-                        <span className="font-semibold">{staff.name} ({staff.code})</span>
-                        {activeStaff.code === staff.code && (
-                          <Check className="w-3.5 h-3.5 text-[#137333]" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#B06000] mb-2">
-                    Radiology Technicians (TC01 - TC06)
-                  </h4>
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-                    {INSTITUTIONAL_STAFF_ACCOUNTS.filter((s) => s.code.startsWith("TC")).map((staff) => (
-                      <button
-                        key={staff.code}
-                        onClick={() => {
-                          setCurrentStaff(staff);
-                          try {
-                            localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
-                          } catch {}
-                          setShowRoleSwitcher(false);
-                        }}
-                        className={`w-full p-2 rounded-lg border text-left text-xs transition-all flex items-center justify-between cursor-pointer ${
-                          activeStaff.code === staff.code
-                            ? "bg-[#FEF7E0] border-[#B06000] text-[#B06000]"
-                            : "bg-[#FFFFFF] border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
-                        }`}
-                      >
-                        <span className="font-semibold">{staff.name} ({staff.code})</span>
-                        {activeStaff.code === staff.code && (
-                          <Check className="w-3.5 h-3.5 text-[#B06000]" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       {/* Patient Clinical Dossier Modal */}
       {selectedDossierPatient && (
         <PatientDossierModal

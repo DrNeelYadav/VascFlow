@@ -15,6 +15,7 @@ import {
   ChevronRight,
   ShieldCheck,
   Layers,
+  BarChart3,
 } from "lucide-react";
 
 export interface NavItem {
@@ -64,6 +65,14 @@ const HOSPITAL_WORKLISTS: NavItem[] = [
 ];
 
 const CLINICAL_TOOLS: NavItem[] = [
+  {
+    id: "census-registry",
+    name: "Departmental Census & Registry",
+    href: "/dashboard/census",
+    icon: BarChart3,
+    badge: "REGISTRY",
+    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
+  },
   {
     id: "ir-registry",
     name: "100 IR Catalog",

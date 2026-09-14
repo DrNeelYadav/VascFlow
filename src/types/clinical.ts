@@ -137,16 +137,33 @@ export interface ConditionalPrnItem {
   instructions: string;
 }
 
+export interface ProtocolYojanaRequirement {
+  primaryScheme: 'MAAY' | 'RGHS' | 'AB-PMJAY' | 'CGHS';
+  packageCode: string;
+  secondaryPackageCode?: string;
+  icd10Code: string;
+  packageName: string;
+  tariffAmountInr: number;
+  implantReimbursementCeilingInr?: number;
+  approvedImplants: { code: string; name: string; price?: number }[];
+  mandatoryPreAuthDocuments: string[];
+  applicationSteps: string[];
+  ipdAdmissionRequired: boolean;
+  preAuthTurnaroundHours?: number;
+}
+
 export interface DrugProtocol {
   id: string;
   name: string;
   shortName: string;
   category: string;
+  system?: string;
   indication: string;
   prescriptions: PrescriptionItem[];
   prnMedications: ConditionalPrnItem[];
   safetyLabsToMonitor: string[];
   recallSchedule: string[];
+  yojanaRequirement?: ProtocolYojanaRequirement;
 }
 
 export interface SchemePackage {

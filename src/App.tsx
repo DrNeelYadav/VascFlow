@@ -5,14 +5,12 @@ import { Layout } from './components/shell/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { LaunchpadPage } from './pages/LaunchpadPage';
 import { OtBookingPage } from './pages/OtBookingPage';
-import { RosterPage } from './pages/RosterPage';
 import { EncyclopediaPage } from './pages/EncyclopediaPage';
 import { DischargeStudioPage } from './pages/DischargeStudioPage';
 import { BiopsyRegistryPage } from './pages/BiopsyRegistryPage';
 import { EducationPage } from './pages/EducationPage';
 import { CaseSimulatorPage } from './pages/CaseSimulatorPage';
 import { SchemeDirectoryPage } from './pages/SchemeDirectoryPage';
-import { CalculatorsPage } from './pages/CalculatorsPage';
 import { DrugProtocolsPage } from './pages/DrugProtocolsPage';
 import { useClinicalStore } from './stores/useClinicalStore';
 
@@ -45,14 +43,14 @@ export const App: React.FC = () => {
         <Route element={<AppLayout />}>
           <Route path="/" element={<LaunchpadPage />} />
           <Route path="/ot-booking" element={<OtBookingPage />} />
-          <Route path="/roster" element={<RosterPage />} />
+          <Route path="/roster" element={<Navigate to="/ot-booking" replace />} />
           <Route path="/encyclopedia" element={<EncyclopediaPage />} />
           <Route path="/discharge" element={<DischargeStudioPage />} />
           <Route path="/biopsies" element={<BiopsyRegistryPage />} />
           <Route path="/education" element={<EducationPage />} />
           <Route path="/simulations" element={<CaseSimulatorPage />} />
           <Route path="/schemes" element={<SchemeDirectoryPage />} />
-          <Route path="/calculators" element={<CalculatorsPage />} />
+          <Route path="/calculators" element={<Navigate to="/protocols" replace />} />
           <Route path="/protocols" element={<DrugProtocolsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

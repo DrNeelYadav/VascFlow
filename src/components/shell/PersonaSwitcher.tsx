@@ -33,30 +33,30 @@ export const PersonaSwitcher: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/90 hover:bg-slate-800 text-slate-200 transition text-xs shadow-sm font-medium"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white hover:bg-[#F8F9FA] text-[#202124] transition text-xs shadow-xs font-medium"
       >
-        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
         <span className={`px-1.5 py-0.5 rounded font-mono text-[10px] font-bold border ${current.badgeClass}`}>
           {current.code}
         </span>
         <span className="hidden sm:inline font-semibold">{current.name}</span>
-        <span className="text-slate-400 text-[11px] hidden md:inline">({current.role})</span>
-        <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+        <span className="text-[#5F6368] text-[11px] hidden md:inline">({current.role})</span>
+        <ChevronDown className="w-3.5 h-3.5 text-[#5F6368]" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-72 max-h-[80vh] overflow-y-auto rounded-xl border border-slate-800 bg-slate-900 shadow-2xl p-2 z-50 divide-y divide-slate-800/60 font-sans">
-          <div className="px-2 py-1.5 mb-1 flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+        <div className="absolute right-0 mt-2 w-72 max-h-[80vh] overflow-y-auto rounded-xl border border-[#DADCE0] bg-white shadow-lg p-2 z-50 divide-y divide-[#DADCE0]/80 font-sans">
+          <div className="px-2 py-1.5 mb-1 flex items-center justify-between text-[11px] font-semibold text-[#5F6368] uppercase tracking-wider">
             <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-crimson-500" />
+              <Shield className="w-3.5 h-3.5 text-[#1A73E8]" />
               Active Staff Persona
             </span>
-            <span className="text-[10px] text-slate-500">RajSSO</span>
+            <span className="text-[10px] text-[#5F6368]">RajSSO</span>
           </div>
 
           {tiers.map((group) => (
             <div key={group.label} className="py-1.5">
-              <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <div className="px-2 py-1 text-[10px] font-bold text-[#5F6368] uppercase tracking-wider">
                 {group.label}
               </div>
               <div className="space-y-0.5">
@@ -72,8 +72,8 @@ export const PersonaSwitcher: React.FC = () => {
                       }}
                       className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left text-xs transition ${
                         isSelected
-                          ? 'bg-crimson-950/60 border border-crimson-800/80 text-white'
-                          : 'hover:bg-slate-800 text-slate-300'
+                          ? 'bg-[#E8F0FE] border border-[#1A73E8]/30 text-[#1A73E8]'
+                          : 'hover:bg-[#F8F9FA] text-[#3C4043]'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -81,11 +81,11 @@ export const PersonaSwitcher: React.FC = () => {
                           {p.code}
                         </span>
                         <div>
-                          <div className="font-medium text-slate-100">{p.name}</div>
-                          <div className="text-[10px] text-slate-400">{p.desc}</div>
+                          <div className={`font-medium ${isSelected ? 'text-[#1A73E8]' : 'text-[#202124]'}`}>{p.name}</div>
+                          <div className="text-[10px] text-[#5F6368]">{p.desc}</div>
                         </div>
                       </div>
-                      {isSelected && <UserCheck className="w-4 h-4 text-crimson-400" />}
+                      {isSelected && <UserCheck className="w-4 h-4 text-[#1A73E8]" />}
                     </button>
                   );
                 })}

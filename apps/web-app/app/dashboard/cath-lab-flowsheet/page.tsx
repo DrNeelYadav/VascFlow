@@ -371,6 +371,9 @@ function CathLabFlowsheetContent() {
               <div className="text-xs font-mono text-zinc-400 mt-2">
                 {isAkiRisk ? "CIRSE AKI Hard Cap: 40 mL" : `Cigarroa MACD: ${macdLimit} mL`}
               </div>
+              <div className="text-[10px] font-mono text-amber-300/80 mt-1">
+                Formula: (5 × Weight in kg) / Serum Creatinine = (5 × {weightKg} kg) / {safeCr} mg/dL = {macdLimit} mL
+              </div>
             </div>
 
             {/* Blood Pressure & MAP */}

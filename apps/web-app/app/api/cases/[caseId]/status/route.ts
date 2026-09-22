@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CaseStatus, logAuditTrail, prisma } from "@vascule/db";
 import { auth } from "@/auth";
+import { db, isFirebaseConfigured } from "@/app/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 
 const VALID_STATUSES: CaseStatus[] = [
@@ -144,6 +146,14 @@ export async function PATCH(
       });
     } catch (dbErr) {
       console.warn("[Case Status DB Persistence Warning]:", dbErr);
+    }
+
+    if (isFirebaseConfigured() && db) {
+      try {
+        await setDoc(doc(db, "cases", caseId), { status: nextStatus, updatedAt: nowIso }, { merge: true });
+      } catch (e) {
+        console.warn("[Firestore Status Sync Warning]:", e);
+      }
     }
 
     const isEmergencyOverride = Boolean(body.isEmergencyOverride);

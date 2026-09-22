@@ -1508,50 +1508,50 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             <User className="w-3.5 h-3.5 text-[#1A73E8]" />
             Select Patient or Enter Procedure Details:
           </span>
-          <div className="flex items-center rounded-lg bg-[#F1F3F4] p-0.5 text-xs font-semibold">
+          <div className="grid grid-cols-2 sm:flex sm:items-center rounded-lg bg-[#F1F3F4] p-0.5 text-xs font-semibold w-full sm:w-auto gap-0.5">
             <button
               onClick={() => setActiveTab("preview")}
-              className={`px-3 py-1 rounded-md transition-colors cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === "preview"
                   ? "bg-white text-[#1A73E8] shadow-xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
-              <span>Official Print Preview</span>
+              <span>Print Preview</span>
             </button>
             <button
               onClick={() => setActiveTab("editor")}
-              className={`px-3 py-1 rounded-md transition-colors cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === "editor"
                   ? "bg-white text-[#1A73E8] shadow-xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
               <Sliders className="w-3.5 h-3.5" />
-              <span>Fine-Tune Fields</span>
+              <span>Fine-Tune</span>
             </button>
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`px-3 py-1 rounded-md transition-colors cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === "analytics"
                   ? "bg-white text-[#1A73E8] shadow-xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5 text-[#1A73E8]" />
-              <span>&gt;10 Charts &amp; Metrics</span>
+              <span>Charts/Metrics</span>
             </button>
             <button
               onClick={() => setActiveTab("sso")}
-              className={`px-3 py-1 rounded-md transition-colors cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === "sso"
                   ? "bg-white text-[#1A73E8] shadow-xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
               <Globe className="w-3.5 h-3.5 text-[#137333]" />
-              <span>SSO / IHMS Ingestion</span>
+              <span>SSO Ingestion</span>
             </button>
           </div>
         </div>
@@ -1672,7 +1672,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-[#F8F9FA] p-1 rounded-xl border border-[#DADCE0]">
+          <div className="flex flex-wrap items-center gap-1.5 bg-[#F8F9FA] p-1 rounded-xl border border-[#DADCE0]">
             <button
               onClick={() => setProcedureCategory("varicose_veins")}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
@@ -2320,7 +2320,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
       {/* VIEW A: OFFICIAL PRINTOUT PREVIEW (CLEAN A4 WITH 1-CLICK COPIERS)   */}
       {/* ==================================================================== */}
       {activeTab === "preview" && (
-        <div className="bg-white border border-[#DADCE0] rounded-2xl p-6 sm:p-10 shadow-sm space-y-6 print:border-none print:shadow-none print:p-0">
+        <div className="bg-white border border-[#DADCE0] rounded-2xl p-3 sm:p-6 md:p-10 shadow-sm space-y-6 print:border-none print:shadow-none print:p-0">
           {/* Hospital Official Header */}
           <div className="text-center border-b-2 border-[#202124] pb-3 space-y-0.5">
             <h2 className="text-base sm:text-lg font-black tracking-wide text-[#202124] uppercase">

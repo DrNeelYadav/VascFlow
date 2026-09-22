@@ -21,12 +21,22 @@ describe("Phase 19: Authentic EndoFlow Clinical Workflow & Security (Web-App Sui
       expect(state.activeCaseId).toBeNull();
     });
 
-    it("initializes beds with only verified clinical admissions", () => {
+    it("initializes beds with clean vacant state in production", () => {
+      const state = useEndoflowStore.getState();
+      const occupied = state.beds.filter((b) => b.status === "occupied");
+      expect(occupied.length).toBe(0);
+      expect(state.beds.every((b) => b.status === "vacant")).toBe(true);
+    });
+
+    it("loads decoupled demo seed data on demand via loadDemoSeedData", () => {
+      useEndoflowStore.getState().loadDemoSeedData();
       const state = useEndoflowStore.getState();
       const occupied = state.beds.filter((b) => b.status === "occupied");
       expect(occupied.length).toBe(2);
       expect(occupied.some((b) => b.ptName === "Lakshmi")).toBe(true);
       expect(occupied.some((b) => b.ptName === "Roshan")).toBe(true);
+      expect(state.patients.length).toBe(8);
+      expect(state.ctReviews.length).toBe(3);
     });
   });
 
@@ -213,6 +223,88 @@ describe("Phase 19: Authentic EndoFlow Clinical Workflow & Security (Web-App Sui
       expect(ClinicalStageSchema.safeParse("In Cath-Lab").success).toBe(true);
       expect(ClinicalStageSchema.safeParse("Discharged").success).toBe(true);
       expect(ClinicalStageSchema.safeParse("MALICIOUS_STAGE").success).toBe(false);
+    });
+  });
+
+  describe("4. Permanent Data Persistence & Decoupled Demo Data (Phase 1-3)", () => {
+    it("exports databaseURL and FIRESTORE from firebase.ts", async () => {
+      const { FIRESTORE, db, firebaseConfig } = await import("../../app/lib/firebase");
+      expect(FIRESTORE).toBe(db);
+      expect(firebaseConfig.databaseURL).toBeDefined();
+    });
+
+    it("optimistically adds patient via addPatient and preserves state safely", async () => {
+      const store = useEndoflowStore.getState();
+      const newPt: EndoflowPatient = {
+        id: "PT_ASYNC_01",
+        name: "Async Patient",
+        age: 50,
+        sex: "Female",
+        hid: "SMS-2026-ASYNC",
+        scanId: "SCAN-ASYNC",
+        phone: "9829111222",
+        unit: "IR Unit II",
+        postedBy: "Dr. Neel Yadav",
+        time: "10:30 AM",
+        summary: "Emergency Bronchial Artery Embolization",
+        procedureKey: "bae_hemoptysis",
+        procedure: "BAE Embolization",
+        modality: "XA",
+        status: "Scheduled",
+        scheme: "MAAY",
+        schemeTid: "TID-9988",
+        beneficiaryId: "BEN-9988",
+        preAuthStatus: "Approved",
+        ipd: {
+          admissionType: "Emergency",
+          ward: "IR Ward",
+          bed: "Bed 02",
+          podDay: "Pre-Op",
+        },
+        labs: {
+          ast: 25,
+          alt: 25,
+          bili: 0.8,
+          ldh: 180,
+          alb: 4.0,
+          creat: 0.9,
+          inr: 1.1,
+          plt: 220000,
+          fib: 280,
+          protc: 85,
+          prots: 90,
+          ascitesGrade: "none",
+        },
+        preOp: {
+          bedLocation: "IR Ward Bed 02",
+          npoHours: 6,
+          inrChecked: true,
+          creatinineChecked: true,
+          consentSigned: true,
+          ivCannulaGauge: "18G",
+          calledToLab: false,
+          labCleared: true,
+        },
+      };
+
+      await store.addPatient(newPt);
+      const retrieved = useEndoflowStore.getState().patients.find((p) => p.id === "PT_ASYNC_01");
+      expect(retrieved).toBeDefined();
+      expect(retrieved?.name).toBe("Async Patient");
+    });
+
+    it("resets to clean state via resetToDefaultPatients", () => {
+      const store = useEndoflowStore.getState();
+      store.loadDemoSeedData();
+      expect(useEndoflowStore.getState().patients.length).toBe(8);
+
+      store.resetToDefaultPatients();
+      const cleanState = useEndoflowStore.getState();
+      expect(cleanState.patients.length).toBe(0);
+      expect(cleanState.beds.every((b) => b.status === "vacant")).toBe(true);
+      expect(cleanState.bookedCases.length).toBe(0);
+      expect(cleanState.ctReviews.length).toBe(0);
+      expect(cleanState.dopplerRecords.length).toBe(0);
     });
   });
 });

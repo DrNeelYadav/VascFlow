@@ -50,6 +50,8 @@ export const DEPARTMENT_ROOMS = [
   "FNAC Room",
 ] as const;
 
+export const VACANT_WORKLIST_CASES: PatientWorklistEntry[] = [];
+
 export const INITIAL_RIS_WORKLIST_CASES: PatientWorklistEntry[] = [
   {
     caseId: "CASE-2026-001",

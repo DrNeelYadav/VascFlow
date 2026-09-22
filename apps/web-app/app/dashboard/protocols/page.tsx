@@ -464,9 +464,9 @@ export default function DrugProtocolsPage() {
 
       {/* Sleek Protocol Selector Bar - Dropdown Menu replacing bulky 4-col list */}
       <div className="bg-white border border-[#E5E5EA] rounded-2xl p-3.5 shadow-xs flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3 flex-1 min-w-[300px]">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 min-w-0 w-full sm:w-auto">
           {/* Organ System Filter Dropdown */}
-          <div className="relative shrink-0">
+          <div className="relative shrink-0 w-full sm:w-auto">
             <label className="text-[10px] font-bold uppercase text-[#8E8E93] block mb-0.5">
               Organ System
             </label>
@@ -481,7 +481,7 @@ export default function DrugProtocolsPage() {
                     if (firstInSys) setSelectedProtocolId(firstInSys.id);
                   }
                 }}
-                className="appearance-none pl-3 pr-8 py-2 text-xs font-semibold bg-[#F2F2F7] hover:bg-[#E5E5EA] border border-[#E5E5EA] rounded-xl text-[#1C1C1E] focus:bg-white focus:border-[#007AFF] outline-none cursor-pointer transition"
+                className="appearance-none w-full sm:w-auto pl-3 pr-8 py-2 text-xs font-semibold bg-[#F2F2F7] hover:bg-[#E5E5EA] border border-[#E5E5EA] rounded-xl text-[#1C1C1E] focus:bg-white focus:border-[#007AFF] outline-none cursor-pointer transition"
               >
                 {PROTOCOL_SYSTEMS.map((sys) => (
                   <option key={sys} value={sys}>
@@ -494,7 +494,7 @@ export default function DrugProtocolsPage() {
           </div>
 
           {/* Main Protocol Dropdown Menu */}
-          <div className="flex-1 min-w-[260px]">
+          <div className="flex-1 min-w-0 w-full sm:w-auto">
             <label className="text-[10px] font-bold uppercase text-[#8E8E93] block mb-0.5 flex items-center justify-between">
               <span>Select Clinical Protocol ({filteredProtocols.length} Available)</span>
               <span className="font-mono text-[#007AFF] font-normal text-[10px]">
@@ -558,8 +558,8 @@ export default function DrugProtocolsPage() {
         </div>
 
         {/* Quick Search & Summary Pill */}
-        <div className="flex items-center gap-2">
-          <div className="w-48 sm:w-56 relative">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex-1 sm:w-56 relative">
             <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8E8E93]" />
             <input
               type="text"

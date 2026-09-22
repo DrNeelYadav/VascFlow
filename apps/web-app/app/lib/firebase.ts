@@ -1,5 +1,11 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import {
+  initializeFirestore,
+  getFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  type Firestore,
+} from "firebase/firestore";
 
 export const firebaseConfig = {
   apiKey:
@@ -8,6 +14,9 @@ export const firebaseConfig = {
   authDomain:
     process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ||
     "endoflow-54b71.firebaseapp.com",
+  databaseURL:
+    process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL ||
+    "https://endoflow-54b71-default-rtdb.firebaseio.com",
   projectId:
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
     "endoflow-54b71",
@@ -33,8 +42,23 @@ export const app: FirebaseApp =
 
 /**
  * Primary Google Cloud Firestore instance for VascFlow OS collections.
+ * Uses persistent local IndexedDB cache with multi-tab management in browser.
  */
-export const db: Firestore = getFirestore(app);
+export const db: Firestore = (() => {
+  if (typeof window !== "undefined") {
+    try {
+      return initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager(),
+        }),
+      });
+    } catch {
+      return getFirestore(app);
+    }
+  }
+  return getFirestore(app);
+})();
+export const FIRESTORE: Firestore = db;
 
 /**
  * Checks whether Firebase credentials are properly configured.

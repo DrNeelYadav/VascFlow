@@ -36,6 +36,21 @@ export interface PreBookingPatientInfo {
   diagnosis?: string;
 }
 
+export const BLANK_WORKUP_FORM = {
+  name: '',
+  age: '' as unknown as number,
+  gender: 'Male',
+  crNo: '',
+  ipdNo: '',
+  bedNo: '',
+  phone: '',
+  scheme: '',
+  procedureDate: '',
+  diagnosis: '',
+  plannedProcedure: '',
+  customHistoryGap: '',
+};
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -51,29 +66,27 @@ export const PreBookingWorkupModal: React.FC<Props> = ({
     getWorkupTemplateForProtocol(patientInfo.protocolId, patientInfo.procedureName)
   );
 
-  // Editable Demographics
-  const [name, setName] = useState(patientInfo.patientName || 'PATIENT NAME');
-  const [age, setAge] = useState(patientInfo.patientAge || 45);
-  const [gender, setGender] = useState(patientInfo.patientGender || 'Male');
-  const [crNo, setCrNo] = useState(patientInfo.crNo || 'CR-2026-XXXX');
-  const [ipdNo, setIpdNo] = useState(patientInfo.ipdNo || 'IPD-8821');
-  const [bedNo, setBedNo] = useState(patientInfo.bedNo || 'Daycare / Ward Bed');
-  const [phone, setPhone] = useState(patientInfo.patientPhone || '98290XXXXX');
-  const [scheme, setScheme] = useState(patientInfo.scheme || 'RGHS / Chiranjeevi (MAAY)');
+  // Editable Demographics - clean zero-ghost initialization
+  const [name, setName] = useState(patientInfo.patientName || BLANK_WORKUP_FORM.name);
+  const [age, setAge] = useState<number | string>(patientInfo.patientAge || '');
+  const [gender, setGender] = useState(patientInfo.patientGender || BLANK_WORKUP_FORM.gender);
+  const [crNo, setCrNo] = useState(patientInfo.crNo || BLANK_WORKUP_FORM.crNo);
+  const [ipdNo, setIpdNo] = useState(patientInfo.ipdNo || BLANK_WORKUP_FORM.ipdNo);
+  const [bedNo, setBedNo] = useState(patientInfo.bedNo || BLANK_WORKUP_FORM.bedNo);
+  const [phone, setPhone] = useState(patientInfo.patientPhone || BLANK_WORKUP_FORM.phone);
+  const [scheme, setScheme] = useState(patientInfo.scheme || BLANK_WORKUP_FORM.scheme);
   const [procedureDate, setProcedureDate] = useState(
     patientInfo.targetDate || new Date().toISOString().slice(0, 10)
   );
 
   // Editable Main Heading
   const [diagnosis, setDiagnosis] = useState(patientInfo.diagnosis || template.defaultDiagnosis);
-  const [plannedProcedure, setPlannedProcedure] = useState(template.defaultProcedure);
+  const [plannedProcedure, setPlannedProcedure] = useState(patientInfo.procedureName || template.defaultProcedure);
   const [urgencyTier, setUrgencyTier] = useState(template.urgencyTier);
 
-  // Editable Sections
+  // Editable Sections - no hardcoded ghost case strings
   const [historyItems, setHistoryItems] = useState<WorkupHistoryItem[]>(template.commonHistory);
-  const [customHistoryGap, setCustomHistoryGap] = useState(
-    'Known case of Budd-Chiari syndrome; previously maintained on Spironolactone and Furosemide with gradual loss of diuretic response. No prior episode of overt hepatic encephalopathy. Upper GI endoscopy 3 weeks ago revealed Grade III esophageal varices; prophylactic EVBL performed.'
-  );
+  const [customHistoryGap, setCustomHistoryGap] = useState('');
   const [screeningItems, setScreeningItems] = useState<WorkupScreeningItem[]>(template.screeningChecklist);
   const [hardwareItems, setHardwareItems] = useState<WorkupHardwareItem[]>(template.hardwareList);
   const [proceduralPlan, setProceduralPlan] = useState(template.defaultPlan);
@@ -83,36 +96,39 @@ export const PreBookingWorkupModal: React.FC<Props> = ({
   const [newHardwareItem, setNewHardwareItem] = useState('');
   const [newHardwareQty, setNewHardwareQty] = useState('1');
 
-  // Reset when patientInfo changes
+  // Reset cleanly when modal mounts or opens (isOpen) or patientInfo changes
   useEffect(() => {
+    if (!isOpen) return;
     const t = getWorkupTemplateForProtocol(patientInfo.protocolId, patientInfo.procedureName);
     setTemplate(t);
-    setName(patientInfo.patientName || 'PATIENT NAME');
-    setAge(patientInfo.patientAge || 45);
-    setGender(patientInfo.patientGender || 'Male');
-    setCrNo(patientInfo.crNo || 'CR-2026-XXXX');
-    setIpdNo(patientInfo.ipdNo || 'IPD-8821');
-    setBedNo(patientInfo.bedNo || 'Daycare / Ward Bed');
-    setPhone(patientInfo.patientPhone || '98290XXXXX');
-    setScheme(patientInfo.scheme || 'RGHS / Chiranjeevi (MAAY)');
+    setName(patientInfo.patientName || BLANK_WORKUP_FORM.name);
+    setAge(patientInfo.patientAge || '');
+    setGender(patientInfo.patientGender || BLANK_WORKUP_FORM.gender);
+    setCrNo(patientInfo.crNo || BLANK_WORKUP_FORM.crNo);
+    setIpdNo(patientInfo.ipdNo || BLANK_WORKUP_FORM.ipdNo);
+    setBedNo(patientInfo.bedNo || BLANK_WORKUP_FORM.bedNo);
+    setPhone(patientInfo.patientPhone || BLANK_WORKUP_FORM.phone);
+    setScheme(patientInfo.scheme || BLANK_WORKUP_FORM.scheme);
     setProcedureDate(patientInfo.targetDate || new Date().toISOString().slice(0, 10));
-    setDiagnosis(patientInfo.diagnosis || t.defaultDiagnosis);
-    setPlannedProcedure(t.defaultProcedure);
-    setUrgencyTier(t.urgencyTier);
-    setHistoryItems(t.commonHistory);
-    setScreeningItems(t.screeningChecklist);
-    setHardwareItems(t.hardwareList);
-    setProceduralPlan(t.defaultPlan);
-  }, [patientInfo]);
+    setDiagnosis(patientInfo.diagnosis || t.defaultDiagnosis || '');
+    setPlannedProcedure(patientInfo.procedureName || t.defaultProcedure || '');
+    setUrgencyTier(t.urgencyTier || 'Elective');
+    setHistoryItems(t.commonHistory || []);
+    setCustomHistoryGap('');
+    setScreeningItems(t.screeningChecklist || []);
+    setHardwareItems(t.hardwareList || []);
+    setProceduralPlan(t.defaultPlan || '');
+  }, [isOpen, patientInfo]);
 
   if (!isOpen) return null;
 
   const handleResetDefaults = () => {
     const t = getWorkupTemplateForProtocol(patientInfo.protocolId, patientInfo.procedureName);
-    setDiagnosis(t.defaultDiagnosis);
-    setPlannedProcedure(t.defaultProcedure);
+    setDiagnosis(patientInfo.diagnosis || t.defaultDiagnosis);
+    setPlannedProcedure(patientInfo.procedureName || t.defaultProcedure);
     setUrgencyTier(t.urgencyTier);
     setHistoryItems(t.commonHistory);
+    setCustomHistoryGap('');
     setScreeningItems(t.screeningChecklist);
     setHardwareItems(t.hardwareList);
     setProceduralPlan(t.defaultPlan);
@@ -289,6 +305,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
                   className="font-bold text-xs w-full bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                 />
               </div>
@@ -299,6 +317,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                     type="number"
                     value={age}
                     onChange={(e) => setAge(Number(e.target.value))}
+                    autoComplete="off"
+                    data-lpignore="true"
                     className="font-bold text-xs w-12 bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                   />
                   <span>Y /</span>
@@ -319,6 +339,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                   type="text"
                   value={crNo}
                   onChange={(e) => setCrNo(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
                   className="font-bold font-mono text-xs w-full bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                 />
               </div>
@@ -329,6 +351,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                     type="text"
                     value={ipdNo}
                     onChange={(e) => setIpdNo(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     className="font-bold font-mono text-xs w-20 bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                   />
                   <span>/</span>
@@ -336,6 +360,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                     type="text"
                     value={bedNo}
                     onChange={(e) => setBedNo(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     className="font-bold text-xs w-full bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                   />
                 </div>
@@ -346,6 +372,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
                   className="font-semibold text-xs w-full bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                 />
               </div>
@@ -355,6 +383,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                   type="text"
                   value={scheme}
                   onChange={(e) => setScheme(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
                   className="font-semibold text-xs w-full bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                 />
               </div>
@@ -364,6 +394,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                   type="date"
                   value={procedureDate}
                   onChange={(e) => setProcedureDate(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
                   className="font-bold text-xs w-full bg-transparent border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none print:border-none"
                 />
               </div>
@@ -392,6 +424,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 type="text"
                 value={diagnosis}
                 onChange={(e) => setDiagnosis(e.target.value)}
+                autoComplete="off"
+                data-lpignore="true"
                 className="w-full font-bold text-sm text-[#202124] bg-transparent border-b border-dashed border-blue-300 focus:border-blue-700 focus:outline-none print:border-none print:text-black"
               />
             </div>
@@ -404,6 +438,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 type="text"
                 value={plannedProcedure}
                 onChange={(e) => setPlannedProcedure(e.target.value)}
+                autoComplete="off"
+                data-lpignore="true"
                 className="w-full font-bold text-xs sm:text-sm text-gray-800 bg-transparent border-b border-dashed border-blue-300 focus:border-blue-700 focus:outline-none print:border-none print:text-black"
               />
             </div>
@@ -471,6 +507,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 rows={2}
                 value={customHistoryGap}
                 onChange={(e) => setCustomHistoryGap(e.target.value)}
+                autoComplete="off"
+                data-lpignore="true"
                 placeholder="Enter any other specific clinical details, past medical interventions, comorbidities, or custom patient observations..."
                 className="w-full text-xs p-2.5 rounded-lg border border-[#DADCE0] bg-white focus:outline-none focus:border-blue-600 print:border-black/30 print:p-1"
               />
@@ -512,6 +550,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                       type="text"
                       value={scr.defaultValue}
                       placeholder={scr.placeholder}
+                      autoComplete="off"
+                      data-lpignore="true"
                       onChange={(e) => {
                         const val = e.target.value;
                         setScreeningItems((prev) =>
@@ -562,6 +602,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                     <input
                       type="text"
                       value={hw.quantity}
+                      autoComplete="off"
+                      data-lpignore="true"
                       onChange={(e) => {
                         const val = e.target.value;
                         setHardwareItems((prev) =>
@@ -588,6 +630,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 type="text"
                 placeholder="Add additional catheter, wire, stent, or embolic..."
                 value={newHardwareItem}
+                autoComplete="off"
+                data-lpignore="true"
                 onChange={(e) => setNewHardwareItem(e.target.value)}
                 className="flex-1 px-2.5 py-1.5 text-xs border border-[#DADCE0] rounded-lg focus:outline-none focus:border-blue-600"
               />
@@ -595,6 +639,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 type="text"
                 placeholder="Qty"
                 value={newHardwareQty}
+                autoComplete="off"
+                data-lpignore="true"
                 onChange={(e) => setNewHardwareQty(e.target.value)}
                 className="w-16 px-2 py-1.5 text-xs text-center border border-[#DADCE0] rounded-lg focus:outline-none"
               />
@@ -621,6 +667,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
             <textarea
               rows={8}
               value={proceduralPlan}
+              autoComplete="off"
+              data-lpignore="true"
               onChange={(e) => setProceduralPlan(e.target.value)}
               className="w-full text-xs font-mono leading-relaxed p-3 rounded-xl border border-black/40 bg-white focus:outline-none focus:border-blue-700 print:border-black print:rounded-none print:p-2"
             />

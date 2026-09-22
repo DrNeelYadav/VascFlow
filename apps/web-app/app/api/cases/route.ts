@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/app/lib/firebase";
+import { db, isFirebaseConfigured } from "@/app/lib/firebase";
 import {
   collection,
   getDocs,
-  addDoc,
+  doc,
+  setDoc,
   query,
   orderBy,
   limit,
@@ -37,6 +38,8 @@ const INITIAL_FALLBACK_CASES = [
   },
 ];
 
+const inMemoryCases: Array<Record<string, any>> = [...INITIAL_FALLBACK_CASES];
+
 /**
  * GET /api/cases
  * Retrieves cases from Google Cloud Firestore collection "cases".
@@ -49,29 +52,38 @@ export async function GET(request: NextRequest) {
       Math.max(1, parseInt(searchParams.get("limit") || "50", 10) || 50)
     );
 
-    const casesRef = collection(db, "cases");
-    const q = query(casesRef, orderBy("createdAt", "desc"), limit(limitCount));
-    const snapshot = await getDocs(q);
+    if (isFirebaseConfigured() && db) {
+      const casesRef = collection(db, "cases");
+      let snapshot;
+      try {
+        const q = query(casesRef, orderBy("createdAt", "desc"), limit(limitCount));
+        snapshot = await getDocs(q);
+      } catch {
+        const q = query(casesRef, limit(limitCount));
+        snapshot = await getDocs(q);
+      }
 
-    if (!snapshot.empty) {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      return NextResponse.json(data);
+      if (!snapshot.empty) {
+        const data = snapshot.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        }));
+        return NextResponse.json(data);
+      }
     }
 
-    // Return fallback cases if collection is not yet populated
-    return NextResponse.json(INITIAL_FALLBACK_CASES);
+    // Return fallback cases if collection is not yet populated or offline
+    return NextResponse.json(inMemoryCases.slice(0, limitCount));
   } catch (error: any) {
     console.warn("[Firestore /api/cases GET] Falling back to memory:", error?.message);
-    return NextResponse.json(INITIAL_FALLBACK_CASES);
+    return NextResponse.json(inMemoryCases);
   }
 }
 
 /**
  * POST /api/cases
- * Adds a new clinical procedure case into Google Cloud Firestore.
+ * Adds or updates a clinical procedure case in Google Cloud Firestore.
+ * Preserves custom case IDs to prevent split-brain mismatches with status routes.
  */
 export async function POST(req: Request) {
   try {
@@ -84,16 +96,33 @@ export async function POST(req: Request) {
       );
     }
 
+    const nowIso = new Date().toISOString();
+    const targetId = body.id || body.caseId || `case_${Date.now()}`;
     const newRecord = {
       ...body,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      id: targetId,
+      createdAt: body.createdAt || nowIso,
+      updatedAt: nowIso,
     };
 
-    const docRef = await addDoc(collection(db, "cases"), newRecord);
+    if (isFirebaseConfigured() && db) {
+      try {
+        await setDoc(doc(db, "cases", targetId), newRecord, { merge: true });
+      } catch (fbErr: any) {
+        console.warn("[Firestore /api/cases POST] Failed to save to Firestore, using memory fallback:", fbErr?.message);
+      }
+    }
+
+    // Keep in-memory cache in sync
+    const existingIndex = inMemoryCases.findIndex((c) => c.id === targetId);
+    if (existingIndex >= 0) {
+      inMemoryCases[existingIndex] = { ...inMemoryCases[existingIndex], ...newRecord };
+    } else {
+      inMemoryCases.unshift(newRecord);
+    }
 
     return NextResponse.json(
-      { id: docRef.id, ...newRecord },
+      newRecord,
       { status: 201 }
     );
   } catch (error: any) {

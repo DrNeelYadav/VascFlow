@@ -6,6 +6,16 @@ service cloud.firestore {
       allow read, write: if true; // Institutional intranet & web-app access
     }
 
+    // Inpatient Bed Board Matrix
+    match /beds/{bedId} {
+      allow read, write: if true; // Institutional intranet & clinical workstation access
+    }
+
+    // Patient Registry Collection
+    match /patients/{patientId} {
+      allow read, write: if true; // Institutional intranet & clinical workstation access
+    }
+
     // Cath Lab Hardware & Inventory Collection
     match /inventory/{sku} {
       allow read, write: if true;

@@ -177,9 +177,195 @@ export function WorklistTable({
   });
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-[#DADCE0] bg-white shadow-sm">
-      <table className="w-full text-left text-xs text-[#202124]">
-        <thead className="bg-[#F8F9FA] text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] border-b border-[#DADCE0]">
+    <div className="rounded-xl border border-[#DADCE0] bg-white shadow-sm overflow-hidden">
+      {/* Mobile Card Stack (Phone View: 0 Horizontal Scroll) */}
+      <div className="block md:hidden divide-y divide-[#DADCE0]">
+        {filteredCases.length === 0 ? (
+          <div className="p-8 text-center text-[#5F6368]">
+            <AlertCircle className="mx-auto h-7 w-7 text-[#DADCE0] mb-2" />
+            No procedure cases matching current filter or search criteria.
+          </div>
+        ) : (
+          filteredCases.map((entry) => {
+            const modKey = entry.modality || "XA";
+            const modStyle = MODALITY_BADGE_STYLE[modKey] || MODALITY_BADGE_STYLE.XA;
+            return (
+              <div
+                key={`mob-${entry.caseId}`}
+                className={`p-3.5 space-y-2.5 transition-colors ${
+                  entry.isStat ? "bg-[#FFF8F6] border-l-4 border-l-[#EA4335]" : "bg-white hover:bg-slate-50"
+                }`}
+              >
+                {/* Header Row: Time + Room + Modality + Status */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-[#202124]">
+                    <Clock className="h-3.5 w-3.5 text-[#5F6368] shrink-0" />
+                    <span>{entry.plannedTime}</span>
+                    <span className="text-[11px] text-[#5F6368] font-sans font-normal">
+                      &bull; {entry.room || "Cath Lab 1"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold border ${modStyle.bg} ${modStyle.text} ${modStyle.border}`}>
+                      {modKey}
+                    </span>
+                    <span className={`rounded-md border px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${statusColorMap[entry.status]}`}>
+                      {entry.status.replace(/_/g, " ")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Patient Details & STAT Flag */}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-[#202124]">{entry.patientName}</span>
+                    {entry.isStat && (
+                      <span className="shrink-0 rounded bg-[#EA4335] text-white px-1.5 py-0.5 text-[9px] font-black tracking-wider uppercase animate-pulse">
+                        STAT
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-[#5F6368] font-mono mt-0.5">CR: {entry.crNumber}</div>
+                  {entry.statIndication && (
+                    <div className="text-[10px] font-semibold text-[#C5221F] mt-0.5">
+                      ⚡ {entry.statIndication}
+                    </div>
+                  )}
+                </div>
+
+                {/* Procedure Title */}
+                <div className="text-xs font-semibold text-[#1A73E8]">
+                  {entry.procedureName}
+                </div>
+
+                {/* Clinical Team */}
+                <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#5F6368]">
+                  <span>Op: <strong className="text-[#202124]">{entry.operatorResident}</strong></span>
+                  <span>&bull;</span>
+                  <span>Cons: <strong className="text-[#202124]">{entry.supervisingConsultant}</strong></span>
+                </div>
+
+                {/* Safety Flags */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                  {entry.fastingConfirmed ? (
+                    <span className="inline-flex items-center gap-0.5 rounded bg-[#E6F4EA] px-1.5 py-0.5 text-[10px] font-semibold text-[#137333] border border-[#34A853]/30">
+                      <CheckCircle2 className="h-2.5 w-2.5" /> NPO Confirmed
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-0.5 rounded bg-[#FEF7E0] px-1.5 py-0.5 text-[10px] font-semibold text-[#B06000] border border-[#FBBC04]/50">
+                      NPO Pending
+                    </span>
+                  )}
+                  {entry.contrastAllergy && (
+                    <span className="inline-flex items-center gap-0.5 rounded bg-[#FCE8E6] px-1.5 py-0.5 text-[10px] font-semibold text-[#C5221F] border border-[#EA4335]/30">
+                      <ShieldAlert className="h-2.5 w-2.5" /> Allergy Alert
+                    </span>
+                  )}
+                </div>
+
+                {/* Mobile Actions Bar */}
+                <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                  {entry.status === "SCHEDULED" && (
+                    <button
+                      onClick={() => handleOpenTransitionModal(entry, "ADMITTED_PREPPED")}
+                      className="flex-1 min-h-[36px] rounded-lg bg-[#1A73E8] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-[#1557B0] transition flex items-center justify-center cursor-pointer"
+                    >
+                      Check In &amp; Prep
+                    </button>
+                  )}
+
+                  {entry.status === "ADMITTED_PREPPED" && (
+                    <button
+                      onClick={() => handleOpenTransitionModal(entry, "IN_PROCEDURE")}
+                      className="flex-1 min-h-[36px] rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition flex items-center justify-center cursor-pointer"
+                    >
+                      Start Lab
+                    </button>
+                  )}
+
+                  {entry.status === "IN_PROCEDURE" && (
+                    <>
+                      <Link
+                        href={`/dashboard/cath-lab-flowsheet?caseId=${entry.caseId}`}
+                        className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white hover:bg-black transition shadow-2xs"
+                      >
+                        <Activity className="h-3 w-3 text-[#34A853] animate-pulse" />
+                        Flowsheet
+                      </Link>
+                      <button
+                        onClick={() => handleOpenTransitionModal(entry, "POST_OP_HOLDING")}
+                        className="flex-1 min-h-[36px] rounded-lg border border-[#DADCE0] bg-white px-3 py-1.5 text-xs font-semibold text-[#3C4043] hover:bg-[#F1F3F4] transition flex items-center justify-center cursor-pointer"
+                      >
+                        Finish Cath
+                      </button>
+                    </>
+                  )}
+
+                  {entry.status === "POST_OP_HOLDING" && (
+                    <Link
+                      href={`/dashboard/reports/${entry.caseId}`}
+                      className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
+                    >
+                      <FileText className="h-3 w-3" />
+                      Dictate Report
+                    </Link>
+                  )}
+
+                  {entry.status === "REPORT_DRAFTED" && (
+                    <Link
+                      href={`/dashboard/reports/${entry.caseId}`}
+                      className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
+                    >
+                      <ShieldAlert className="h-3 w-3 text-[#FBBC04]" />
+                      Consultant Verify
+                    </Link>
+                  )}
+
+                  {entry.status === "FINALIZED_SIGNED" && (
+                    <>
+                      <Link
+                        href={`/dashboard/reports/${entry.caseId}`}
+                        className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg border border-[#DADCE0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#3C4043] hover:bg-[#F1F3F4] transition"
+                      >
+                        <FileText className="h-3 w-3 text-[#5F6368]" />
+                        View Report
+                      </Link>
+                      <button
+                        onClick={() => handleOpenTransitionModal(entry, "DISCHARGED")}
+                        className="flex-1 min-h-[36px] rounded-lg bg-[#202124] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-black transition flex items-center justify-center cursor-pointer"
+                      >
+                        Discharge
+                      </button>
+                    </>
+                  )}
+
+                  {entry.status === "DISCHARGED" && (
+                    <Link
+                      href={`/dashboard/discharge`}
+                      className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg border border-[#DADCE0] bg-[#F8F9FA] px-3 py-1.5 text-xs font-medium text-[#5F6368] hover:bg-[#F1F3F4] transition"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      IHMS Summary
+                    </Link>
+                  )}
+
+                  <Link
+                    href={`/dashboard/consent?caseId=${entry.caseId}&procedure=${encodeURIComponent(entry.procedureName)}`}
+                    className="px-2.5 py-1.5 text-xs text-[#1A73E8] bg-blue-50 hover:bg-blue-100 rounded-lg transition"
+                  >
+                    Consent
+                  </Link>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Worklist Table (Hidden on Mobile) */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full text-left text-xs text-[#202124]">
+          <thead className="bg-[#F8F9FA] text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] border-b border-[#DADCE0]">
           <tr>
             <th className="px-3.5 py-2.5">Schedule</th>
             <th className="px-3.5 py-2.5">Patient / CR</th>
@@ -449,6 +635,7 @@ export function WorklistTable({
           )}
         </tbody>
       </table>
+      </div>
 
       {/* Safety Checklist Transition Modal */}
       {activeModalTarget && (

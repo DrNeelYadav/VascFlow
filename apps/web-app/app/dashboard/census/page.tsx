@@ -153,15 +153,15 @@ export default function DepartmentalCensusPage() {
   }, [filteredCohort, followUpIntervalFilter]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-20 md:pb-16 overflow-x-hidden min-w-0">
       {/* Streamlined Header */}
-      <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-lg px-3 sm:px-4 py-3 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shrink-0">
             <BarChart3 className="w-4 h-4" />
           </div>
           <div className="flex items-center gap-2">
-            <h1 className="text-base font-bold text-slate-900 tracking-tight">
+            <h1 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
               Census &amp; Publishable Registry
             </h1>
             <span className="px-2 py-0.5 text-[10px] font-medium rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -171,7 +171,7 @@ export default function DepartmentalCensusPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 self-end md:self-auto shrink-0">
+        <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto shrink-0">
           <button
             onClick={handleDownloadCsv}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
@@ -184,7 +184,7 @@ export default function DepartmentalCensusPage() {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-blue-200 bg-blue-50 hover:bg-blue-100 text-xs font-semibold text-blue-700 transition-colors cursor-pointer"
           >
             {copiedTable ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-blue-600" />}
-            <span>{copiedTable ? "Copied" : "Copy Table 1 (JVIR)"}</span>
+            <span>{copiedTable ? "Copied" : "Copy Table 1"}</span>
           </button>
           <Link
             href="/dashboard"
@@ -196,10 +196,10 @@ export default function DepartmentalCensusPage() {
       </div>
 
       {/* 2. Global Interactive Filter Bar */}
-      <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5 shadow-xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5">
+      <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3 sm:p-3.5 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto flex-1">
           {/* Search Input */}
-          <div className="relative min-w-[220px]">
+          <div className="relative w-full sm:w-auto sm:min-w-[220px] flex-1">
             <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#70757A]" />
             <input
               type="text"
@@ -229,7 +229,7 @@ export default function DepartmentalCensusPage() {
           </div>
 
           {/* Age Group Filter */}
-          <div className="flex items-center gap-1 bg-[#F1F3F4] p-1 rounded-lg">
+          <div className="flex flex-wrap items-center gap-1 bg-[#F1F3F4] p-1 rounded-lg max-w-full">
             <span className="text-[10px] font-bold text-[#5F6368] px-1.5 uppercase">Age:</span>
             {["all", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"].map((a) => (
               <button
@@ -250,7 +250,7 @@ export default function DepartmentalCensusPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="text-xs py-1.5 px-2.5 rounded-lg border border-[#DADCE0] bg-[#F8F9FA] text-[#3C4043] focus:outline-none focus:border-[#1A73E8]"
+            className="w-full sm:w-auto text-xs py-1.5 px-2.5 rounded-lg border border-[#DADCE0] bg-[#F8F9FA] text-[#3C4043] focus:outline-none focus:border-[#1A73E8]"
           >
             <option value="all">All Categories</option>
             <option value="Venous & Dialysis">Venous &amp; Dialysis (TIPS / DVT)</option>
@@ -262,71 +262,76 @@ export default function DepartmentalCensusPage() {
           </select>
         </div>
 
-        <div className="text-xs font-mono text-[#5F6368]">
+        <div className="text-xs font-mono text-[#5F6368] w-full sm:w-auto text-right">
           Showing <span className="font-bold text-[#1A73E8]">{filteredCohort.length}</span> of {PUBLISHABLE_REGISTRY_COHORT.length} cases
         </div>
       </div>
 
       {/* 3. Sub-View Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#DADCE0] pb-2 overflow-x-auto">
+      <div className="flex items-center gap-1.5 sm:gap-2 border-b border-[#DADCE0] pb-2 overflow-x-auto">
         <button
           onClick={() => setActiveTab("visual_analytics")}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
             activeTab === "visual_analytics"
               ? "bg-[#1A73E8] text-white shadow-xs"
               : "bg-[#FFFFFF] border border-[#DADCE0] text-[#5F6368] hover:text-[#202124]"
           }`}
         >
           <BarChart3 className="w-3.5 h-3.5" />
-          <span>1. Journal Visual Analytics (Box, Scatter, Leaf, KM)</span>
+          <span className="hidden sm:inline">1. Journal Visual Analytics (Box, Scatter, Leaf, KM)</span>
+          <span className="sm:hidden">1. Analytics</span>
         </button>
 
         <button
           onClick={() => setActiveTab("procedure_markers")}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
             activeTab === "procedure_markers"
               ? "bg-[#1A73E8] text-white shadow-xs"
               : "bg-[#FFFFFF] border border-[#DADCE0] text-[#5F6368] hover:text-[#202124]"
           }`}
         >
           <Stethoscope className="w-3.5 h-3.5" />
-          <span>2. Procedure Markers (TIPS Gradients, TACE, Thrombectomy)</span>
+          <span className="hidden sm:inline">2. Procedure Markers (TIPS Gradients, TACE, Thrombectomy)</span>
+          <span className="sm:hidden">2. Markers</span>
         </button>
 
         <button
           onClick={() => setActiveTab("follow_up_ledger")}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
             activeTab === "follow_up_ledger"
               ? "bg-[#1A73E8] text-white shadow-xs"
               : "bg-[#FFFFFF] border border-[#DADCE0] text-[#5F6368] hover:text-[#202124]"
           }`}
         >
           <Calendar className="w-3.5 h-3.5" />
-          <span>3. Longitudinal Follow-up Ledger</span>
+          <span className="hidden sm:inline">3. Longitudinal Follow-up Ledger</span>
+          <span className="sm:hidden">3. Follow-up</span>
         </button>
 
         <button
           onClick={() => setActiveTab("volume")}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
             activeTab === "volume"
               ? "bg-[#1A73E8] text-white shadow-xs"
               : "bg-[#FFFFFF] border border-[#DADCE0] text-[#5F6368] hover:text-[#202124]"
           }`}
         >
           <TrendingUp className="w-3.5 h-3.5" />
-          <span>4. Monthly Caseload &amp; Radiation Benchmarks</span>
+          <span className="hidden sm:inline">4. Monthly Caseload &amp; Radiation Benchmarks</span>
+          <span className="sm:hidden">4. Volumes</span>
         </button>
 
         <button
           onClick={() => setActiveTab("publishable")}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 ${
             activeTab === "publishable"
               ? "bg-[#1A73E8] text-white shadow-xs"
               : "bg-[#FFFFFF] border border-[#DADCE0] text-[#5F6368] hover:text-[#202124]"
           }`}
         >
           <FileText className="w-3.5 h-3.5" />
-          <span>5. Nature / Lancet LaTeX Exporter</span>
+          <span className="hidden sm:inline">5. Nature / Lancet LaTeX Exporter</span>
+          <span className="sm:hidden">5. Exporter</span>
         </button>
       </div>
 
@@ -345,7 +350,7 @@ export default function DepartmentalCensusPage() {
       {activeTab === "procedure_markers" && (
         <div className="space-y-6">
           {/* Procedure Sub-tab selector */}
-          <div className="flex items-center gap-2 bg-[#F8F9FA] p-1.5 rounded-xl border border-[#DADCE0] max-w-xl">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#F8F9FA] p-1.5 rounded-xl border border-[#DADCE0] max-w-xl">
             <button
               onClick={() => setProcedureSubTab("tips")}
               className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg transition-all text-center ${
@@ -425,7 +430,46 @@ export default function DepartmentalCensusPage() {
                   <span>TIPS &amp; DIPS Hemodynamic Cohort Ledger (N={tipsCases.length})</span>
                   <span className="text-[#1A73E8] font-mono text-[11px]">Baveno VII Decompression Criteria</span>
                 </div>
-                <div className="overflow-x-auto">
+                {/* Mobile Card Stack */}
+                <div className="block md:hidden divide-y divide-[#E8EAED]">
+                  {tipsCases.map((r) => (
+                    <div key={r.researchId} className="p-3 space-y-2 bg-white">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono font-bold text-xs text-[#1A73E8]">{r.researchId}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            r.hepaticEncephalopathy === "None" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                          }`}>
+                            HE: {r.hepaticEncephalopathy}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                            {r.followUpStatus}
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-[#202124]">{r.indication}</div>
+                        <div className="text-[11px] text-[#5F6368]">{r.exactAge}y / {r.gender} • {r.classification} • {r.stentGraftType}</div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 bg-[#F8F9FA] p-2 rounded-lg border border-[#E8EAED] text-center">
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Pre-PSG</div>
+                          <div className="text-xs font-bold text-red-600">{r.preShuntGradientMmHg} mmHg</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Post-PSG</div>
+                          <div className="text-xs font-bold text-green-700">{r.postShuntGradientMmHg} mmHg</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Δ Drop</div>
+                          <div className="text-xs font-bold text-blue-600">-{r.gradientReductionMmHg}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="min-w-full divide-y divide-[#E8EAED] text-xs">
                     <thead className="bg-[#F8F9FA] text-[#5F6368]">
                       <tr>
@@ -516,7 +560,40 @@ export default function DepartmentalCensusPage() {
                   <span>Interventional Oncology &amp; TACE Cohort Ledger (N={taceCases.length})</span>
                   <span className="text-[#1A73E8] font-mono text-[11px]">BCLC Staging &amp; mRECIST Outcomes</span>
                 </div>
-                <div className="overflow-x-auto">
+                {/* Mobile Card Stack */}
+                <div className="block md:hidden divide-y divide-[#E8EAED]">
+                  {taceCases.map((r) => (
+                    <div key={r.researchId} className="p-3 space-y-2 bg-white">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono font-bold text-xs text-[#1A73E8]">{r.researchId}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="px-2 py-0.5 rounded font-bold text-[10px] bg-purple-100 text-purple-800">
+                            BCLC {r.bclcStage}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800">
+                            {r.mRecistResponse}
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-[#202124]">{r.indication}</div>
+                        <div className="text-[11px] text-[#5F6368]">{r.exactAge}y / {r.gender} • Size: {r.targetLesionSizeCm} cm • {r.embolicAgent}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 bg-[#F8F9FA] p-2 rounded-lg border border-[#E8EAED] text-center">
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Pre-AFP</div>
+                          <div className="text-xs font-bold text-red-600">{r.preAfpNgMl} ng/mL</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Post-AFP</div>
+                          <div className="text-xs font-bold text-green-700">{r.postAfpNgMl} ng/mL</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="min-w-full divide-y divide-[#E8EAED] text-xs">
                     <thead className="bg-[#F8F9FA] text-[#5F6368]">
                       <tr>
@@ -596,7 +673,39 @@ export default function DepartmentalCensusPage() {
                   <span>Mechanical Thrombectomy &amp; Clot Extraction Cohort (N={thrombectomyCases.length})</span>
                   <span className="text-[#1A73E8] font-mono text-[11px]">AHA/ASA &amp; CIRSE Standards</span>
                 </div>
-                <div className="overflow-x-auto">
+                {/* Mobile Card Stack */}
+                <div className="block md:hidden divide-y divide-[#E8EAED]">
+                  {thrombectomyCases.map((r) => (
+                    <div key={r.researchId} className="p-3 space-y-2 bg-white">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono font-bold text-xs text-[#1A73E8]">{r.researchId}</span>
+                        <span className="px-2 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800 text-[10px]">
+                          mRS {r.ninetyDayMrsScore} (Independent)
+                        </span>
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-[#202124]">{r.targetVessel}</div>
+                        <div className="text-[11px] text-[#5F6368]">{r.exactAge}y / {r.gender} • {r.deviceUsed}</div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 bg-[#F8F9FA] p-2 rounded-lg border border-[#E8EAED] text-center">
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Pre-TICI</div>
+                          <div className="text-xs font-bold text-red-600">{r.preTiciScore}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Post-TICI</div>
+                          <div className="text-xs font-bold text-green-700">{r.postTiciScore}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-[#5F6368]">Reduction</div>
+                          <div className="text-xs font-bold text-blue-600">{r.clotBurdenReductionPct}%</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="min-w-full divide-y divide-[#E8EAED] text-xs">
                     <thead className="bg-[#F8F9FA] text-[#5F6368]">
                       <tr>
@@ -643,9 +752,9 @@ export default function DepartmentalCensusPage() {
         <div className="space-y-4">
           {/* Follow-up Sub-filter Bar */}
           <div className="bg-white p-3.5 rounded-xl border border-[#DADCE0] shadow-xs flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-semibold text-[#5F6368]">Follow-up Interval:</span>
-              <div className="flex items-center gap-1 bg-[#F1F3F4] p-1 rounded-lg">
+              <div className="flex flex-wrap items-center gap-1 bg-[#F1F3F4] p-1 rounded-lg">
                 {["all", "30-Day", "3-Month", "6-Month", "12-Month", "24-Month"].map((intvl) => (
                   <button
                     key={intvl}
@@ -673,7 +782,43 @@ export default function DepartmentalCensusPage() {
               <span>Patient Follow-up &amp; Patency Surveillance Ledger</span>
               <span className="text-[#1A73E8] font-mono text-[11px]">100% De-Identified Registry</span>
             </div>
-            <div className="overflow-x-auto">
+            {/* Mobile Card Stack */}
+            <div className="block md:hidden divide-y divide-[#E8EAED]">
+              {followUpCohort.map((r) => (
+                <div key={r.researchId} className="p-3 space-y-2 bg-white">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-xs text-[#1A73E8]">{r.researchId}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded font-bold text-[10px] bg-slate-100 text-slate-700">
+                        {r.followUpInterval}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        r.followUpStatus?.includes("Patent")
+                          ? "bg-green-100 text-green-800"
+                          : r.followUpStatus?.includes("Assisted")
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-red-100 text-red-800"
+                      }`}>
+                        {r.followUpStatus}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-[#202124]">{r.procedureName}</div>
+                    <div className="text-[11px] text-[#5F6368]">{r.indication}</div>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-100">
+                    <span className="text-slate-500 font-mono">Date: {r.followUpDate}</span>
+                    <span className="font-mono font-bold text-emerald-700">{r.followUpPatencyDays}d patent</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      {r.schemeCoverage}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="min-w-full divide-y divide-[#E8EAED] text-xs">
                 <thead className="bg-[#F8F9FA] text-[#5F6368]">
                   <tr>

@@ -6,105 +6,127 @@ import { usePathname } from "next/navigation";
 import {
   Stethoscope,
   BedDouble,
+  Kanban,
   Calendar,
-  ClipboardList,
+  Activity,
   Menu,
 } from "lucide-react";
+import { useEndoflowStore } from "../../dashboard/useEndoflowStore";
 
-export interface MobileBottomNavProps {
-  onOpenDrawer?: () => void;
-}
-
-export function MobileBottomNav({ onOpenDrawer }: MobileBottomNavProps) {
+export function MobileBottomNav({
+  onToggleMore,
+}: {
+  onToggleMore: () => void;
+}) {
   const pathname = usePathname();
 
-  const navItems = [
+  // Store indicators
+  const ctReviews = useEndoflowStore((s) => s.ctReviews);
+  const beds = useEndoflowStore((s) => s.beds);
+  const patients = useEndoflowStore((s) => s.patients);
+  const bookedCases = useEndoflowStore((s) => s.bookedCases);
+
+  const pendingReviewsCount = ctReviews.filter((r) => r.status === "Pending Review").length;
+  const occupiedBedsCount = beds.filter((b) => b.status === "occupied").length;
+  const activeCasesCount = patients.filter((p) => p.status !== "Discharged").length;
+  const bookedCasesCount = bookedCases.filter((c) => c.status !== "Completed").length;
+
+  const NAV_ITEMS = [
     {
-      id: "opd",
+      id: "op-clinic",
       label: "OPD",
       href: "/dashboard/op-clinic",
       icon: Stethoscope,
+      badge: pendingReviewsCount > 0 ? pendingReviewsCount : undefined,
     },
     {
-      id: "beds",
+      id: "bed-board",
       label: "Beds",
       href: "/dashboard/bed-board",
       icon: BedDouble,
-    },
-    {
-      id: "calendar",
-      label: "Calendar",
-      href: "/dashboard/calendar",
-      icon: Calendar,
+      badge: `${occupiedBedsCount}/8`,
     },
     {
       id: "worklist",
       label: "Worklist",
       href: "/dashboard/worklist",
-      icon: ClipboardList,
+      icon: Kanban,
+      badge: activeCasesCount > 0 ? activeCasesCount : undefined,
     },
     {
-      id: "more",
-      label: "More",
-      icon: Menu,
-      isAction: true,
+      id: "calendar",
+      label: "OT Cal",
+      href: "/dashboard/calendar",
+      icon: Calendar,
+      badge: bookedCasesCount > 0 ? bookedCasesCount : undefined,
+    },
+    {
+      id: "protocols",
+      label: "Calcs",
+      href: "/dashboard/protocols",
+      icon: Activity,
     },
   ];
 
-  const isActive = (href?: string) => {
-    if (!href) return false;
-    return pathname.startsWith(href);
+  const isItemActive = (href: string) => {
+    if (href === "/dashboard" && pathname === "/dashboard") return true;
+    if (href !== "/dashboard" && pathname.startsWith(href)) return true;
+    return false;
   };
 
   return (
     <nav
-      aria-label="Mobile bottom navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-[#E5E5EA] px-2 py-1 flex items-center justify-around shadow-lg select-none"
+      aria-label="Mobile Navigation Bar"
+      className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)] select-none"
     >
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        const active = item.href ? isActive(item.href) : false;
+      <div className="grid grid-cols-6 h-14 items-stretch px-1">
+        {NAV_ITEMS.map((item) => {
+          const active = isItemActive(item.href);
+          const Icon = item.icon;
 
-        if (item.isAction) {
           return (
-            <button
+            <Link
               key={item.id}
-              type="button"
-              onClick={onOpenDrawer}
-              className="flex flex-col items-center justify-center min-h-[44px] min-w-[56px] px-2 py-1 rounded-xl text-[#8E8E93] hover:text-[#1C1C1E] active:scale-95 transition-all cursor-pointer"
-              aria-label="Open clinical navigation drawer"
+              href={item.href}
+              className={`flex flex-col items-center justify-center relative py-1 transition-all group ${
+                active
+                  ? "text-blue-600 dark:text-blue-400 font-semibold"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+              }`}
             >
-              <Icon className="w-5 h-5 shrink-0 mb-0.5" strokeWidth={2} />
-              <span className="text-[10px] font-medium tracking-tight leading-none">
+              <div className="relative">
+                <Icon
+                  className={`w-5 h-5 transition-transform ${
+                    active ? "scale-110 stroke-[2.25]" : "stroke-[1.75]"
+                  }`}
+                />
+                {item.badge !== undefined && (
+                  <span className="absolute -top-1.5 -right-2.5 px-1 min-w-[14px] h-3.5 bg-blue-600 text-white rounded-full text-[9px] font-bold flex items-center justify-center shadow-xs leading-none">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] mt-0.5 tracking-tight truncate max-w-full px-0.5">
                 {item.label}
               </span>
-            </button>
+              {active && (
+                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
+              )}
+            </Link>
           );
-        }
+        })}
 
-        return (
-          <Link
-            key={item.id}
-            href={item.href!}
-            className={`flex flex-col items-center justify-center min-h-[44px] min-w-[56px] px-2 py-1 rounded-xl active:scale-95 transition-all ${
-              active
-                ? "text-[#007AFF] bg-[#007AFF]/10 font-semibold"
-                : "text-[#8E8E93] hover:text-[#1C1C1E] font-medium"
-            }`}
-            aria-current={active ? "page" : undefined}
-          >
-            <Icon
-              className={`w-5 h-5 shrink-0 mb-0.5 transition-colors ${
-                active ? "text-[#007AFF]" : "text-[#8E8E93]"
-              }`}
-              strokeWidth={active ? 2.4 : 2}
-            />
-            <span className="text-[10px] tracking-tight leading-none">
-              {item.label}
-            </span>
-          </Link>
-        );
-      })}
+        {/* More Drawer Button */}
+        <button
+          type="button"
+          onClick={onToggleMore}
+          className="flex flex-col items-center justify-center relative py-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all cursor-pointer"
+          aria-label="Open More Clinical Navigation Options"
+        >
+          <Menu className="w-5 h-5 stroke-[1.75]" />
+          <span className="text-[10px] mt-0.5 tracking-tight">More</span>
+        </button>
+      </div>
     </nav>
   );
 }

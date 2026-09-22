@@ -1124,8 +1124,8 @@ export default function OpClinicConsultationDeskPage() {
       {/* MODAL: CONFIRM CATH-LAB BOOKING */}
       {/* ========================================================================= */}
       {showBookingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs p-4">
-          <div className="bg-white border border-[#E5E5EA] rounded-2xl w-full max-w-lg shadow-xl p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white border border-[#E5E5EA] rounded-2xl w-full max-w-lg max-h-[90dvh] overflow-y-auto shadow-xl p-4 sm:p-6 relative">
             <button
               onClick={() => setShowBookingModal(false)}
               className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F2F2F7] text-[#8E8E93] cursor-pointer"

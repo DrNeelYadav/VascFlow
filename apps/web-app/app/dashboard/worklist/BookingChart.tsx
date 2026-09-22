@@ -211,12 +211,99 @@ export function BookingChart({
               <span className="text-xs font-semibold uppercase tracking-wider text-[#5F6368]">
                 Hourly Room Allocation (08:00 – 17:00)
               </span>
-              <span className="text-[11px] text-[#5F6368]">
+              <span className="hidden sm:inline text-[11px] text-[#5F6368]">
                 Hover procedure blocks for operator &amp; case details
               </span>
             </div>
 
-            <div className="overflow-x-auto pb-2">
+            {/* Mobile View: Room Allocation Cards (Zero Horizontal Scroll) */}
+            <div className="block md:hidden space-y-3 pb-2">
+              {/* Cath Lab Azurion */}
+              <div className="rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-bold text-xs text-[#202124]">Philips Azurion Cath Lab</span>
+                  <span className="text-[10px] font-mono text-[#1A73E8] font-semibold bg-[#E8F0FE] px-2 py-0.5 rounded">
+                    {azurionUtilPct}% &bull; {azurionMinutes}m
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  {azurionCases.map((entry) => (
+                    <div
+                      key={`mob-az-${entry.caseId}`}
+                      onClick={() => onSelectCase?.(entry.caseId)}
+                      className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-[#E0E0E0] text-xs cursor-pointer active:bg-blue-50"
+                    >
+                      <div className="min-w-0">
+                        <div className="font-semibold text-[#202124] truncate">{entry.procedureName}</div>
+                        <div className="text-[10px] text-[#5F6368]">{entry.patientName} &bull; CR: {entry.crNumber}</div>
+                      </div>
+                      <span className="shrink-0 font-mono text-[10px] font-semibold text-[#174EA6] bg-[#E8F0FE] px-1.5 py-0.5 rounded">
+                        {entry.plannedTime}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CT Suite */}
+              <div className="rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-bold text-xs text-[#202124]">CT Guided Suite</span>
+                  <span className="text-[10px] font-mono text-[#C5221F] font-semibold bg-[#FCE8E6] px-2 py-0.5 rounded">
+                    {ctUtilPct}% &bull; {ctMinutes}m
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  {ctCases.map((entry) => (
+                    <div
+                      key={`mob-ct-${entry.caseId}`}
+                      onClick={() => onSelectCase?.(entry.caseId)}
+                      className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-[#E0E0E0] text-xs cursor-pointer active:bg-red-50"
+                    >
+                      <div className="min-w-0">
+                        <div className="font-semibold text-[#202124] truncate">{entry.procedureName}</div>
+                        <div className="text-[10px] text-[#5F6368]">{entry.patientName} &bull; CR: {entry.crNumber}</div>
+                      </div>
+                      <span className="shrink-0 font-mono text-[10px] font-semibold text-[#C5221F] bg-[#FCE8E6] px-1.5 py-0.5 rounded">
+                        {entry.plannedTime}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Department Procedure Suites */}
+              {departmentRoomCases.length > 0 && (
+                <div className="rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-xs text-[#202124]">Procedure Suites</span>
+                    <span className="text-[10px] font-mono text-[#137333] font-semibold bg-[#E6F4EA] px-2 py-0.5 rounded">
+                      {departmentRoomCases.length} cases
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {departmentRoomCases.map((entry) => (
+                      <div
+                        key={`mob-dept-${entry.caseId}`}
+                        onClick={() => onSelectCase?.(entry.caseId)}
+                        className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-[#E0E0E0] text-xs cursor-pointer active:bg-green-50"
+                      >
+                        <div className="min-w-0">
+                          <div className="font-semibold text-[#202124] truncate">{entry.procedureName}</div>
+                          <div className="text-[10px] text-[#5F6368]">{entry.patientName} &bull; {entry.room || "Room"}</div>
+                        </div>
+                        <span className="shrink-0 font-mono text-[10px] font-semibold text-[#137333] bg-[#E6F4EA] px-1.5 py-0.5 rounded">
+                          {entry.plannedTime}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Desktop Timeline (Hidden on Mobile) */}
+            <div className="hidden md:block overflow-x-auto pb-2">
               <div className="min-w-[640px]">
                 {/* Time Ruler */}
                 <div className="grid grid-cols-9 border-b border-[#DADCE0] pb-1 text-[11px] font-mono text-[#5F6368]">
@@ -491,7 +578,7 @@ export function BookingChart({
             </div>
 
             {/* Donut Chart & Legend layout */}
-            <div className="flex items-center justify-center gap-4 py-1">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 py-1">
               {/* SVG Donut Chart */}
               <div className="relative shrink-0 flex items-center justify-center">
                 <svg

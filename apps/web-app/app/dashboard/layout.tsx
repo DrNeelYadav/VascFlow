@@ -7,6 +7,7 @@ import { GoogleHeader } from "../components/shell/GoogleHeader";
 import { SessionTimeoutModal } from "../components/SessionTimeoutModal";
 import { CommandMenu } from "../components/command-menu";
 import { DualPaneWorkspace } from "./components/DualPaneWorkspace";
+import { MobileBottomNav } from "../components/shell/MobileBottomNav";
 
 export default function DashboardLayout({
   children,
@@ -51,7 +52,7 @@ export default function DashboardLayout({
     : "bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100";
 
   return (
-    <div className={`h-screen overflow-hidden ${containerBg} flex flex-col font-sans antialiased`}>
+    <div className={`h-[100dvh] overflow-hidden ${containerBg} flex flex-col font-sans antialiased`}>
       {/* Google Workspace Header with Pill Search Bar, Dual-Pane & Bedside Lock */}
       <div className="print:hidden">
         <GoogleHeader
@@ -79,10 +80,15 @@ export default function DashboardLayout({
             <DualPaneWorkspace>{children}</DualPaneWorkspace>
           </main>
         ) : (
-          <main className="flex-1 overflow-y-auto p-3 lg:p-4 relative print:p-0 print:m-0 print:bg-white print:overflow-visible print:h-auto print:block flex flex-col">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-3 lg:p-4 pb-20 md:pb-4 relative print:p-0 print:m-0 print:bg-white print:overflow-visible print:h-auto print:block flex flex-col">
             {children}
           </main>
         )}
+      </div>
+
+      {/* Mobile Bottom Navigation Dock */}
+      <div className="print:hidden">
+        <MobileBottomNav onToggleMore={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)} />
       </div>
 
       {/* Data Tools Modal */}

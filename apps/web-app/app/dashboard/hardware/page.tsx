@@ -302,8 +302,8 @@ export default function HardwareMonitorPage() {
   return (
     <div className="min-h-screen bg-[#FFFFFF] text-[#202124] flex flex-col font-sans selection:bg-[#E8F0FE] selection:text-[#1A73E8]">
       {/* Google Workspace Header */}
-      <header className="sticky top-0 z-40 bg-[#FFFFFF] border-b border-[#DADCE0] px-6 py-3 shadow-[0_1px_2px_rgba(60,64,67,0.08)]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[#FFFFFF] border-b border-[#DADCE0] px-3 sm:px-6 py-2.5 sm:py-3 shadow-[0_1px_2px_rgba(60,64,67,0.08)]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard"
@@ -313,25 +313,25 @@ export default function HardwareMonitorPage() {
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <div className="flex items-center gap-2 text-xs text-[#5F6368]">
-                <span>Clinical Workstation</span>
-                <ChevronRight className="w-3 h-3" />
-                <span className="text-[#202124] font-medium">Mission Control</span>
-                <ChevronRight className="w-3 h-3" />
-                <span className="text-[#1A73E8] font-medium">Hardware C-Arm Gateway</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-[#5F6368] overflow-hidden">
+                <span className="truncate">Clinical Workstation</span>
+                <ChevronRight className="w-3 h-3 shrink-0" />
+                <span className="text-[#202124] font-medium truncate">Mission Control</span>
+                <ChevronRight className="w-3 h-3 shrink-0" />
+                <span className="text-[#1A73E8] font-medium truncate">Hardware Gateway</span>
               </div>
-              <h1 className="text-xl font-semibold text-[#202124] tracking-tight flex items-center gap-2.5 mt-0.5">
-                Angiosuite Fluoroscopy & MLLP Bridge
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]">
+              <h1 className="text-base sm:text-xl font-semibold text-[#202124] tracking-tight flex flex-wrap items-center gap-2 mt-0.5">
+                <span>Angiosuite Fluoroscopy Bridge</span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]">
                   <span className="w-2 h-2 rounded-full bg-[#1E8E3E] animate-pulse" />
-                  C-STORE SCP :11112 ONLINE
+                  C-STORE ONLINE
                 </span>
               </h1>
             </div>
           </div>
 
           {/* Action Bar */}
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
             <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0] text-[#5F6368]">
               <Clock className="w-3.5 h-3.5" />
               <span className="font-mono font-medium text-[#202124] tabular-nums">{currentTime} UTC</span>
@@ -406,7 +406,7 @@ export default function HardwareMonitorPage() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-6">
         {/* Gateway Protocol Matrix */}
         <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="p-4 rounded-xl border border-[#DADCE0] bg-[#FFFFFF] shadow-sm flex items-center gap-3.5">

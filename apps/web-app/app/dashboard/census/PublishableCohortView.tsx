@@ -148,7 +148,7 @@ export function PublishableCohortView() {
         </div>
 
         {/* Export Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleCopyLatex}
             className="px-3 py-1.5 rounded-md bg-white hover:bg-gray-50 text-[#3C4043] border border-[#DADCE0] text-xs font-medium flex items-center gap-1.5 transition"
@@ -415,7 +415,54 @@ export function PublishableCohortView() {
           </span>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile Card Stack */}
+        <div className="block md:hidden divide-y divide-[#DADCE0]">
+          {filteredCohort.map((p) => (
+            <div key={p.researchId} className="p-3 space-y-2 bg-white">
+              <div className="flex items-center justify-between">
+                <span className="font-mono font-bold text-xs text-[#202124]">{p.researchId}</span>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                      p.technicalSuccess
+                        ? "bg-emerald-50 text-[#137333]"
+                        : "bg-red-50 text-[#C5221F]"
+                    }`}
+                  >
+                    {p.technicalSuccess ? "Success" : "Failed"}
+                  </span>
+                  <span className="text-[11px] font-mono text-slate-500">{p.dapGyCm2.toFixed(1)} Gy·cm²</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-[#202124]">{p.procedureName}</div>
+                <div className="text-[11px] text-[#5F6368]">{p.indication}</div>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] pt-1 border-t border-slate-100">
+                <span className="text-slate-600 font-mono">
+                  {p.ageBinned} / {p.gender === "Male" ? "M" : "F"} • {p.quarterYear}
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
+                  {p.procedureCategory}
+                </span>
+                <span
+                  className={`text-[10px] font-medium ${
+                    p.cirseGrade === "None"
+                      ? "text-[#5F6368]"
+                      : p.cirseGrade.includes("Grade 3")
+                      ? "text-[#C5221F]"
+                      : "text-[#B06000]"
+                  }`}
+                >
+                  CIRSE: {p.cirseGrade.split("(")[0].trim()}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs text-[#3C4043]">
             <thead className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[11px] font-semibold text-[#5F6368]">
               <tr>

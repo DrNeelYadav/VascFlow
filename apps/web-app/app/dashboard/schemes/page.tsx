@@ -171,11 +171,11 @@ export default function SchemeTariffsPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white px-6 py-3.5">
+      <div className="border-b border-gray-200 bg-white px-3 sm:px-6 py-3.5">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <h1 className="text-lg font-bold tracking-tight text-gray-900">
-              Government Schemes & Master Tariff Directory
+            <h1 className="text-base sm:text-lg font-bold tracking-tight text-gray-900">
+              Government Schemes &amp; Master Tariff
             </h1>
             <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -199,11 +199,11 @@ export default function SchemeTariffsPage() {
       </div>
 
       {/* View Mode Switcher */}
-      <div className="bg-gray-100 border-b border-gray-200 px-6 py-2">
-        <div className="max-w-7xl mx-auto flex items-center gap-2">
+      <div className="bg-gray-100 border-b border-gray-200 px-3 sm:px-6 py-2">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <button
             onClick={() => setViewMode("generator")}
-            className={`px-4 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${
+            className={`px-4 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer text-center ${
               viewMode === "generator"
                 ? "bg-blue-600 text-white shadow-xs"
                 : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
@@ -213,13 +213,13 @@ export default function SchemeTariffsPage() {
           </button>
           <button
             onClick={() => setViewMode("directory")}
-            className={`px-4 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${
+            className={`px-4 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer text-center ${
               viewMode === "directory"
                 ? "bg-blue-600 text-white shadow-xs"
                 : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
             }`}
           >
-            Master Tariff Directory & SMS Parser
+            Master Tariff Directory
           </button>
         </div>
       </div>
@@ -499,7 +499,82 @@ export default function SchemeTariffsPage() {
                 />
               ) : (
                 <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                  <div ref={parentRef} className="overflow-x-auto max-h-[480px] overflow-y-auto">
+                  {/* Mobile Package Cards (Zero Horizontal Scroll on Phone) */}
+                  <div className="block sm:hidden divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
+                    {packages.length === 0 ? (
+                      <div className="py-8 text-center text-xs text-slate-400 font-mono">
+                        No records found
+                      </div>
+                    ) : (
+                      packages.map((pkg) => {
+                        const isSelected = selectedPackage?.packageCode === pkg.packageCode;
+                        return (
+                          <div
+                            key={`mob-pkg-${pkg.packageCode}`}
+                            onClick={() => setSelectedPackage(pkg)}
+                            className={`p-3 space-y-2 cursor-pointer transition-colors ${
+                              isSelected ? "bg-blue-50/70 border-l-4 border-l-blue-600" : "hover:bg-gray-50 bg-white"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-mono font-bold text-xs text-blue-700">{pkg.packageCode}</span>
+                              <div className="flex items-center gap-1.5">
+                                <span
+                                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                    pkg.scheme === "MAAY" ? "bg-orange-100 text-orange-800" : "bg-purple-100 text-purple-800"
+                                  }`}
+                                >
+                                  {pkg.scheme}
+                                </span>
+                                <span className="font-mono font-bold text-xs text-gray-900">
+                                  ₹{pkg.baseTariffINR.toLocaleString()}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="text-xs font-semibold text-gray-900 leading-snug">
+                              {pkg.packageName}
+                            </div>
+
+                            <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px] pt-1 border-t border-gray-100">
+                              <span className="text-gray-500">
+                                {pkg.authorizedImplants.length > 0 ? (
+                                  <span className="text-blue-600 font-medium">{pkg.authorizedImplants.length} Implants Authorized</span>
+                                ) : (
+                                  <span>Implants Included</span>
+                                )}
+                              </span>
+
+                              <div className="flex items-center gap-1.5">
+                                {pkg.preAuthRequired ? (
+                                  <span className="text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 text-[10px] font-medium">
+                                    Pre-Auth Mandated
+                                  </span>
+                                ) : (
+                                  <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-[10px] font-medium">
+                                    Direct Approved
+                                  </span>
+                                )}
+
+                                <Button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedPackage(pkg);
+                                  }}
+                                  className="px-2 py-0.5 text-[10px] bg-gray-100 hover:bg-gray-200 text-gray-700 rounded"
+                                >
+                                  Inspect
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* Desktop Virtualized Table (Hidden on Mobile) */}
+                  <div ref={parentRef} className="hidden sm:block overflow-x-auto max-h-[480px] overflow-y-auto">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 uppercase font-semibold sticky top-0 z-10">
                         <tr>

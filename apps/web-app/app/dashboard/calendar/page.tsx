@@ -517,7 +517,7 @@ export default function OtScheduleCalendarPage() {
           {viewMode === "month" ? (
             <div className="bg-white rounded-xl border border-[#DADCE0] shadow-xs overflow-hidden">
               {/* Day Headers (Mon - Sun) */}
-              <div className="grid grid-cols-7 border-b border-[#DADCE0] bg-[#F8F9FA] text-center text-[11px] font-bold text-[#5F6368] py-2">
+              <div className="grid grid-cols-7 border-b border-[#DADCE0] bg-[#F8F9FA] text-center text-[10px] sm:text-[11px] font-bold text-[#5F6368] py-1.5 sm:py-2">
                 <div>MON</div>
                 <div>TUE</div>
                 <div>WED</div>
@@ -540,7 +540,7 @@ export default function OtScheduleCalendarPage() {
                     <div
                       key={cell.dateStr}
                       onClick={() => setSelectedDateStr(cell.dateStr)}
-                      className={`min-h-[105px] p-2 transition-all cursor-pointer flex flex-col justify-between relative group ${
+                      className={`min-h-[58px] sm:min-h-[105px] p-1 sm:p-2 transition-all cursor-pointer flex flex-col justify-between relative group ${
                         !cell.isCurrentMonth
                           ? "bg-[#FAFAFA] text-[#BDC1C6]"
                           : isSelected
@@ -553,9 +553,9 @@ export default function OtScheduleCalendarPage() {
                       }`}
                     >
                       {/* Cell Header: Date Number & Holiday Indicator */}
-                      <div className="flex items-start justify-between gap-1">
+                      <div className="flex items-start justify-between gap-0.5">
                         <span
-                          className={`text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full ${
+                          className={`text-[11px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full ${
                             isToday
                               ? "bg-[#1A73E8] text-white"
                               : isSelected
@@ -573,34 +573,53 @@ export default function OtScheduleCalendarPage() {
                         {/* Holiday Tag */}
                         {cell.holidayInfo.isHoliday && (
                           <div className="text-right">
-                            {isGazetted ? (
-                              <span
-                                className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-800 border border-rose-200 leading-tight max-w-[85px] truncate"
-                                title={cell.holidayInfo.name || "Gazetted Holiday"}
-                              >
-                                {cell.holidayInfo.name}
-                              </span>
-                            ) : isRestricted ? (
-                              <span
-                                className="inline-block px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200 leading-tight max-w-[85px] truncate"
-                                title={cell.holidayInfo.name || "Restricted Holiday"}
-                              >
-                                {cell.holidayInfo.name}
-                              </span>
-                            ) : null}
+                            {/* Mobile dot indicator */}
+                            <span
+                              className={`sm:hidden inline-block w-1.5 h-1.5 rounded-full ${
+                                isGazetted ? "bg-rose-500" : "bg-amber-500"
+                              }`}
+                              title={cell.holidayInfo.name || "Holiday"}
+                            />
+                            {/* Desktop full pill */}
+                            <div className="hidden sm:block">
+                              {isGazetted ? (
+                                <span
+                                  className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-800 border border-rose-200 leading-tight max-w-[85px] truncate"
+                                  title={cell.holidayInfo.name || "Gazetted Holiday"}
+                                >
+                                  {cell.holidayInfo.name}
+                                </span>
+                              ) : isRestricted ? (
+                                <span
+                                  className="inline-block px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200 leading-tight max-w-[85px] truncate"
+                                  title={cell.holidayInfo.name || "Restricted Holiday"}
+                                >
+                                  {cell.holidayInfo.name}
+                                </span>
+                              ) : null}
+                            </div>
                           </div>
                         )}
                       </div>
 
-                      {/* Sunday Closed Tag */}
+                      {/* Sunday Closed Tag (Desktop only) */}
                       {isSunday && (
-                        <div className="my-1 text-[9px] font-medium text-red-600 bg-red-50/80 px-1 py-0.5 rounded border border-red-100">
+                        <div className="hidden sm:block my-1 text-[9px] font-medium text-red-600 bg-red-50/80 px-1 py-0.5 rounded border border-red-100">
                           Sunday Off
                         </div>
                       )}
 
-                      {/* Booked Cases Count & Urgency Dots */}
-                      <div className="mt-1 space-y-1">
+                      {/* Mobile Cases Indicator */}
+                      <div className="sm:hidden flex items-center justify-center mt-0.5">
+                        {cell.cases.length > 0 && (
+                          <span className="min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center">
+                            {cell.cases.length}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Desktop Cases List */}
+                      <div className="hidden sm:block mt-1 space-y-1">
                         {cell.cases.length > 0 ? (
                           <div className="space-y-1">
                             <div className="flex items-center gap-1">

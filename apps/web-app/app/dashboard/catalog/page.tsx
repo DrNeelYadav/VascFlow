@@ -150,14 +150,14 @@ export default function CatalogPage() {
         </div>
 
         {/* Master Operative Notes & Standardized Reports Banner */}
-        <div className="mt-4 p-3.5 bg-linear-to-r from-[#E8F0FE] to-[#F8F9FA] border border-[#D2E3FC] rounded-xl flex items-center justify-between gap-4">
+        <div className="mt-4 p-3.5 bg-linear-to-r from-[#E8F0FE] to-[#F8F9FA] border border-[#D2E3FC] rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#1A73E8] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
               ON
             </div>
             <div>
               <div className="text-xs font-bold text-[#202124]">
-                Master Catalog & Clinical Operative Notes Engine
+                Master Catalog &amp; Clinical Operative Notes Engine
               </div>
               <div className="text-[11px] text-[#5F6368]">
                 Generate Rajasthan MAAY / RGHS compatible clinical operative reports with individualized post-op care plans.
@@ -166,7 +166,7 @@ export default function CatalogPage() {
           </div>
           <Link
             href="/dashboard/operative-notes"
-            className="px-3 py-1.5 bg-[#1A73E8] text-white text-xs font-medium rounded-lg hover:bg-[#1557B0] transition-colors flex items-center gap-1.5 shrink-0 shadow-xs"
+            className="px-3 py-1.5 bg-[#1A73E8] text-white text-xs font-medium rounded-lg hover:bg-[#1557B0] transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-xs self-start sm:self-auto"
           >
             <span>View Operative Notes</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -220,7 +220,7 @@ export default function CatalogPage() {
 
           {/* Search & Modalities */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-            <div className="flex items-center gap-1.5 text-xs">
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
               <span className="text-[11px] font-semibold text-[#5F6368] mr-1">
                 Modality:
               </span>

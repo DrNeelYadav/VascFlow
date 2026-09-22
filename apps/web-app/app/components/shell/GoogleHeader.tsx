@@ -115,12 +115,12 @@ export function GoogleHeader({
 
       {/* Right: Actions, Status Dot, Shift Profile Avatar & Settings */}
       <div className="flex items-center gap-1.5 shrink-0">
-        {/* Dual-Pane Toggle */}
+        {/* Dual-Pane Toggle (Desktop Only) */}
         <button
           type="button"
           onClick={onToggleDualPane}
           title="Toggle Dual-Pane Cockpit (Cmd+\)"
-          className={`p-1.5 rounded transition cursor-pointer flex items-center gap-1 text-xs font-medium ${
+          className={`hidden md:flex p-1.5 rounded transition cursor-pointer items-center gap-1 text-xs font-medium ${
             isDualPane
               ? "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
               : "text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800"

@@ -1,8 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
+  "outputDirectory": "apps/web-app/.next",
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npx prisma generate --schema=packages/db/schema.prisma && next build apps/web-app",
+  "buildCommand": "npx prisma generate --schema=packages/db/schema.prisma && next build apps/web-app && node -e \"const fs=require('fs'); try{fs.cpSync('apps/web-app/.next','apps/web-app/dist',{recursive:true})}catch(e){}\"",
+
 
   "headers": [
     {

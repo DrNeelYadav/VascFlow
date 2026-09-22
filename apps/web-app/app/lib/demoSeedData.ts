@@ -142,6 +142,7 @@ export const DEMO_CT_REVIEWS: CtReviewRecord[] = [
     organSystem: "Liver & Hepatobiliary",
     diseaseKey: "brto_parto_gastric_varices",
     procedureTitle: "Balloon-Occluded Retrograde Transvenous Obliteration (BRTO)",
+    postponeHistory: [],
   },
   {
     id: "CT-REV-002",
@@ -163,6 +164,7 @@ export const DEMO_CT_REVIEWS: CtReviewRecord[] = [
     organSystem: "Thoracic & Pulmonary",
     diseaseKey: "bronchial_artery_embo_bae",
     procedureTitle: "Bronchial Artery Embolization (BAE) - Massive Hemoptysis",
+    postponeHistory: [],
   },
   {
     id: "CT-REV-003",
@@ -184,6 +186,7 @@ export const DEMO_CT_REVIEWS: CtReviewRecord[] = [
     organSystem: "Liver & Hepatobiliary",
     diseaseKey: "ptbd_biliary_stenting",
     procedureTitle: "Percutaneous Transhepatic Biliary Drainage (PTBD) & SEMS Stenting",
+    postponeHistory: [],
   },
 ];
 

@@ -3,7 +3,6 @@ import { NextRequest } from "next/server";
 import { app, db, isFirebaseConfigured, firebaseConfig } from "../../app/lib/firebase";
 import { GET as getCases, POST as postCase } from "../../app/api/cases/route";
 import { POST as depleteInventory } from "../../app/api/inventory/use/route";
-import { GET as searchSchemes } from "../../app/api/schemes/search/route";
 import { GET as getAudit, POST as postAudit } from "../../app/api/audit/route";
 
 vi.mock("@/auth", () => ({
@@ -78,20 +77,6 @@ describe("Google Cloud Firestore Adapter & Serverless Routes Suite", () => {
       expect(data.depletedCount).toBe(2);
       expect(data.depletedItems).toHaveLength(2);
       expect(data.depletedItems[0].quantityUsed).toBe(1);
-      expect(data.source).toBeDefined();
-    }, 15000);
-  });
-
-  describe("/api/schemes/search Route Handler (Firestore schemes collection)", () => {
-    it("queries schemes collection and returns paginated package records", async () => {
-      const req = new NextRequest("http://localhost:3001/api/schemes/search?limit=5");
-      const res = await searchSchemes(req);
-
-      expect(res.status).toBe(200);
-      const data = await res.json();
-      expect(Array.isArray(data.packages)).toBe(true);
-      expect(data.packages.length).toBeGreaterThan(0);
-      expect(data.pagination).toBeDefined();
       expect(data.source).toBeDefined();
     }, 15000);
   });

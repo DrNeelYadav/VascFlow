@@ -49,6 +49,8 @@ import {
   History,
   ShieldAlert,
   Zap,
+  Pause,
+  Play
 } from "lucide-react";
 
 export const BLANK_PATIENT_FORM = {
@@ -77,6 +79,9 @@ export default function OpClinicConsultationDeskPage() {
     addCtReview,
     updateCtReview,
     convertCtReviewToBooking,
+    postponeCtReview,
+    holdCtReview,
+    reactivateCtReview,
     patients,
     admitPatient,
     beds,
@@ -143,6 +148,11 @@ export default function OpClinicConsultationDeskPage() {
     linkLabel?: string;
   } | null>(null);
   const [sentinelTasks, setSentinelTasks] = useState<RadiationSentinelTask[]>([]);
+
+  // Action Popover State for Review Queue
+  const [activePopover, setActivePopover] = useState<{ id: string; type: "contact" | "date" | "postpone" } | null>(null);
+  const [popoverInput, setPopoverInput] = useState<string>("");
+  const [popoverReason, setPopoverReason] = useState<string>("");
 
   useEffect(() => {
     setSentinelTasks(getScheduledRadiationTasks());
@@ -518,6 +528,7 @@ export default function OpClinicConsultationDeskPage() {
         accessionNumber: generatedScanId,
         ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
+        status: "Pending Review",
         smsBillId: generatedHid,
         hospitalSource: "SONI Hospital",
         contactNumber: contactNumber.trim(),
@@ -704,6 +715,7 @@ export default function OpClinicConsultationDeskPage() {
         accessionNumber: generatedAcc,
         ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
+        status: "Pending Review",
         smsBillId: `SMS-OPD-2026-${newSeq}`,
         hospitalSource: "SONI Hospital",
         contactNumber: contactNumber.trim(),
@@ -1411,6 +1423,10 @@ export default function OpClinicConsultationDeskPage() {
                           className={`px-2.5 py-0.5 text-[10px] font-semibold uppercase rounded-full ${
                             item.status === "Booked in Cath-Lab"
                               ? "bg-[#34C759]/15 text-[#248A3D]"
+                              : item.status === "Deferred / Postponed"
+                              ? "bg-amber-100 text-amber-800"
+                              : item.status === "On Hold"
+                              ? "bg-gray-200 text-gray-800"
                               : item.status === "Pending Review"
                               ? "bg-[#FF9500]/15 text-[#C97100]"
                               : "bg-[#007AFF]/15 text-[#007AFF]"
@@ -1418,6 +1434,11 @@ export default function OpClinicConsultationDeskPage() {
                         >
                           {item.status}
                         </span>
+                        {item.postponedUntilDate && (
+                          <span className="text-[10px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                            Postponed until {item.postponedUntilDate}
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E93]">
@@ -1440,29 +1461,200 @@ export default function OpClinicConsultationDeskPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={() => {
-                          loadPatientIntoDesk(item.id);
-                          setActiveTab("desk");
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E5EA] bg-white hover:bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] transition-all cursor-pointer"
-                      >
-                        <ClipboardList className="w-3.5 h-3.5 text-[#8E8E93]" />
-                        <span>Open in Desk</span>
-                      </button>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            loadPatientIntoDesk(item.id);
+                            setActiveTab("desk");
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E5EA] bg-white hover:bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] transition-all cursor-pointer"
+                        >
+                          <ClipboardList className="w-3.5 h-3.5 text-[#8E8E93]" />
+                          <span>Open in Desk</span>
+                        </button>
 
-                      <button
-                        onClick={() => {
-                          loadPatientIntoDesk(item.id);
-                          setBookingStep(1);
-                          setShowBookingModal(true);
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
-                      >
-                        <CalendarPlus className="w-3.5 h-3.5" />
-                        <span>Book Lab</span>
-                      </button>
+                        <button
+                          onClick={() => {
+                            loadPatientIntoDesk(item.id);
+                            setBookingStep(1);
+                            setShowBookingModal(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                        >
+                          <CalendarPlus className="w-3.5 h-3.5" />
+                          <span>Book Lab</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* 1. Call Patient Button */}
+                        <div className="relative">
+                          {item.contactNumber ? (
+                            <a
+                              href={`tel:${item.contactNumber}`}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 text-[11px] font-semibold transition-all cursor-pointer"
+                            >
+                              <Phone className="w-3 h-3" />
+                              <span>Call Patient</span>
+                            </a>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => setActivePopover(activePopover?.id === item.id && activePopover?.type === 'contact' ? null : { id: item.id, type: 'contact' })}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 text-[11px] font-semibold transition-all cursor-pointer"
+                              >
+                                <Phone className="w-3 h-3" />
+                                <span>Add Number</span>
+                              </button>
+                              {activePopover?.id === item.id && activePopover?.type === 'contact' && (
+                                <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#E5E5EA] rounded-xl shadow-lg p-2 z-10 flex gap-2">
+                                  <input 
+                                    type="tel"
+                                    placeholder="Phone number"
+                                    value={popoverInput}
+                                    onChange={(e) => setPopoverInput(e.target.value)}
+                                    className="flex-1 px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                  />
+                                  <button
+                                    onClick={() => {
+                                      updateCtReview(item.id, { contactNumber: popoverInput });
+                                      setActivePopover(null);
+                                      setPopoverInput("");
+                                    }}
+                                    className="px-2 py-1 bg-teal-600 text-white text-xs rounded-lg font-semibold cursor-pointer"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+
+                        {/* 2. Give Date Button */}
+                        <div className="relative">
+                          <button
+                            onClick={() => setActivePopover(activePopover?.id === item.id && activePopover?.type === 'date' ? null : { id: item.id, type: 'date' })}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-[11px] font-semibold transition-all cursor-pointer"
+                          >
+                            <CalendarPlus className="w-3 h-3" />
+                            <span>Give Date</span>
+                          </button>
+                          {activePopover?.id === item.id && activePopover?.type === 'date' && (
+                            <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-[#E5E5EA] rounded-xl shadow-lg p-2 z-10 space-y-2">
+                              <input 
+                                type="date"
+                                value={popoverInput}
+                                onChange={(e) => setPopoverInput(e.target.value)}
+                                className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                              />
+                              {popoverInput && (getHolidayForDate(popoverInput).isHoliday || getHolidayForDate(popoverInput).isSunday) && (
+                                <div className="text-[9px] text-amber-700 bg-amber-50 p-1.5 rounded border border-amber-200 leading-tight">
+                                  <AlertTriangle className="w-3 h-3 inline mr-1" />
+                                  Holiday/Sunday warning: {getHolidayForDate(popoverInput).name || "Sunday"}
+                                </div>
+                              )}
+                              <button
+                                onClick={() => {
+                                  convertCtReviewToBooking(item.id, popoverInput, item.diseaseKey || '', item.procedureTitle || 'Elective IR Procedure', activeStaff.name);
+                                  setActivePopover(null);
+                                  setPopoverInput("");
+                                }}
+                                disabled={!popoverInput}
+                                className="w-full px-2 py-1 bg-blue-600 text-white text-xs rounded-lg font-semibold disabled:opacity-50 cursor-pointer"
+                              >
+                                Confirm Date
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 3. Postpone / Hold Button */}
+                        <div className="relative">
+                          <button
+                            onClick={() => setActivePopover(activePopover?.id === item.id && activePopover?.type === 'postpone' ? null : { id: item.id, type: 'postpone' })}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 text-[11px] font-semibold transition-all cursor-pointer"
+                          >
+                            <Pause className="w-3 h-3" />
+                            <span>{item.status === "Booked in Cath-Lab" && item.bookedCaseId ? "Reschedule Booking" : "Postpone / Hold"}</span>
+                          </button>
+                          {activePopover?.id === item.id && activePopover?.type === 'postpone' && (
+                            <div className="absolute right-0 top-full mt-1 w-64 bg-white border border-[#E5E5EA] rounded-xl shadow-lg p-3 z-10 space-y-3">
+                              {item.status === "Booked in Cath-Lab" && item.bookedCaseId ? (
+                                <Link 
+                                  href={`/dashboard/calendar?highlight=${item.bookedCaseId}`}
+                                  className="block w-full text-center px-2 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs rounded-lg font-semibold"
+                                >
+                                  Go to Calendar to Reschedule
+                                </Link>
+                              ) : (
+                                <>
+                                  <div className="space-y-1.5 pb-2 border-b border-[#E5E5EA]">
+                                    <span className="text-[10px] font-bold text-gray-500 block mb-1">POSTPONE TO DATE</span>
+                                    <input 
+                                      type="date"
+                                      value={popoverInput}
+                                      onChange={(e) => setPopoverInput(e.target.value)}
+                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                    />
+                                    <input 
+                                      type="text"
+                                      placeholder="Reason (optional)"
+                                      value={popoverReason}
+                                      onChange={(e) => setPopoverReason(e.target.value)}
+                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        postponeCtReview(item.id, popoverInput, popoverReason);
+                                        setActivePopover(null);
+                                        setPopoverInput("");
+                                        setPopoverReason("");
+                                      }}
+                                      disabled={!popoverInput}
+                                      className="w-full px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white text-xs rounded-lg font-semibold disabled:opacity-50 cursor-pointer"
+                                    >
+                                      Postpone
+                                    </button>
+                                  </div>
+                                  <div className="space-y-1.5 pt-1">
+                                    <span className="text-[10px] font-bold text-gray-500 block mb-1">ON HOLD (INDEFINITE)</span>
+                                    <input 
+                                      type="text"
+                                      placeholder="Reason"
+                                      value={popoverReason}
+                                      onChange={(e) => setPopoverReason(e.target.value)}
+                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        holdCtReview(item.id, popoverReason);
+                                        setActivePopover(null);
+                                        setPopoverReason("");
+                                      }}
+                                      className="w-full px-2 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs rounded-lg font-semibold cursor-pointer"
+                                    >
+                                      Put On Hold
+                                    </button>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 4. Reactivate Button */}
+                        {(item.status === 'Deferred / Postponed' || item.status === 'On Hold') && (
+                          <button
+                            onClick={() => reactivateCtReview(item.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 text-[11px] font-semibold transition-all cursor-pointer"
+                          >
+                            <Play className="w-3 h-3" />
+                            <span>Reactivate</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -1609,3 +1801,4 @@ export default function OpClinicConsultationDeskPage() {
     </div>
   );
 }
+

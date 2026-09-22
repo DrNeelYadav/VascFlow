@@ -46,9 +46,7 @@ export function GoogleHeader({
     e.preventDefault();
     if (!searchQuery.trim()) return;
     const q = searchQuery.toLowerCase().trim();
-    if (q.includes("calc") || q.includes("meld") || q.includes("macd") || q.includes("rotterdam")) {
-      router.push(`/dashboard/calculators?calc=${encodeURIComponent(q)}`);
-    } else if (q.includes("drug") || q.includes("prot") || q.includes("tace") || q.includes("heparin")) {
+    if (q.includes("drug") || q.includes("prot") || q.includes("tace") || q.includes("heparin")) {
       router.push(`/dashboard/protocols`);
     } else if (q.includes("census") || q.includes("registry")) {
       router.push(`/dashboard/census`);

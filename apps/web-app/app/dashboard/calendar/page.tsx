@@ -22,6 +22,8 @@ import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
+  ChevronsRight,
+  Pause,
   Clock,
   AlertTriangle,
   CheckCircle2,
@@ -37,6 +39,8 @@ import {
   X,
   Stethoscope,
   Info,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 // Urgency badge styling helper
@@ -67,8 +71,14 @@ export function getUrgencyBadge(urgency?: "Elective" | "Urgent" | "Emergency" | 
   }
 }
 
+function shiftDate(dateStr: string, days: number): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split('T')[0];
+}
+
 export default function OtScheduleCalendarPage() {
-  const { bookedCases, rescheduleCase, massRescheduleCases } = useEndoflowStore();
+  const { bookedCases, rescheduleCase, massRescheduleCases, holdCase, batchRescheduleCases } = useEndoflowStore();
 
   // Calendar View State: "month" or "week"
   const [viewMode, setViewMode] = useState<"month" | "week">("month");
@@ -96,6 +106,16 @@ export default function OtScheduleCalendarPage() {
   const [massTargetDate, setMassTargetDate] = useState<string>("");
   const [massReason, setMassReason] = useState<string>("Departmental schedule balancing / Cath-Lab reorganization");
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+
+  // Multi-Select Batch Reschedule State
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [selectedCaseIds, setSelectedCaseIds] = useState<string[]>([]);
+  const [batchTargetDate, setBatchTargetDate] = useState<string>("");
+
+  // Parked Cases Panel State
+  const [isParkedExpanded, setIsParkedExpanded] = useState(false);
+  const [reactivateCaseId, setReactivateCaseId] = useState<string | null>(null);
+  const [reactivateDate, setReactivateDate] = useState<string>("");
 
   // Month navigation helpers
   const year = currentDate.getFullYear();
@@ -216,12 +236,16 @@ export default function OtScheduleCalendarPage() {
 
   // Combined booked and historical cases
   const allCalendarCases = useMemo(() => {
-    const combined = [...bookedCases];
+    const combined = [...bookedCases.filter((c) => c.status !== "On Hold")];
     historicalCasesMap.forEach((histCases) => {
       combined.push(...histCases);
     });
     return combined;
   }, [bookedCases, historicalCasesMap]);
+
+  const parkedCases = useMemo(() => {
+    return bookedCases.filter((c) => c.status === "On Hold");
+  }, [bookedCases]);
 
   // Compute month matrix (Monday-start)
   const monthMatrix = useMemo(() => {
@@ -826,7 +850,7 @@ export default function OtScheduleCalendarPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-1 text-[11px]">
+              <div className="flex items-center gap-1 text-[11px] mt-2">
                 <span className="text-[#5F6368] mr-1">Urgency:</span>
                 {["all", "Emergency", "Urgent", "Elective"].map((u) => (
                   <button
@@ -842,10 +866,30 @@ export default function OtScheduleCalendarPage() {
                   </button>
                 ))}
               </div>
+              <div className="mt-2 pt-2 border-t border-[#F1F3F4] flex items-center justify-between">
+                <button
+                  onClick={() => {
+                    setMultiSelectMode(!multiSelectMode);
+                    setSelectedCaseIds([]);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                    multiSelectMode
+                      ? "bg-[#1A73E8] text-white border-[#1A73E8]"
+                      : "bg-white text-[#5F6368] border-[#DADCE0] hover:bg-[#F8F9FA]"
+                  }`}
+                >
+                  {multiSelectMode ? "Cancel Selection" : "☑ Select Multiple"}
+                </button>
+                {multiSelectMode && selectedCaseIds.length > 0 && (
+                  <span className="text-xs font-bold text-[#1A73E8]">
+                    {selectedCaseIds.length} selected
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Case List */}
-            <div className="p-3 space-y-3 max-h-[560px] overflow-y-auto">
+            <div className="p-3 space-y-3 max-h-[560px] overflow-y-auto relative pb-20">
               {selectedDateCases.length === 0 ? (
                 <div className="text-center py-10 text-[#5F6368]">
                   <CalendarIcon className="w-8 h-8 mx-auto text-[#BDC1C6] mb-2" />
@@ -867,15 +911,34 @@ export default function OtScheduleCalendarPage() {
                 selectedDateCases.map((cs) => {
                   const badge = getUrgencyBadge(cs.urgency);
                   const Icon = badge.icon;
+                  const isRealBookedCase = bookedCases.some((b) => b.id === cs.id);
 
                   return (
                     <div
                       key={cs.id}
-                      className="rounded-xl border border-[#DADCE0] bg-white p-3 shadow-2xs hover:shadow-xs transition-shadow space-y-2.5"
+                      className={`rounded-xl border ${
+                        selectedCaseIds.includes(cs.id)
+                          ? "border-[#1A73E8] bg-blue-50/30 ring-1 ring-[#1A73E8]"
+                          : "border-[#DADCE0] bg-white"
+                      } p-3 shadow-2xs hover:shadow-xs transition-shadow space-y-2.5`}
                     >
                       {/* Top Row: Urgency Badge & Action */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5">
+                          {multiSelectMode && isRealBookedCase && (
+                            <input
+                              type="checkbox"
+                              checked={selectedCaseIds.includes(cs.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedCaseIds([...selectedCaseIds, cs.id]);
+                                } else {
+                                  setSelectedCaseIds(selectedCaseIds.filter((id) => id !== cs.id));
+                                }
+                              }}
+                              className="w-4 h-4 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8]"
+                            />
+                          )}
                           <span
                             className={`px-2 py-0.5 rounded-md text-[10px] font-bold border flex items-center gap-1 ${badge.bg}`}
                           >
@@ -939,11 +1002,170 @@ export default function OtScheduleCalendarPage() {
                           <span>Labs: {cs.labsVerified ? "Cleared" : "Pending"}</span>
                         </div>
                       </div>
+
+                      {/* Quick Shift Actions (Only for active booked cases) */}
+                      {isRealBookedCase && (
+                        <div className="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-[#F1F3F4]">
+                          <button
+                            onClick={() => rescheduleCase(cs.id, shiftDate(cs.scheduledDate, -1), "Quick shift: -1 day")}
+                            disabled={new Date(shiftDate(cs.scheduledDate, -1)) < new Date(new Date().toISOString().split("T")[0])}
+                            className="flex items-center justify-center gap-1 p-1 rounded bg-[#F1F3F4] text-[#3C4043] hover:bg-[#E8EAED] text-[10px] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Previous Day"
+                          >
+                            <ChevronLeft className="w-3 h-3" /> Prev
+                          </button>
+                          <button
+                            onClick={() => rescheduleCase(cs.id, shiftDate(cs.scheduledDate, 1), "Quick shift: +1 day")}
+                            className="flex items-center justify-center gap-1 p-1 rounded bg-[#F1F3F4] text-[#3C4043] hover:bg-[#E8EAED] text-[10px] font-medium"
+                            title="Next Day"
+                          >
+                            Next <ChevronRight className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => rescheduleCase(cs.id, shiftDate(cs.scheduledDate, 7), "Quick shift: +7 days")}
+                            className="flex items-center justify-center gap-1 p-1 rounded bg-[#F1F3F4] text-[#3C4043] hover:bg-[#E8EAED] text-[10px] font-medium"
+                            title="Next Week"
+                          >
+                            Next Wk <ChevronsRight className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => holdCase(cs.id, "Parked from calendar")}
+                            className="flex items-center justify-center gap-1 p-1 rounded bg-amber-50 text-amber-700 hover:bg-amber-100 text-[10px] font-medium border border-amber-200"
+                            title="Park / Hold Case"
+                          >
+                            <Pause className="w-3 h-3" /> Park
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })
               )}
             </div>
+
+            {/* Batch Reschedule Action Bar */}
+            {multiSelectMode && selectedCaseIds.length > 0 && (
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-white border-t border-[#DADCE0] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-10 animate-slideUp">
+                <div className="text-[11px] font-bold text-[#3C4043] mb-2">
+                  Move {selectedCaseIds.length} Selected to...
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    value={batchTargetDate}
+                    onChange={(e) => setBatchTargetDate(e.target.value)}
+                    min="2026-01-01"
+                    max="2026-12-31"
+                    className="flex-1 px-2 py-1.5 rounded border border-[#DADCE0] text-xs font-semibold focus:border-[#1A73E8] focus:outline-none"
+                  />
+                  <button
+                    onClick={() => {
+                      if (batchTargetDate) {
+                        batchRescheduleCases(selectedCaseIds, batchTargetDate, "Batch move from calendar");
+                        setMultiSelectMode(false);
+                        setSelectedCaseIds([]);
+                        setBatchTargetDate("");
+                        setActionNotice(`Successfully batch-moved ${selectedCaseIds.length} cases to ${batchTargetDate}.`);
+                      }
+                    }}
+                    disabled={!batchTargetDate}
+                    className="px-3 py-1.5 bg-[#1A73E8] text-white text-xs font-bold rounded hover:bg-[#1557B0] disabled:opacity-50 transition-colors shrink-0"
+                  >
+                    Confirm Move
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Parked / On Hold Cases Panel */}
+          <div className="bg-white rounded-xl border border-[#DADCE0] shadow-xs overflow-hidden">
+            <button
+              onClick={() => setIsParkedExpanded(!isParkedExpanded)}
+              className="w-full flex items-center justify-between p-3 bg-[#F8F9FA] hover:bg-[#F1F3F4] transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Pause className="w-4 h-4 text-amber-600" />
+                <span className="text-xs font-bold text-[#202124]">
+                  Parked / On Hold Cases ({parkedCases.length})
+                </span>
+              </div>
+              {isParkedExpanded ? (
+                <ChevronUp className="w-4 h-4 text-[#5F6368]" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-[#5F6368]" />
+              )}
+            </button>
+
+            {isParkedExpanded && (
+              <div className="p-3 border-t border-[#DADCE0] space-y-2 max-h-[300px] overflow-y-auto">
+                {parkedCases.length === 0 ? (
+                  <div className="text-center py-4 text-[#5F6368] text-xs">
+                    No cases on hold.
+                  </div>
+                ) : (
+                  parkedCases.map((cs) => (
+                    <div
+                      key={cs.id}
+                      className="p-2 rounded-lg border border-amber-200 bg-amber-50/30 flex flex-col gap-2"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="text-[11px] font-bold text-[#202124] truncate max-w-[200px]">
+                            {cs.patientName}
+                          </div>
+                          <div className="text-[10px] text-[#5F6368] truncate max-w-[200px]">
+                            {cs.procedureTitle}
+                          </div>
+                        </div>
+                        {reactivateCaseId === cs.id ? (
+                          <div className="flex flex-col gap-1 items-end">
+                            <input
+                              type="date"
+                              value={reactivateDate}
+                              onChange={(e) => setReactivateDate(e.target.value)}
+                              className="px-1 py-0.5 border border-[#DADCE0] rounded text-[10px] max-w-[100px]"
+                            />
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => setReactivateCaseId(null)}
+                                className="px-1.5 py-0.5 rounded border border-[#DADCE0] bg-white text-[9px]"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (reactivateDate) {
+                                    rescheduleCase(cs.id, reactivateDate, "Reactivated from hold");
+                                    setReactivateCaseId(null);
+                                    setReactivateDate("");
+                                    setActionNotice(`Reactivated ${cs.patientName} for ${reactivateDate}.`);
+                                  }
+                                }}
+                                disabled={!reactivateDate}
+                                className="px-1.5 py-0.5 rounded bg-amber-600 text-white text-[9px] disabled:opacity-50"
+                              >
+                                Confirm
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setReactivateCaseId(cs.id);
+                              setReactivateDate("");
+                            }}
+                            className="px-2 py-1 rounded text-[10px] font-bold bg-white border border-amber-300 text-amber-700 hover:bg-amber-100"
+                          >
+                            Reactivate
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

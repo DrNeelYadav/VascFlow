@@ -115,6 +115,7 @@ export interface DdcDrugItem {
 export interface DischargeMedicationItem {
   sNo: number;
   medicine: string;
+  genericName?: string;
   dosePower: string;
   route: "ORAL" | "SUBCUTANEOUS" | "IV" | "TOPICAL" | "INHALATION";
   frequency: "OD" | "BD" | "TID" | "QID" | "SOS" | "HS";

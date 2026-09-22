@@ -340,7 +340,7 @@ export const BookedCaseSchema = z.object({
     oneYearSurvival: z.string(),
   }).optional(),
   postOpPlan: z.string().default("Post-procedure monitoring, analgesia, and hydration."),
-  status: z.enum(["Scheduled", "Cath-Lab", "Completed", "Rescheduled"]).default("Scheduled"),
+  status: z.enum(["Scheduled", "Cath-Lab", "Completed", "Rescheduled", "On Hold", "Deferred"]).default("Scheduled"),
   npoVerified: z.boolean().default(false),
   labsVerified: z.boolean().default(false),
   bloodProductsVerified: z.boolean().default(false),
@@ -401,7 +401,9 @@ export const CtReviewSchema = z.object({
     "Reviewed by Neel / Nilesh",
     "To be reviewed by consultant",
     "Booking Cath-Lab on next available date",
-    "Booked in Cath-Lab"
+    "Booked in Cath-Lab",
+    "Deferred / Postponed",
+    "On Hold"
   ]).default("Pending Review"),
   reviewedBy: z.string().optional(),
   reviewedAt: z.string().optional(),
@@ -418,6 +420,16 @@ export const CtReviewSchema = z.object({
   referringDepartment: z.string().optional(),
   urgencyCategory: z.string().optional(),
   customProcedureTitle: z.string().optional(),
+  postponedUntilDate: z.string().optional(),
+  deferralReason: z.string().optional(),
+  postponeHistory: z.array(z.object({
+    previousStatus: z.string(),
+    action: z.enum(["postponed", "held", "reactivated"]),
+    targetDate: z.string().optional(),
+    reason: z.string().optional(),
+    actionAt: z.string(),
+    actionBy: z.string().optional(),
+  })).default([]),
 });
 
 export type CtReviewRecord = z.infer<typeof CtReviewSchema>;
@@ -492,7 +504,7 @@ export interface EndoflowState {
 
   // OPD CT Review Queue
   ctReviews: CtReviewRecord[];
-  addCtReview: (review: Omit<CtReviewRecord, "id" | "status">) => void;
+  addCtReview: (review: Omit<CtReviewRecord, "id" | "postponeHistory">) => void;
   updateCtReview: (id: string, updates: Partial<CtReviewRecord>) => void;
   convertCtReviewToBooking: (
     reviewId: string,
@@ -501,6 +513,15 @@ export interface EndoflowState {
     procedureTitle: string,
     staffName: string
   ) => { success: boolean; id?: string };
+
+  // CT Review Postponement & Hold Actions
+  postponeCtReview: (reviewId: string, targetDate?: string, reason?: string) => void;
+  holdCtReview: (reviewId: string, reason?: string) => void;
+  reactivateCtReview: (reviewId: string) => void;
+
+  // Booked Case Hold & Batch Actions
+  holdCase: (caseId: string, reason?: string) => void;
+  batchRescheduleCases: (caseIds: string[], targetDate: string, reason?: string) => number;
 
   // Doppler Surveillance Records
   dopplerRecords: DopplerRecord[];
@@ -1041,6 +1062,52 @@ export const useEndoflowStore = create<EndoflowState>()(
     return movedCount;
   },
 
+  holdCase: (caseId: string, reason?: string) => {
+    set((state) => ({
+      bookedCases: state.bookedCases.map((c) => {
+        if (c.id !== caseId) return c;
+        return {
+          ...c,
+          status: "On Hold" as const,
+          rescheduleHistory: [
+            {
+              previousDate: c.scheduledDate,
+              newDate: "ON_HOLD",
+              rescheduledAt: new Date().toISOString(),
+              reason: reason || "Parked / On Hold by attending",
+            },
+            ...c.rescheduleHistory,
+          ],
+        };
+      }),
+    }));
+  },
+
+  batchRescheduleCases: (caseIds: string[], targetDate: string, reason?: string) => {
+    let movedCount = 0;
+    set((state) => ({
+      bookedCases: state.bookedCases.map((c) => {
+        if (!caseIds.includes(c.id)) return c;
+        movedCount++;
+        return {
+          ...c,
+          scheduledDate: targetDate,
+          status: "Rescheduled" as const,
+          rescheduleHistory: [
+            {
+              previousDate: c.scheduledDate,
+              newDate: targetDate,
+              rescheduledAt: new Date().toISOString(),
+              reason: reason || "Batch reschedule by attending",
+            },
+            ...c.rescheduleHistory,
+          ],
+        };
+      }),
+    }));
+    return movedCount;
+  },
+
   updateCaseHardwareItem: (caseId: string, hardwareId: string, checked: boolean) => {
     set((state) => ({
       bookedCases: state.bookedCases.map((c) => {
@@ -1118,7 +1185,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const newRecord: CtReviewRecord = {
       ...review,
       id: newId,
-      status: "Pending Review",
+      status: review.status || "Pending Review",
+      postponeHistory: [],
     };
     set((state) => ({
       ctReviews: [newRecord, ...state.ctReviews],
@@ -1191,6 +1259,74 @@ export const useEndoflowStore = create<EndoflowState>()(
     }
 
     return bookingResult;
+  },
+
+  postponeCtReview: (reviewId: string, targetDate?: string, reason?: string) => {
+    set((state) => ({
+      ctReviews: state.ctReviews.map((r) => {
+        if (r.id !== reviewId) return r;
+        return {
+          ...r,
+          status: "Deferred / Postponed" as const,
+          postponedUntilDate: targetDate,
+          deferralReason: reason || "Clinical rescheduling",
+          postponeHistory: [
+            {
+              previousStatus: r.status,
+              action: "postponed" as const,
+              targetDate,
+              reason: reason || "Clinical rescheduling",
+              actionAt: new Date().toISOString(),
+            },
+            ...r.postponeHistory,
+          ],
+        };
+      }),
+    }));
+  },
+
+  holdCtReview: (reviewId: string, reason?: string) => {
+    set((state) => ({
+      ctReviews: state.ctReviews.map((r) => {
+        if (r.id !== reviewId) return r;
+        return {
+          ...r,
+          status: "On Hold" as const,
+          deferralReason: reason || "Awaiting clinical decision",
+          postponeHistory: [
+            {
+              previousStatus: r.status,
+              action: "held" as const,
+              reason: reason || "Awaiting clinical decision",
+              actionAt: new Date().toISOString(),
+            },
+            ...r.postponeHistory,
+          ],
+        };
+      }),
+    }));
+  },
+
+  reactivateCtReview: (reviewId: string) => {
+    set((state) => ({
+      ctReviews: state.ctReviews.map((r) => {
+        if (r.id !== reviewId) return r;
+        return {
+          ...r,
+          status: "Pending Review" as const,
+          postponedUntilDate: undefined,
+          deferralReason: undefined,
+          postponeHistory: [
+            {
+              previousStatus: r.status,
+              action: "reactivated" as const,
+              actionAt: new Date().toISOString(),
+            },
+            ...r.postponeHistory,
+          ],
+        };
+      }),
+    }));
   },
 
   // Doppler Surveillance Records

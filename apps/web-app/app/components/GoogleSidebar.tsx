@@ -166,12 +166,6 @@ export function GoogleSidebar({
       icon: Activity,
     },
     {
-      id: "schemes",
-      name: "Scheme Tariffs",
-      href: "/dashboard/schemes",
-      icon: ShieldCheck,
-    },
-    {
       id: "inventory",
       name: "Consumables Inventory",
       href: "/dashboard/inventory",

@@ -43,7 +43,7 @@ import { ClinicalMetricsSuite } from "./ClinicalMetricsSuite";
 import { MasterCatalogDrawer } from "./MasterCatalogDrawer";
 import { SsoIhmsPrefill } from "./SsoIhmsPrefill";
 import { MasterProcedure } from "../../lib/masterCatalog";
-import { validateSchemePreSubmission, type SchemeValidationRequirement } from "@vascule/utils";
+import { getAllProcedureFamilies, getDischargeTemplate, CriteriaField } from './procedureDischargeTemplates';
 
 // ============================================================================
 // CLINICAL PROCEDURE DEFINITIONS & TYPES
@@ -903,7 +903,11 @@ export default function DischargeSummaryPage() {
   const [masterCatalogOpen, setMasterCatalogOpen] = useState(false);
   const [copyToast, setCopyToast] = useState<string | null>(null);
 
-  // Procedure Category Selector
+  // New dynamic templates state
+  const [selectedProcedureKey, setSelectedProcedureKey] = useState<string>("varicose_veins");
+  const [dynamicCriteria, setDynamicCriteria] = useState<Record<string, any>>({});
+
+  // Procedure Category Selector (Legacy - keeping for fallback)
   const [procedureCategory, setProcedureCategory] =
     useState<ProcedureCategory>("varicose_veins");
 
@@ -952,19 +956,6 @@ export default function DischargeSummaryPage() {
     SUNIL_KUMAR_DISCHARGE
   );
 
-  // Rajasthan Government Scheme Pre-Submission Audit Validation
-  const schemeAudit = useMemo(() => {
-    return validateSchemePreSubmission({
-      scheme: summaryData.admissionDetails?.patientCategory || "MAAY",
-      packageCode: summaryData.caseSummary?.diagnosis || "IR-PROC",
-      preAuthNumber: summaryData.admissionDetails?.admissionNo || "SMS-MAAY-2026-904",
-      preProcedureImagingTimestamp: summaryData.admissionDetails?.dateOfAdmission,
-      postProcedureFluoroRecord: true,
-      implantInvoice: true,
-      requiresImplant: true,
-    });
-  }, [summaryData]);
-
   // Re-synthesize whenever criteria or procedure category changes
   const runAutoSynthesis = useCallback(
     (
@@ -988,15 +979,62 @@ export default function DischargeSummaryPage() {
 
   // Auto-sync on criteria change
   useEffect(() => {
-    runAutoSynthesis(
-      procedureCategory,
-      varicoseCriteria,
-      varicoceleCriteria,
-      otherIrCriteria,
-      summaryData
-    );
+    if (selectedProcedureKey === 'varicose_veins') {
+      // Use existing detailed VaricoseCriteria flow
+      runAutoSynthesis(
+        procedureCategory,
+        varicoseCriteria,
+        varicoceleCriteria,
+        otherIrCriteria,
+        summaryData
+      );
+    } else {
+      const template = getDischargeTemplate(selectedProcedureKey);
+      if (!template) return;
+      
+      const complaints = template.synthesizeComplaints(dynamicCriteria);
+      const history = template.synthesizeHistory(dynamicCriteria);
+      const localExam = template.synthesizeLocalExam(dynamicCriteria);
+      const operativeNote = template.synthesizeOperativeNote(dynamicCriteria);
+      const diagnosis = template.synthesizeDiagnosis(dynamicCriteria);
+      
+      setSummaryData(prev => ({
+        ...prev,
+        caseSummary: {
+          ...prev.caseSummary,
+          complaints,
+          caseHistory: history,
+          diagnosis,
+          icdDiagnosis: `(S) ${template.icdPrimary.description} (${template.icdPrimary.code})`,
+        },
+        systemicExam: {
+          ...prev.systemicExam,
+          localExamination: localExam,
+        },
+        procedureDetails: [{
+          ...(prev.procedureDetails[0] || {}),
+          sNo: 1,
+          dateTime: new Date().toLocaleDateString("en-IN") + " 10:00 AM",
+          processDoneBy: "Dr Shashank Sharma",
+          procedureDetail: operativeNote,
+          surgicalProcedure: template.procedureFamily,
+          operationType: template.procedureType,
+          anaesthesiaType: template.anaesthesiaDefault as "LOCAL" | "CONSCIOUS SEDATION" | "GENERAL" | "REGIONAL",
+        }],
+        dischargeMedications: [
+          ...template.defaultMedications,
+          ...template.conditionalMedications
+            .filter(cm => dynamicCriteria[cm.conditionKey] === cm.conditionValue)
+            .map(cm => cm.medication),
+        ].map((m, i) => ({ ...m, sNo: i + 1 })),
+        dischargeDetails: {
+          ...prev.dischargeDetails,
+          generalAdvise: template.dischargeAdvice.join('\n'),
+        },
+      }));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [procedureCategory, varicoseCriteria, varicoceleCriteria, otherIrCriteria]);
+  }, [procedureCategory, varicoseCriteria, varicoceleCriteria, otherIrCriteria, selectedProcedureKey, dynamicCriteria]);
 
   // Handle Patient Selection
   const handleSelectPatient = (id: string) => {
@@ -1047,6 +1085,77 @@ export default function DischargeSummaryPage() {
       otherIrCriteria,
       base
     );
+  };
+
+  const renderCriteriaPanel = () => {
+    const template = getDischargeTemplate(selectedProcedureKey);
+    if (!template) return null;
+    
+    // Group criteria by their group field
+    const groups: Record<string, CriteriaField[]> = {};
+    template.criteriaFields.forEach(f => {
+      const g = f.group || 'General';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(f);
+    });
+    
+    return Object.entries(groups).map(([groupName, fields]) => (
+      <div key={groupName} className="mb-4">
+        <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">{groupName}</h4>
+        <div className="space-y-2">
+          {fields.map(field => {
+            if (field.type === 'checkbox') {
+              return (
+                <label key={field.key} className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={!!dynamicCriteria[field.key]}
+                    onChange={(e) => setDynamicCriteria(prev => ({...prev, [field.key]: e.target.checked}))}
+                  />
+                  {field.label}
+                </label>
+              );
+            }
+            if (field.type === 'select' && field.options) {
+              return (
+                <div key={field.key}>
+                  <label className="text-xs text-gray-500">{field.label}</label>
+                  <select className="w-full text-sm border rounded p-1"
+                    value={dynamicCriteria[field.key] || ''}
+                    onChange={(e) => setDynamicCriteria(prev => ({...prev, [field.key]: e.target.value}))}
+                  >
+                    {field.options.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
+            if (field.type === 'text') {
+              return (
+                <div key={field.key}>
+                  <label className="text-xs text-gray-500">{field.label}</label>
+                  <input type="text" className="w-full text-sm border rounded p-1"
+                    value={dynamicCriteria[field.key] || ''}
+                    onChange={(e) => setDynamicCriteria(prev => ({...prev, [field.key]: e.target.value}))}
+                  />
+                </div>
+              );
+            }
+            if (field.type === 'number') {
+              return (
+                <div key={field.key}>
+                  <label className="text-xs text-gray-500">{field.label}</label>
+                  <input type="number" className="w-full text-sm border rounded p-1"
+                    value={dynamicCriteria[field.key] || ''}
+                    onChange={(e) => setDynamicCriteria(prev => ({...prev, [field.key]: parseFloat(e.target.value) || 0}))}
+                  />
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+      </div>
+    ));
   };
 
   const handleSelectFromMasterCatalog = (proc: MasterProcedure) => {
@@ -1556,29 +1665,6 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {/* Default Preset Patients */}
-          <button
-            onClick={() => handleSelectPatient("EX01")}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
-              selectedPatientId === "EX01"
-                ? "bg-[#1A73E8] text-white shadow-xs"
-                : "bg-[#F8F9FA] text-[#3C4043] border border-[#DADCE0] hover:bg-[#FFFFFF]"
-            }`}
-          >
-            <span>Varicose Veins (VenaSeal)</span>
-          </button>
-
-          <button
-            onClick={() => handleSelectPatient("EX02")}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
-              selectedPatientId === "EX02"
-                ? "bg-[#1A73E8] text-white shadow-xs"
-                : "bg-[#F8F9FA] text-[#3C4043] border border-[#DADCE0] hover:bg-[#FFFFFF]"
-            }`}
-          >
-            <span>Budd-Chiari (DIPS / TIPS)</span>
-          </button>
-
           {/* Real Admitted / Active Store Patients */}
           {patients
             .filter((pt) => !["Anjum Nisha", "Ramswaroop Meena", "Prem Devi", "Santosh Devi", "Bhanwar Lal", "Abdul Latif", "Mohit Verma", "Ghanshyam Gurjar"].includes(pt.name))
@@ -1609,48 +1695,6 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
           </button>
         </div>
 
-        {/* Scheme Pre-Submission Audit Card */}
-        <div className="pt-2.5 border-t border-[#F1F3F4] flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <ShieldCheck className="w-4 h-4 text-[#1A73E8]" />
-            <span className="text-xs font-bold text-[#202124]">
-              Government Scheme Pre-Submission Audit:
-            </span>
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-              {summaryData.admissionDetails?.patientCategory || "MAAY"}
-            </span>
-            <span
-              className={`text-xs font-bold font-mono px-2 py-0.5 rounded border ${
-                schemeAudit.isCompliant
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                  : "bg-amber-50 text-amber-800 border-amber-200"
-              }`}
-            >
-              {schemeAudit.isCompliant ? "✓ Pre-Auth Ready (100%)" : `⚠ Audit Check (${schemeAudit.readinessScore}%)`}
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 text-[11px]">
-            {schemeAudit.requirements.map((req: SchemeValidationRequirement) => (
-              <span
-                key={req.id}
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border font-medium ${
-                  req.satisfied
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    : "bg-amber-50 text-amber-800 border-amber-200"
-                }`}
-                title={req.detail}
-              >
-                {req.satisfied ? (
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                ) : (
-                  <AlertCircle className="w-3 h-3 text-amber-600" />
-                )}
-                <span>{req.label}</span>
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* ==================================================================== */}
@@ -1674,36 +1718,31 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 bg-[#F8F9FA] p-1 rounded-xl border border-[#DADCE0]">
-            <button
-              onClick={() => setProcedureCategory("varicose_veins")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                procedureCategory === "varicose_veins"
-                  ? "bg-[#1A73E8] text-white shadow-xs"
-                  : "text-[#5F6368] hover:text-[#202124]"
-              }`}
+            <select
+              value={selectedProcedureKey}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedProcedureKey(val);
+                if (val === 'varicose_veins') {
+                  setProcedureCategory('varicose_veins');
+                } else {
+                  setProcedureCategory('other_ir');
+                  const template = getDischargeTemplate(val);
+                  if (template) {
+                    const defaults: Record<string, any> = {};
+                    template.criteriaFields.forEach(f => {
+                      defaults[f.key] = f.defaultValue ?? (f.type === 'checkbox' ? false : '');
+                    });
+                    setDynamicCriteria(defaults);
+                  }
+                }
+              }}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold border border-[#DADCE0] bg-white text-[#1A73E8] focus:outline-none focus:ring-2 focus:ring-[#1A73E8]"
             >
-              Varicose Veins (VenaSeal / EVLT)
-            </button>
-            <button
-              onClick={() => setProcedureCategory("varicocele")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                procedureCategory === "varicocele"
-                  ? "bg-[#1A73E8] text-white shadow-xs"
-                  : "text-[#5F6368] hover:text-[#202124]"
-              }`}
-            >
-              Varicocele Embolization
-            </button>
-            <button
-              onClick={() => setProcedureCategory("other_ir")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                procedureCategory === "other_ir"
-                  ? "bg-[#1A73E8] text-white shadow-xs"
-                  : "text-[#5F6368] hover:text-[#202124]"
-              }`}
-            >
-              Other Common IR (TIPS, BAE, PTBD, PCD, SAE, TACE)
-            </button>
+              {getAllProcedureFamilies().map(pf => (
+                <option key={pf.key} value={pf.key}>{pf.label}</option>
+              ))}
+            </select>
             <button
               type="button"
               onClick={() => setMasterCatalogOpen(true)}
@@ -1718,7 +1757,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
         {/* ------------------------------------------------------------------ */}
         {/* SUB-PANEL 1: VARICOSE VEINS (VENASEAL / EVLT)                       */}
         {/* ------------------------------------------------------------------ */}
-        {procedureCategory === "varicose_veins" && (
+        {selectedProcedureKey === "varicose_veins" && (
           <div className="space-y-4">
             {/* Laterality & Modality Bar */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
@@ -2037,282 +2076,9 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
           </div>
         )}
 
-        {/* ------------------------------------------------------------------ */}
-        {/* SUB-PANEL 2: VARICOCELE EMBOLIZATION                               */}
-        {/* ------------------------------------------------------------------ */}
-        {procedureCategory === "varicocele" && (
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Clinical Grade
-                </label>
-                <select
-                  value={varicoceleCriteria.clinicalGrade}
-                  onChange={(e) =>
-                    setVaricoceleCriteria({
-                      ...varicoceleCriteria,
-                      clinicalGrade: e.target
-                        .value as VaricoceleCriteria["clinicalGrade"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#1A73E8]"
-                >
-                  {[
-                    "Grade I (Palpable with Valsalva)",
-                    "Grade II (Palpable without Valsalva)",
-                    "Grade III (Visible through scrotal skin)",
-                  ].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Side / Laterality
-                </label>
-                <select
-                  value={varicoceleCriteria.side}
-                  onChange={(e) =>
-                    setVaricoceleCriteria({
-                      ...varicoceleCriteria,
-                      side: e.target.value as VaricoceleCriteria["side"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
-                >
-                  {["Left", "Right", "Bilateral"].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Primary Indication
-                </label>
-                <select
-                  value={varicoceleCriteria.indication}
-                  onChange={(e) =>
-                    setVaricoceleCriteria({
-                      ...varicoceleCriteria,
-                      indication: e.target
-                        .value as VaricoceleCriteria["indication"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
-                >
-                  {[
-                    "Scrotal pain & heaviness",
-                    "Infertility & abnormal semen parameters",
-                    "Cosmetic / testicular hypotrophy",
-                  ].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Symptom Duration
-                </label>
-                <select
-                  value={varicoceleCriteria.duration}
-                  onChange={(e) =>
-                    setVaricoceleCriteria({
-                      ...varicoceleCriteria,
-                      duration: e.target
-                        .value as VaricoceleCriteria["duration"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
-                >
-                  {["3 months", "6 months", "1 year", "2 years"].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------------ */}
-        {/* SUB-PANEL 3: OTHER IR PROCEDURES (TIPS/BCS, BAE, PTBD, BIOPSY)     */}
-        {/* ------------------------------------------------------------------ */}
-        {procedureCategory === "other_ir" && (
-          <div className="space-y-3">
-            <div>
-              <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                Select Procedure Type
-              </label>
-              <select
-                value={otherIrCriteria.subProcedure}
-                onChange={(e) =>
-                  setOtherIrCriteria({
-                    ...otherIrCriteria,
-                    subProcedure: e.target
-                      .value as OtherIrCriteria["subProcedure"],
-                  })
-                }
-                className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-xs font-bold text-[#1A73E8]"
-              >
-                <option value="TIPS / DIPS (Budd-Chiari / Portal HTN)">
-                  Budd-Chiari Syndrome / TIPS / DIPS Decompressive Shunt
-                </option>
-                <option value="Bronchial Artery Embolization (BAE)">
-                  Bronchial Artery Embolization (BAE) - Hemoptysis
-                </option>
-                <option value="Percutaneous Transhepatic Biliary Drainage (PTBD)">
-                  Percutaneous Transhepatic Biliary Drainage (PTBD)
-                </option>
-                <option value="Biliary SEMS (Self-Expanding Metal Stent)">
-                  Biliary SEMS Placement (Self-Expanding Metallic Stenting)
-                </option>
-                <option value="Percutaneous Liver Abscess Drainage (PCD)">
-                  Percutaneous Catheter Drainage (PCD) - Liver Abscess / Collection
-                </option>
-                <option value="Splenic Artery Embolization (SAE)">
-                  Splenic Artery Embolization (SAE) - Hypersplenism / Trauma
-                </option>
-                <option value="Percutaneous Core Liver / Renal Biopsy">
-                  Percutaneous Core Liver / Renal Biopsy (USG / CT Guided)
-                </option>
-                <option value="AV Fistuloplasty / Dialysis Access Salvage">
-                  Hemodialysis AV Fistuloplasty / Central Venous Stenosis Plasty
-                </option>
-                <option value="Transarterial Chemoembolization (TACE)">
-                  Transarterial Chemoembolization (TACE) / Lipiodol-Doxorubicin
-                </option>
-                <option value="Other Master Catalog Procedure">
-                  ⚡ Open Master Catalog (All 1,120+ Procedures across 22 Domains)
-                </option>
-              </select>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Technical Success
-                </label>
-                <select
-                  value={otherIrCriteria.technicalSuccess}
-                  onChange={(e) =>
-                    setOtherIrCriteria({
-                      ...otherIrCriteria,
-                      technicalSuccess: e.target
-                        .value as OtherIrCriteria["technicalSuccess"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#137333]"
-                >
-                  {[
-                    "Complete Technical Success (100%)",
-                    "Successful with Planned Staged Procedure",
-                    "Hemostasis & Desired Embolic Endpoint Achieved",
-                    "Patent Shunt / Flow Restoration Verified",
-                  ].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Puncture Site Status
-                </label>
-                <select
-                  value={otherIrCriteria.punctureSiteStatus}
-                  onChange={(e) =>
-                    setOtherIrCriteria({
-                      ...otherIrCriteria,
-                      punctureSiteStatus: e.target
-                        .value as OtherIrCriteria["punctureSiteStatus"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
-                >
-                  {[
-                    "Clean, Dry & Intact (No Hematoma/Bruit)",
-                    "Pressure Dressing Applied, Distal Pulses Well Palpable",
-                    "Manual Compression Applied, Zero Oozing",
-                    "Right IJV Puncture Site Sealed, Intact Dressing",
-                    "Radial/Femoral Band in Situ, Intact Capillary Refill",
-                  ].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Analgesia Status
-                </label>
-                <select
-                  value={otherIrCriteria.analgesia}
-                  onChange={(e) =>
-                    setOtherIrCriteria({
-                      ...otherIrCriteria,
-                      analgesia: e.target
-                        .value as OtherIrCriteria["analgesia"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
-                >
-                  {[
-                    "Adequate Pain Control (VAS 1-2/10, Oral NSAIDs/Paracetamol)",
-                    "Mild Pain, Relieved with SOS Analgesia",
-                    "Painless, Nil Distress",
-                    "Moderate Pain Controlled on IV Paracetamol + Tramadol",
-                  ].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
-                  Follow-Up Advice
-                </label>
-                <select
-                  value={otherIrCriteria.followUpAdvice}
-                  onChange={(e) =>
-                    setOtherIrCriteria({
-                      ...otherIrCriteria,
-                      followUpAdvice: e.target
-                        .value as OtherIrCriteria["followUpAdvice"],
-                    })
-                  }
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
-                >
-                  {[
-                    "Ultrasound Doppler check at 1 month + Hepatic Panel",
-                    "Chest X-ray & Pulmonology Review in 2 weeks",
-                    "Biliary Bag Output Monitoring & Flush Protocol; OPD 7 Days",
-                    "Wound inspection & Suture/Stitch check in 5 days; OPD Unit I",
-                    "Strict anticoagulation compliance with weekly INR/platelet review",
-                  ].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+        {selectedProcedureKey !== "varicose_veins" && (
+          <div className="space-y-4">
+            {renderCriteriaPanel()}
           </div>
         )}
       </div>

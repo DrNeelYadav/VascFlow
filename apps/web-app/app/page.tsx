@@ -84,7 +84,7 @@ export default function LandingPage() {
       if (staff.role === "ADMIN") {
         router.push("/admin");
       } else {
-        router.push("/dashboard/worklist");
+        router.push("/dashboard");
       }
     }, 400);
   };

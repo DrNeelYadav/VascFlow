@@ -314,7 +314,7 @@ export const BookedCaseSchema = z.object({
   patientName: z.string().min(1),
   age: z.number().min(0).max(130),
   sex: z.enum(["Male", "Female"]),
-  contactNumber: z.string().min(5),
+  contactNumber: z.string().default(""),
   ssoNumber: z.string().min(1),
   location: z.string().default("Jaipur"),
   scheduledDate: z.string().min(1), // YYYY-MM-DD
@@ -362,6 +362,10 @@ export const BookedCaseSchema = z.object({
   accessionNumber: z.string().optional(),
   disposition: ClinicalDispositionSchema.optional(),
   sosTriggerSymptoms: z.string().optional(),
+  residentContact: z.string().optional(),
+  referringDepartment: z.string().optional(),
+  urgencyCategory: z.string().optional(),
+  customProcedureTitle: z.string().optional(),
 });
 
 export const BookedCaseInputSchema = BookedCaseSchema.omit({
@@ -384,14 +388,14 @@ export const CtReviewSchema = z.object({
   age: z.number(),
   sex: z.enum(["Male", "Female"]),
   date: z.string(),
-  primaryDiagnosis: z.string(),
-  ctNumber: z.string(),
-  ctReviewNotes: z.string(),
+  primaryDiagnosis: z.string().default(""),
+  ctNumber: z.string().default(""),
+  ctReviewNotes: z.string().default(""),
   clinicalHistory: z.string().optional(),
   presentingComplaints: z.string().optional(),
-  smsBillId: z.string(),
+  smsBillId: z.string().default(""),
   hospitalSource: z.string().default("SONI Hospital"),
-  contactNumber: z.string().default("9829000000"),
+  contactNumber: z.string().default(""),
   status: z.enum([
     "Pending Review",
     "Reviewed by Neel / Nilesh",
@@ -410,6 +414,10 @@ export const CtReviewSchema = z.object({
   cectFindings: z.string().optional(),
   disposition: ClinicalDispositionSchema.optional(),
   sosTriggerSymptoms: z.string().optional(),
+  residentContact: z.string().optional(),
+  referringDepartment: z.string().optional(),
+  urgencyCategory: z.string().optional(),
+  customProcedureTitle: z.string().optional(),
 });
 
 export type CtReviewRecord = z.infer<typeof CtReviewSchema>;
@@ -468,7 +476,7 @@ export interface EndoflowState {
   // Booked Cases (DM Resident OPD Diary)
   bookedCases: BookedCaseRecord[];
   bookCase: (
-    record: BookedCaseInput
+    record: Partial<BookedCaseInput>
   ) => { success: boolean; id?: string; error?: string };
   rescheduleCase: (caseId: string, newDate: string, reason?: string) => void;
   massRescheduleCases: (fromDate: string, targetDate: string, reason?: string) => number;
@@ -941,13 +949,38 @@ export const useEndoflowStore = create<EndoflowState>()(
   bookedCases: INITIAL_BOOKED_CASES,
   bookCase: (rawRecord) => {
     const newId = `BC-2026-${String(get().bookedCases.length + 1).padStart(3, "0")}`;
-    const parsed = BookedCaseSchema.safeParse({
+    const sanitizedRecord = {
+      location: "Jaipur",
+      organSystem: "Liver & Hepatobiliary",
+      orderedLabs: [],
+      specialInvestigations: [],
+      preScanAnatomy: {},
+      hardwareChecklist: [],
+      postOpPlan: "Post-procedure monitoring, analgesia, and hydration.",
+      npoVerified: false,
+      labsVerified: false,
+      bloodProductsVerified: false,
+      hardwareVerified: false,
+      screenedBy: null,
+      screenedAt: null,
+      keptForTomorrow: false,
+      admissionCardUpdated: false,
+      codeAdditionStatus: "Pending" as const,
       ...rawRecord,
+      patientName: rawRecord.patientName?.trim() || "OPD Consultation Patient",
+      age: Number(rawRecord.age) || 0,
+      sex: (rawRecord.sex === "Female" ? "Female" : "Male") as "Male" | "Female",
+      contactNumber: rawRecord.contactNumber?.trim() || "",
+      ssoNumber: rawRecord.ssoNumber?.trim() || `SMS-2026-${Date.now().toString().slice(-4)}`,
+      scheduledDate: rawRecord.scheduledDate || new Date().toISOString().split("T")[0],
+      procedureTitle: rawRecord.procedureTitle?.trim() || "Interventional Radiology Procedure",
+      diseaseKey: rawRecord.diseaseKey || "custom_procedure",
       id: newId,
       bookedAt: new Date().toISOString(),
-      status: "Scheduled",
+      status: "Scheduled" as const,
       rescheduleHistory: [],
-    });
+    };
+    const parsed = BookedCaseSchema.safeParse(sanitizedRecord);
     if (!parsed.success) {
       const errorMsg = parsed.error.issues
         ? parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
@@ -1107,6 +1140,10 @@ export const useEndoflowStore = create<EndoflowState>()(
       age: target.age,
       sex: target.sex,
       contactNumber: target.contactNumber,
+      residentContact: target.residentContact,
+      referringDepartment: target.referringDepartment,
+      urgencyCategory: target.urgencyCategory,
+      customProcedureTitle: target.customProcedureTitle,
       ssoNumber: target.smsBillId,
       location: "Jaipur",
       scheduledDate,

@@ -307,4 +307,41 @@ describe("Phase 19: Authentic EndoFlow Clinical Workflow & Security (Web-App Sui
       expect(cleanState.dopplerRecords.length).toBe(0);
     });
   });
+
+  describe("8. OPD Consultation Desk & Booked Case Streamlining", () => {
+    it("allows free addition in bookCase even with empty record, applying safe defaults", () => {
+      const store = useEndoflowStore.getState();
+      const result = store.bookCase({});
+      expect(result.success).toBe(true);
+      expect(result.id).toBeDefined();
+
+      const createdCase = useEndoflowStore.getState().bookedCases.find((c) => c.id === result.id);
+      expect(createdCase).toBeDefined();
+      expect(createdCase?.patientName).toBe("OPD Consultation Patient");
+      expect(createdCase?.age).toBe(0);
+      expect(createdCase?.sex).toBe("Male");
+      expect(createdCase?.contactNumber).toBe("");
+      expect(createdCase?.ssoNumber).toMatch(/^SMS-2026-/);
+      expect(createdCase?.procedureTitle).toBe("Interventional Radiology Procedure");
+      expect(createdCase?.diseaseKey).toBe("custom_procedure");
+    });
+
+    it("persists residentContact, referringDepartment, urgencyCategory, and customProcedureTitle in booked case", () => {
+      const store = useEndoflowStore.getState();
+      const result = store.bookCase({
+        patientName: "Dr. Sharma Patient",
+        residentContact: "9829012345",
+        referringDepartment: "Urology & Renal Transplant",
+        urgencyCategory: "Emergency / STAT",
+        customProcedureTitle: "Renal Angiogram and Coil Embolization",
+      });
+      expect(result.success).toBe(true);
+
+      const createdCase = useEndoflowStore.getState().bookedCases.find((c) => c.id === result.id);
+      expect(createdCase?.residentContact).toBe("9829012345");
+      expect(createdCase?.referringDepartment).toBe("Urology & Renal Transplant");
+      expect(createdCase?.urgencyCategory).toBe("Emergency / STAT");
+      expect(createdCase?.customProcedureTitle).toBe("Renal Angiogram and Coil Embolization");
+    });
+  });
 });

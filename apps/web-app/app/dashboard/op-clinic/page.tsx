@@ -56,15 +56,16 @@ export const BLANK_PATIENT_FORM = {
   age: "" as unknown as number,
   sex: "Male" as "Male" | "Female",
   contactNumber: "",
-  smsBillId: "",
-  ctNumber: "",
+  residentContact: "",
+  referringDepartment: "Gastroenterology & Hepatology",
+  urgencyCategory: "Routine / Non-Urgent",
   accessionNumber: "",
-  hospitalSource: "SMS Hospital",
+  hospitalSource: "SONI Hospital",
   organSystem: "Liver & Hepatobiliary",
   diseaseKey: "budd_chiari_dips",
+  customProcedureTitle: "",
   primaryDiagnosis: "",
-  chiefComplaints: "",
-  history3Months: "",
+  clinicalHistory: "",
   cectFindings: "",
   disposition: "ADMIT_WARD_PREOP" as ClinicalDisposition,
   sosTriggerSymptoms: "",
@@ -103,17 +104,18 @@ export default function OpClinicConsultationDeskPage() {
   const [age, setAge] = useState<number | string>("");
   const [sex, setSex] = useState<"Male" | "Female">(BLANK_PATIENT_FORM.sex);
   const [contactNumber, setContactNumber] = useState<string>(BLANK_PATIENT_FORM.contactNumber);
-  const [smsBillId, setSmsBillId] = useState<string>(BLANK_PATIENT_FORM.smsBillId);
-  const [ctNumber, setCtNumber] = useState<string>(BLANK_PATIENT_FORM.ctNumber);
+  const [residentContact, setResidentContact] = useState<string>(BLANK_PATIENT_FORM.residentContact);
+  const [referringDepartment, setReferringDepartment] = useState<string>(BLANK_PATIENT_FORM.referringDepartment);
+  const [urgencyCategory, setUrgencyCategory] = useState<string>(BLANK_PATIENT_FORM.urgencyCategory);
   const [accessionNumber, setAccessionNumber] = useState<string>(BLANK_PATIENT_FORM.accessionNumber);
   const [hospitalSource, setHospitalSource] = useState<string>(BLANK_PATIENT_FORM.hospitalSource);
   const [organSystem, setOrganSystem] = useState<string>(BLANK_PATIENT_FORM.organSystem);
   const [diseaseKey, setDiseaseKey] = useState<string>(BLANK_PATIENT_FORM.diseaseKey);
+  const [customProcedureTitle, setCustomProcedureTitle] = useState<string>(BLANK_PATIENT_FORM.customProcedureTitle);
   const [primaryDiagnosis, setPrimaryDiagnosis] = useState<string>(BLANK_PATIENT_FORM.primaryDiagnosis);
 
-  // Key Clinical History Blocks
-  const [chiefComplaints, setChiefComplaints] = useState<string>(BLANK_PATIENT_FORM.chiefComplaints);
-  const [history3Months, setHistory3Months] = useState<string>(BLANK_PATIENT_FORM.history3Months);
+  // Key Clinical History & Imaging Blocks
+  const [clinicalHistory, setClinicalHistory] = useState<string>(BLANK_PATIENT_FORM.clinicalHistory);
   const [cectFindings, setCectFindings] = useState<string>(BLANK_PATIENT_FORM.cectFindings);
 
   // Multi-Track Clinical Disposition Matrix State
@@ -185,16 +187,17 @@ export default function OpClinicConsultationDeskPage() {
       setAge("");
       setSex(BLANK_PATIENT_FORM.sex);
       setContactNumber(BLANK_PATIENT_FORM.contactNumber);
-      setSmsBillId("");
-      setCtNumber("");
-      setAccessionNumber("");
+      setResidentContact(BLANK_PATIENT_FORM.residentContact);
+      setReferringDepartment(BLANK_PATIENT_FORM.referringDepartment);
+      setUrgencyCategory(BLANK_PATIENT_FORM.urgencyCategory);
+      setAccessionNumber(BLANK_PATIENT_FORM.accessionNumber);
       setHospitalSource(BLANK_PATIENT_FORM.hospitalSource);
       setOrganSystem(BLANK_PATIENT_FORM.organSystem);
       setDiseaseKey(BLANK_PATIENT_FORM.diseaseKey);
-      setPrimaryDiagnosis("");
-      setChiefComplaints("");
-      setHistory3Months("");
-      setCectFindings("");
+      setCustomProcedureTitle(BLANK_PATIENT_FORM.customProcedureTitle);
+      setPrimaryDiagnosis(BLANK_PATIENT_FORM.primaryDiagnosis);
+      setClinicalHistory(BLANK_PATIENT_FORM.clinicalHistory);
+      setCectFindings(BLANK_PATIENT_FORM.cectFindings);
       setDisposition(BLANK_PATIENT_FORM.disposition);
       setSosTriggerSymptoms(BLANK_PATIENT_FORM.sosTriggerSymptoms);
       return;
@@ -207,15 +210,16 @@ export default function OpClinicConsultationDeskPage() {
       setAge(review.age ?? "");
       setSex(review.sex || "Male");
       setContactNumber(review.contactNumber || "");
-      setSmsBillId(review.smsBillId || "");
-      setCtNumber(review.ctNumber || "");
+      setResidentContact(review.residentContact || "");
+      setReferringDepartment(review.referringDepartment || "Gastroenterology & Hepatology");
+      setUrgencyCategory(review.urgencyCategory || "Routine / Non-Urgent");
       setAccessionNumber(review.accessionNumber || review.ctNumber || "");
-      setHospitalSource(review.hospitalSource || "SMS Hospital");
+      setHospitalSource(review.hospitalSource || "SONI Hospital");
       setOrganSystem(review.organSystem || "Liver & Hepatobiliary");
       setDiseaseKey(review.diseaseKey || "budd_chiari_dips");
+      setCustomProcedureTitle(review.customProcedureTitle || "");
       setPrimaryDiagnosis(review.primaryDiagnosis || "");
-      setChiefComplaints(review.presentingComplaints || "");
-      setHistory3Months(review.clinicalHistory3Months || review.clinicalHistory || "");
+      setClinicalHistory(review.clinicalHistory || review.clinicalHistory3Months || review.presentingComplaints || "");
       setCectFindings(review.cectFindings || review.ctReviewNotes || "");
       setDisposition(review.disposition || "ADMIT_WARD_PREOP");
       setSosTriggerSymptoms(review.sosTriggerSymptoms || "");
@@ -229,16 +233,21 @@ export default function OpClinicConsultationDeskPage() {
       setAge(patient.age ?? "");
       setSex(patient.sex || "Male");
       setContactNumber(patient.phone || "");
-      setSmsBillId(patient.hid || "");
-      setCtNumber(patient.scanId || "");
+      setResidentContact("");
+      setReferringDepartment("Gastroenterology & Hepatology");
+      setUrgencyCategory("Routine / Non-Urgent");
       setAccessionNumber(patient.scanId || "");
-      setHospitalSource("SMS Hospital");
+      setHospitalSource("SONI Hospital");
       setDiseaseKey(patient.procedureKey);
       const proto = IR_CLINICAL_PROTOCOLS.find((pr) => pr.key === patient.procedureKey);
-      if (proto) setOrganSystem(proto.organSystem);
+      if (proto) {
+        setOrganSystem(proto.organSystem);
+      } else {
+        setOrganSystem("Others");
+      }
+      setCustomProcedureTitle(patient.procedure || "");
       setPrimaryDiagnosis(patient.procedure || "");
-      setChiefComplaints(patient.chiefComplaints || patient.summary || "");
-      setHistory3Months(patient.clinicalHistory3Months || patient.history3Months || "");
+      setClinicalHistory(patient.clinicalHistory3Months || patient.history3Months || patient.chiefComplaints || patient.summary || "");
       setCectFindings(patient.cectFindings || "");
       setDisposition(patient.disposition || "ADMIT_WARD_PREOP");
       setSosTriggerSymptoms(patient.sosTriggerSymptoms || "");
@@ -277,20 +286,31 @@ export default function OpClinicConsultationDeskPage() {
     );
   }, [diseaseKey]);
 
+  const effectiveProcedureTitle = useMemo(() => {
+    if (organSystem === "Others") {
+      return customProcedureTitle.trim() || "Interventional Radiology Procedure";
+    }
+    return matchedProtocol?.title || "Interventional Radiology Procedure";
+  }, [organSystem, customProcedureTitle, matchedProtocol]);
+
+  const effectiveDiseaseKey = useMemo(() => {
+    if (organSystem === "Others") {
+      return "custom_procedure";
+    }
+    return diseaseKey || "custom_procedure";
+  }, [organSystem, diseaseKey]);
+
   // ==========================================================================
   // ACTION 1: MULTI-TRACK CLINICAL DISPOSITION (STRICT 8-BED INTEGRITY)
   // ==========================================================================
   const handleApplyDisposition = () => {
-    if (!patientName.trim()) {
-      alert("Please enter a patient name before applying clinical disposition.");
-      return;
-    }
-
-    const generatedHid = smsBillId.trim() || `SMS-2026-${String(ctReviews.length + 101).padStart(4, "0")}`;
-    const generatedScanId = ctNumber.trim() || `SMS-CT-2026-${String(ctReviews.length + 501).padStart(4, "0")}`;
+    const effectiveName = patientName.trim() || "OPD Consultation Patient";
+    const generatedSeq = Date.now().toString().slice(-4);
+    const generatedHid = `SMS-2026-${generatedSeq}`;
+    const generatedScanId = accessionNumber.trim() || `SONI-ACC-2026-${generatedSeq}`;
     const newPatientId = selectedPatientKey.startsWith("PT")
       ? selectedPatientKey
-      : `PT-OPD-${Date.now().toString().slice(-5)}`;
+      : `PT-OPD-${generatedSeq}`;
 
     // Track 1: Inpatient Ward Admission - STRICTLY THE ONLY DISPOSITION that allocates an 8-bed slot
     if (disposition === "ADMIT_WARD_PREOP") {
@@ -302,7 +322,7 @@ export default function OpClinicConsultationDeskPage() {
 
       const newPatientRecord: EndoflowPatient = {
         id: newPatientId,
-        name: patientName.trim(),
+        name: effectiveName,
         age: Number(age) || 0,
         sex,
         hid: generatedHid,
@@ -311,13 +331,13 @@ export default function OpClinicConsultationDeskPage() {
         unit: `Unit I / Interventional Radiology (${vacantBed.title})`,
         postedBy: `${activeStaff.name} (${activeStaff.code})`,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        summary: `${chiefComplaints.trim() || primaryDiagnosis.trim()}. 3-Month Course: ${history3Months.trim()}`,
-        history3Months: history3Months.trim(),
-        clinicalHistory3Months: history3Months.trim(),
-        chiefComplaints: chiefComplaints.trim(),
+        summary: `${primaryDiagnosis.trim() || effectiveProcedureTitle}. History: ${clinicalHistory.trim()}`,
+        history3Months: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        chiefComplaints: clinicalHistory.trim(),
         cectFindings: cectFindings.trim(),
-        procedureKey: diseaseKey,
-        procedure: matchedProtocol.title,
+        procedureKey: effectiveDiseaseKey,
+        procedure: effectiveProcedureTitle,
         modality: "CT",
         status: "Pre-Op Pending",
         scheme: "MAAY",
@@ -352,9 +372,9 @@ export default function OpClinicConsultationDeskPage() {
 
       updateBed(vacantBed.id, {
         status: "occupied",
-        ptName: patientName.trim(),
+        ptName: effectiveName,
         crNo: generatedHid,
-        diag: matchedProtocol.title,
+        diag: effectiveProcedureTitle,
         doctor: activeStaff.name,
         ptId: newPatientId,
       });
@@ -369,7 +389,7 @@ export default function OpClinicConsultationDeskPage() {
       }
 
       setSuccessBanner({
-        message: `Patient ${patientName.trim()} admitted to ${vacantBed.title}. Ward Bed Board slot assigned.`,
+        message: `Patient ${effectiveName} admitted to ${vacantBed.title}. Ward Bed Board slot assigned.`,
         linkHref: "/dashboard/bed-board",
         linkLabel: "Open Ward & Bed Board →",
       });
@@ -381,7 +401,7 @@ export default function OpClinicConsultationDeskPage() {
     if (disposition === "STAT_CATH_LAB") {
       const newPatientRecord: EndoflowPatient = {
         id: newPatientId,
-        name: patientName.trim(),
+        name: effectiveName,
         age: Number(age) || 0,
         sex,
         hid: generatedHid,
@@ -390,13 +410,13 @@ export default function OpClinicConsultationDeskPage() {
         unit: "Cath Lab (Philips Azurion) STAT Table",
         postedBy: `${activeStaff.name} (${activeStaff.code})`,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        summary: `STAT Emergency Activation: ${chiefComplaints.trim() || primaryDiagnosis.trim()}`,
-        history3Months: history3Months.trim(),
-        clinicalHistory3Months: history3Months.trim(),
-        chiefComplaints: chiefComplaints.trim(),
+        summary: `STAT Emergency Activation: ${primaryDiagnosis.trim() || effectiveProcedureTitle}. History: ${clinicalHistory.trim()}`,
+        history3Months: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        chiefComplaints: clinicalHistory.trim(),
         cectFindings: cectFindings.trim(),
-        procedureKey: diseaseKey,
-        procedure: matchedProtocol.title,
+        procedureKey: effectiveDiseaseKey,
+        procedure: effectiveProcedureTitle,
         modality: "XA",
         status: "In Cath-Lab",
         scheme: "MAAY",
@@ -439,7 +459,7 @@ export default function OpClinicConsultationDeskPage() {
       }
 
       setSuccessBanner({
-        message: `🚨 STAT Cath-Lab Activated for ${patientName.trim()}! Transferred directly to Table without locking Ward beds.`,
+        message: `🚨 STAT Cath-Lab Activated for ${effectiveName}! Transferred directly to Table without locking Ward beds.`,
         linkHref: "/dashboard/worklist",
         linkLabel: "Open Cath Lab Worklist →",
       });
@@ -457,13 +477,27 @@ export default function OpClinicConsultationDeskPage() {
     // Zero Ward Bed Allocation
     if (selectedPatientKey.startsWith("CT-REV")) {
       updateCtReview(selectedPatientKey, {
-        patientName: patientName.trim(),
+        patientName: effectiveName,
         age: Number(age) || 0,
         sex,
         contactNumber: contactNumber.trim(),
-        smsBillId: smsBillId.trim(),
-        ctNumber: ctNumber.trim(),
-        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
+        residentContact: residentContact.trim() || undefined,
+        referringDepartment: referringDepartment || undefined,
+        urgencyCategory: urgencyCategory || undefined,
+        customProcedureTitle: organSystem === "Others" ? customProcedureTitle.trim() : undefined,
+        smsBillId: generatedHid,
+        ctNumber: generatedScanId,
+        accessionNumber: generatedScanId,
+        hospitalSource: "SONI Hospital",
+        organSystem,
+        diseaseKey: effectiveDiseaseKey,
+        procedureTitle: effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        presentingComplaints: clinicalHistory.trim(),
+        clinicalHistory: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        ctReviewNotes: cectFindings.trim(),
+        cectFindings: cectFindings.trim(),
         status: disposition === "NO_INTERVENTION_NEEDED" ? "Pending Review" : "Reviewed by Neel / Nilesh",
         disposition,
         sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
@@ -471,26 +505,29 @@ export default function OpClinicConsultationDeskPage() {
         reviewedAt: new Date().toLocaleDateString("en-IN"),
       });
     } else {
-      const newSeq = String(ctReviews.length + 101).padStart(4, "0");
       addCtReview({
-        patientName: patientName.trim(),
+        patientName: effectiveName,
         age: Number(age) || 0,
         sex,
         date: new Date().toISOString().split("T")[0],
-        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
-        clinicalHistory: history3Months.trim(),
-        clinicalHistory3Months: history3Months.trim(),
-        presentingComplaints: chiefComplaints.trim(),
-        ctNumber: ctNumber.trim() || `SMS-CT-2026-${newSeq}`,
-        accessionNumber: accessionNumber.trim() || `SMS-ACC-2026-${newSeq}`,
+        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        clinicalHistory: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        presentingComplaints: clinicalHistory.trim(),
+        ctNumber: generatedScanId,
+        accessionNumber: generatedScanId,
         ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
-        smsBillId: smsBillId.trim() || `SMS-OPD-2026-${newSeq}`,
-        hospitalSource,
+        smsBillId: generatedHid,
+        hospitalSource: "SONI Hospital",
         contactNumber: contactNumber.trim(),
+        residentContact: residentContact.trim() || undefined,
+        referringDepartment: referringDepartment || undefined,
+        urgencyCategory: urgencyCategory || undefined,
+        customProcedureTitle: organSystem === "Others" ? customProcedureTitle.trim() : undefined,
         organSystem,
-        diseaseKey,
-        procedureTitle: matchedProtocol.title,
+        diseaseKey: effectiveDiseaseKey,
+        procedureTitle: effectiveProcedureTitle,
         disposition,
         sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
       });
@@ -506,7 +543,7 @@ export default function OpClinicConsultationDeskPage() {
     };
 
     setSuccessBanner({
-      message: `Clinical Disposition applied: ${dispositionFeedback[disposition]} for ${patientName.trim()}.`,
+      message: `Clinical Disposition applied: ${dispositionFeedback[disposition]} for ${effectiveName}.`,
     });
     setTimeout(() => setSuccessBanner(null), 6000);
   };
@@ -521,15 +558,20 @@ export default function OpClinicConsultationDeskPage() {
   // ==========================================================================
   const handleConfirmCathLabBooking = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!patientName.trim()) return;
+
+    const effectiveName = patientName.trim() || "OPD Consultation Patient";
+    const effectiveDate = bookingDate || new Date().toISOString().split("T")[0];
+    const generatedSeq = Date.now().toString().slice(-4);
+    const generatedSso = `SMS-2026-${generatedSeq}`;
+    const generatedAcc = accessionNumber.trim() || `SONI-ACC-2026-${generatedSeq}`;
 
     if (selectedPatientKey.startsWith("CT-REV")) {
       // Transition existing CT review record
       const result = convertCtReviewToBooking(
         selectedPatientKey,
-        bookingDate,
-        diseaseKey,
-        matchedProtocol.title,
+        effectiveDate,
+        effectiveDiseaseKey,
+        effectiveProcedureTitle,
         `${activeStaff.name} (${activeStaff.code})`
       );
 
@@ -537,7 +579,7 @@ export default function OpClinicConsultationDeskPage() {
         setShowBookingModal(false);
         setBookingStep(1);
         setSuccessBanner({
-          message: `Cath-Lab Case Booked (${urgencyLevel})! ${patientName} scheduled for ${bookingDate} with ${matchedProtocol.title}.`,
+          message: `Cath-Lab Case Booked (${urgencyCategory})! ${effectiveName} scheduled for ${effectiveDate} with ${effectiveProcedureTitle}.`,
           linkHref: "/dashboard/calendar",
           linkLabel: "View in Visual OT Calendar →",
         });
@@ -546,18 +588,22 @@ export default function OpClinicConsultationDeskPage() {
     } else {
       // New consult or existing admitted patient -> bookCase
       const bookingResult = bookCase({
-        patientName: patientName.trim(),
+        patientName: effectiveName,
         age: Number(age) || 0,
         sex,
         contactNumber: contactNumber.trim() || "",
-        ssoNumber: smsBillId.trim() || `SMS-2026-${String(ctReviews.length + 101).padStart(4, "0")}`,
-        accessionNumber: accessionNumber.trim() || `SONI-ACC-2026-${String(ctReviews.length + 101).padStart(4, "0")}`,
+        residentContact: residentContact.trim() || undefined,
+        referringDepartment: referringDepartment || undefined,
+        urgencyCategory: urgencyCategory || urgencyLevel,
+        customProcedureTitle: organSystem === "Others" ? (customProcedureTitle.trim() || undefined) : undefined,
+        ssoNumber: generatedSso,
+        accessionNumber: generatedAcc,
         location: "Jaipur",
-        scheduledDate: bookingDate,
-        urgency: urgencyLevel,
+        scheduledDate: effectiveDate,
+        urgency: urgencyCategory || urgencyLevel,
         organSystem,
-        diseaseKey,
-        procedureTitle: matchedProtocol.title,
+        diseaseKey: effectiveDiseaseKey,
+        procedureTitle: effectiveProcedureTitle,
         disposition,
         sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
         bookedBy: `${activeStaff.name} (${activeStaff.code})`,
@@ -568,9 +614,8 @@ export default function OpClinicConsultationDeskPage() {
           "Complete Blood Count (Hb, TLC, Platelets)",
         ],
         specialInvestigations: [
-          `CT Scan #${ctNumber} (${hospitalSource}) [Acc #${accessionNumber}]: ${cectFindings}`,
-          `Chief Complaints: ${chiefComplaints}`,
-          `3-Month Clinical Course: ${history3Months}`,
+          `PACS Accession #${generatedAcc}: ${cectFindings.trim() || "No CT findings recorded"}`,
+          `Clinical History: ${clinicalHistory.trim() || "Clinical course documented."}`,
         ],
         preScanAnatomy: {},
         hardwareChecklist: [
@@ -578,7 +623,7 @@ export default function OpClinicConsultationDeskPage() {
           { id: "h2", item: "Selective Diagnostic Catheter", spec: "5F Cobra C2 / Simmons 1", checked: true },
           { id: "h3", item: "Hydrophilic Guidewire", spec: "0.035\" 260cm Terumo Glidewire", checked: true },
         ],
-        postOpPlan: `Elective outpatient Cath-Lab intervention: ${matchedProtocol.title}. 3-Month History: ${history3Months}. Pre-procedure hydration & pre-op vitals check verified.`,
+        postOpPlan: `Cath-Lab intervention: ${effectiveProcedureTitle}. Clinical History: ${clinicalHistory.trim() || "Standard"}. Pre-procedure hydration & pre-op vitals check verified.`,
         npoVerified: false,
         labsVerified: false,
         bloodProductsVerified: false,
@@ -594,7 +639,7 @@ export default function OpClinicConsultationDeskPage() {
         setShowBookingModal(false);
         setBookingStep(1);
         setSuccessBanner({
-          message: `Cath-Lab Case Booked (${urgencyLevel})! ${patientName} scheduled for ${bookingDate} with ${matchedProtocol.title}.`,
+          message: `Cath-Lab Case Booked (${urgencyCategory})! ${effectiveName} scheduled for ${effectiveDate} with ${effectiveProcedureTitle}.`,
           linkHref: "/dashboard/calendar",
           linkLabel: "View in Visual OT Calendar →",
         });
@@ -608,24 +653,31 @@ export default function OpClinicConsultationDeskPage() {
   // ==========================================================================
   const handleSaveConsult = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!patientName.trim()) return;
+    const effectiveName = patientName.trim() || "OPD Consultation Patient";
+    const newSeq = Date.now().toString().slice(-4);
+    const generatedAcc = accessionNumber.trim() || `SONI-ACC-2026-${newSeq}`;
 
     if (selectedPatientKey.startsWith("CT-REV")) {
       updateCtReview(selectedPatientKey, {
-        patientName: patientName.trim(),
+        patientName: effectiveName,
         age: Number(age) || 0,
         sex,
         contactNumber: contactNumber.trim(),
-        smsBillId: smsBillId.trim(),
-        ctNumber: ctNumber.trim(),
-        hospitalSource,
+        residentContact: residentContact.trim() || undefined,
+        referringDepartment: referringDepartment || undefined,
+        urgencyCategory: urgencyCategory || undefined,
+        customProcedureTitle: organSystem === "Others" ? customProcedureTitle.trim() : undefined,
+        smsBillId: `SMS-OPD-2026-${newSeq}`,
+        ctNumber: generatedAcc,
+        accessionNumber: generatedAcc,
+        hospitalSource: "SONI Hospital",
         organSystem,
-        diseaseKey,
-        procedureTitle: matchedProtocol.title,
-        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
-        presentingComplaints: chiefComplaints.trim(),
-        clinicalHistory: history3Months.trim(),
-        clinicalHistory3Months: history3Months.trim(),
+        diseaseKey: effectiveDiseaseKey,
+        procedureTitle: effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        presentingComplaints: clinicalHistory.trim(),
+        clinicalHistory: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
         ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
         disposition,
@@ -635,37 +687,39 @@ export default function OpClinicConsultationDeskPage() {
       });
 
       setSuccessBanner({
-        message: `OPD Consultation & Triage records updated for ${patientName}.`,
+        message: `OPD Consultation & Triage records updated for ${effectiveName}.`,
       });
       setTimeout(() => setSuccessBanner(null), 4000);
     } else {
-      // Add new CT Review intake with deterministic sequential ID
-      const newSeq = String(ctReviews.length + 101).padStart(4, "0");
       addCtReview({
-        patientName: patientName.trim(),
+        patientName: effectiveName,
         age: Number(age) || 0,
         sex,
         date: new Date().toISOString().split("T")[0],
-        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
-        clinicalHistory: history3Months.trim(),
-        clinicalHistory3Months: history3Months.trim(),
-        presentingComplaints: chiefComplaints.trim(),
-        ctNumber: ctNumber.trim() || `SMS-CT-2026-${newSeq}`,
-        accessionNumber: accessionNumber.trim() || `SMS-ACC-2026-${newSeq}`,
+        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        clinicalHistory: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        presentingComplaints: clinicalHistory.trim(),
+        ctNumber: generatedAcc,
+        accessionNumber: generatedAcc,
         ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
-        smsBillId: smsBillId.trim() || `SMS-OPD-2026-${newSeq}`,
-        hospitalSource,
+        smsBillId: `SMS-OPD-2026-${newSeq}`,
+        hospitalSource: "SONI Hospital",
         contactNumber: contactNumber.trim(),
+        residentContact: residentContact.trim() || undefined,
+        referringDepartment: referringDepartment || undefined,
+        urgencyCategory: urgencyCategory || undefined,
+        customProcedureTitle: organSystem === "Others" ? customProcedureTitle.trim() : undefined,
         organSystem,
-        diseaseKey,
-        procedureTitle: matchedProtocol.title,
+        diseaseKey: effectiveDiseaseKey,
+        procedureTitle: effectiveProcedureTitle,
         disposition,
         sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
       });
 
       setSuccessBanner({
-        message: `New OPD Consultation saved for ${patientName}.`,
+        message: `New OPD Consultation saved for ${effectiveName}.`,
       });
       setTimeout(() => setSuccessBanner(null), 4000);
     }
@@ -802,76 +856,25 @@ export default function OpClinicConsultationDeskPage() {
       {/* ========================================================================= */}
       {activeTab === "desk" && (
         <div className="space-y-5">
-          {/* Patient Selection Bar */}
-          <div className="bg-white border border-[#E5E5EA] rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 w-full md:w-auto">
-              <span className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider shrink-0">
-                Patient Source:
-              </span>
-              <select
-                value={selectedPatientKey}
-                onChange={(e) => loadPatientIntoDesk(e.target.value)}
-                className="flex-1 md:w-80 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] focus:outline-none focus:bg-white focus:border-[#007AFF] transition-colors"
-              >
-                <option value="new">+ Enter New Walk-In Consultation</option>
-                <optgroup label="Authentic CT Reviews / Queued Patients">
-                  {availablePatients.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.label}
-                    </option>
-                  ))}
-                </optgroup>
-              </select>
-            </div>
-
-            {/* Direct Transition Action Bar */}
-            <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap sm:flex-nowrap">
-              <button
-                type="button"
-                onClick={handleApplyDisposition}
-                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-white text-xs font-semibold shadow-xs transition-all cursor-pointer ${
-                  disposition === "STAT_CATH_LAB"
-                    ? "bg-[#EA4335] hover:bg-[#D93025]"
-                    : disposition === "ADMIT_WARD_PREOP"
-                    ? "bg-[#5856D6] hover:bg-[#4745B8]"
-                    : "bg-[#007AFF] hover:bg-[#0062CC]"
-                }`}
-              >
-                <ShieldAlert className="w-4 h-4" />
-                <span>Execute Disposition ({disposition === "ADMIT_WARD_PREOP" ? "Ward Bed" : disposition === "STAT_CATH_LAB" ? "STAT" : "Non-Bed"})</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowBookingModal(true)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-[#007AFF] bg-white text-[#007AFF] hover:bg-[#007AFF]/10 text-xs font-semibold transition-all cursor-pointer"
-              >
-                <CalendarPlus className="w-4 h-4" />
-                <span>Book Cath-Lab</span>
-              </button>
-            </div>
-          </div>
-
           {/* Consultation Desk Intake Card */}
-          <form onSubmit={handleSaveConsult} className="bg-white border border-[#E5E5EA] rounded-2xl p-5 shadow-xs space-y-5">
-            {/* Section 1: Demographics & Identifiers */}
+          <form onSubmit={handleSaveConsult} className="bg-white border border-[#E5E5EA] rounded-2xl p-5 sm:p-6 shadow-xs space-y-6">
+            {/* Section 1: Demographics & Contact Numbers */}
             <div>
               <div className="flex items-center justify-between border-b border-[#E5E5EA] pb-2 mb-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
                   <UserCheck className="w-3.5 h-3.5" />
-                  Patient Demographics &amp; Identifiers
+                  Section 1: Demographics &amp; Contact Numbers
                 </h3>
-                <span className="text-[11px] text-[#8E8E93]">Pure Deterministic IDs (Zero Math.random)</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                <div>
+                {/* Patient Full Name */}
+                <div className="md:col-span-2">
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Patient Full Name *
+                    Patient Full Name
                   </label>
                   <input
                     type="text"
-                    required
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value)}
                     autoComplete="off"
@@ -881,7 +884,8 @@ export default function OpClinicConsultationDeskPage() {
                   />
                 </div>
 
-                <div>
+                {/* Age & Biological Sex */}
+                <div className="md:col-span-2">
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
                     Age &amp; Biological Sex
                   </label>
@@ -893,7 +897,7 @@ export default function OpClinicConsultationDeskPage() {
                       autoComplete="off"
                       data-lpignore="true"
                       placeholder="Age"
-                      className="w-20 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                      className="w-24 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                     />
                     <select
                       value={sex}
@@ -906,131 +910,153 @@ export default function OpClinicConsultationDeskPage() {
                   </div>
                 </div>
 
+                {/* Patient Contact Number (strictly 10-digit mobile) */}
                 <div>
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Contact Mobile *
+                    Patient Contact Number
                   </label>
                   <input
                     type="tel"
+                    maxLength={10}
+                    pattern="[0-9]{10}"
                     value={contactNumber}
-                    onChange={(e) => setContactNumber(e.target.value)}
+                    onChange={(e) => setContactNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
                     autoComplete="off"
                     data-lpignore="true"
-                    placeholder="e.g. 9829012345"
+                    placeholder="10-digit mobile number e.g. 9829012345"
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
 
+                {/* Resident Contact Number (10-digit mobile) */}
                 <div>
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    SMS Bill ID / CR No (Deterministic)
+                    Resident Contact Number
                   </label>
                   <input
-                    type="text"
-                    value={smsBillId}
-                    onChange={(e) => setSmsBillId(e.target.value)}
+                    type="tel"
+                    maxLength={10}
+                    pattern="[0-9]{10}"
+                    value={residentContact}
+                    onChange={(e) => setResidentContact(e.target.value.replace(/\D/g, "").slice(0, 10))}
                     autoComplete="off"
                     data-lpignore="true"
-                    placeholder="SMS-OPD-2026-..."
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    CT Scan / PACS Accession Number
-                  </label>
-                  <input
-                    type="text"
-                    value={ctNumber}
-                    onChange={(e) => setCtNumber(e.target.value)}
-                    autoComplete="off"
-                    data-lpignore="true"
-                    placeholder="e.g. SONI-PACS-99214"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    placeholder="Resident 10-digit mobile"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
 
+                {/* Referring Department */}
                 <div>
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Imaging Center / Source
+                    Referring Department
                   </label>
                   <select
-                    value={hospitalSource}
-                    onChange={(e) => setHospitalSource(e.target.value)}
+                    value={referringDepartment}
+                    onChange={(e) => setReferringDepartment(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   >
-                    <option value="SONI Hospital">SONI Hospital PACS</option>
-                    <option value="SMS Hospital">SMS Hospital CT</option>
-                    <option value="External PACS">External / Other Center</option>
+                    <option value="Gastroenterology & Hepatology">Gastroenterology &amp; Hepatology</option>
+                    <option value="General Surgery">General Surgery</option>
+                    <option value="Urology & Renal Transplant">Urology &amp; Renal Transplant</option>
+                    <option value="Pulmonary Medicine / Chest TB">Pulmonary Medicine / Chest TB</option>
+                    <option value="Obstetrics & Gynecology">Obstetrics &amp; Gynecology</option>
+                    <option value="Medical & Surgical Oncology">Medical &amp; Surgical Oncology</option>
+                    <option value="Internal Medicine">Internal Medicine</option>
+                    <option value="Emergency Medicine & Trauma">Emergency Medicine &amp; Trauma</option>
+                    <option value="Nephrology">Nephrology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Neurology & Neurosurgery">Neurology &amp; Neurosurgery</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Other Department">Other Department</option>
+                  </select>
+                </div>
+
+                {/* Urgency / Priority Category */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Urgency / Priority Category
+                  </label>
+                  <select
+                    value={urgencyCategory}
+                    onChange={(e) => setUrgencyCategory(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  >
+                    <option value="Routine / Non-Urgent">Routine / Non-Urgent</option>
+                    <option value="Early Treatment">Early Treatment</option>
+                    <option value="Extensive Disease">Extensive Disease</option>
+                    <option value="VIP Patient">VIP Patient</option>
+                    <option value="Emergency / STAT">Emergency / STAT</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            {/* Section 2: Chief Complaints & 3-Month Clinical Course */}
+            {/* Section 2: Imaging Identifiers */}
             <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+              <div className="flex items-center justify-between border-b border-[#E5E5EA] pb-2 mb-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5" />
-                  Chief Complaints &amp; 3 Months of Clinical History
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Chief Complaints &amp; Presenting Symptoms *
-                  </label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={chiefComplaints}
-                    onChange={(e) => setChiefComplaints(e.target.value)}
-                    autoComplete="off"
-                    data-lpignore="true"
-                    placeholder="e.g. Recurrent episodes of painless gross hematuria, left flank dragging discomfort for 2 weeks..."
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1 flex items-center gap-1">
-                    <History className="w-3 h-3 text-[#5856D6]" />
-                    <span>3 Months of Clinical History &amp; Disease Progression *</span>
-                  </label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={history3Months}
-                    onChange={(e) => setHistory3Months(e.target.value)}
-                    autoComplete="off"
-                    data-lpignore="true"
-                    placeholder="e.g. Over the past 3 months: progressive jaundice, 2 episodes of melena requiring PRBC transfusion, escalating abdominal distension refractory to diuretics..."
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Section 3: CECT Findings & Angio Planning */}
-            <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
-                  <Eye className="w-3.5 h-3.5" />
-                  CECT &amp; Cross-Sectional Imaging Findings
+                  <Radio className="w-3.5 h-3.5" />
+                  Section 2: Imaging Identifiers
                 </h3>
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                  CECT Findings &amp; Catheterization Roadmapping Notes *
+                  PACS Accession Number
+                </label>
+                <input
+                  type="text"
+                  value={accessionNumber}
+                  onChange={(e) => setAccessionNumber(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  placeholder="e.g. SONI-ACC-2026-99214"
+                  className="w-full max-w-md px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Section 3: Consolidated Clinical History */}
+            <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5" />
+                  Section 3: Consolidated Clinical History
+                </h3>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  Clinical History &amp; Chief Complaints (Presenting Symptoms &amp; 3-Month Progression)
                 </label>
                 <textarea
                   rows={3}
-                  required
+                  value={clinicalHistory}
+                  onChange={(e) => setClinicalHistory(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  placeholder="e.g. Recurrent episodes of painless gross hematuria for 2 weeks. Past 3 months: progressive jaundice, 2 episodes of melena requiring PRBC transfusion, escalating abdominal distension..."
+                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Section 4: CT Review & Imaging Findings */}
+            <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5" />
+                  Section 4: CT Review &amp; Imaging Findings
+                </h3>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  CT Review / Imaging Findings
+                </label>
+                <textarea
+                  rows={3}
                   value={cectFindings}
                   onChange={(e) => setCectFindings(e.target.value)}
                   autoComplete="off"
@@ -1041,28 +1067,27 @@ export default function OpClinicConsultationDeskPage() {
               </div>
             </div>
 
-            {/* Section 4: Clinical Diagnosis & Suspected Procedure */}
+            {/* Section 5: Diagnosis & Suggested IR Protocol */}
             <div>
               <div className="border-b border-[#E5E5EA] pb-2 mb-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5" />
-                  Diagnosis &amp; IR Procedural Plan
+                  Section 5: Diagnosis &amp; Suggested IR Protocol
                 </h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Primary Diagnosis *
+                    Primary Diagnosis
                   </label>
                   <input
                     type="text"
-                    required
                     value={primaryDiagnosis}
                     onChange={(e) => setPrimaryDiagnosis(e.target.value)}
                     autoComplete="off"
                     data-lpignore="true"
-                    placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites"
+                    placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites (optional)"
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
@@ -1076,35 +1101,59 @@ export default function OpClinicConsultationDeskPage() {
                     onChange={(e) => {
                       const newSys = e.target.value;
                       setOrganSystem(newSys);
-                      const first = IR_CLINICAL_PROTOCOLS.find((p) => p.organSystem === newSys);
-                      if (first) setDiseaseKey(first.key);
+                      if (newSys === "Others") {
+                        setDiseaseKey("custom_procedure");
+                      } else {
+                        const first = IR_CLINICAL_PROTOCOLS.find((p) => p.organSystem === newSys);
+                        if (first) setDiseaseKey(first.key);
+                      }
                     }}
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   >
-                    <option value="Liver & Hepatobiliary">Liver & Hepatobiliary</option>
-                    <option value="Thoracic & Pulmonary">Thoracic & Pulmonary</option>
-                    <option value="Gastrointestinal & Mesenteric">Gastrointestinal & Mesenteric</option>
+                    <option value="Liver & Hepatobiliary">Liver &amp; Hepatobiliary</option>
+                    <option value="Thoracic & Pulmonary">Thoracic &amp; Pulmonary</option>
+                    <option value="Gastrointestinal & Mesenteric">Gastrointestinal &amp; Mesenteric</option>
                     <option value="Peripheral Vascular">Peripheral Vascular</option>
-                    <option value="Pelvic & Genitourinary">Pelvic & Genitourinary</option>
-                    <option value="Venous & Dialysis Access">Venous & Dialysis Access</option>
+                    <option value="Pelvic & Genitourinary">Pelvic &amp; Genitourinary</option>
+                    <option value="Venous & Dialysis Access">Venous &amp; Dialysis Access</option>
+                    <option value="Others">Others</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Suggested IR Protocol
-                  </label>
-                  <select
-                    value={diseaseKey}
-                    onChange={(e) => setDiseaseKey(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  >
-                    {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
-                      <option key={p.key} value={p.key}>
-                        {p.title}
-                      </option>
-                    ))}
-                  </select>
+                  {organSystem === "Others" ? (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                        Suggested IR Protocol (Custom Entry)
+                      </label>
+                      <input
+                        type="text"
+                        value={customProcedureTitle}
+                        onChange={(e) => setCustomProcedureTitle(e.target.value)}
+                        autoComplete="off"
+                        data-lpignore="true"
+                        placeholder="e.g. Percutaneous Sclerotherapy / Custom Angio"
+                        className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                        Suggested IR Protocol
+                      </label>
+                      <select
+                        value={diseaseKey}
+                        onChange={(e) => setDiseaseKey(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                      >
+                        {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
+                          <option key={p.key} value={p.key}>
+                            {p.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1508,20 +1557,21 @@ export default function OpClinicConsultationDeskPage() {
             </div>
 
             <div className="p-3 rounded-xl bg-[#F2F2F7] text-xs space-y-1 mb-4">
-              <p><strong>Patient:</strong> {patientName} ({age}y / {sex})</p>
-              <p><strong>Procedure:</strong> {matchedProtocol.title}</p>
-              <p><strong>Diagnosis:</strong> {primaryDiagnosis || matchedProtocol.title}</p>
-              <p><strong>3-Month History:</strong> {history3Months || "Symptom progression documented."}</p>
+              <p><strong>Patient:</strong> {patientName.trim() || "OPD Consultation Patient"} ({age || 0}y / {sex})</p>
+              <p><strong>Procedure:</strong> {effectiveProcedureTitle}</p>
+              <p><strong>Diagnosis:</strong> {primaryDiagnosis.trim() || effectiveProcedureTitle}</p>
+              <p><strong>Clinical History:</strong> {clinicalHistory.trim() || "Symptom progression documented."}</p>
+              {referringDepartment && <p><strong>Referring Dept:</strong> {referringDepartment}</p>}
+              {urgencyCategory && <p><strong>Urgency:</strong> {urgencyCategory}</p>}
             </div>
 
             <form onSubmit={handleConfirmCathLabBooking} className="space-y-4 text-xs">
               <div>
                 <label className="block font-semibold text-[#636366] mb-1">
-                  Scheduled Cath-Lab Date *
+                  Scheduled Cath-Lab Date
                 </label>
                 <input
                   type="date"
-                  required
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] focus:bg-white focus:border-[#007AFF] focus:outline-none"
@@ -1540,19 +1590,29 @@ export default function OpClinicConsultationDeskPage() {
 
               <div>
                 <label className="block font-semibold text-[#636366] mb-1">
-                  Procedure Protocol *
+                  Procedure Protocol
                 </label>
-                <select
-                  value={diseaseKey}
-                  onChange={(e) => setDiseaseKey(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-semibold focus:bg-white focus:border-[#007AFF] focus:outline-none"
-                >
-                  {IR_CLINICAL_PROTOCOLS.map((p) => (
-                    <option key={p.key} value={p.key}>
-                      {p.title} ({p.organSystem})
-                    </option>
-                  ))}
-                </select>
+                {organSystem === "Others" ? (
+                  <input
+                    type="text"
+                    value={customProcedureTitle}
+                    onChange={(e) => setCustomProcedureTitle(e.target.value)}
+                    placeholder="e.g. Custom IR Procedure"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-semibold focus:bg-white focus:border-[#007AFF] focus:outline-none"
+                  />
+                ) : (
+                  <select
+                    value={diseaseKey}
+                    onChange={(e) => setDiseaseKey(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-semibold focus:bg-white focus:border-[#007AFF] focus:outline-none"
+                  >
+                    {IR_CLINICAL_PROTOCOLS.map((p) => (
+                      <option key={p.key} value={p.key}>
+                        {p.title} ({p.organSystem})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E5EA]">

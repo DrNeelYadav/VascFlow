@@ -108,6 +108,11 @@ export function StatEmergencyModal({
   const [supervisingConsultant, setSupervisingConsultant] = useState<string>(BLANK_STAT_FORM.supervisingConsultant);
   const [serumCreatinine, setSerumCreatinine] = useState<string>(BLANK_STAT_FORM.serumCreatinine);
   const [isDialysisPatient, setIsDialysisPatient] = useState<boolean>(false);
+  const [inr, setInr] = useState<string>("1.1");
+  const [platelets, setPlatelets] = useState<string>("220000");
+  const [hasContrastAllergy, setHasContrastAllergy] = useState<boolean>(false);
+  const [isOverrideConfirmed, setIsOverrideConfirmed] = useState<boolean>(false);
+  const [overrideReason, setOverrideReason] = useState<string>("Emergent life/limb salvage indication");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
@@ -123,6 +128,11 @@ export function StatEmergencyModal({
     setSupervisingConsultant(BLANK_STAT_FORM.supervisingConsultant);
     setSerumCreatinine(BLANK_STAT_FORM.serumCreatinine);
     setIsDialysisPatient(false);
+    setInr("1.1");
+    setPlatelets("220000");
+    setHasContrastAllergy(false);
+    setIsOverrideConfirmed(false);
+    setOverrideReason("Emergent life/limb salvage indication");
     setIsSubmitting(false);
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -138,6 +148,11 @@ export function StatEmergencyModal({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const inrNum = parseFloat(inr) || 1.1;
+  const pltNum = parseFloat(platelets) || 220000;
+  const creatNum = parseFloat(serumCreatinine) || 1.0;
+  const isHardStop = inrNum > 1.5 || pltNum < 50000 || creatNum > 2.0 || hasContrastAllergy;
 
   const creatinineNum = parseFloat(serumCreatinine) || 1.0;
   const isAkiRisk = creatinineNum >= 2.0 || isDialysisPatient;
@@ -170,7 +185,7 @@ export function StatEmergencyModal({
       supervisingConsultant,
       status: "IN_PROCEDURE",
       fastingConfirmed: true,
-      contrastAllergy: false,
+      contrastAllergy: hasContrastAllergy,
       room,
       modality,
       durationMinutes: STAT_PRESETS[selectedPresetIndex]?.durationMinutes || 60,
@@ -338,12 +353,12 @@ export function StatEmergencyModal({
             </div>
           </div>
 
-          {/* Clinical Nephrotoxicity & Contrast Safety Guardrail */}
-          <div className="rounded-xl border border-[#DADCE0] bg-[#F8F9FA] p-3 space-y-2">
+          {/* Clinical Nephrotoxicity, Coagulation & Contrast Safety Guardrail */}
+          <div className="rounded-xl border border-[#DADCE0] bg-[#F8F9FA] p-3 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#202124] flex items-center gap-1.5">
                 <Calculator className="h-3.5 w-3.5 text-[#5F6368]" />
-                Urgent Renal Pre-Check (Cigarroa Safety Limit)
+                Urgent Renal &amp; Hemostasis Pre-Check
               </span>
               <label className="flex items-center gap-1.5 text-xs text-[#3C4043] cursor-pointer">
                 <input
@@ -356,9 +371,9 @@ export function StatEmergencyModal({
               </label>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#5F6368]">Serum Creatinine:</span>
+                <span className="text-xs text-[#5F6368]">Creatinine:</span>
                 <input
                   type="number"
                   step="0.1"
@@ -373,14 +388,100 @@ export function StatEmergencyModal({
                 <span className="text-xs text-[#5F6368]">mg/dL</span>
               </div>
 
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#5F6368]">INR:</span>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0.8"
+                  max="10.0"
+                  value={inr}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  onChange={(e) => setInr(e.target.value)}
+                  className="w-20 rounded-lg border border-[#DADCE0] px-2 py-1 text-xs font-mono font-bold bg-white"
+                  placeholder="1.1"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#5F6368]">Platelets:</span>
+                <input
+                  type="number"
+                  step="1000"
+                  min="5000"
+                  max="1000000"
+                  value={platelets}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  onChange={(e) => setPlatelets(e.target.value)}
+                  className="w-24 rounded-lg border border-[#DADCE0] px-2 py-1 text-xs font-mono font-bold bg-white"
+                  placeholder="220000"
+                />
+                <span className="text-xs text-[#5F6368]">/µL</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-1 border-t border-[#DADCE0] flex-wrap gap-2">
+              <label className="flex items-center gap-1.5 text-xs text-[#C5221F] font-semibold cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hasContrastAllergy}
+                  onChange={(e) => setHasContrastAllergy(e.target.checked)}
+                  className="rounded border-[#DADCE0] text-[#EA4335] focus:ring-[#EA4335]"
+                />
+                <span>Severe Contrast Allergy History</span>
+              </label>
+
               {isAkiRisk && (
-                <div className="flex items-center gap-1 text-[11px] font-bold text-[#C5221F] bg-[#FCE8E6] px-2 py-1 rounded-lg border border-[#EA4335]/30">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-[#C5221F] bg-[#FCE8E6] px-2 py-0.5 rounded-lg border border-[#EA4335]/30">
                   <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
                   <span>CIRSE Hard Cap: Maximum 40 mL Contrast</span>
                 </div>
               )}
             </div>
           </div>
+
+          {/* Hard-Stop Warning Banner & Override Checkbox */}
+          {isHardStop && (
+            <div className="rounded-xl border-2 border-[#D93025] bg-[#FCE8E6] p-3.5 space-y-2.5">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="h-5 w-5 text-[#D93025] shrink-0 mt-0.5 animate-pulse" />
+                <div className="text-xs font-bold text-[#C5221F] leading-snug">
+                  CRITICAL CLINICAL HARD-STOP: Elevated puncture-site bleeding risk (INR &gt; 1.5 / Platelets &lt; 50k), severe renal impairment (Cr &gt; 2.0), or contrast anaphylaxis risk detected.
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-white border border-[#EA4335]/40 p-2.5 space-y-2">
+                <label className="flex items-start gap-2 text-xs font-bold text-[#C5221F] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isOverrideConfirmed}
+                    onChange={(e) => setIsOverrideConfirmed(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-[#EA4335] text-[#D93025] focus:ring-[#EA4335] cursor-pointer"
+                  />
+                  <span>
+                    I confirm explicit Senior Operator Emergency Override for life/limb salvage and accept procedural risks.
+                  </span>
+                </label>
+
+                {isOverrideConfirmed && (
+                  <div className="pt-1">
+                    <label className="text-[10px] uppercase font-bold text-[#5F6368] block mb-1">
+                      Override Indication / Documentation:
+                    </label>
+                    <input
+                      type="text"
+                      value={overrideReason}
+                      onChange={(e) => setOverrideReason(e.target.value)}
+                      className="w-full text-xs font-medium border border-[#DADCE0] rounded-lg px-2.5 py-1.5 bg-[#F8F9FA] focus:border-[#EA4335] focus:outline-hidden"
+                      placeholder="Emergent life/limb salvage indication"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer CTA */}
@@ -398,9 +499,9 @@ export function StatEmergencyModal({
             </button>
             <button
               type="button"
-              disabled={isSubmitting}
+              disabled={isSubmitting || (isHardStop && !isOverrideConfirmed)}
               onClick={handleActivate}
-              className="flex items-center gap-2 rounded-xl bg-[#EA4335] hover:bg-[#D93025] text-white px-5 py-2 text-xs font-bold shadow-md transition disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-[#EA4335] hover:bg-[#D93025] text-white px-5 py-2 text-xs font-bold shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Zap className="h-4 w-4 fill-white" />
               <span>{isSubmitting ? "Activating..." : "ACTIVATE ON TABLE STAT"}</span>

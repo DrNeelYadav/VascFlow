@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useEndoflowStore, EndoflowPatient } from "../../dashboard/useEndoflowStore";
 import { calculateMacd } from "../../lib/calculators";
 import {
   User,
   ShieldAlert,
+  AlertTriangle,
   ArrowRightLeft,
   FileText,
   ScanText,
@@ -34,8 +35,17 @@ export function PatientSafetyStrip() {
     summary: string;
     details: string;
   } | null>(null);
+  const [isOverrideAcknowledged, setIsOverrideAcknowledged] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsOverrideAcknowledged(false);
+  }, [activePatient?.id]);
 
   if (!activePatient) return null;
+
+  const isCriticalCoag = (activePatient.labs?.inr ?? 1.1) > 1.5 || (activePatient.labs?.plt ?? 200000) < 50000;
+  const isCriticalRenal = (activePatient.labs?.creat ?? 1.1) > 2.0;
+  const hasSafetyAlert = isCriticalCoag || isCriticalRenal;
 
   const macdCalc = calculateMacd(
     60,
@@ -161,6 +171,41 @@ export function PatientSafetyStrip() {
           </div>
         </div>
       </div>
+
+      {/* Critical Lab Hard-Stop Safety Banner */}
+      {hasSafetyAlert && (
+        <div
+          className={`w-full border-b px-4 py-2 transition-colors z-30 shadow-sm ${
+            isOverrideAcknowledged
+              ? "bg-[#B71C1C] text-white border-[#7F0000]"
+              : "bg-[#D93025] text-white border-[#B71C1C] animate-pulse"
+          }`}
+        >
+          <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2 text-xs">
+            <div className="flex items-center gap-2 font-bold">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-white" />
+              <span>
+                {"CRITICAL LAB HARD-STOP: " +
+                  (isCriticalCoag
+                    ? `Elevated Bleeding Risk (INR: ${activePatient.labs.inr}, Plt: ${activePatient.labs.plt}). `
+                    : "") +
+                  (isCriticalRenal
+                    ? `Severe Nephrotoxicity / CIN Risk (Creatinine: ${activePatient.labs.creat} mg/dL). `
+                    : "")}
+              </span>
+            </div>
+            <label className="flex items-center gap-1.5 cursor-pointer font-semibold select-none text-[11px] bg-black/20 hover:bg-black/30 px-2.5 py-1 rounded-lg transition border border-white/20">
+              <input
+                type="checkbox"
+                checked={isOverrideAcknowledged}
+                onChange={(e) => setIsOverrideAcknowledged(e.target.checked)}
+                className="h-3.5 w-3.5 rounded border-white text-red-600 focus:ring-0 cursor-pointer"
+              />
+              <span>Operator Override Acknowledged</span>
+            </label>
+          </div>
+        </div>
+      )}
 
       {/* Patient Switcher Modal */}
       {isSwitchModalOpen && (

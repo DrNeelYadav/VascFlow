@@ -6,7 +6,7 @@ import {
   INSTITUTIONAL_STAFF_ACCOUNTS,
 } from "../lib/staffAccounts";
 import { db, isFirebaseConfigured } from "../lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, writeBatch } from "firebase/firestore";
 import {
   DEMO_8_BEDS,
   DEMO_CT_REVIEWS,
@@ -560,6 +560,42 @@ async function syncPatientToFirestore(patient: EndoflowPatient): Promise<void> {
   }
 }
 
+async function syncBedToFirestore(bed: BedRecord): Promise<void> {
+  try {
+    if (!isFirebaseConfigured() || !db) return;
+    const sanitized = JSON.parse(JSON.stringify(bed));
+    const writePromise = setDoc(doc(db, "beds", bed.id), sanitized, { merge: true });
+    await Promise.race([
+      writePromise,
+      new Promise<void>((_, reject) =>
+        setTimeout(() => reject(new Error("Firestore bed sync timed out")), 1500)
+      ),
+    ]);
+  } catch (error) {
+    console.warn(`[Firestore] Failed to persist bed ${bed?.id}:`, error);
+  }
+}
+
+async function syncBedsBatchToFirestore(beds: BedRecord[]): Promise<void> {
+  try {
+    if (!isFirebaseConfigured() || !db) return;
+    const batch = writeBatch(db);
+    for (const bed of beds) {
+      const sanitized = JSON.parse(JSON.stringify(bed));
+      batch.set(doc(db, "beds", bed.id), sanitized, { merge: true });
+    }
+    const writePromise = batch.commit();
+    await Promise.race([
+      writePromise,
+      new Promise<void>((_, reject) =>
+        setTimeout(() => reject(new Error("Firestore batch beds sync timed out")), 1500)
+      ),
+    ]);
+  } catch (error) {
+    console.warn("[Firestore] Failed to persist beds batch:", error);
+  }
+}
+
 // ============================================================================
 // ZUSTAND STORE IMPLEMENTATION
 // ============================================================================
@@ -803,11 +839,45 @@ export const useEndoflowStore = create<EndoflowState>()(
       };
     }
 
-    set((state) => ({
-      patients: [parseResult.data, ...state.patients],
-    }));
+    const patientData = parseResult.data;
+    const bedIdentifier = patientData.ipd?.bed || patientData.preOp?.bedLocation;
+    let assignedBed: BedRecord | undefined;
 
-    void syncPatientToFirestore(parseResult.data);
+    set((state) => {
+      let updatedBeds = state.beds;
+      if (bedIdentifier) {
+        const bedMatch = state.beds.find(
+          (b) => b.id === bedIdentifier || b.title === bedIdentifier
+        );
+        if (bedMatch) {
+          updatedBeds = state.beds.map((b) => {
+            if (b.id === bedMatch.id) {
+              assignedBed = {
+                ...b,
+                status: "occupied",
+                ptName: patientData.name,
+                crNo: patientData.hid,
+                diag: patientData.procedure,
+                doctor: patientData.postedBy,
+                ptId: patientData.id,
+              };
+              return assignedBed;
+            }
+            return b;
+          });
+        }
+      }
+
+      return {
+        patients: [patientData, ...state.patients],
+        beds: updatedBeds,
+      };
+    });
+
+    void syncPatientToFirestore(patientData);
+    if (assignedBed) {
+      void syncBedToFirestore(assignedBed);
+    }
 
     return { success: true };
   },
@@ -820,6 +890,10 @@ export const useEndoflowStore = create<EndoflowState>()(
     set((state) => ({
       beds: state.beds.map((b) => (b.id === bedId ? { ...b, ...updates } : b)),
     }));
+    const target = get().beds.find((b) => b.id === bedId);
+    if (target) {
+      void syncBedToFirestore(target);
+    }
   },
   transferPatientBed: (ptId: string, fromBedId: string, toBedId: string) => {
     set((state) => {
@@ -856,6 +930,12 @@ export const useEndoflowStore = create<EndoflowState>()(
 
       return { beds: updatedBeds };
     });
+
+    const updatedFrom = get().beds.find((b) => b.id === fromBedId);
+    const updatedTo = get().beds.find((b) => b.id === toBedId);
+    if (updatedFrom && updatedTo) {
+      void syncBedsBatchToFirestore([updatedFrom, updatedTo]);
+    }
   },
 
   bookedCases: INITIAL_BOOKED_CASES,
@@ -1127,7 +1207,20 @@ export const useEndoflowStore = create<EndoflowState>()(
     }),
     }),
     {
-      name: "vascflow-clinical-storage-v1",
+      name: "vascflow-clinical-storage-v2",
+      version: 2,
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2) {
+          return {
+            ...persistedState,
+            patients: [],
+            ctReviews: [],
+            bookedCases: [],
+            beds: CLEAN_VACANT_8_BEDS,
+          };
+        }
+        return persistedState;
+      },
       storage: safeStorage,
     }
   )

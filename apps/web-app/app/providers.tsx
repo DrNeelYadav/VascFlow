@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "./lib/firebase";
-import { useEndoflowStore } from "./dashboard/useEndoflowStore";
+import { useEndoflowStore, type BedRecord } from "./dashboard/useEndoflowStore";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -37,6 +37,7 @@ export function Providers({ children }: ProvidersProps) {
 
     let unsubPatients: () => void = () => {};
     let unsubCases: () => void = () => {};
+    let unsubBeds: () => void = () => {};
 
     try {
       unsubPatients = onSnapshot(
@@ -94,9 +95,32 @@ export function Providers({ children }: ProvidersProps) {
       console.warn("[Firestore Real-Time Sync] 'cases' setup error:", err);
     }
 
+    try {
+      unsubBeds = onSnapshot(
+        collection(db, "beds"),
+        (snapshot) => {
+          if (!snapshot.empty) {
+            useEndoflowStore.setState((state) => {
+              const bedMap = new Map(state.beds.map((b) => [b.id, b]));
+              snapshot.docs.forEach((doc) => {
+                const remoteBed = { id: doc.id, ...doc.data() } as BedRecord;
+                const existing = bedMap.get(remoteBed.id);
+                bedMap.set(remoteBed.id, existing ? { ...existing, ...remoteBed } : remoteBed);
+              });
+              return { beds: Array.from(bedMap.values()) };
+            });
+          }
+        },
+        (err) => console.warn("[Firestore Real-Time Sync] 'beds' subscription warning:", err)
+      );
+    } catch (err) {
+      console.warn("[Firestore Real-Time Sync] 'beds' setup error:", err);
+    }
+
     return () => {
       unsubPatients();
       unsubCases();
+      unsubBeds();
     };
   }, []);
 

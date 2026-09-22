@@ -1580,8 +1580,10 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             <span>Budd-Chiari (DIPS / TIPS)</span>
           </button>
 
-          {/* Active Store Patients */}
-          {patients.map((pt) => (
+          {/* Real Admitted / Active Store Patients */}
+          {patients
+            .filter((pt) => !["Anjum Nisha", "Ramswaroop Meena", "Prem Devi", "Santosh Devi", "Bhanwar Lal", "Abdul Latif", "Mohit Verma", "Ghanshyam Gurjar"].includes(pt.name))
+            .map((pt) => (
             <button
               key={pt.id}
               onClick={() => handleSelectPatient(pt.id)}

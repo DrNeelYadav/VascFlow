@@ -1,5 +1,6 @@
 import { auth } from "../../../auth";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@vascule/db";
+
 
 /**
  * Normalizes staff role codes and titles to Prisma UserRole enum

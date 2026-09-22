@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate --schema=../../packages/db/schema.prisma",
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate --schema=../../packages/db/schema.prisma && next build",
     "start": "next start",
     "lint": "next lint"
   },
+
   "dependencies": {
     "@tanstack/react-query": "^5.66.0",
     "@tanstack/react-virtual": "^3.13.0",

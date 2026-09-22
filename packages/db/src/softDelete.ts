@@ -14,33 +14,34 @@ export function createSoftDeletePrismaClient(baseClient?: PrismaClient) {
     name: "softDelete",
     query: {
       patientLogEntry: {
-        async delete({ args }) {
-          return client.patientLogEntry.update({
+        async delete({ args }: { args: any }) {
+          return (client as any).patientLogEntry.update({
             where: args.where,
             data: { deletedAt: new Date() },
           });
         },
-        async deleteMany({ args }) {
-          return client.patientLogEntry.updateMany({
+        async deleteMany({ args }: { args: any }) {
+          return (client as any).patientLogEntry.updateMany({
             where: args.where,
             data: { deletedAt: new Date() },
           });
         },
       },
       patientCase: {
-        async delete({ args }) {
-          return client.patientCase.update({
+        async delete({ args }: { args: any }) {
+          return (client as any).patientCase.update({
             where: args.where,
             data: { deletedAt: new Date() },
           });
         },
-        async deleteMany({ args }) {
-          return client.patientCase.updateMany({
+        async deleteMany({ args }: { args: any }) {
+          return (client as any).patientCase.updateMany({
             where: args.where,
             data: { deletedAt: new Date() },
           });
         },
       },
     },
+
   });
 }

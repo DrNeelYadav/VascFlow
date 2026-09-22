@@ -44,9 +44,9 @@ export async function checkReplicationLag(
   try {
     // 1. Query replica replay timestamp lag on read replica
     const replicaClient = getPrismaClient("read");
-    const lagQuery = await replicaClient.$queryRawUnsafe<Array<{ lag_ms: number | null }>>(
+    const lagQuery = (await (replicaClient as any).$queryRawUnsafe(
       `SELECT COALESCE(EXTRACT(EPOCH FROM (now() - pg_last_xact_replay_timestamp())) * 1000, 0)::float AS lag_ms`
-    );
+    )) as Array<{ lag_ms: number | null }>;
 
     const lagMs =
       lagQuery?.[0]?.lag_ms !== null && lagQuery?.[0]?.lag_ms !== undefined
@@ -56,11 +56,12 @@ export async function checkReplicationLag(
     // 2. Query primary replication slot status
     let activeSlotsCount = 0;
     try {
-      const slots = await prisma.$queryRawUnsafe<Array<{ slot_name: string; active: boolean }>>(
+      const slots = (await (prisma as any).$queryRawUnsafe(
         `SELECT slot_name, active FROM pg_replication_slots WHERE active = true`
-      );
+      )) as Array<{ slot_name: string; active: boolean }>;
       activeSlotsCount = slots?.length || 0;
     } catch {
+
       // Non-superuser or local dev fallback
     }
 

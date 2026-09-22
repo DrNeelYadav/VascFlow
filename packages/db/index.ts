@@ -86,5 +86,7 @@ export * from "./src/audit";
 export * from "./src/resilience/transactionRetry";
 export * from "./src/resilience/replicationMonitor";
 export * from "./src/firestore";
-export * from "@prisma/client";
+export * from "./src/enums";
+export { PrismaClient } from "@prisma/client";
 export default prisma;
+

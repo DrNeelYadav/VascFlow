@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CaseStatus } from "@prisma/client";
-import { logAuditTrail, prisma } from "@vascule/db";
+import { CaseStatus, logAuditTrail, prisma } from "@vascule/db";
 import { auth } from "@/auth";
+
 
 const VALID_STATUSES: CaseStatus[] = [
   CaseStatus.SCHEDULED,

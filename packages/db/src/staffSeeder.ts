@@ -1,4 +1,5 @@
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { UserRole } from "./enums";
 
 export interface StaffSeedPayload {
   staffId: string;

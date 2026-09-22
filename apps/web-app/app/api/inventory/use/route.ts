@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
             const maxRetries = process.env.NODE_ENV === "test" ? 1 : 3;
             return await withRetry(
               async () => {
-                return await prisma.$transaction(async (tx) => {
+                return await prisma.$transaction(async (tx: any) => {
                   const records: Array<{
                     itemId: string;
                     sku: string;

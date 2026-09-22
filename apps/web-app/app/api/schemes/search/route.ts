@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
           });
 
           total = count;
-          packages = rows.map((r) => ({
+          packages = rows.map((r: any) => ({
             packageCode: r.packageCode,
             packageName: r.packageName,
             scheme: r.scheme as "MAAY" | "RGHS",

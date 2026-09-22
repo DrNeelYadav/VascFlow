@@ -70,7 +70,7 @@ export async function executeWithTenantContext<T>(
 ): Promise<T> {
   const sanitized = sanitizeTenantId(tenantId);
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     // Inject the active tenant ID into the transaction session parameters
     await tx.$executeRawUnsafe(
       `SET LOCAL ${TENANT_SESSION_VARIABLE} = '${sanitized}';`

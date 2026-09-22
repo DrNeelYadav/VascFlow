@@ -8,6 +8,7 @@ import { SessionTimeoutModal } from "../components/SessionTimeoutModal";
 import { CommandMenu } from "../components/command-menu";
 import { DualPaneWorkspace } from "./components/DualPaneWorkspace";
 import { MobileBottomNav } from "../components/shell/MobileBottomNav";
+import { VersionNotification } from "./components/VersionNotification";
 
 export default function DashboardLayout({
   children,
@@ -103,6 +104,9 @@ export default function DashboardLayout({
 
       {/* Centralized Global Command Menu (Cmd+K) */}
       <CommandMenu onLockBedside={() => setIsBedsideLocked(true)} />
+
+      {/* Auto-detect new Vercel deployments */}
+      <VersionNotification />
     </div>
   );
 }

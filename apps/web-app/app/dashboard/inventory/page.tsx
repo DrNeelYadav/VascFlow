@@ -247,7 +247,7 @@ export default function InventoryDashboard() {
       setDepletionLogs((prev) => [...createdLogs, ...prev]);
 
       setDepletionIsError(false);
-      setDepletionFeedback(`Successfully depleted ${stagedDepletions.length} implant(s) from Cath-Lab store.`);
+      setDepletionFeedback(`Successfully depleted ${stagedDepletions.length} implant(s) from inventory.`);
       setStagedDepletions([]);
     } catch (err) {
       console.warn("Inventory depletion error caught gracefully:", err);
@@ -272,11 +272,11 @@ export default function InventoryDashboard() {
                 Hardware Inventory &amp; Depletion Ledger
               </h1>
               <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
-                Cath-Lab Store
+                Angiosuite Inventory
               </span>
             </div>
             <p className="text-xs text-[#5F6368] mt-0.5">
-              SMS Medical College, Jaipur • Rajasthan RMSCL SKU synchronization
+              Sterile endovascular hardware, diagnostic consumables, and implant tracking
             </p>
           </div>
         </div>
@@ -366,14 +366,14 @@ export default function InventoryDashboard() {
                     Hardware Inventory &amp; Depletion Ledger
                   </h2>
                   <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
-                    Cath-Lab Store
+                    Angiosuite Inventory
                   </span>
                   <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]">
                     Staged for Case Depletion
                   </span>
                 </div>
                 <p className="text-xs text-[#5F6368] mt-0.5">
-                  SMS Medical College, Jaipur • Rajasthan RMSCL SKU synchronization
+                  Pre-procedural sterile verification and atomic batch depletion
                 </p>
               </div>
             </div>
@@ -576,14 +576,14 @@ export default function InventoryDashboard() {
                   Hardware Inventory &amp; Depletion Ledger
                 </h2>
                 <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
-                  Cath-Lab Store
+                  Angiosuite Inventory
                 </span>
                 <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-blue-50 text-blue-700 font-semibold border border-blue-100">
                   {stockItems.length} SKUs (Needles to Shunts)
                 </span>
               </div>
               <p className="text-xs text-[#5F6368] mt-0.5">
-                SMS Medical College, Jaipur • Rajasthan RMSCL SKU synchronization
+                Active catalog with GS1 barcoding, sterile lot tracking, and reorder levels
               </p>
             </div>
           </div>

@@ -734,17 +734,9 @@ export default function OpClinicConsultationDeskPage() {
             <Stethoscope className="w-6 h-6 stroke-[1.8]" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-semibold text-[#1C1C1E] tracking-tight">
-                OPD Consultation &amp; Triage Desk
-              </h1>
-              <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-[#007AFF]/10 text-[#007AFF]">
-                {ctReviews.length} Active Records
-              </span>
-            </div>
-            <p className="text-xs text-[#8E8E93] mt-0.5">
-              SMS Medical College &amp; Attached Hospitals, Jaipur • Radiodiagnosis &amp; Interventional Radiology
-            </p>
+            <h1 className="text-base sm:text-lg font-semibold text-[#1C1C1E] tracking-tight">
+              OPD Consultation &amp; Triage Desk
+            </h1>
           </div>
         </div>
 
@@ -858,15 +850,8 @@ export default function OpClinicConsultationDeskPage() {
         <div className="space-y-5">
           {/* Consultation Desk Intake Card */}
           <form onSubmit={handleSaveConsult} className="bg-white border border-[#E5E5EA] rounded-2xl p-5 sm:p-6 shadow-xs space-y-6">
-            {/* Section 1: Demographics & Contact Numbers */}
+            {/* Patient Form Fields */}
             <div>
-              <div className="flex items-center justify-between border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  Section 1: Demographics &amp; Contact Numbers
-                </h3>
-              </div>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Patient Full Name */}
                 <div className="md:col-span-2">
@@ -923,7 +908,7 @@ export default function OpClinicConsultationDeskPage() {
                     onChange={(e) => setContactNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
                     autoComplete="off"
                     data-lpignore="true"
-                    placeholder="10-digit mobile number e.g. 9829012345"
+                    placeholder="10-digit mobile number"
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
@@ -989,57 +974,39 @@ export default function OpClinicConsultationDeskPage() {
                     <option value="Emergency / STAT">Emergency / STAT</option>
                   </select>
                 </div>
+
+                {/* Accession Number / CR Number */}
+                <div className="md:col-span-2">
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Accession / CR Number
+                  </label>
+                  <input
+                    type="text"
+                    value={accessionNumber}
+                    onChange={(e) => setAccessionNumber(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    placeholder="e.g. 2026-99214"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Section 2: Imaging Identifiers */}
+            {/* Clinical History */}
             <div>
-              <div className="flex items-center justify-between border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5" />
-                  Section 2: Imaging Identifiers
-                </h3>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                  PACS Accession Number
-                </label>
-                <input
-                  type="text"
-                  value={accessionNumber}
-                  onChange={(e) => setAccessionNumber(e.target.value)}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  placeholder="e.g. SONI-ACC-2026-99214"
-                  className="w-full max-w-md px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Section 3: Consolidated Clinical History */}
-            <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5" />
-                  Section 3: Consolidated Clinical History
-                </h3>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                  Clinical History &amp; Chief Complaints (Presenting Symptoms &amp; 3-Month Progression)
-                </label>
-                <textarea
-                  rows={3}
-                  value={clinicalHistory}
-                  onChange={(e) => setClinicalHistory(e.target.value)}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  placeholder="e.g. Recurrent episodes of painless gross hematuria for 2 weeks. Past 3 months: progressive jaundice, 2 episodes of melena requiring PRBC transfusion, escalating abdominal distension..."
-                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                />
-              </div>
+              <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                Clinical History &amp; Chief Complaints
+              </label>
+              <textarea
+                rows={3}
+                value={clinicalHistory}
+                onChange={(e) => setClinicalHistory(e.target.value)}
+                autoComplete="off"
+                data-lpignore="true"
+                placeholder="Presenting symptoms and clinical history..."
+                className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+              />
             </div>
 
             {/* Section 4: CT Review & Imaging Findings */}

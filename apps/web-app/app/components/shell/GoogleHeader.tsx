@@ -72,15 +72,9 @@ export function GoogleHeader({
           <Menu className="w-5 h-5" />
         </button>
 
-        <Link href="/dashboard/worklist" className="flex items-center">
+        <Link href="/dashboard" className="flex items-center">
           <EndoFlowLogo size="sm" showSubtitle={false} />
         </Link>
-
-        {/* Active Department Indicator with single 8px green status dot */}
-        <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="System Online & Connected" />
-          <span>IR Cath Lab</span>
-        </div>
       </div>
 
       {/* Center: Compact Global Patient Search (Cmd + K, max 360px) */}

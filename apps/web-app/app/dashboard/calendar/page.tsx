@@ -7,7 +7,6 @@ import {
   BookedCaseRecord,
 } from "../useEndoflowStore";
 import {
-  RAJASTHAN_HOLIDAYS_2026,
   getHolidayForDate,
   isDateElectiveBlocked,
 } from "../../lib/rajasthanHolidays2026";
@@ -344,23 +343,6 @@ export default function OtScheduleCalendarPage() {
     return getHolidayForDate(selectedDateStr);
   }, [selectedDateStr]);
 
-  // Overall Statistics for Current Month View
-  const monthStats = useMemo(() => {
-    const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
-    const casesInMonth = allCalendarCases.filter((c) => c.scheduledDate.startsWith(monthPrefix));
-    const gazettedInMonth = RAJASTHAN_HOLIDAYS_2026.filter(
-      (h) => h.month === month + 1 && h.type === "Gazetted"
-    );
-
-    return {
-      totalCases: casesInMonth.length,
-      elective: casesInMonth.filter((c) => (c.urgency || "Elective") === "Elective").length,
-      urgent: casesInMonth.filter((c) => c.urgency === "Urgent").length,
-      emergency: casesInMonth.filter((c) => c.urgency === "Emergency").length,
-      gazettedHolidaysCount: gazettedInMonth.length,
-    };
-  }, [bookedCases, year, month]);
-
   // Single Case Reschedule Handler
   const handleConfirmSingleReschedule = () => {
     if (!rescheduleModalCase || !singleNewDate) return;
@@ -398,7 +380,7 @@ export default function OtScheduleCalendarPage() {
                 OT Schedule & Cath-Lab Calendar
               </h1>
               <p className="text-xs text-[#5F6368]">
-                Rajasthan 2026 Master Calendar • Real-Time Urgency Stratification • Single & Mass Case Rescheduling
+                Master schedule and case management
               </p>
             </div>
           </div>
@@ -464,66 +446,6 @@ export default function OtScheduleCalendarPage() {
         </div>
       )}
 
-      {/* Month Statistics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="bg-white p-3 rounded-xl border border-[#DADCE0] shadow-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#5F6368]">
-            {monthNames[month]} Bookings
-          </span>
-          <div className="text-xl font-bold text-[#202124] mt-0.5">
-            {monthStats.totalCases} <span className="text-xs font-normal text-[#5F6368]">Cases</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-3 rounded-xl border border-blue-100 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">
-              Elective
-            </span>
-            <span className="w-2 h-2 rounded-full bg-blue-500" />
-          </div>
-          <div className="text-xl font-bold text-blue-800 mt-0.5">
-            {monthStats.elective}
-          </div>
-        </div>
-
-        <div className="bg-white p-3 rounded-xl border border-amber-100 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
-              Urgent
-            </span>
-            <span className="w-2 h-2 rounded-full bg-amber-500" />
-          </div>
-          <div className="text-xl font-bold text-amber-800 mt-0.5">
-            {monthStats.urgent}
-          </div>
-        </div>
-
-        <div className="bg-white p-3 rounded-xl border border-red-100 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-red-700">
-              Emergency STAT
-            </span>
-            <span className="w-2 h-2 rounded-full bg-red-500" />
-          </div>
-          <div className="text-xl font-bold text-red-800 mt-0.5">
-            {monthStats.emergency}
-          </div>
-        </div>
-
-        <div className="bg-white p-3 rounded-xl border border-purple-100 shadow-xs col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700">
-              Gazetted Holidays
-            </span>
-            <span className="w-2 h-2 rounded-full bg-purple-500" />
-          </div>
-          <div className="text-xl font-bold text-purple-900 mt-0.5">
-            {monthStats.gazettedHolidaysCount} <span className="text-xs font-normal text-purple-600">Days</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Layout: Calendar Grid + Day Details Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Calendar Navigation & Month/Week Grid (8 Cols) */}
@@ -574,7 +496,7 @@ export default function OtScheduleCalendarPage() {
                 <div>THU</div>
                 <div>FRI</div>
                 <div>SAT</div>
-                <div className="text-red-600">SUN</div>
+                <div className="text-red-600 bg-red-50/50">SUN</div>
               </div>
 
               {/* Day Matrix Grid */}
@@ -592,26 +514,34 @@ export default function OtScheduleCalendarPage() {
                       onClick={() => setSelectedDateStr(cell.dateStr)}
                       className={`min-h-[58px] sm:min-h-[105px] p-1 sm:p-2 transition-all cursor-pointer flex flex-col justify-between relative group ${
                         !cell.isCurrentMonth
-                          ? "bg-[#FAFAFA] text-[#BDC1C6]"
+                          ? isSunday
+                            ? "bg-red-50/20 text-red-300"
+                            : "bg-[#FAFAFA] text-[#BDC1C6]"
                           : isSelected
-                          ? "bg-blue-50/60 ring-2 ring-inset ring-[#1A73E8]"
+                          ? isSunday
+                            ? "bg-rose-500/15 ring-2 ring-inset ring-red-500 text-red-900"
+                            : "bg-blue-50/60 ring-2 ring-inset ring-[#1A73E8]"
                           : isSunday
-                          ? "bg-[#FCFDFD] hover:bg-[#F1F3F4]"
+                          ? "bg-red-500/10 hover:bg-red-500/15 border-red-500/20"
                           : isGazetted
                           ? "bg-rose-50/30 hover:bg-rose-50/60"
                           : "bg-white hover:bg-[#F8F9FA]"
                       }`}
                     >
                       {/* Cell Header: Date Number & Holiday Indicator */}
-                      <div className="flex items-start justify-between gap-0.5">
+                      <div className="flex items-start justify-between gap-1">
                         <span
-                          className={`text-[11px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full ${
+                          className={`text-[11px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full shrink-0 ${
                             isToday
                               ? "bg-[#1A73E8] text-white"
                               : isSelected
-                              ? "bg-blue-200 text-blue-900"
+                              ? isSunday
+                                ? "bg-red-600 text-white"
+                                : "bg-blue-200 text-blue-900"
                               : isSunday
-                              ? "text-red-600"
+                              ? cell.isCurrentMonth
+                                ? "text-red-700 bg-red-100/70"
+                                : "text-red-400"
                               : cell.isCurrentMonth
                               ? "text-[#202124]"
                               : "text-[#BDC1C6]"
@@ -622,7 +552,7 @@ export default function OtScheduleCalendarPage() {
 
                         {/* Holiday Tag */}
                         {cell.holidayInfo.isHoliday && (
-                          <div className="text-right">
+                          <div className="text-right min-w-0 flex-1">
                             {/* Mobile dot indicator */}
                             <span
                               className={`sm:hidden inline-block w-1.5 h-1.5 rounded-full ${
@@ -634,14 +564,14 @@ export default function OtScheduleCalendarPage() {
                             <div className="hidden sm:block">
                               {isGazetted ? (
                                 <span
-                                  className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-800 border border-rose-200 leading-tight max-w-[85px] truncate"
+                                  className="block px-1.5 py-0.5 rounded text-[9px] font-semibold bg-rose-100 text-rose-800 border border-rose-200 leading-tight truncate text-left"
                                   title={cell.holidayInfo.name || "Gazetted Holiday"}
                                 >
                                   {cell.holidayInfo.name}
                                 </span>
                               ) : isRestricted ? (
                                 <span
-                                  className="inline-block px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200 leading-tight max-w-[85px] truncate"
+                                  className="block px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200 leading-tight truncate text-left"
                                   title={cell.holidayInfo.name || "Restricted Holiday"}
                                 >
                                   {cell.holidayInfo.name}
@@ -654,7 +584,7 @@ export default function OtScheduleCalendarPage() {
 
                       {/* Sunday Closed Tag (Desktop only) */}
                       {isSunday && (
-                        <div className="hidden sm:block my-1 text-[9px] font-medium text-red-600 bg-red-50/80 px-1 py-0.5 rounded border border-red-100">
+                        <div className="hidden sm:block my-1 text-[9px] font-semibold text-red-700 bg-red-100/80 px-1 py-0.5 rounded border border-red-200 text-center tracking-tight">
                           Sunday Off
                         </div>
                       )}
@@ -730,17 +660,19 @@ export default function OtScheduleCalendarPage() {
                       onClick={() => setSelectedDateStr(col.dateStr)}
                       className={`min-h-[400px] p-2.5 transition-colors cursor-pointer flex flex-col ${
                         isSelected
-                          ? "bg-blue-50/40"
+                          ? isSunday
+                            ? "bg-red-500/15"
+                            : "bg-blue-50/40"
                           : isGazetted
                           ? "bg-rose-50/20"
                           : isSunday
-                          ? "bg-slate-50/50"
+                          ? "bg-red-500/10"
                           : "bg-white"
                       }`}
                     >
                       {/* Day Header */}
                       <div className="border-b border-[#F1F3F4] pb-2 text-center">
-                        <span className="text-[10px] font-bold uppercase text-[#5F6368]">
+                        <span className={`text-[10px] font-bold uppercase ${isSunday ? "text-red-600" : "text-[#5F6368]"}`}>
                           {col.dayName}
                         </span>
                         <div
@@ -748,9 +680,11 @@ export default function OtScheduleCalendarPage() {
                             isToday
                               ? "bg-[#1A73E8] text-white"
                               : isSelected
-                              ? "bg-blue-200 text-blue-900"
+                              ? isSunday
+                                ? "bg-red-600 text-white"
+                                : "bg-blue-200 text-blue-900"
                               : isSunday
-                              ? "text-red-600"
+                              ? "text-red-700 bg-red-100/70"
                               : "text-[#202124]"
                           }`}
                         >
@@ -759,7 +693,7 @@ export default function OtScheduleCalendarPage() {
 
                         {col.holidayInfo.isHoliday && (
                           <div className="mt-1">
-                            <span className="px-1.5 py-0.5 text-[9px] font-semibold bg-rose-100 text-rose-800 rounded border border-rose-200 block truncate">
+                            <span className="px-1.5 py-0.5 text-[9px] font-semibold bg-rose-100 text-rose-800 rounded border border-rose-200 block truncate" title={col.holidayInfo.name || ""}>
                               {col.holidayInfo.name}
                             </span>
                           </div>
@@ -810,35 +744,6 @@ export default function OtScheduleCalendarPage() {
               </div>
             </div>
           )}
-
-          {/* Rajasthan Holiday Legend */}
-          <div className="bg-white p-3 rounded-xl border border-[#DADCE0] text-xs flex flex-wrap items-center gap-4 text-[#5F6368]">
-            <span className="font-bold text-[#202124]">Calendar Legend:</span>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded bg-rose-100 border border-rose-300" />
-              <span>Rajasthan Gazetted Holiday</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded bg-slate-100 border border-slate-300" />
-              <span>Optional Holiday</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded bg-red-50 border border-red-300" />
-              <span>Sunday (Emergency Only)</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-              <span>Emergency</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span>Urgent</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-              <span>Elective</span>
-            </div>
-          </div>
         </div>
 
         {/* Right Column: Selected Date Inspector & Action Panel (4 Cols) */}

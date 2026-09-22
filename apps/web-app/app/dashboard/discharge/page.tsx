@@ -46,7 +46,7 @@ import { MasterProcedure } from "../../lib/masterCatalog";
 import { validateSchemePreSubmission, type SchemeValidationRequirement } from "@vascule/utils";
 
 // ============================================================================
-// SEED CRITERIA DEFINITIONS & TYPES
+// CLINICAL PROCEDURE DEFINITIONS & TYPES
 // ============================================================================
 
 export type ProcedureCategory = "varicose_veins" | "varicocele" | "other_ir";
@@ -1397,8 +1397,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             </h1>
           </div>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Sawai Man Singh Hospital, Jaipur • Department of Interventional
-            Radiology &bull; Instant Tick-Box Seed Criteria &amp; 1-Click Portal Copiers
+            Interventional Radiology • Clinical Documentation &amp; Procedure Summary
           </p>
         </div>
 
@@ -1407,10 +1406,10 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
           <button
             onClick={handleCopyFullIhms}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
-            title="Copy entire formatted discharge summary for Rajasthan IHMS portal"
+            title="Copy entire formatted discharge summary for portal"
           >
             <Copy className="w-3.5 h-3.5" />
-            <span>Copy for IHMS Portal</span>
+            <span>Copy Full Summary</span>
           </button>
 
           <button
@@ -1423,10 +1422,10 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
         </div>
       </div>
 
-      {/* Prefilled SSO Dataset for Rajasthan IHMS / e-Hospital Portal */}
+      {/* Structured Clinical Sections Data Bar */}
       <div className="bg-[#F8F9FA] border border-[#DADCE0] rounded-xl p-2.5 flex items-center gap-2 overflow-x-auto print:hidden">
         <span className="text-[11px] font-bold text-[#5F6368] whitespace-nowrap pl-1 flex items-center gap-1">
-          <Copy className="w-3 h-3 text-[#1A73E8]" /> Prefilled SSO Dataset:
+          <Copy className="w-3 h-3 text-[#1A73E8]" /> Copy Section:
         </span>
         <button
           onClick={() =>
@@ -1506,7 +1505,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
         <div className="flex items-center justify-between flex-wrap gap-2">
           <span className="text-xs font-bold text-[#3C4043] flex items-center gap-1.5">
             <User className="w-3.5 h-3.5 text-[#1A73E8]" />
-            Select Patient or Enter Procedure Details:
+            Patient / Procedure Context:
           </span>
           <div className="grid grid-cols-2 sm:flex sm:items-center rounded-lg bg-[#F1F3F4] p-0.5 text-xs font-semibold w-full sm:w-auto gap-0.5">
             <button
@@ -1655,7 +1654,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
       </div>
 
       {/* ==================================================================== */}
-      {/* INTERACTIVE SEED CRITERIA SELECTOR (TICK BOXES & DROPDOWNS)         */}
+      {/* CLINICAL FINDINGS & PROCEDURE PARAMETERS                             */}
       {/* ==================================================================== */}
       <div className="bg-white border-2 border-[#1A73E8]/30 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4 print:hidden">
         {/* Category Selector Tabs */}
@@ -1665,11 +1664,11 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
               <span className="w-2 h-2 rounded-full bg-[#1A73E8] animate-ping" />
               <h2 className="text-xs font-black uppercase tracking-wider text-[#1A73E8] flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-[#1A73E8]" />
-                Interactive Seed Criteria Selector
+                Procedure Findings &amp; Clinical Parameters
               </h2>
             </div>
             <p className="text-[11px] text-[#5F6368] mt-0.5">
-              Select findings and procedural parameters below to auto-synthesize
+              Select findings and procedural parameters below to generate
               the clinical narrative, operative notes, medications, and advice.
             </p>
           </div>
@@ -2319,7 +2318,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
       </div>
 
       {/* ==================================================================== */}
-      {/* VIEW A: OFFICIAL PRINTOUT PREVIEW (CLEAN A4 WITH 1-CLICK COPIERS)   */}
+      {/* VIEW A: OFFICIAL PRINTOUT PREVIEW (CLEAN A4)                         */}
       {/* ==================================================================== */}
       {activeTab === "preview" && (
         <div className="bg-white border border-[#DADCE0] rounded-2xl p-3 sm:p-6 md:p-10 shadow-sm space-y-6 print:border-none print:shadow-none print:p-0">

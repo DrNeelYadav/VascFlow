@@ -4,16 +4,10 @@ import React, { useState, useEffect } from "react";
 import { usePatientLogisticsStore, PatientLogisticsRecord } from "@/app/lib/logistics/patientLogisticsStore";
 import {
   BedDouble,
-  Users,
   Search,
-  Filter,
   ArrowRightLeft,
   CheckCircle2,
-  Sparkles,
-  AlertCircle,
   X,
-  Building,
-  UserCheck,
   Stethoscope,
 } from "lucide-react";
 
@@ -159,23 +153,17 @@ export default function BedBoardPage() {
   }, [patients]);
 
   const [selectedWard, setSelectedWard] = useState<string>("all");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [transferModalBed, setTransferModalBed] = useState<BedRecord | null>(null);
   const [targetWard, setTargetWard] = useState<string>("ir_icu");
   const [actionSuccessMessage, setActionSuccessMessage] = useState<string | null>(null);
 
-  // Compute metrics
-  const totalBeds = beds.length;
-  const occupiedCount = beds.filter((b) => b.status === "occupied").length;
-  const vacantCount = beds.filter((b) => b.status === "vacant").length;
-  const cleaningCount = beds.filter((b) => b.status === "cleaning").length;
-  const occupancyPercent = Math.round((occupiedCount / totalBeds) * 100);
+  // Only occupied beds are displayed
+  const occupiedBeds = beds.filter((bed) => bed.status === "occupied");
 
-  // Filtered beds
-  const filteredBeds = beds.filter((bed) => {
+  // Filtered occupied beds
+  const filteredBeds = occupiedBeds.filter((bed) => {
     if (selectedWard !== "all" && bed.ward !== selectedWard) return false;
-    if (selectedStatus !== "all" && bed.status !== selectedStatus) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchName = bed.ptName.toLowerCase().includes(q);
@@ -221,52 +209,19 @@ export default function BedBoardPage() {
   };
 
   return (
-    <div className="space-y-5">
-      {/* Top Header Card */}
-      <div className="bg-white border border-[#DADCE0] rounded-2xl p-5 shadow-xs">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#1E8E3E]" />
-              <h1 className="text-lg font-bold text-[#202124]">
-                28-Bed Inpatient Bed Board
-              </h1>
-              <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#E8F0FE] text-[#1A73E8]">
-                Real-Time Bed Matrix
-              </span>
-            </div>
-            <p className="text-xs text-[#5F6368]">
-              Department of Interventional Radiology • SMS Medical College & Attached Hospitals
-            </p>
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-            <div className="px-3.5 py-2 rounded-xl bg-[#F8F9FA] border border-[#DADCE0]">
-              <div className="text-[11px] text-[#5F6368]">Total Capacity</div>
-              <div className="text-base font-bold text-[#202124]">{totalBeds} Beds</div>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-[#E8F0FE] border border-[#D2E3FC]">
-              <div className="text-[11px] text-[#1A73E8] font-medium">Occupied</div>
-              <div className="text-base font-bold text-[#1A73E8]">
-                {occupiedCount} ({occupancyPercent}%)
-              </div>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-[#E6F4EA] border border-[#CEEAD6]">
-              <div className="text-[11px] text-[#137333] font-medium">Available</div>
-              <div className="text-base font-bold text-[#137333]">{vacantCount} Beds</div>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-[#FEF7E0] border border-[#FEEFC3]">
-              <div className="text-[11px] text-[#B06000] font-medium">Sanitizing</div>
-              <div className="text-base font-bold text-[#B06000]">{cleaningCount} Beds</div>
-            </div>
-          </div>
+    <div className="space-y-4">
+      {/* Minimal Header & Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E5E7EB] pb-3">
+        <div className="flex items-center gap-2">
+          <h1 className="text-base font-semibold text-[#111827]">Occupied Beds</h1>
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563]">
+            {filteredBeds.length} active
+          </span>
         </div>
 
-        {/* Filters and Search Bar */}
-        <div className="mt-5 pt-4 border-t border-[#F1F3F4] flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Ward Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 text-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          {/* Ward filter tabs */}
+          <div className="flex items-center gap-1 text-xs">
             {[
               { id: "all", label: "All Wards" },
               { id: "old_gastro_ward", label: "Old Gastro IR Ward" },
@@ -275,10 +230,10 @@ export default function BedBoardPage() {
               <button
                 key={tab.id}
                 onClick={() => setSelectedWard(tab.id)}
-                className={`px-3 py-1.5 rounded-full font-medium transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                   selectedWard === tab.id
-                    ? "bg-[#1A73E8] text-white shadow-xs"
-                    : "bg-white text-[#3C4043] border border-[#DADCE0] hover:bg-[#F1F3F4]"
+                    ? "bg-[#111827] text-white"
+                    : "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB]"
                 }`}
               >
                 {tab.label}
@@ -286,222 +241,159 @@ export default function BedBoardPage() {
             ))}
           </div>
 
-          {/* Status and Search */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-1.5 rounded-full border border-[#DADCE0] bg-white text-xs text-[#3C4043] focus:border-[#1A73E8] focus:outline-none"
-            >
-              <option value="all">All Statuses</option>
-              <option value="occupied">Occupied Only</option>
-              <option value="vacant">Vacant Only</option>
-              <option value="cleaning">Sanitizing Only</option>
-            </select>
-
-            <div className="relative flex-1 sm:flex-initial">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#5F6368]" />
-              <input
-                type="text"
-                placeholder="Search bed, patient, CR No..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 rounded-full border border-[#DADCE0] bg-white text-xs text-[#202124] focus:border-[#1A73E8] focus:outline-none w-full sm:w-56"
-              />
-            </div>
+          {/* Search bar */}
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+            <input
+              type="text"
+              placeholder="Search occupied bed, patient, CR No..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 pr-3 py-1 rounded-md border border-[#D1D5DB] bg-white text-xs text-[#111827] placeholder:text-[#9CA3AF] focus:border-[#111827] focus:outline-none w-full sm:w-60"
+            />
           </div>
         </div>
       </div>
 
-      {/* Bed Board Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-        {filteredBeds.map((bed) => {
-          const isOccupied = bed.status === "occupied";
-          const isCleaning = bed.status === "cleaning";
-          const isVacant = bed.status === "vacant";
-
-          return (
+      {/* Occupied Bed Grid */}
+      {filteredBeds.length === 0 ? (
+        <div className="text-center py-12 border border-dashed border-[#E5E7EB] rounded-xl text-xs text-[#6B7280]">
+          No occupied beds matching the current filter.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          {filteredBeds.map((bed) => (
             <div
               key={bed.id}
-              className={`bg-white border rounded-2xl p-4 shadow-xs transition-all hover:shadow-md flex flex-col justify-between ${
-                isOccupied
-                  ? "border-[#DADCE0]"
-                  : isCleaning
-                  ? "border-[#FEEFC3] bg-[#FEFDF8]"
-                  : "border-[#CEEAD6] bg-[#F9FCFA]"
-              }`}
+              className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 flex flex-col justify-between hover:border-[#D1D5DB] transition-colors"
             >
               <div>
-                {/* Bed Identifier & Status Tag */}
-                <div className="flex items-center justify-between gap-2 mb-3">
+                {/* Bed Identifier & Ward */}
+                <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2">
-                    <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs ${
-                        isOccupied
-                          ? "bg-[#E8F0FE] text-[#1A73E8]"
-                          : isCleaning
-                          ? "bg-[#FEF7E0] text-[#B06000]"
-                          : "bg-[#E6F4EA] text-[#137333]"
-                      }`}
-                    >
-                      <BedDouble className="w-4 h-4" />
+                    <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#374151] flex items-center justify-center">
+                      <BedDouble className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <span className="text-xs font-bold text-[#202124]">
+                      <span className="text-xs font-semibold text-[#111827]">
                         {bed.id}
                       </span>
-                      <span className="text-[10px] text-[#5F6368] block">
+                      <span className="text-[10px] text-[#6B7280] ml-1.5 font-normal">
                         {bed.wardTitle}
                       </span>
                     </div>
                   </div>
 
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                      isOccupied
-                        ? "bg-[#E8F0FE] text-[#1A73E8]"
-                        : isCleaning
-                        ? "bg-[#FEF7E0] text-[#B06000]"
-                        : "bg-[#E6F4EA] text-[#137333]"
-                    }`}
-                  >
-                    {bed.status}
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-[#FEF3C7] text-[#92400E]">
+                    Occupied
                   </span>
                 </div>
 
-                {/* Patient / Bed Info */}
-                {isOccupied ? (
-                  <div className="space-y-2 mb-3 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#202124] text-sm truncate">
-                        {bed.ptName}
-                      </span>
-                      <span className="font-mono text-[10px] font-semibold text-[#5F6368]">
-                        {bed.crNo}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#3C4043] line-clamp-2 bg-[#F8F9FA] p-2 rounded-lg border border-[#DADCE0]">
-                      {bed.diag}
-                    </p>
-                    <div className="flex items-center gap-1.5 text-[10px] text-[#5F6368]">
-                      <Stethoscope className="w-3 h-3 text-[#1A73E8]" />
-                      <span>{bed.doctor}</span>
-                    </div>
+                {/* Patient Details */}
+                <div className="space-y-1.5 text-xs mb-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-semibold text-[#111827] truncate">
+                      {bed.ptName}
+                    </span>
+                    <span className="font-mono text-[10px] text-[#6B7280] shrink-0">
+                      {bed.crNo}
+                    </span>
                   </div>
-                ) : (
-                  <div className="space-y-2 mb-3 text-xs py-2">
-                    <p className="text-[11px] text-[#5F6368] italic">
-                      {bed.diag}
-                    </p>
-                    <div className="text-[10px] text-[#80868B]">
-                      {isCleaning
-                        ? "Housekeeping protocol in progress"
-                        : "Ready for bed allocation & catheter intake"}
-                    </div>
+
+                  <p className="text-[11px] text-[#374151] bg-[#F9FAFB] p-2 rounded border border-[#E5E7EB] leading-relaxed line-clamp-3">
+                    {bed.diag}
+                  </p>
+
+                  <div className="flex items-center gap-1.5 text-[10px] text-[#6B7280] pt-0.5">
+                    <Stethoscope className="w-3 h-3 text-[#4B5563] shrink-0" />
+                    <span className="truncate">{bed.doctor}</span>
                   </div>
-                )}
+                </div>
               </div>
 
-              {/* Action Buttons (White surfaces with Google styling) */}
-              <div className="pt-3 border-t border-[#F1F3F4] flex items-center justify-between gap-2">
-                {isOccupied ? (
-                  <>
-                    <button
-                      onClick={() => setTransferModalBed(bed)}
-                      className="flex-1 py-1.5 px-2 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                    >
-                      <ArrowRightLeft className="w-3 h-3 text-[#5F6368]" />
-                      <span>Transfer</span>
-                    </button>
-                    <button
-                      onClick={() => handleToggleStatus(bed.id)}
-                      className="py-1.5 px-3 rounded-full border border-[#DADCE0] bg-white text-[#C5221F] hover:bg-[#FCE8E6] text-[11px] font-medium transition-colors cursor-pointer"
-                      title="Discharge patient and mark bed for sanitization"
-                    >
-                      Discharge
-                    </button>
-                  </>
-                ) : isCleaning ? (
-                  <button
-                    onClick={() => handleToggleStatus(bed.id)}
-                    className="w-full py-1.5 px-2 rounded-full border border-[#CEEAD6] bg-[#FFFFFF] text-[#137333] hover:bg-[#E6F4EA] text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Sanitization Complete → Make Vacant</span>
-                  </button>
-                ) : (
-                  <div className="w-full py-1.5 px-2 rounded-full bg-[#F8F9FA] border border-[#DADCE0] text-[#5F6368] text-[11px] font-medium flex items-center justify-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#137333]" />
-                    <span>Bed Vacant &amp; Available</span>
-                  </div>
-                )}
+              {/* Actions */}
+              <div className="pt-2 border-t border-[#F3F4F6] flex items-center gap-2">
+                <button
+                  onClick={() => setTransferModalBed(bed)}
+                  className="flex-1 py-1 px-2.5 rounded border border-[#D1D5DB] bg-white text-[#374151] hover:bg-[#F9FAFB] text-xs font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                >
+                  <ArrowRightLeft className="w-3 h-3 text-[#6B7280]" />
+                  <span>Transfer</span>
+                </button>
+                <button
+                  onClick={() => handleToggleStatus(bed.id)}
+                  className="py-1 px-2.5 rounded border border-[#FECACA] bg-white text-[#DC2626] hover:bg-[#FEF2F2] text-xs font-medium transition-colors cursor-pointer"
+                  title="Discharge patient"
+                >
+                  Discharge
+                </button>
               </div>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Transfer Patient Modal */}
       {transferModalBed && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white border border-[#DADCE0] rounded-2xl w-full max-w-md shadow-xl p-6 relative">
+          <div className="bg-white border border-[#E5E7EB] rounded-xl w-full max-w-md shadow-xl p-5 relative">
             <button
               onClick={() => setTransferModalBed(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] hover:text-[#202124] transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-1 rounded-md hover:bg-[#F3F4F6] text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center">
-                <ArrowRightLeft className="w-5 h-5" />
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-[#F3F4F6] text-[#111827] flex items-center justify-center">
+                <ArrowRightLeft className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#202124]">
-                  Inpatient Bed Transfer Order
+                <h3 className="text-sm font-semibold text-[#111827]">
+                  Bed Transfer Order
                 </h3>
-                <p className="text-xs text-[#5F6368]">
-                  From Bed: {transferModalBed.id} ({transferModalBed.wardTitle})
+                <p className="text-[11px] text-[#6B7280]">
+                  From: {transferModalBed.id} ({transferModalBed.wardTitle})
                 </p>
               </div>
             </div>
 
             {actionSuccessMessage ? (
               <div className="py-6 text-center space-y-2">
-                <CheckCircle2 className="w-10 h-10 text-[#1E8E3E] mx-auto" />
-                <p className="text-xs font-semibold text-[#1E8E3E]">
+                <CheckCircle2 className="w-8 h-8 text-[#059669] mx-auto" />
+                <p className="text-xs font-semibold text-[#059669]">
                   {actionSuccessMessage}
                 </p>
               </div>
             ) : (
-              <div className="space-y-4 text-xs">
-                <div className="bg-[#F8F9FA] border border-[#DADCE0] rounded-xl p-3 space-y-1">
+              <div className="space-y-3.5 text-xs">
+                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-2.5 space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-[#5F6368]">Patient Name:</span>
-                    <span className="font-bold text-[#202124]">
+                    <span className="text-[#6B7280]">Patient:</span>
+                    <span className="font-semibold text-[#111827]">
                       {transferModalBed.ptName}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#5F6368]">CR Number:</span>
-                    <span className="font-mono text-[#202124]">
+                    <span className="text-[#6B7280]">CR Number:</span>
+                    <span className="font-mono text-[#111827]">
                       {transferModalBed.crNo}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#5F6368]">Treating Consultant:</span>
-                    <span className="text-[#202124]">{transferModalBed.doctor}</span>
+                    <span className="text-[#6B7280]">Consultant:</span>
+                    <span className="text-[#111827]">{transferModalBed.doctor}</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#3C4043] mb-1">
+                  <label className="block text-[11px] font-medium text-[#374151] mb-1">
                     Destination Ward / Unit
                   </label>
                   <select
                     value={targetWard}
                     onChange={(e) => setTargetWard(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    className="w-full px-2.5 py-1.5 rounded-md border border-[#D1D5DB] bg-white text-xs text-[#111827] focus:border-[#111827] focus:outline-none"
                   >
                     <option value="old_gastro_ward">Old Gastro IR Ward</option>
                     <option value="ir_icu">IR ICU</option>
@@ -509,26 +401,26 @@ export default function BedBoardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#3C4043] mb-1">
-                    Clinical Reason for Transfer
+                  <label className="block text-[11px] font-medium text-[#374151] mb-1">
+                    Clinical Reason
                   </label>
                   <textarea
                     rows={2}
                     defaultValue="Post-procedure stabilization complete. Transitioning to step-down ward care."
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    className="w-full px-2.5 py-1.5 rounded-md border border-[#D1D5DB] bg-white text-xs text-[#111827] focus:border-[#111827] focus:outline-none resize-none"
                   />
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2">
+                <div className="flex items-center justify-end gap-2 pt-1">
                   <button
                     onClick={() => setTransferModalBed(null)}
-                    className="px-4 py-2 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] transition-colors cursor-pointer"
+                    className="px-3 py-1.5 rounded-md border border-[#D1D5DB] bg-white text-xs text-[#374151] hover:bg-[#F9FAFB] transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleExecuteTransfer}
-                    className="px-4 py-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white font-semibold transition-colors cursor-pointer"
+                    className="px-3 py-1.5 rounded-md bg-[#111827] hover:bg-black text-white text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Execute Transfer
                   </button>

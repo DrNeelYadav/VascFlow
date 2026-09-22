@@ -20,6 +20,7 @@ import {
   ChevronDown,
   X,
   GraduationCap,
+  BarChart3,
 } from "lucide-react";
 import { useEndoflowStore } from "../dashboard/useEndoflowStore";
 
@@ -131,6 +132,13 @@ export function GoogleSidebar({
       icon: BookOpen,
     },
     {
+      id: "cath-lab-masters",
+      name: "Cath-Lab Masters & Analytics",
+      href: "/dashboard/cath-lab-masters",
+      icon: BarChart3,
+      badge: "2025-2026",
+    },
+    {
       id: "discharge",
       name: "Discharge Summaries & Operative Notes",
       href: "/dashboard/discharge",
@@ -213,7 +221,11 @@ export function GoogleSidebar({
           {/* Header & Toggle Button */}
           <div className="flex items-center justify-between px-1 pt-0.5">
             {(!isCollapsed || isMobileOpen) && (
-              <div className="flex items-center gap-2">
+              <Link
+                href="/dashboard"
+                onClick={() => onCloseMobile?.()}
+                className="flex items-center gap-2 hover:opacity-85 transition-opacity"
+              >
                 <div className="w-2.5 h-2.5 rounded-full bg-[#007AFF] ring-4 ring-[#007AFF]/20 animate-pulse" />
                 <div className="flex flex-col">
                   <span className="text-[13px] font-semibold text-[#1C1C1E] tracking-tight leading-none">
@@ -223,7 +235,7 @@ export function GoogleSidebar({
                     Angiosuite Clinical Suite
                   </span>
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* Mobile Close Button */}

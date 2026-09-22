@@ -450,16 +450,12 @@ export default function DrugProtocolsPage() {
           </div>
         </div>
 
-        <div className="w-full sm:w-80 relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-2.5 text-[#8E8E93]" />
-          <input
-            type="text"
-            placeholder="Search protocol, drug, package..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3.5 py-2 text-xs bg-[#F2F2F7] hover:bg-[#E5E5EA]/70 focus:bg-white border border-transparent focus:border-[#007AFF] rounded-xl text-[#1C1C1E] placeholder-[#8E8E93] focus:outline-none transition shadow-xs"
-          />
-        </div>
+        {activeProtocol.yojanaRequirement && (
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs font-mono font-bold shrink-0">
+            <span>₹{activeProtocol.yojanaRequirement.tariffAmountInr.toLocaleString("en-IN")}</span>
+            <span className="text-[10px] text-blue-600 font-normal">({activeProtocol.yojanaRequirement.packageCode})</span>
+          </div>
+        )}
       </div>
 
       {/* Sleek Protocol Selector Bar - Dropdown Menu replacing bulky 4-col list */}

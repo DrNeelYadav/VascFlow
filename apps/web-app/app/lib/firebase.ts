@@ -1,5 +1,11 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import {
+  initializeFirestore,
+  getFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  type Firestore,
+} from "firebase/firestore";
 
 export const firebaseConfig = {
   apiKey:
@@ -36,8 +42,22 @@ export const app: FirebaseApp =
 
 /**
  * Primary Google Cloud Firestore instance for VascFlow OS collections.
+ * Uses persistent local IndexedDB cache with multi-tab management in browser.
  */
-export const db: Firestore = getFirestore(app);
+export const db: Firestore = (() => {
+  if (typeof window !== "undefined") {
+    try {
+      return initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager(),
+        }),
+      });
+    } catch {
+      return getFirestore(app);
+    }
+  }
+  return getFirestore(app);
+})();
 export const FIRESTORE: Firestore = db;
 
 /**

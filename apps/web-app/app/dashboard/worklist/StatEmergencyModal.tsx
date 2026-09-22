@@ -79,26 +79,52 @@ const STAT_PRESETS = [
   },
 ];
 
+export const BLANK_STAT_FORM = {
+  patientName: "",
+  crNumber: "",
+  procedureName: STAT_PRESETS[0].procedure,
+  statIndication: STAT_PRESETS[0].indication,
+  room: STAT_PRESETS[0].room,
+  modality: STAT_PRESETS[0].modality,
+  operatorResident: "Dr. Neel Yadav",
+  supervisingConsultant: "Dr. Meenu Bagarhatta",
+  serumCreatinine: "",
+  isDialysisPatient: false,
+};
+
 export function StatEmergencyModal({
   isOpen,
   onClose,
   onActivateStatCase,
 }: StatEmergencyModalProps) {
   const [selectedPresetIndex, setSelectedPresetIndex] = useState<number>(0);
-  const [patientName, setPatientName] = useState<string>("STAT Emergency / Unknown");
-  const [crNumber, setCrNumber] = useState<string>(() => `STAT-SMS-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`);
+  const [patientName, setPatientName] = useState<string>(BLANK_STAT_FORM.patientName);
+  const [crNumber, setCrNumber] = useState<string>(BLANK_STAT_FORM.crNumber);
   const [procedureName, setProcedureName] = useState<string>(STAT_PRESETS[0].procedure);
   const [statIndication, setStatIndication] = useState<string>(STAT_PRESETS[0].indication);
   const [room, setRoom] = useState<string>(STAT_PRESETS[0].room);
   const [modality, setModality] = useState<"XA" | "CT" | "US" | "ROSE">(STAT_PRESETS[0].modality);
-  const [operatorResident, setOperatorResident] = useState<string>("Dr. Neel Yadav");
-  const [supervisingConsultant, setSupervisingConsultant] = useState<string>("Dr. Meenu Bagarhatta");
-  const [serumCreatinine, setSerumCreatinine] = useState<string>("1.2");
+  const [operatorResident, setOperatorResident] = useState<string>(BLANK_STAT_FORM.operatorResident);
+  const [supervisingConsultant, setSupervisingConsultant] = useState<string>(BLANK_STAT_FORM.supervisingConsultant);
+  const [serumCreatinine, setSerumCreatinine] = useState<string>(BLANK_STAT_FORM.serumCreatinine);
   const [isDialysisPatient, setIsDialysisPatient] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isOpen) return;
+    setPatientName(BLANK_STAT_FORM.patientName);
+    setCrNumber(BLANK_STAT_FORM.crNumber);
+    setSelectedPresetIndex(0);
+    setProcedureName(STAT_PRESETS[0].procedure);
+    setStatIndication(STAT_PRESETS[0].indication);
+    setRoom(STAT_PRESETS[0].room);
+    setModality(STAT_PRESETS[0].modality);
+    setOperatorResident(BLANK_STAT_FORM.operatorResident);
+    setSupervisingConsultant(BLANK_STAT_FORM.supervisingConsultant);
+    setSerumCreatinine(BLANK_STAT_FORM.serumCreatinine);
+    setIsDialysisPatient(false);
+    setIsSubmitting(false);
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -232,6 +258,8 @@ export function StatEmergencyModal({
                 type="text"
                 value={patientName}
                 onChange={(e) => setPatientName(e.target.value)}
+                autoComplete="off"
+                data-lpignore="true"
                 className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-medium focus:border-[#EA4335] focus:outline-hidden focus:ring-1 focus:ring-[#EA4335]"
                 placeholder="e.g. Rameshwar Sharma"
               />
@@ -256,6 +284,8 @@ export function StatEmergencyModal({
                 type="text"
                 value={crNumber}
                 onChange={(e) => setCrNumber(e.target.value)}
+                autoComplete="off"
+                data-lpignore="true"
                 className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-mono font-medium focus:border-[#EA4335] focus:outline-hidden"
               />
             </div>
@@ -268,6 +298,8 @@ export function StatEmergencyModal({
                 type="text"
                 value={procedureName}
                 onChange={(e) => setProcedureName(e.target.value)}
+                autoComplete="off"
+                data-lpignore="true"
                 className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-medium focus:border-[#EA4335] focus:outline-hidden"
               />
             </div>
@@ -333,6 +365,8 @@ export function StatEmergencyModal({
                   min="0.4"
                   max="12.0"
                   value={serumCreatinine}
+                  autoComplete="off"
+                  data-lpignore="true"
                   onChange={(e) => setSerumCreatinine(e.target.value)}
                   className="w-20 rounded-lg border border-[#DADCE0] px-2 py-1 text-xs font-mono font-bold bg-white"
                 />

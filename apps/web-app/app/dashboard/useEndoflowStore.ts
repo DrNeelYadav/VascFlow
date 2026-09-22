@@ -14,10 +14,20 @@ import {
   DEMO_BOOKED_CASES,
   DEMO_DOPPLER_RECORDS,
 } from "../lib/demoSeedData";
+import { ClinicalDisposition } from "../types/clinical";
 
 // ============================================================================
 // STRICT ZOD VALIDATION SCHEMAS & TYPES (ZERO VULNERABILITIES)
 // ============================================================================
+
+export const ClinicalDispositionSchema = z.enum([
+  "STAT_CATH_LAB",
+  "ADMIT_WARD_PREOP",
+  "ELECTIVE_OUTPATIENT",
+  "NO_INTERVENTION_NEEDED",
+  "DEFERRED_REVIEW_SOS",
+  "SURVEILLANCE_PROTOCOL",
+]);
 
 export const ClinicalStageSchema = z.enum([
   "Scheduled",
@@ -140,6 +150,8 @@ export const EndoflowPatientSchema = z.object({
   clinicalHistory3Months: z.string().optional(),
   history3Months: z.string().optional(),
   cectFindings: z.string().optional(),
+  disposition: ClinicalDispositionSchema.optional(),
+  sosTriggerSymptoms: z.string().optional(),
 });
 export type EndoflowPatient = z.infer<typeof EndoflowPatientSchema>;
 
@@ -348,6 +360,8 @@ export const BookedCaseSchema = z.object({
   ).default([]),
   urgency: z.string().optional(),
   accessionNumber: z.string().optional(),
+  disposition: ClinicalDispositionSchema.optional(),
+  sosTriggerSymptoms: z.string().optional(),
 });
 
 export const BookedCaseInputSchema = BookedCaseSchema.omit({
@@ -394,6 +408,8 @@ export const CtReviewSchema = z.object({
   accessionNumber: z.string().optional(),
   clinicalHistory3Months: z.string().optional(),
   cectFindings: z.string().optional(),
+  disposition: ClinicalDispositionSchema.optional(),
+  sosTriggerSymptoms: z.string().optional(),
 });
 
 export type CtReviewRecord = z.infer<typeof CtReviewSchema>;
@@ -505,6 +521,11 @@ export interface EndoflowState {
   setFilterModality: (modality: string) => void;
   resetToDefaultPatients: () => void;
   loadDemoSeedData: () => void;
+
+  // Cloud Sync Alert Notification
+  syncAlert: string | null;
+  setSyncAlert: (alert: string | null) => void;
+  clearSyncAlert: () => void;
 }
 
 // ============================================================================
@@ -534,6 +555,8 @@ async function syncPatientToFirestore(patient: EndoflowPatient): Promise<void> {
     ]);
   } catch (error) {
     console.warn(`[Firestore] Failed to persist patient ${patient?.id}:`, error);
+    const alertMsg = `Offline / Cloud sync notice for patient "${patient.name || patient.id}". Data preserved locally in offline browser storage.`;
+    useEndoflowStore.getState().setSyncAlert(alertMsg);
   }
 }
 
@@ -548,6 +571,9 @@ export const useEndoflowStore = create<EndoflowState>()(
       activeCaseId: null,
       searchQuery: "",
       filterModality: "all",
+      syncAlert: null,
+      setSyncAlert: (alert: string | null) => set({ syncAlert: alert }),
+      clearSyncAlert: () => set({ syncAlert: null }),
 
       addPatient: async (patient: EndoflowPatient) => {
         set((state) => ({

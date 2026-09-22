@@ -15,6 +15,14 @@ export interface StaffPersona {
 
 export type SchemeType = 'MAAY_CHIRANJEEVI' | 'RGHS' | 'BPL' | 'GENERAL';
 
+export type ClinicalDisposition =
+  | 'STAT_CATH_LAB'          // Emergency activation / immediate procedure
+  | 'ADMIT_WARD_PREOP'       // Occupies a bed on the 8-bed ward board for workup
+  | 'ELECTIVE_OUTPATIENT'    // Scheduled procedure without occupying ward bed
+  | 'NO_INTERVENTION_NEEDED' // Conservative / primary care referral
+  | 'DEFERRED_REVIEW_SOS'    // Deferred; re-evaluate on SOS symptom triggers
+  | 'SURVEILLANCE_PROTOCOL'; // Interval imaging follow-up (3, 6, 12 months)
+
 export interface PatientSafetyProfile {
   id: string;
   crNo: string;
@@ -37,6 +45,8 @@ export interface PatientSafetyProfile {
   admissionDate?: string;
   dischargeDate?: string;
   phone?: string;
+  disposition?: ClinicalDisposition;
+  sosTriggerSymptoms?: string;
 }
 
 export type BookingStatus = 'Scheduled' | 'In-Lab' | 'Completed' | 'Deferred';

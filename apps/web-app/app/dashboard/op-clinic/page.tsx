@@ -7,6 +7,7 @@ import {
   CtReviewRecord,
   EndoflowPatient,
 } from "../useEndoflowStore";
+import { ClinicalDisposition } from "../../types/clinical";
 import {
   IR_CLINICAL_PROTOCOLS,
 } from "@vascule/catalog";
@@ -46,7 +47,28 @@ import {
   Layers,
   Activity,
   History,
+  ShieldAlert,
+  Zap,
 } from "lucide-react";
+
+export const BLANK_PATIENT_FORM = {
+  patientName: "",
+  age: "" as unknown as number,
+  sex: "Male" as "Male" | "Female",
+  contactNumber: "",
+  smsBillId: "",
+  ctNumber: "",
+  accessionNumber: "",
+  hospitalSource: "SMS Hospital",
+  organSystem: "Liver & Hepatobiliary",
+  diseaseKey: "budd_chiari_dips",
+  primaryDiagnosis: "",
+  chiefComplaints: "",
+  history3Months: "",
+  cectFindings: "",
+  disposition: "ADMIT_WARD_PREOP" as ClinicalDisposition,
+  sosTriggerSymptoms: "",
+};
 
 export default function OpClinicConsultationDeskPage() {
   const {
@@ -61,6 +83,8 @@ export default function OpClinicConsultationDeskPage() {
     bookCase,
     bookedCases,
     currentStaff,
+    syncAlert,
+    clearSyncAlert,
   } = useEndoflowStore();
 
   const activeStaff =
@@ -71,27 +95,30 @@ export default function OpClinicConsultationDeskPage() {
   // Selected Mode: "desk" (Consultation Desk) or "queue" (Review Queue Directory)
   const [activeTab, setActiveTab] = useState<"desk" | "queue">("desk");
 
-  // Patient Selector State
-  // "new" or a ctReview id (e.g. "CT-REV-001") or patient id (e.g. "PT01")
-  const [selectedPatientKey, setSelectedPatientKey] = useState<string>("CT-REV-001");
+  // Patient Selector State - default to clean "new" patient intake
+  const [selectedPatientKey, setSelectedPatientKey] = useState<string>("new");
 
-  // Form Fields for Active Consultation
-  const [patientName, setPatientName] = useState<string>("");
-  const [age, setAge] = useState<number>(55);
-  const [sex, setSex] = useState<"Male" | "Female">("Male");
-  const [contactNumber, setContactNumber] = useState<string>("");
-  const [smsBillId, setSmsBillId] = useState<string>("");
-  const [ctNumber, setCtNumber] = useState<string>("");
-  const [accessionNumber, setAccessionNumber] = useState<string>("SONI-ACC-2026-001");
-  const [hospitalSource, setHospitalSource] = useState<string>("SONI Hospital");
-  const [organSystem, setOrganSystem] = useState<string>("Liver & Hepatobiliary");
-  const [diseaseKey, setDiseaseKey] = useState<string>("budd_chiari_dips");
-  const [primaryDiagnosis, setPrimaryDiagnosis] = useState<string>("");
+  // Form Fields for Active Consultation - initialized strictly blank
+  const [patientName, setPatientName] = useState<string>(BLANK_PATIENT_FORM.patientName);
+  const [age, setAge] = useState<number | string>("");
+  const [sex, setSex] = useState<"Male" | "Female">(BLANK_PATIENT_FORM.sex);
+  const [contactNumber, setContactNumber] = useState<string>(BLANK_PATIENT_FORM.contactNumber);
+  const [smsBillId, setSmsBillId] = useState<string>(BLANK_PATIENT_FORM.smsBillId);
+  const [ctNumber, setCtNumber] = useState<string>(BLANK_PATIENT_FORM.ctNumber);
+  const [accessionNumber, setAccessionNumber] = useState<string>(BLANK_PATIENT_FORM.accessionNumber);
+  const [hospitalSource, setHospitalSource] = useState<string>(BLANK_PATIENT_FORM.hospitalSource);
+  const [organSystem, setOrganSystem] = useState<string>(BLANK_PATIENT_FORM.organSystem);
+  const [diseaseKey, setDiseaseKey] = useState<string>(BLANK_PATIENT_FORM.diseaseKey);
+  const [primaryDiagnosis, setPrimaryDiagnosis] = useState<string>(BLANK_PATIENT_FORM.primaryDiagnosis);
 
   // Key Clinical History Blocks
-  const [chiefComplaints, setChiefComplaints] = useState<string>("");
-  const [history3Months, setHistory3Months] = useState<string>("");
-  const [cectFindings, setCectFindings] = useState<string>("");
+  const [chiefComplaints, setChiefComplaints] = useState<string>(BLANK_PATIENT_FORM.chiefComplaints);
+  const [history3Months, setHistory3Months] = useState<string>(BLANK_PATIENT_FORM.history3Months);
+  const [cectFindings, setCectFindings] = useState<string>(BLANK_PATIENT_FORM.cectFindings);
+
+  // Multi-Track Clinical Disposition Matrix State
+  const [disposition, setDisposition] = useState<ClinicalDisposition>(BLANK_PATIENT_FORM.disposition);
+  const [sosTriggerSymptoms, setSosTriggerSymptoms] = useState<string>(BLANK_PATIENT_FORM.sosTriggerSymptoms);
 
   // Filtering & Search for Queue
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -149,96 +176,78 @@ export default function OpClinicConsultationDeskPage() {
     return list;
   }, [ctReviews, patients]);
 
-  // Load Patient Data into Consultation Desk
+  // Load Patient Data into Consultation Desk - clean zero-ghost loading
   const loadPatientIntoDesk = (key: string) => {
     setSelectedPatientKey(key);
 
     if (key === "new") {
-      // Deterministic Bill & CT ID without Math.random()
-      const nextSeq = String(ctReviews.length + 101).padStart(4, "0");
-      setPatientName("");
-      setAge(50);
-      setSex("Male");
-      setContactNumber("9829000000");
-      setSmsBillId(`SMS-OPD-2026-${nextSeq}`);
-      setCtNumber(`SMS-CT-2026-${nextSeq}`);
-      setAccessionNumber(`SONI-ACC-2026-${nextSeq}`);
-      setHospitalSource("SMS Hospital");
-      setOrganSystem("Liver & Hepatobiliary");
-      setDiseaseKey("budd_chiari_dips");
+      setPatientName(BLANK_PATIENT_FORM.patientName);
+      setAge("");
+      setSex(BLANK_PATIENT_FORM.sex);
+      setContactNumber(BLANK_PATIENT_FORM.contactNumber);
+      setSmsBillId("");
+      setCtNumber("");
+      setAccessionNumber("");
+      setHospitalSource(BLANK_PATIENT_FORM.hospitalSource);
+      setOrganSystem(BLANK_PATIENT_FORM.organSystem);
+      setDiseaseKey(BLANK_PATIENT_FORM.diseaseKey);
       setPrimaryDiagnosis("");
       setChiefComplaints("");
       setHistory3Months("");
       setCectFindings("");
+      setDisposition(BLANK_PATIENT_FORM.disposition);
+      setSosTriggerSymptoms(BLANK_PATIENT_FORM.sosTriggerSymptoms);
       return;
     }
 
     // Find in CT Reviews
     const review = ctReviews.find((r) => r.id === key);
     if (review) {
-      setPatientName(review.patientName);
-      setAge(review.age);
-      setSex(review.sex);
-      setContactNumber(review.contactNumber || "9829000000");
-      setSmsBillId(review.smsBillId);
-      setCtNumber(review.ctNumber);
-      setAccessionNumber(review.accessionNumber || review.ctNumber || "SONI-ACC-2026-001");
-      setHospitalSource(review.hospitalSource || "SONI Hospital");
+      setPatientName(review.patientName || "");
+      setAge(review.age ?? "");
+      setSex(review.sex || "Male");
+      setContactNumber(review.contactNumber || "");
+      setSmsBillId(review.smsBillId || "");
+      setCtNumber(review.ctNumber || "");
+      setAccessionNumber(review.accessionNumber || review.ctNumber || "");
+      setHospitalSource(review.hospitalSource || "SMS Hospital");
       setOrganSystem(review.organSystem || "Liver & Hepatobiliary");
       setDiseaseKey(review.diseaseKey || "budd_chiari_dips");
-      setPrimaryDiagnosis(review.primaryDiagnosis);
-      setChiefComplaints(
-        review.presentingComplaints ||
-          "Refractory vascular symptoms, progressive abdominal discomfort, and marked physical fatigue."
-      );
-      setHistory3Months(
-        review.clinicalHistory3Months ||
-          review.clinicalHistory ||
-          "Over the past 3 months, patient experienced progressive escalation of symptoms with recurrent hospital presentations and failing conservative management."
-      );
-      setCectFindings(
-        review.cectFindings ||
-          review.ctReviewNotes ||
-          "Cross-sectional CECT reveals anatomical vascular distortion, luminal narrowing, and prominent collaterals feasible for endovascular catheter intervention."
-      );
+      setPrimaryDiagnosis(review.primaryDiagnosis || "");
+      setChiefComplaints(review.presentingComplaints || "");
+      setHistory3Months(review.clinicalHistory3Months || review.clinicalHistory || "");
+      setCectFindings(review.cectFindings || review.ctReviewNotes || "");
+      setDisposition(review.disposition || "ADMIT_WARD_PREOP");
+      setSosTriggerSymptoms(review.sosTriggerSymptoms || "");
       return;
     }
 
     // Find in Admitted Patients
     const patient = patients.find((p) => p.id === key);
     if (patient) {
-      setPatientName(patient.name);
-      setAge(patient.age);
-      setSex(patient.sex);
-      setContactNumber(patient.phone || "9829000000");
-      setSmsBillId(patient.hid);
-      setCtNumber(patient.scanId);
-      setAccessionNumber(patient.scanId || "SONI-ACC-98214");
+      setPatientName(patient.name || "");
+      setAge(patient.age ?? "");
+      setSex(patient.sex || "Male");
+      setContactNumber(patient.phone || "");
+      setSmsBillId(patient.hid || "");
+      setCtNumber(patient.scanId || "");
+      setAccessionNumber(patient.scanId || "");
       setHospitalSource("SMS Hospital");
       setDiseaseKey(patient.procedureKey);
       const proto = IR_CLINICAL_PROTOCOLS.find((pr) => pr.key === patient.procedureKey);
       if (proto) setOrganSystem(proto.organSystem);
-      setPrimaryDiagnosis(patient.procedure);
-      setChiefComplaints(
-        patient.chiefComplaints ||
-          patient.summary ||
-          "Chronic progressive vascular insufficiency requiring endovascular evaluation."
-      );
-      setHistory3Months(
-        patient.clinicalHistory3Months ||
-          patient.history3Months ||
-          "Past 3 months: progressive functional limitation, repeated outpatient clinic visits, and worsening imaging signs."
-      );
-      setCectFindings(
-        patient.cectFindings ||
-          "CECT angio demonstrates significant vessel remodeling and patent inflow/outflow suitable for targeted intervention."
-      );
+      setPrimaryDiagnosis(patient.procedure || "");
+      setChiefComplaints(patient.chiefComplaints || patient.summary || "");
+      setHistory3Months(patient.clinicalHistory3Months || patient.history3Months || "");
+      setCectFindings(patient.cectFindings || "");
+      setDisposition(patient.disposition || "ADMIT_WARD_PREOP");
+      setSosTriggerSymptoms(patient.sosTriggerSymptoms || "");
     }
   };
 
-  // Initial load on mount
+  // Initial load on mount - initializes desk cleanly
   useEffect(() => {
-    loadPatientIntoDesk(selectedPatientKey);
+    loadPatientIntoDesk("new");
   }, []);
 
   // Filtered Reviews for Queue Directory
@@ -269,84 +278,78 @@ export default function OpClinicConsultationDeskPage() {
   }, [diseaseKey]);
 
   // ==========================================================================
-  // ACTION 1: ADMIT TO WARD
+  // ACTION 1: MULTI-TRACK CLINICAL DISPOSITION (STRICT 8-BED INTEGRITY)
   // ==========================================================================
-  const handleAdmitToWard = () => {
+  const handleApplyDisposition = () => {
     if (!patientName.trim()) {
-      alert("Please enter a patient name before admitting.");
+      alert("Please enter a patient name before applying clinical disposition.");
       return;
     }
 
-    // Find next available bed or fallback
-    const vacantBed = beds.find((b) => b.status === "vacant") || beds[0];
     const generatedHid = smsBillId.trim() || `SMS-2026-${String(ctReviews.length + 101).padStart(4, "0")}`;
     const generatedScanId = ctNumber.trim() || `SMS-CT-2026-${String(ctReviews.length + 501).padStart(4, "0")}`;
-
     const newPatientId = selectedPatientKey.startsWith("PT")
       ? selectedPatientKey
       : `PT-OPD-${Date.now().toString().slice(-5)}`;
 
-    const newPatientRecord: EndoflowPatient = {
-      id: newPatientId,
-      name: patientName.trim(),
-      age: Number(age),
-      sex,
-      hid: generatedHid,
-      scanId: generatedScanId,
-      phone: contactNumber.trim() || "9829000000",
-      unit: "Unit I / Interventional Radiology (Old Gastro Ward Bed IR-1)",
-      postedBy: `${activeStaff.name} (${activeStaff.code})`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      summary: `${chiefComplaints.trim() || primaryDiagnosis.trim()}. 3-Month Course: ${history3Months.trim()}`,
-      history3Months: history3Months.trim(),
-      clinicalHistory3Months: history3Months.trim(),
-      chiefComplaints: chiefComplaints.trim(),
-      cectFindings: cectFindings.trim(),
-      procedureKey: diseaseKey,
-      procedure: matchedProtocol.title,
-      modality: "CT",
-      status: "Pre-Op Pending",
-      scheme: "MAAY",
-      schemeTid: "TID-9482103",
-      beneficiaryId: "Jan Aadhaar 7821-9482-10",
-      preAuthStatus: "Approved",
-      ipd: {
-        admissionType: "IPD",
-        ward: "IR Ward D-Block",
-        bed: vacantBed ? vacantBed.title : "Bed 01",
-        podDay: "Pre-Op",
-      },
-      labs: {
-        ast: 25,
-        alt: 25,
-        bili: 0.8,
-        ldh: 180,
-        alb: 4.0,
-        creat: 0.9,
-        inr: 1.1,
-        plt: 220000,
-        fib: 280,
-        protc: 85,
-        prots: 90,
-        ascitesGrade: "none",
-      },
-      preOp: {
-        bedLocation: `IR Ward D-Block ${vacantBed ? vacantBed.title : "Bed 01"}`,
-        npoHours: 6,
-        inrChecked: true,
-        creatinineChecked: true,
-        consentSigned: true,
-        ivCannulaGauge: "18G Green",
-        calledToLab: false,
-        labCleared: true,
-      },
-    };
+    // Track 1: Inpatient Ward Admission - STRICTLY THE ONLY DISPOSITION that allocates an 8-bed slot
+    if (disposition === "ADMIT_WARD_PREOP") {
+      const vacantBed = beds.find((b) => b.status === "vacant");
+      if (!vacantBed) {
+        alert("All 8 Ward/ICU beds are currently occupied. Please discharge or transfer an inpatient first.");
+        return;
+      }
 
-    // Admit to store
-    admitPatient(newPatientRecord);
+      const newPatientRecord: EndoflowPatient = {
+        id: newPatientId,
+        name: patientName.trim(),
+        age: Number(age) || 0,
+        sex,
+        hid: generatedHid,
+        scanId: generatedScanId,
+        phone: contactNumber.trim() || "",
+        unit: `Unit I / Interventional Radiology (${vacantBed.title})`,
+        postedBy: `${activeStaff.name} (${activeStaff.code})`,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        summary: `${chiefComplaints.trim() || primaryDiagnosis.trim()}. 3-Month Course: ${history3Months.trim()}`,
+        history3Months: history3Months.trim(),
+        clinicalHistory3Months: history3Months.trim(),
+        chiefComplaints: chiefComplaints.trim(),
+        cectFindings: cectFindings.trim(),
+        procedureKey: diseaseKey,
+        procedure: matchedProtocol.title,
+        modality: "CT",
+        status: "Pre-Op Pending",
+        scheme: "MAAY",
+        schemeTid: "TID-9482103",
+        beneficiaryId: "Jan Aadhaar 7821-9482-10",
+        preAuthStatus: "Approved",
+        disposition: "ADMIT_WARD_PREOP",
+        sosTriggerSymptoms: "",
+        ipd: {
+          admissionType: "IPD",
+          ward: vacantBed.type === "ICU" ? "Liver ICU" : "IR Ward D-Block",
+          bed: vacantBed.title,
+          podDay: "Pre-Op",
+        },
+        labs: {
+          ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9,
+          inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none",
+        },
+        preOp: {
+          bedLocation: vacantBed.title,
+          npoHours: 6,
+          inrChecked: true,
+          creatinineChecked: true,
+          consentSigned: true,
+          ivCannulaGauge: "18G Green",
+          calledToLab: false,
+          labCleared: true,
+        },
+      };
 
-    // Update bed assignment in Bed Board
-    if (vacantBed) {
+      admitPatient(newPatientRecord);
+
       updateBed(vacantBed.id, {
         status: "occupied",
         ptName: patientName.trim(),
@@ -355,24 +358,162 @@ export default function OpClinicConsultationDeskPage() {
         doctor: activeStaff.name,
         ptId: newPatientId,
       });
+
+      if (selectedPatientKey.startsWith("CT-REV")) {
+        updateCtReview(selectedPatientKey, {
+          status: "To be reviewed by consultant",
+          reviewedBy: activeStaff.name,
+          reviewedAt: new Date().toLocaleDateString("en-IN"),
+          disposition: "ADMIT_WARD_PREOP",
+        });
+      }
+
+      setSuccessBanner({
+        message: `Patient ${patientName.trim()} admitted to ${vacantBed.title}. Ward Bed Board slot assigned.`,
+        linkHref: "/dashboard/bed-board",
+        linkLabel: "Open Ward & Bed Board →",
+      });
+      setTimeout(() => setSuccessBanner(null), 6000);
+      return;
     }
 
-    // If item was in review queue, update its status
+    // Track 2: STAT Cath-Lab Immediate Activation (Emergency - Zero Ward Bed Allocation)
+    if (disposition === "STAT_CATH_LAB") {
+      const newPatientRecord: EndoflowPatient = {
+        id: newPatientId,
+        name: patientName.trim(),
+        age: Number(age) || 0,
+        sex,
+        hid: generatedHid,
+        scanId: generatedScanId,
+        phone: contactNumber.trim() || "",
+        unit: "Cath Lab (Philips Azurion) STAT Table",
+        postedBy: `${activeStaff.name} (${activeStaff.code})`,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        summary: `STAT Emergency Activation: ${chiefComplaints.trim() || primaryDiagnosis.trim()}`,
+        history3Months: history3Months.trim(),
+        clinicalHistory3Months: history3Months.trim(),
+        chiefComplaints: chiefComplaints.trim(),
+        cectFindings: cectFindings.trim(),
+        procedureKey: diseaseKey,
+        procedure: matchedProtocol.title,
+        modality: "XA",
+        status: "In Cath-Lab",
+        scheme: "MAAY",
+        schemeTid: "TID-STAT-EMERGENCY",
+        beneficiaryId: "Emergency Fast-Path",
+        preAuthStatus: "Emergency Pre-Auth",
+        disposition: "STAT_CATH_LAB",
+        sosTriggerSymptoms: "",
+        ipd: {
+          admissionType: "STAT_CATH_LAB",
+          ward: "Cath Lab Angiosuite",
+          bed: "Angio Table 01",
+          podDay: "Emergent",
+        },
+        labs: {
+          ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9,
+          inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none",
+        },
+        preOp: {
+          bedLocation: "Cath-Lab Direct Table",
+          npoHours: 0,
+          inrChecked: true,
+          creatinineChecked: true,
+          consentSigned: true,
+          ivCannulaGauge: "16G Grey",
+          calledToLab: true,
+          labCleared: true,
+        },
+      };
+
+      admitPatient(newPatientRecord);
+
+      if (selectedPatientKey.startsWith("CT-REV")) {
+        updateCtReview(selectedPatientKey, {
+          status: "Booked in Cath-Lab",
+          reviewedBy: activeStaff.name,
+          reviewedAt: new Date().toLocaleDateString("en-IN"),
+          disposition: "STAT_CATH_LAB",
+        });
+      }
+
+      setSuccessBanner({
+        message: `🚨 STAT Cath-Lab Activated for ${patientName.trim()}! Transferred directly to Table without locking Ward beds.`,
+        linkHref: "/dashboard/worklist",
+        linkLabel: "Open Cath Lab Worklist →",
+      });
+      setTimeout(() => setSuccessBanner(null), 6000);
+      return;
+    }
+
+    // Track 3: Elective Outpatient Day-Care Procedure (Zero Ward Bed Allocation)
+    if (disposition === "ELECTIVE_OUTPATIENT") {
+      setShowBookingModal(true);
+      return;
+    }
+
+    // Tracks 4, 5, 6: NO_INTERVENTION_NEEDED, DEFERRED_REVIEW_SOS, SURVEILLANCE_PROTOCOL
+    // Zero Ward Bed Allocation
     if (selectedPatientKey.startsWith("CT-REV")) {
       updateCtReview(selectedPatientKey, {
-        status: "To be reviewed by consultant",
+        patientName: patientName.trim(),
+        age: Number(age) || 0,
+        sex,
+        contactNumber: contactNumber.trim(),
+        smsBillId: smsBillId.trim(),
+        ctNumber: ctNumber.trim(),
+        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
+        status: disposition === "NO_INTERVENTION_NEEDED" ? "Pending Review" : "Reviewed by Neel / Nilesh",
+        disposition,
+        sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
         reviewedBy: activeStaff.name,
         reviewedAt: new Date().toLocaleDateString("en-IN"),
       });
+    } else {
+      const newSeq = String(ctReviews.length + 101).padStart(4, "0");
+      addCtReview({
+        patientName: patientName.trim(),
+        age: Number(age) || 0,
+        sex,
+        date: new Date().toISOString().split("T")[0],
+        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
+        clinicalHistory: history3Months.trim(),
+        clinicalHistory3Months: history3Months.trim(),
+        presentingComplaints: chiefComplaints.trim(),
+        ctNumber: ctNumber.trim() || `SMS-CT-2026-${newSeq}`,
+        accessionNumber: accessionNumber.trim() || `SMS-ACC-2026-${newSeq}`,
+        ctReviewNotes: cectFindings.trim(),
+        cectFindings: cectFindings.trim(),
+        smsBillId: smsBillId.trim() || `SMS-OPD-2026-${newSeq}`,
+        hospitalSource,
+        contactNumber: contactNumber.trim(),
+        organSystem,
+        diseaseKey,
+        procedureTitle: matchedProtocol.title,
+        disposition,
+        sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
+      });
     }
 
-    setSuccessBanner({
-      message: `Patient ${patientName.trim()} successfully admitted to IR Ward D-Block (${vacantBed ? vacantBed.title : "Bed 01"}).`,
-      linkHref: "/dashboard/bed-board",
-      linkLabel: "Open Ward & Bed Board →",
-    });
+    const dispositionFeedback: Record<ClinicalDisposition, string> = {
+      STAT_CATH_LAB: "STAT Cath-Lab Activated",
+      ADMIT_WARD_PREOP: "Ward Bed Assigned",
+      ELECTIVE_OUTPATIENT: "Elective Day-Care",
+      NO_INTERVENTION_NEEDED: "Conservative Referral Logged (Zero Ward Beds Occupied)",
+      DEFERRED_REVIEW_SOS: `Deferred Review on SOS Triggers [${sosTriggerSymptoms.trim() || "Progression"}] (Zero Ward Beds Occupied)`,
+      SURVEILLANCE_PROTOCOL: "Interval Surveillance Protocol Enrolled (Zero Ward Beds Occupied)",
+    };
 
+    setSuccessBanner({
+      message: `Clinical Disposition applied: ${dispositionFeedback[disposition]} for ${patientName.trim()}.`,
+    });
     setTimeout(() => setSuccessBanner(null), 6000);
+  };
+
+  const handleAdmitToWard = () => {
+    setDisposition("ADMIT_WARD_PREOP");
+    handleApplyDisposition();
   };
 
   // ==========================================================================
@@ -406,9 +547,9 @@ export default function OpClinicConsultationDeskPage() {
       // New consult or existing admitted patient -> bookCase
       const bookingResult = bookCase({
         patientName: patientName.trim(),
-        age: Number(age),
+        age: Number(age) || 0,
         sex,
-        contactNumber: contactNumber.trim() || "9829000000",
+        contactNumber: contactNumber.trim() || "",
         ssoNumber: smsBillId.trim() || `SMS-2026-${String(ctReviews.length + 101).padStart(4, "0")}`,
         accessionNumber: accessionNumber.trim() || `SONI-ACC-2026-${String(ctReviews.length + 101).padStart(4, "0")}`,
         location: "Jaipur",
@@ -417,6 +558,8 @@ export default function OpClinicConsultationDeskPage() {
         organSystem,
         diseaseKey,
         procedureTitle: matchedProtocol.title,
+        disposition,
+        sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
         bookedBy: `${activeStaff.name} (${activeStaff.code})`,
         orderedLabs: [
           "Liver Function Tests (Total & Direct Bilirubin, AST, ALT, Albumin)",
@@ -435,7 +578,7 @@ export default function OpClinicConsultationDeskPage() {
           { id: "h2", item: "Selective Diagnostic Catheter", spec: "5F Cobra C2 / Simmons 1", checked: true },
           { id: "h3", item: "Hydrophilic Guidewire", spec: "0.035\" 260cm Terumo Glidewire", checked: true },
         ],
-        postOpPlan: `Admitted for planned endovascular intervention: ${matchedProtocol.title}. 3-Month History: ${history3Months}. Pre-procedure hydration & pre-op vitals check verified.`,
+        postOpPlan: `Elective outpatient Cath-Lab intervention: ${matchedProtocol.title}. 3-Month History: ${history3Months}. Pre-procedure hydration & pre-op vitals check verified.`,
         npoVerified: false,
         labsVerified: false,
         bloodProductsVerified: false,
@@ -470,7 +613,7 @@ export default function OpClinicConsultationDeskPage() {
     if (selectedPatientKey.startsWith("CT-REV")) {
       updateCtReview(selectedPatientKey, {
         patientName: patientName.trim(),
-        age: Number(age),
+        age: Number(age) || 0,
         sex,
         contactNumber: contactNumber.trim(),
         smsBillId: smsBillId.trim(),
@@ -485,6 +628,8 @@ export default function OpClinicConsultationDeskPage() {
         clinicalHistory3Months: history3Months.trim(),
         ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
+        disposition,
+        sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
         reviewedBy: activeStaff.name,
         reviewedAt: new Date().toLocaleDateString("en-IN"),
       });
@@ -498,23 +643,25 @@ export default function OpClinicConsultationDeskPage() {
       const newSeq = String(ctReviews.length + 101).padStart(4, "0");
       addCtReview({
         patientName: patientName.trim(),
-        age: Number(age),
+        age: Number(age) || 0,
         sex,
         date: new Date().toISOString().split("T")[0],
         primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
-        clinicalHistory: history3Months.trim() || "3-month symptomatic progression.",
+        clinicalHistory: history3Months.trim(),
         clinicalHistory3Months: history3Months.trim(),
-        presentingComplaints: chiefComplaints.trim() || "Vascular/Biliary complaints.",
+        presentingComplaints: chiefComplaints.trim(),
         ctNumber: ctNumber.trim() || `SMS-CT-2026-${newSeq}`,
-        accessionNumber: `SMS-ACC-2026-${newSeq}`,
-        ctReviewNotes: cectFindings.trim() || "Review cross-sectional imaging for catheter access.",
+        accessionNumber: accessionNumber.trim() || `SMS-ACC-2026-${newSeq}`,
+        ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
         smsBillId: smsBillId.trim() || `SMS-OPD-2026-${newSeq}`,
         hospitalSource,
-        contactNumber: contactNumber.trim() || "9829000000",
+        contactNumber: contactNumber.trim(),
         organSystem,
         diseaseKey,
         procedureTitle: matchedProtocol.title,
+        disposition,
+        sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
       });
 
       setSuccessBanner({
@@ -573,6 +720,22 @@ export default function OpClinicConsultationDeskPage() {
           </button>
         </div>
       </div>
+
+      {/* Cloud Sync Failure / Offline Toast */}
+      {syncAlert && (
+        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-medium flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-1">
+          <div className="flex items-center gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>{syncAlert}</span>
+          </div>
+          <button
+            onClick={clearSyncAlert}
+            className="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 text-[11px] font-bold cursor-pointer transition shrink-0"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* 2. Success Banner / Notification */}
       {successBanner && (
@@ -662,23 +825,29 @@ export default function OpClinicConsultationDeskPage() {
             </div>
 
             {/* Direct Transition Action Bar */}
-            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+            <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap sm:flex-nowrap">
               <button
                 type="button"
-                onClick={handleAdmitToWard}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#5856D6] hover:bg-[#4745B8] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                onClick={handleApplyDisposition}
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-white text-xs font-semibold shadow-xs transition-all cursor-pointer ${
+                  disposition === "STAT_CATH_LAB"
+                    ? "bg-[#EA4335] hover:bg-[#D93025]"
+                    : disposition === "ADMIT_WARD_PREOP"
+                    ? "bg-[#5856D6] hover:bg-[#4745B8]"
+                    : "bg-[#007AFF] hover:bg-[#0062CC]"
+                }`}
               >
-                <BedDouble className="w-4 h-4" />
-                <span>Admit to Ward</span>
+                <ShieldAlert className="w-4 h-4" />
+                <span>Execute Disposition ({disposition === "ADMIT_WARD_PREOP" ? "Ward Bed" : disposition === "STAT_CATH_LAB" ? "STAT" : "Non-Bed"})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setShowBookingModal(true)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-[#007AFF] bg-white text-[#007AFF] hover:bg-[#007AFF]/10 text-xs font-semibold transition-all cursor-pointer"
               >
                 <CalendarPlus className="w-4 h-4" />
-                <span>Book for Cath-Lab</span>
+                <span>Book Cath-Lab</span>
               </button>
             </div>
           </div>
@@ -705,6 +874,8 @@ export default function OpClinicConsultationDeskPage() {
                     required
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     placeholder="e.g. Bhanwar Lal Sharma"
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
@@ -718,7 +889,10 @@ export default function OpClinicConsultationDeskPage() {
                     <input
                       type="number"
                       value={age}
-                      onChange={(e) => setAge(Number(e.target.value))}
+                      onChange={(e) => setAge(e.target.value ? Number(e.target.value) : "")}
+                      autoComplete="off"
+                      data-lpignore="true"
+                      placeholder="Age"
                       className="w-20 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                     />
                     <select
@@ -740,6 +914,8 @@ export default function OpClinicConsultationDeskPage() {
                     type="tel"
                     value={contactNumber}
                     onChange={(e) => setContactNumber(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     placeholder="e.g. 9829012345"
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
@@ -753,6 +929,8 @@ export default function OpClinicConsultationDeskPage() {
                     type="text"
                     value={smsBillId}
                     onChange={(e) => setSmsBillId(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     placeholder="SMS-OPD-2026-..."
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
@@ -768,6 +946,8 @@ export default function OpClinicConsultationDeskPage() {
                     type="text"
                     value={ctNumber}
                     onChange={(e) => setCtNumber(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     placeholder="e.g. SONI-PACS-99214"
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
@@ -809,6 +989,8 @@ export default function OpClinicConsultationDeskPage() {
                     required
                     value={chiefComplaints}
                     onChange={(e) => setChiefComplaints(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     placeholder="e.g. Recurrent episodes of painless gross hematuria, left flank dragging discomfort for 2 weeks..."
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
@@ -824,6 +1006,8 @@ export default function OpClinicConsultationDeskPage() {
                     required
                     value={history3Months}
                     onChange={(e) => setHistory3Months(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     placeholder="e.g. Over the past 3 months: progressive jaundice, 2 episodes of melena requiring PRBC transfusion, escalating abdominal distension refractory to diuretics..."
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
@@ -849,6 +1033,8 @@ export default function OpClinicConsultationDeskPage() {
                   required
                   value={cectFindings}
                   onChange={(e) => setCectFindings(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
                   placeholder="e.g. Triple-phase CECT: Cirrhotic liver morphology, attenuated right and left hepatic veins, marked caudate lobe hypertrophy (>3.5 cm), patent main portal vein with hepatopetal flow. Feasible for transcaval DIPS..."
                   className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                 />
@@ -874,6 +1060,8 @@ export default function OpClinicConsultationDeskPage() {
                     required
                     value={primaryDiagnosis}
                     onChange={(e) => setPrimaryDiagnosis(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
                     placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites"
                     className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
@@ -921,6 +1109,172 @@ export default function OpClinicConsultationDeskPage() {
               </div>
             </div>
 
+            {/* Section 5: Clinical Disposition Matrix (6-Track Framework) */}
+            <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3 flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  Clinical Disposition Matrix (6-Track Framework)
+                </h3>
+                <span className="text-[11px] text-[#8E8E93] hidden sm:inline">
+                  Strict 8-Bed Inpatient Guardrail • Non-inpatient tracks never lock beds
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
+                {/* 1. STAT Cath-Lab */}
+                <button
+                  type="button"
+                  onClick={() => setDisposition("STAT_CATH_LAB")}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    disposition === "STAT_CATH_LAB"
+                      ? "border-[#EA4335] bg-[#EA4335]/10 text-[#C5221F] shadow-xs font-bold ring-1 ring-[#EA4335]"
+                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#EA4335]/40"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-xs font-bold flex items-center gap-1">
+                      <Zap className="w-3 h-3 text-[#EA4335]" />
+                      STAT Cath-Lab
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                    Emergency fast-path direct to table
+                  </span>
+                </button>
+
+                {/* 2. Admit Ward Pre-Op */}
+                <button
+                  type="button"
+                  onClick={() => setDisposition("ADMIT_WARD_PREOP")}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    disposition === "ADMIT_WARD_PREOP"
+                      ? "border-[#5856D6] bg-[#5856D6]/10 text-[#4745B8] shadow-xs font-bold ring-1 ring-[#5856D6]"
+                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#5856D6]/40"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-xs font-bold flex items-center gap-1">
+                      <BedDouble className="w-3 h-3 text-[#5856D6]" />
+                      Admit Ward
+                    </span>
+                    <span className="px-1 py-0.2 rounded text-[9px] bg-purple-200 text-purple-900 font-mono">
+                      8-Bed
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                    Assigns 1 of 8 beds on Ward Board
+                  </span>
+                </button>
+
+                {/* 3. Elective Outpatient */}
+                <button
+                  type="button"
+                  onClick={() => setDisposition("ELECTIVE_OUTPATIENT")}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    disposition === "ELECTIVE_OUTPATIENT"
+                      ? "border-[#007AFF] bg-[#007AFF]/10 text-[#0062CC] shadow-xs font-bold ring-1 ring-[#007AFF]"
+                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#007AFF]/40"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-xs font-bold flex items-center gap-1">
+                      <CalendarPlus className="w-3 h-3 text-[#007AFF]" />
+                      Elective Day-Care
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                    Day procedure, zero ward bed locks
+                  </span>
+                </button>
+
+                {/* 4. No Intervention Needed */}
+                <button
+                  type="button"
+                  onClick={() => setDisposition("NO_INTERVENTION_NEEDED")}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    disposition === "NO_INTERVENTION_NEEDED"
+                      ? "border-[#34C759] bg-[#34C759]/10 text-[#248A3D] shadow-xs font-bold ring-1 ring-[#34C759]"
+                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#34C759]/40"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-xs font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-[#34C759]" />
+                      Conservative
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                    Primary referral / No intervention
+                  </span>
+                </button>
+
+                {/* 5. Deferred Review SOS */}
+                <button
+                  type="button"
+                  onClick={() => setDisposition("DEFERRED_REVIEW_SOS")}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    disposition === "DEFERRED_REVIEW_SOS"
+                      ? "border-[#FF9500] bg-[#FF9500]/10 text-[#C97100] shadow-xs font-bold ring-1 ring-[#FF9500]"
+                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#FF9500]/40"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-xs font-bold flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3 text-[#FF9500]" />
+                      Deferred (SOS)
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                    Wait-and-watch on red flags
+                  </span>
+                </button>
+
+                {/* 6. Surveillance Protocol */}
+                <button
+                  type="button"
+                  onClick={() => setDisposition("SURVEILLANCE_PROTOCOL")}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    disposition === "SURVEILLANCE_PROTOCOL"
+                      ? "border-[#32ADE6] bg-[#32ADE6]/10 text-[#0077A6] shadow-xs font-bold ring-1 ring-[#32ADE6]"
+                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#32ADE6]/40"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-xs font-bold flex items-center gap-1">
+                      <Eye className="w-3 h-3 text-[#32ADE6]" />
+                      Surveillance
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                    Interval imaging follow-up
+                  </span>
+                </button>
+              </div>
+
+              {/* Conditional SOS Trigger Symptoms Input */}
+              {disposition === "DEFERRED_REVIEW_SOS" && (
+                <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-300 text-xs space-y-1.5 animate-in fade-in">
+                  <label className="block text-[11px] font-bold text-amber-950 flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                    SOS Red-Flag Trigger Symptoms for Urgent Hospital Return *
+                  </label>
+                  <input
+                    type="text"
+                    value={sosTriggerSymptoms}
+                    onChange={(e) => setSosTriggerSymptoms(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    placeholder="e.g. Abdominal pain progression, fresh melena/hematemesis, expanding hematoma, sudden Hb drop, high fever..."
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-amber-300 bg-white font-medium text-amber-950 focus:outline-none focus:border-amber-600"
+                  />
+                  <p className="text-[10px] text-amber-800">
+                    Documenting SOS triggers ensures patient has explicit clinical boundary conditions without occupying an inpatient hospital bed.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Bottom Action Strip */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E5EA]">
               <div className="text-[11px] text-[#8E8E93] flex items-center gap-1.5">
@@ -928,20 +1282,26 @@ export default function OpClinicConsultationDeskPage() {
                 <span>Consultant: <strong>{activeStaff.name}</strong> ({activeStaff.code})</span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-xl border border-[#E5E5EA] bg-white hover:bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] transition-all cursor-pointer"
                 >
-                  Save / Update Consult Entry
+                  Save / Update Consult
                 </button>
                 <button
                   type="button"
-                  onClick={handleAdmitToWard}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5856D6] hover:bg-[#4745B8] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                  onClick={handleApplyDisposition}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-xs font-semibold shadow-xs transition-all cursor-pointer ${
+                    disposition === "STAT_CATH_LAB"
+                      ? "bg-[#EA4335] hover:bg-[#D93025]"
+                      : disposition === "ADMIT_WARD_PREOP"
+                      ? "bg-[#5856D6] hover:bg-[#4745B8]"
+                      : "bg-[#007AFF] hover:bg-[#0062CC]"
+                  }`}
                 >
-                  <BedDouble className="w-4 h-4" />
-                  <span>Admit to Ward</span>
+                  <ShieldAlert className="w-4 h-4" />
+                  <span>Execute Disposition ({disposition === "ADMIT_WARD_PREOP" ? "Ward Bed" : disposition === "STAT_CATH_LAB" ? "STAT" : "Non-Bed"})</span>
                 </button>
                 <button
                   type="button"
@@ -949,10 +1309,10 @@ export default function OpClinicConsultationDeskPage() {
                     setBookingStep(1);
                     setShowBookingModal(true);
                   }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#007AFF] bg-white text-[#007AFF] hover:bg-[#007AFF]/10 text-xs font-semibold transition-all cursor-pointer"
                 >
                   <CalendarPlus className="w-4 h-4" />
-                  <span>Book for Cath-Lab</span>
+                  <span>Book Cath-Lab</span>
                 </button>
               </div>
             </div>

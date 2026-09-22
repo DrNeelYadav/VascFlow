@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Link from "next/link";
 import {
   IR_PROCEDURES_CATALOG,
   IRProcedure,
@@ -148,8 +149,32 @@ export default function CatalogPage() {
           </div>
         </div>
 
+        {/* Master Operative Notes & Standardized Reports Banner */}
+        <div className="mt-4 p-3.5 bg-linear-to-r from-[#E8F0FE] to-[#F8F9FA] border border-[#D2E3FC] rounded-xl flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#1A73E8] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+              ON
+            </div>
+            <div>
+              <div className="text-xs font-bold text-[#202124]">
+                Master Catalog & Clinical Operative Notes Engine
+              </div>
+              <div className="text-[11px] text-[#5F6368]">
+                Generate Rajasthan MAAY / RGHS compatible clinical operative reports with individualized post-op care plans.
+              </div>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/operative-notes"
+            className="px-3 py-1.5 bg-[#1A73E8] text-white text-xs font-medium rounded-lg hover:bg-[#1557B0] transition-colors flex items-center gap-1.5 shrink-0 shadow-xs"
+          >
+            <span>View Operative Notes</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
         {/* Domain Tabs & Modality Filter */}
-        <div className="mt-5 pt-4 border-t border-[#F1F3F4] space-y-3">
+        <div className="mt-4 pt-4 border-t border-[#F1F3F4] space-y-3">
           {/* Domain Tabs */}
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
             {[
@@ -487,6 +512,11 @@ export default function CatalogPage() {
           </div>
         </div>
       )}
+
+      {/* Light subtle footer attribution */}
+      <div className="text-center py-4 text-xs text-zinc-400 print:hidden select-none">
+        Made by Dr. Neel Yadav
+      </div>
     </div>
   );
 }

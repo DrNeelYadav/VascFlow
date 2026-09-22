@@ -14,43 +14,43 @@ function UnauthorizedContent() {
 
   return (
     <div className="w-full max-w-lg space-y-6">
-      <Card variant="oled" className="border-[#EF4444]/30 shadow-[0_0_50px_rgba(239,68,68,0.12)]">
-        <CardHeader className="space-y-2 pb-4 border-b border-[#1E293B]/60">
+      <Card className="border border-[#DADCE0] bg-white shadow-xl text-[#202124]">
+        <CardHeader className="space-y-2 pb-4 border-b border-[#F1F3F4]">
           <div className="flex items-center justify-between">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#EF4444]/10 border border-[#EF4444]/30 text-[10px] font-mono text-[#F87171]">
-              <ShieldAlert className="w-3.5 h-3.5 text-[#EF4444]" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#FCE8E6] border border-[#F5C2C7] text-[10px] font-mono text-[#C5221F]">
+              <ShieldAlert className="w-3.5 h-3.5 text-[#C5221F]" />
               PRIVILEGE BOUNDARY ENFORCED
             </div>
-            <span className="text-[10px] font-mono text-[#64748B]">HTTP 403 FORBIDDEN</span>
+            <span className="text-[10px] font-mono text-[#5F6368]">HTTP 403 FORBIDDEN</span>
           </div>
-          <CardTitle className="text-xl font-bold tracking-tight text-white font-heading pt-1 flex items-center gap-2">
+          <CardTitle className="text-xl font-bold tracking-tight text-[#202124] font-heading pt-1 flex items-center gap-2">
             Access Restricted: Insufficient Tier
           </CardTitle>
-          <CardDescription className="text-xs text-[#94A3B8] leading-relaxed">
+          <CardDescription className="text-xs text-[#5F6368] leading-relaxed">
             Your authenticated session does not possess the cryptographic privilege tier required to
             access this surgical administration surface.
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="pt-6 space-y-4">
+        <CardContent className="pt-5 space-y-4">
           {/* RBAC Comparison Matrix */}
-          <div className="rounded-xl bg-[#090A0F] border border-[#1E293B] p-4 space-y-3 font-mono">
-            <div className="flex items-center justify-between text-xs pb-2 border-b border-[#1E293B]">
-              <span className="text-[#94A3B8]">Required Privilege Tier:</span>
-              <span className="px-2 py-0.5 rounded bg-[#1E293B] text-[#38BDF8] font-bold">
+          <div className="rounded-xl bg-[#F8F9FA] border border-[#DADCE0] p-4 space-y-3 font-mono text-xs text-[#202124]">
+            <div className="flex items-center justify-between text-xs pb-2 border-b border-[#DADCE0]">
+              <span className="text-[#5F6368]">Required Privilege Tier:</span>
+              <span className="px-2 py-0.5 rounded bg-[#E8F0FE] text-[#1A73E8] font-bold border border-[#D2E3FC]">
                 {requiredRole}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#94A3B8]">Your Current Active Tier:</span>
-              <span className="px-2 py-0.5 rounded bg-[#7F1D1D]/40 border border-[#EF4444]/40 text-[#FCA5A5] font-bold">
+              <span className="text-[#5F6368]">Your Current Active Tier:</span>
+              <span className="px-2 py-0.5 rounded bg-[#FCE8E6] border border-[#F5C2C7] text-[#C5221F] font-bold">
                 {currentRole}
               </span>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-[#0F172A]/60 border border-[#1E293B] flex items-start gap-3 text-xs text-[#94A3B8]">
-            <AlertTriangle className="w-4 h-4 text-[#F59E0B] shrink-0 mt-0.5" />
+          <div className="p-3 rounded-lg bg-[#FEF7E0] border border-[#FEEFC3] flex items-start gap-2.5 text-xs text-[#B06000]">
+            <AlertTriangle className="w-4 h-4 text-[#F9AB00] shrink-0 mt-0.5" />
             <p className="leading-relaxed">
               Administrative route guarding prevents unauthorized access to PACS routing configurations,
               HL7 intake ports, and staff directory databases. All unauthorized route traversal attempts
@@ -59,22 +59,18 @@ function UnauthorizedContent() {
           </div>
         </CardContent>
 
-        <CardFooter className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+        <CardFooter className="pt-2 pb-5 flex flex-col sm:flex-row items-center gap-3">
           <Button
-            variant="cobalt"
-            size="lg"
             onClick={() => router.push("/?callbackUrl=/admin")}
-            className="w-full sm:w-auto flex-1 gap-2 font-medium shadow-cobalt-glow cursor-pointer"
+            className="w-full sm:w-auto flex-1 gap-2 font-semibold text-xs py-2.5 bg-[#1A73E8] hover:bg-[#1557B0] text-white shadow-xs cursor-pointer"
           >
             <KeyRound className="w-4 h-4" />
             Authenticate as Admin / Faculty
             <ChevronRight className="w-4 h-4" />
           </Button>
           <Button
-            variant="secondary"
-            size="lg"
             onClick={() => router.push("/dashboard")}
-            className="w-full sm:w-auto gap-2 font-medium cursor-pointer"
+            className="w-full sm:w-auto gap-2 text-xs py-2.5 border border-[#DADCE0] bg-white hover:bg-[#F1F3F4] text-[#202124] cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             Return to Dashboard
@@ -82,7 +78,7 @@ function UnauthorizedContent() {
         </CardFooter>
       </Card>
 
-      <div className="text-center text-[11px] font-mono text-[#64748B]">
+      <div className="text-center text-[11px] font-mono text-[#5F6368]">
         Security Incident Ref: SEC-RBAC-{(Date.now() % 1000000).toString(16).toUpperCase()} // Vascule OS Guard
       </div>
     </div>
@@ -91,8 +87,8 @@ function UnauthorizedContent() {
 
 export default function UnauthorizedPage() {
   return (
-    <div className="min-h-screen bg-[#000000] text-white flex flex-col items-center justify-center p-4 selection:bg-[#EF4444] selection:text-white">
-      <Suspense fallback={<div className="text-sm font-mono text-[#64748B]">Verifying privileges...</div>}>
+    <div className="min-h-screen bg-[#F8F9FA] text-[#202124] flex flex-col items-center justify-center p-4">
+      <Suspense fallback={<div className="text-sm font-mono text-[#5F6368]">Verifying privileges...</div>}>
         <UnauthorizedContent />
       </Suspense>
     </div>

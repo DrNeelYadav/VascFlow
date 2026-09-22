@@ -19,6 +19,10 @@ import {
   Activity,
   AlertTriangle,
   Info,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -33,6 +37,8 @@ import {
   clampZoom,
 } from "./types";
 import { useStudyQuery } from "./useStudyQuery";
+import { terminateCodecWorker } from "./workers/dicomCodecBridge";
+import { recordClientTelemetryError } from "@vascule/utils";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -65,6 +71,7 @@ function renderCanvasFrame(
   width: number,
   height: number,
   state: ViewerState,
+  wadoImage?: HTMLImageElement | null,
 ) {
   const { windowCenter, windowWidth, zoom, panX, panY } = state;
 
@@ -77,6 +84,24 @@ function renderCanvasFrame(
   ctx.translate(width / 2 + panX, height / 2 + panY);
   ctx.scale(zoom, zoom);
   ctx.translate(-width / 2, -height / 2);
+
+  // If WADO-RS rendered image is loaded, render directly onto canvas
+  if (wadoImage && wadoImage.complete && wadoImage.naturalWidth > 0) {
+    const imgRatio = wadoImage.naturalWidth / wadoImage.naturalHeight;
+    const canvasRatio = width / height;
+    let renderW = width;
+    let renderH = height;
+    if (canvasRatio > imgRatio) {
+      renderW = height * imgRatio;
+    } else {
+      renderH = width / imgRatio;
+    }
+    const renderX = (width - renderW) / 2;
+    const renderY = (height - renderH) / 2;
+    ctx.drawImage(wadoImage, renderX, renderY, renderW, renderH);
+    ctx.restore();
+    return;
+  }
 
   // Generate synthetic grayscale pixel data with WW/WL applied
   const imageData = ctx.createImageData(width, height);
@@ -166,6 +191,14 @@ function renderCanvasFrame(
 export interface DicomViewerProps {
   /** DICOM Study Instance UID to display */
   studyUID: string;
+  /** Optional WADO-RS root base URL for CornerstoneJS / Orthanc streaming */
+  wadoRsRootUrl?: string;
+  /** Optional Series Instance UID */
+  seriesUID?: string;
+  /** Optional SOP Instance UID */
+  sopUID?: string;
+  /** Optional initial Cine framerate (1–30 fps) */
+  initialFps?: number;
   /** Optional CSS class for the outer container */
   className?: string;
 }
@@ -181,11 +214,23 @@ export interface DicomViewerProps {
  * angiographic visualization with interactive Window/Level, zoom, pan,
  * and stack scrolling controls.
  */
-export function DicomViewer({ studyUID, className }: DicomViewerProps) {
+export function DicomViewer({
+  studyUID,
+  wadoRsRootUrl,
+  seriesUID,
+  sopUID,
+  initialFps = 15,
+  className,
+}: DicomViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const lastMouse = useRef({ x: 0, y: 0 });
+
+  const [isPlayingCine, setIsPlayingCine] = useState(false);
+  const [cineFps, setCineFps] = useState(Math.max(1, Math.min(30, initialFps)));
+  const cineIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [loadedWadoImg, setLoadedWadoImg] = useState<HTMLImageElement | null>(null);
 
   const { data: studyData, isLoading, error } = useStudyQuery(studyUID);
   const study = studyData?.canonical ?? null;
@@ -194,6 +239,130 @@ export function DicomViewer({ studyUID, className }: DicomViewerProps) {
     ...DEFAULT_VIEWER_STATE,
     totalFrames: study?.numberOfInstances ?? 1,
   });
+
+  // WADO-RS URL for the active frame
+  const activeFrameNum = viewerState.currentFrame + 1;
+  const currentWadoUrl = `${wadoRsRootUrl || "/api/pacs/wado"}/studies/${studyUID}/series/${seriesUID || "1"}/instances/${sopUID || "1"}/frames/${activeFrameNum}/rendered`;
+
+  // Pre-load WADO-RS rendered frame if endpoint is provided
+  useEffect(() => {
+    if (!wadoRsRootUrl) return;
+    let isCancelled = false;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      if (!isCancelled) {
+        setLoadedWadoImg(img);
+      }
+    };
+    img.onerror = () => {
+      if (!isCancelled) {
+        setLoadedWadoImg(null);
+      }
+    };
+    img.src = currentWadoUrl;
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentWadoUrl, wadoRsRootUrl]);
+
+  // WebGL context lifecycle, error telemetry capture, CornerstoneJS cache purging, and Worker termination
+  useEffect(() => {
+    const canvas = canvasRef.current;
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      recordClientTelemetryError({
+        component: "DicomViewer",
+        errorType: "WEBGL_CONTEXT_CRASH",
+        message: "WebGL rendering context lost on DICOM canvas viewport",
+        context: {
+          studyUID,
+          seriesUID,
+          sopUID,
+          currentFrame: viewerState.currentFrame,
+        },
+      });
+    };
+
+    if (canvas) {
+      canvas.addEventListener("webglcontextlost", handleContextLost);
+    }
+
+    return () => {
+      if (canvas) {
+        canvas.removeEventListener("webglcontextlost", handleContextLost);
+      }
+
+      // 1. Purge WebGL context and release GPU textures
+      if (canvas) {
+        try {
+          const gl =
+            canvas.getContext("webgl2") ||
+            (canvas.getContext("webgl") as WebGLRenderingContext | null);
+          if (gl) {
+            const loseExt = gl.getExtension("WEBGL_lose_context");
+            if (loseExt) {
+              loseExt.loseContext();
+            }
+          }
+        } catch {
+          // Non-WebGL canvas fallback
+        }
+      }
+
+      // 2. Invalidate CornerstoneJS texture cache and image request queue
+      if (typeof window !== "undefined") {
+        const cs = (window as any).cornerstone;
+        if (cs) {
+          try {
+            cs.imageLoadPoolManager?.clearRequestStack?.();
+            cs.cache?.purgeCache?.();
+          } catch {
+            // Cornerstone uninitialized
+          }
+        }
+      }
+
+      // 3. Terminate Wasm DICOM Codec Worker
+      terminateCodecWorker();
+    };
+  }, [studyUID, seriesUID, sopUID, viewerState.currentFrame]);
+
+  // Cine Playback Loop (1–30 fps)
+  useEffect(() => {
+    if (isPlayingCine) {
+      const intervalMs = Math.max(33, Math.round(1000 / Math.max(1, Math.min(30, cineFps))));
+      cineIntervalRef.current = setInterval(() => {
+        setViewerState((prev) => {
+          const total = Math.max(1, prev.totalFrames);
+          const next = (prev.currentFrame + 1) % total;
+          return { ...prev, currentFrame: next };
+        });
+      }, intervalMs);
+    } else if (cineIntervalRef.current) {
+      clearInterval(cineIntervalRef.current);
+      cineIntervalRef.current = null;
+    }
+
+    return () => {
+      if (cineIntervalRef.current) {
+        clearInterval(cineIntervalRef.current);
+      }
+    };
+  }, [isPlayingCine, cineFps]);
+
+  const toggleCine = () => setIsPlayingCine((prev) => !prev);
+
+  const stepFrame = (delta: number) => {
+    setIsPlayingCine(false);
+    setViewerState((prev) => {
+      const total = Math.max(1, prev.totalFrames);
+      const next = Math.max(0, Math.min(total - 1, prev.currentFrame + delta));
+      return { ...prev, currentFrame: next };
+    });
+  };
 
   // Update total frames when study data arrives
   useEffect(() => {
@@ -219,8 +388,8 @@ export function DicomViewer({ studyUID, className }: DicomViewerProps) {
       canvas.height = container.clientHeight;
     }
 
-    renderCanvasFrame(ctx, canvas.width, canvas.height, viewerState);
-  }, [viewerState]);
+    renderCanvasFrame(ctx, canvas.width, canvas.height, viewerState, loadedWadoImg);
+  }, [viewerState, loadedWadoImg]);
 
   // Resize observer
   useEffect(() => {
@@ -431,6 +600,71 @@ export function DicomViewer({ studyUID, className }: DicomViewerProps) {
           <Layers className="w-4 h-4 mr-1 inline-block" />
           Scroll
         </Button>
+
+        <div className="w-px h-5 bg-gray-700 mx-2" />
+
+        {/* Cine Playback Controls (1–30 fps) */}
+        <div className="flex items-center gap-1 bg-gray-900 px-2 py-0.5 rounded border border-gray-800">
+          <Button
+            onClick={toggleCine}
+            data-testid="cine-play-toggle"
+            className={cn(
+              "px-2 py-1 text-xs rounded font-medium cursor-pointer",
+              isPlayingCine ? "bg-amber-600 text-white" : "bg-emerald-700 text-white hover:bg-emerald-600"
+            )}
+            title={isPlayingCine ? "Pause Cine playback" : "Start Cine playback"}
+          >
+            {isPlayingCine ? (
+              <>
+                <Pause className="w-3.5 h-3.5 mr-1 inline-block" />
+                Pause
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5 mr-1 inline-block" />
+                Cine
+              </>
+            )}
+          </Button>
+
+          <button
+            type="button"
+            onClick={() => stepFrame(-1)}
+            disabled={viewerState.currentFrame <= 0}
+            data-testid="cine-prev-frame"
+            className="p-1 rounded text-gray-400 hover:text-white disabled:opacity-30 cursor-pointer"
+            title="Step Back Frame"
+          >
+            <SkipBack className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => stepFrame(1)}
+            disabled={viewerState.currentFrame >= viewerState.totalFrames - 1}
+            data-testid="cine-next-frame"
+            className="p-1 rounded text-gray-400 hover:text-white disabled:opacity-30 cursor-pointer"
+            title="Step Forward Frame"
+          >
+            <SkipForward className="w-3.5 h-3.5" />
+          </button>
+
+          <div className="flex items-center gap-1 text-[11px] text-gray-400 font-mono ml-1">
+            <span>FPS:</span>
+            <select
+              value={cineFps}
+              onChange={(e) => setCineFps(Number(e.target.value))}
+              data-testid="cine-fps-select"
+              className="bg-gray-800 text-gray-200 text-xs rounded px-1.5 py-0.5 border border-gray-700 focus:outline-none cursor-pointer"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+              <option value={24}>24</option>
+              <option value={30}>30</option>
+            </select>
+          </div>
+        </div>
 
         <div className="w-px h-5 bg-gray-700 mx-2" />
 

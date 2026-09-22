@@ -1,0 +1,108 @@
+import { MasterProcedure } from './types';
+
+/**
+ * Category 19: Urological Interventions (3 Procedures)
+ * Strict Rajasthan MAAY / RGHS compatibility and SMS Medical College clinical protocols.
+ */
+export const CATEGORY_19_UROLOGY: MasterProcedure[] = [
+  {
+    id: 'cat19-pcn-drainage',
+    categoryNumber: 19,
+    categoryName: 'Urological Interventions',
+    title: 'Percutaneous Nephrostomy (PCN) Placement under US & Fluoroscopy',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Percutaneous Nephrostomy (PCN)',
+      packageCode: '1849-IN074A',
+      icd10: 'N13.3',
+      tariffInr: 10000,
+    },
+    modality: 'US',
+    targetAnatomy: ["Renal Pelvis", "Posterior Lower Pole Calyx"],
+    sedation: 'Local Anesthesia with Conscious Sedation',
+    accessSiteDefault: 'Posterior axillary line below 12th rib via Brodel\'s avascular line',
+    sheathDefault: '8F - 10F Trocar / Seldinger Locking Pigtail Set',
+    cathetersAndWires: '21G Chiba, 0.018" wire, Neff set, 0.035" J-wire, fascial dilators (6F-10F)',
+    microcatheterSystem: 'N/A',
+    embolicOrImplants: '8.5F / 10F Locking Pigtail Nephrostomy Catheter',
+    proceduralNarrativeTemplate:
+      'Indicated for obstructive uropathy with pyonephrosis. Patient prone/oblique. Ultrasound identified dilated calyces and renal parenchyma. Brodel\'s avascular plane selected traversing lower pole posterior calyx. Local infiltration down to renal capsule. 21G Chiba needle entered target calyx under real-time ultrasound. Urine aspirated and sent for routine microscopy and culture. Contrast injected confirming caliceal anatomy and pelvic dilation. 0.018" wire inserted, upsized via Neff set to 0.035" stiff guidewire coiled in renal pelvis. Tract dilated serially. 8.5F locking pigtail catheter deployed in renal pelvis. Catheter locked, secured with 2-0 silk, and connected to drainage bag.',
+    postOpCare: {
+      immobilizationHours: 4,
+      immobilizationInstructions: 'Strict supine/oblique bedrest x 4 hours; keep urine bag dependent.',
+      hematomaChecks: 'Monitor urine output (hourly volume, color, clearing of hematuria) and vitals q15m x 1h, q30m x 2h, then q1h.',
+      requiredImaging: 'Bedside USG if severe flank pain or drop in BP.',
+      hydrationProtocol: 'IV Normal Saline 100 mL/hr.',
+      medications: ["IV Ceftriaxone 1g BD x 5 days", "Tab Paracetamol 650mg TDS PRN"],
+      redFlags: ["Transient hematuria", "Septic shock (pyonephrosis decompression)", "Perirenal hematoma", "Urine leak"],
+    },
+    consentId: 'consent-pcn-drainage',
+  },
+  {
+    id: 'cat19-pae-bph',
+    categoryNumber: 19,
+    categoryName: 'Urological Interventions',
+    title: 'Prostatic Artery Embolization (PAE) for Benign Prostatic Hyperplasia (BPH)',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Prostatic Artery Embolization (PAE)',
+      packageCode: '1849-IN075A',
+      icd10: 'N40.1',
+      tariffInr: 40000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Bilateral Prostatic Arteries", "Prostatic Capsular and Urethral Branches"],
+    sedation: 'Local Anesthesia with Conscious Sedation',
+    accessSiteDefault: 'Right CFA at femoral head level or Left Radial Artery',
+    sheathDefault: '5F 11cm Sheath',
+    cathetersAndWires: '5F Cobra, 1.7F - 2.0F microcatheter (Progreat / Carnelian), 0.014" wire',
+    microcatheterSystem: '1.7F - 2.0F microcatheter',
+    embolicOrImplants: 'Calibrated Hydrogel / PVA Microspheres (300-500um and 100-300um)',
+    proceduralNarrativeTemplate:
+      'Indicated for severe lower urinary tract symptoms (IPSS >20) due to large BPH (>80cc) refractory to medical therapy or high surgical risk. CFA accessed. Internal iliac arteriography in ipsilateral 35° anterior oblique with 10° craniocaudal tilt mapped prostatic artery origin. 2.0F microcatheter advanced superselectively into prostatic artery. Crucial cone-beam CT (CBCT) performed with contrast run-off confirming exclusive parenchymal prostatic enhancement and strictly ruling out non-target shunts to rectum, bladder base, or penis (internal pudendal collateral). Calibrated 300-500um microspheres slowly infused until complete intraprostatic flow stasis achieved. Contralateral prostatic artery selectively cannulated and embolized identically (bilateral PErfection technique). Completion angiography confirmed complete devascularization of the adenomatous transition zone.',
+    postOpCare: {
+      immobilizationHours: 6,
+      immobilizationInstructions: 'Strict supine flat bedrest x 6 hours; right leg straight.',
+      hematomaChecks: 'Monitor urine output (Foley catheter in place), groin site, and pelvic pain q15m x 1h, q30m x 2h, then q1h.',
+      requiredImaging: 'Transrectal / Pelvic Ultrasound at 1 month and 3 months to record prostate volume reduction and post-void residual.',
+      hydrationProtocol: 'IV Normal Saline 100 mL/hr x 12 hours.',
+      medications: ["Tab Ciprofloxacin 500mg BD x 7 days", "Tab Tamsulosin 0.4mg OD x 1 month", "Tab Diclofenac 50mg TDS x 5 days"],
+      redFlags: ["Transient urinary retention (post-PAE edema)", "Dysuria / hematuria", "Non-target embolization (ischemic rectitis, bladder ulceration)"],
+    },
+    consentId: 'consent-pae-bph',
+    calculatorId: 'cigarroa_macd',
+  },
+  {
+    id: 'cat19-varicocele-embolization',
+    categoryNumber: 19,
+    categoryName: 'Urological Interventions',
+    title: 'Retrograde Transvenous Varicocele Embolization with Microcoils & Sclerosant',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Varicocele Embolization',
+      packageCode: '1849-VS018A',
+      icd10: 'I86.1',
+      tariffInr: 22000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Left Internal Spermatic (Testicular) Vein", "Pampiniform Plexus"],
+    sedation: 'Local Anesthesia with Conscious Sedation',
+    accessSiteDefault: 'Right Common Femoral Vein or Right IJV under US',
+    sheathDefault: '5F 11cm Sheath',
+    cathetersAndWires: '5F Cobra / Simmons, 2.7F microcatheter, 0.014" wire, 0.035" and 0.018" microcoils (4-10mm), 3% STS foam',
+    microcatheterSystem: '2.7F microcatheter',
+    embolicOrImplants: 'Pushable / Detachable Microcoils (4-8mm) + 3% STS Foam (2 mL)',
+    proceduralNarrativeTemplate:
+      'Indicated for symptomatic left varicocele with chronic scrotal ache or subfertility. Access via right CFV/IJV. Left renal vein engaged; 5F Cobra navigated into left internal spermatic vein. Venography with Valsalva maneuver revealed massive continuous retrograde reflux down into scrotum through dilated, incompetent testicular vein. Catheter navigated down to inguinal ligament level. 2.7F microcatheter advanced; 2 mL 3% STS foam delivered distally, followed by dense packing of testicular vein trunk with 0.035" and 0.018" fibered microcoils across the retroperitoneal segment up to L3. Check venogram confirmed complete occlusion of testicular vein and disappearance of pampiniform reflux.',
+    postOpCare: {
+      immobilizationHours: 2,
+      immobilizationInstructions: 'Bedrest x 2 hours with scrotal support.',
+      hematomaChecks: 'Monitor groin puncture site and scrotal comfort q30m x 2h.',
+      requiredImaging: 'Scrotal Doppler Ultrasound at 6 weeks.',
+      hydrationProtocol: 'Oral fluids.',
+      medications: ["Tab Paracetamol 650mg TDS", "Scrotal support bandage x 7 days"],
+      redFlags: ["Testicular thrombophlebitis / dull ache", "Coil migration to pulmonary circulation", "Groin hematoma"],
+    },
+    consentId: 'consent-varicocele-embolization',
+  },
+];

@@ -83,16 +83,16 @@ authService:
     targetMemoryUtilizationPercentage: 75
   probes:
     liveness:
-      path: /health
-      initialDelaySeconds: 10
+      path: /api/healthz
+      initialDelaySeconds: 15
       periodSeconds: 10
       timeoutSeconds: 3
       failureThreshold: 3
     readiness:
-      path: /health
-      initialDelaySeconds: 5
-      periodSeconds: 5
-      timeoutSeconds: 2
+      path: /api/healthz
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 3
       failureThreshold: 2
   env:
     PORT: "8080"
@@ -189,14 +189,48 @@ dicomService:
     DATABASE_URL: postgresql://vascule_admin:vascule_prod_secret_2026@vascule-pg-ro:5432/vascule_os?sslmode=verify-full
 
 # ---------------------------------------------------------------------------
-# Ingress & TLS Termination (Cert-Manager)
+# Secrets Management: SealedSecrets & HashiCorp Vault Injection
+# ---------------------------------------------------------------------------
+secrets:
+  sealedSecrets:
+    enabled: true
+    encryptedDatabaseUrl: "AgB...dummySealedPayload..."
+    encryptedDatabaseReadReplicaUrl: "AgB...dummySealedPayload..."
+    encryptedAbdmPrivateKey: "AgB...dummySealedPayload..."
+    encryptedAbdmPublicKey: "AgB...dummySealedPayload..."
+    encryptedNextauthSecret: "AgB...dummySealedPayload..."
+  standardSecret:
+    enabled: false
+    databaseUrl: ""
+    databaseReadReplicaUrl: ""
+    abdmPrivateKey: ""
+    abdmPublicKey: ""
+    nextauthSecret: ""
+  vault:
+    enabled: false
+    role: "vascule-workstation"
+    databaseSecretPath: "secret/data/hospital/database"
+    abdmSecretPath: "secret/data/hospital/abdm"
+
+# ---------------------------------------------------------------------------
+# Zero-Downtime Pre-Upgrade Database Migrations
+# ---------------------------------------------------------------------------
+databaseMigration:
+  enabled: true
+
+# ---------------------------------------------------------------------------
+# Ingress & Strict TLS 1.3 Termination (Cert-Manager)
 # ---------------------------------------------------------------------------
 ingress:
   enabled: true
   className: nginx
+  tlsClusterIssuer: "rajasthan-health-ca-issuer"
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: rajasthan-health-ca-issuer
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.3"
+    nginx.ingress.kubernetes.io/ssl-ciphers: "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
+    nginx.ingress.kubernetes.io/ssl-prefer-server-ciphers: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "100m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "180"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "180"
@@ -217,6 +251,12 @@ ingress:
     - secretName: vascule-tls-certificate
       hosts:
         - vascule.sms.rajasthan.gov.in
+
+  # ABDM National Health Authority (NHA) Gateway Mutual TLS
+  abdmMtls:
+    enabled: true
+    caSecretName: "default/nha-abdm-ca-cert"
+    tlsSecretName: "vascule-tls-certificate"
 
 # ---------------------------------------------------------------------------
 # Zero-Trust Network Policies

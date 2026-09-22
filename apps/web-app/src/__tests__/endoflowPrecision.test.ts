@@ -4,79 +4,94 @@ import {
   EndoflowPatientSchema,
   ClinicalStageSchema,
   INITIAL_ENDOFLOW_PATIENTS,
+  EndoflowPatient,
 } from "../../app/dashboard/useEndoflowStore";
 
-describe("Phase 19: Faithful EndoFlow Clinical Workflow & Security Port (Web-App Suite)", () => {
+describe("Phase 19: Authentic EndoFlow Clinical Workflow & Security (Web-App Suite)", () => {
   beforeEach(() => {
     useEndoflowStore.getState().resetToDefaultPatients();
     useEndoflowStore.getState().setSearchQuery("");
     useEndoflowStore.getState().setFilterModality("all");
   });
 
-  describe("1. Exact EndoFlow Initial State & 4 Core Sections", () => {
-    it("loads all 8 authentic EndoFlow patients from app.js", () => {
+  describe("1. Authentic Clinical State & Zero Mock Clutter", () => {
+    it("initializes with authentic empty patient registry to prevent fake clutter", () => {
       const state = useEndoflowStore.getState();
-      expect(state.patients.length).toBe(8);
-      expect(state.patients.map((p) => p.id)).toEqual([
-        "PT01",
-        "PT02",
-        "PT03",
-        "PT04",
-        "PT05",
-        "PT06",
-        "PT07",
-        "PT08",
-      ]);
+      expect(state.patients.length).toBe(0);
+      expect(state.activeCaseId).toBeNull();
     });
 
-    it("verifies Active In-Room Cath-Lab case (PT03 - Rajesh Kumawat)", () => {
+    it("initializes beds with only verified clinical admissions", () => {
       const state = useEndoflowStore.getState();
-      const inRoomPt = state.patients.find((p) => p.status === "In Cath-Lab");
-      expect(inRoomPt).toBeDefined();
-      expect(inRoomPt?.id).toBe("PT03");
-      expect(inRoomPt?.name).toBe("Rajesh Kumawat");
-      expect(inRoomPt?.procedureKey).toBe("bae_hemoptysis");
-      expect(inRoomPt?.inRoom).toBeDefined();
-      expect(inRoomPt?.inRoom?.activeSheathAccess).toContain("Femoral Artery Sheath");
-      expect(inRoomPt?.inRoom?.elapsedFluoroSeconds).toBe(878);
-      expect(inRoomPt?.inRoom?.contrastInjectedMl).toBe(48);
-    });
-
-    it("verifies Pre-Op Holding Queue (PT05, PT06)", () => {
-      const state = useEndoflowStore.getState();
-      const preOpList = state.patients.filter((p) => p.status === "Pre-Op Pending");
-      expect(preOpList.length).toBeGreaterThanOrEqual(2);
-      preOpList.forEach((pt) => {
-        expect(pt.preOp).toBeDefined();
-        expect(pt.preOp.npoHours).toBeGreaterThanOrEqual(4);
-        expect(pt.preOp.consentSigned).toBe(true);
-      });
-    });
-
-    it("verifies Post-Op Ward Monitoring & Hemostasis (PT01 - Ramswaroop Meena)", () => {
-      const state = useEndoflowStore.getState();
-      const postOpPt = state.patients.find((p) => p.id === "PT01");
-      expect(postOpPt).toBeDefined();
-      expect(postOpPt?.status).toBe("Post-Op ICU");
-      expect(postOpPt?.postOp?.recoveryBed).toBe("Liver ICU Bed LICU-04");
-      expect(postOpPt?.postOp?.punctureSiteSeal).toBe("Hemostasis Intact");
-      expect(postOpPt?.postOp?.distalPulses).toBe("Strong (+++)");
-    });
-
-    it("verifies Master Scheduled Worklist modalities and schemes", () => {
-      const state = useEndoflowStore.getState();
-      const modalities = state.patients.map((p) => p.modality);
-      expect(modalities).toContain("XA");
-      expect(modalities).toContain("CT");
-      expect(modalities).toContain("US");
-      expect(modalities).toContain("ROSE");
+      const occupied = state.beds.filter((b) => b.status === "occupied");
+      expect(occupied.length).toBe(2);
+      expect(occupied.some((b) => b.ptName === "Lakshmi")).toBe(true);
+      expect(occupied.some((b) => b.ptName === "Roshan")).toBe(true);
     });
   });
 
   describe("2. Seamless Clinical Stage Progression Flow", () => {
+    it("verifies patient stage can be advanced via advanceStage", () => {
+      const store = useEndoflowStore.getState();
+      expect(typeof store.advanceStage).toBe("function");
+    });
+
     it("advances patient through Scheduled → Pre-Op → In-Room → Post-Op → Discharged", () => {
       const store = useEndoflowStore.getState();
-      const ptId = "PT02"; // Kamla Devi Sharma (Scheduled)
+      const testPt: EndoflowPatient = {
+        id: "PT_TEST_01",
+        name: "Test Patient",
+        age: 45,
+        sex: "Male",
+        hid: "SMS-2026-TEST",
+        scanId: "SCAN-001",
+        phone: "9829000000",
+        unit: "IR Unit I",
+        postedBy: "Dr. Meenu Bagarhatta",
+        time: "09:00 AM",
+        summary: "Planned SFA Recanalization",
+        procedureKey: "sfa_stenting",
+        procedure: "Superficial Femoral Artery Stenting",
+        modality: "XA",
+        status: "Scheduled",
+        scheme: "MAAY",
+        schemeTid: "TID-12345",
+        beneficiaryId: "BEN-12345",
+        preAuthStatus: "Approved",
+        ipd: {
+          admissionType: "IPD",
+          ward: "IR Ward",
+          bed: "Bed 01",
+          podDay: "Pre-Op",
+        },
+        labs: {
+          ast: 25,
+          alt: 25,
+          bili: 0.8,
+          ldh: 180,
+          alb: 4.0,
+          creat: 0.9,
+          inr: 1.1,
+          plt: 220000,
+          fib: 280,
+          protc: 85,
+          prots: 90,
+          ascitesGrade: "none",
+        },
+        preOp: {
+          bedLocation: "IR Ward Bed 01",
+          npoHours: 6,
+          inrChecked: true,
+          creatinineChecked: true,
+          consentSigned: true,
+          ivCannulaGauge: "18G",
+          calledToLab: false,
+          labCleared: true,
+        },
+      };
+
+      store.admitPatient(testPt);
+      const ptId = testPt.id;
 
       // Step 1: Move to Pre-Op Pending
       store.advanceStage(ptId, "Pre-Op Pending");

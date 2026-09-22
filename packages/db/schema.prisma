@@ -7,6 +7,82 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  CONSULTANT
+  SENIOR_RESIDENT
+  FELLOW
+  CATH_LAB_TECH
+  NURSING_OFFICER
+  AUDIT_ADMIN
+  ADMIN
+  FACULTY
+  RESIDENT
+  NURSE
+  TECH
+}
+
+enum StaffPersonaCode {
+  FC01 // Prof. & HOD
+  FC02 // Dr. Gupta (Assoc. Prof)
+  DM01 // Fellow
+  DM02 // Fellow
+  SR01 // Senior Resident
+  NO01 // Sr. Sister Sunita (NO)
+  NO02 // Staff Nurse Anita (NO)
+  TC01 // Vikram Singh (Tech)
+  TC02 // Ramesh Kumar (Tech)
+  CR01 // Scheme Desk
+}
+
+enum CaseStatus {
+  SCHEDULED
+  ADMITTED_PREPPED
+  IN_PROCEDURE
+  POST_OP_HOLDING
+  REPORT_DRAFTED
+  FINALIZED_SIGNED
+  DISCHARGED
+}
+
+enum SchemeType {
+  MAAY_CHIRANJEEVI
+  RGHS
+  RAJSICK
+  PMJAY
+  BSBY
+  RAILWAY
+  GENERAL_PAID
+}
+
+enum BookingStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  POSTPONED
+  CANCELLED
+}
+
+enum BiopsyModality {
+  D9211_CT
+  ROOM_922_USG
+}
+
+enum BiopsyStatus {
+  PENDING_PATHOLOGY
+  COMPLETED
+  LOST_TO_FOLLOWUP
+  INADEQUATE_REPEAT_RECOMMENDED
+}
+
+// ---------------------------------------------------------------------------
+// Core Multi-Tenant & Governance Models
+// ---------------------------------------------------------------------------
+
 model Tenant {
   id            String         @id @default(cuid())
   hospitalName  String
@@ -19,6 +95,7 @@ model Tenant {
   scheduleSlots ScheduleSlot[]
   auditLogs     AuditLog[]
   uatFeedbacks  UatFeedback[]
+  patientCases  PatientCase[]
 }
 
 model Staff {
@@ -47,31 +124,55 @@ model Patient {
   name            String
   age             Int
   gender          String
+  bedNo           String?
+  phone           String?
+  nationalHealthIdHash String? @unique
   weightKg        Float
   serumCreatinine Float
-  totalBilirubin  Float
-  serumAlbumin    Float
-  inr             Float
-  sodiumMeqL      Float
+  totalBilirubin  Float?
+  serumAlbumin    Float?
+  inr             Float?
+  sodiumMeqL      Float?
+  plateletCount   Float?
+  scheme          SchemeType @default(MAAY_CHIRANJEEVI)
+  schemeTid       String?
+  diagnosis       String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  scheduleSlots   ScheduleSlot[]
+  procedures      Procedure[]
+  biopsies        BiopsyLog[]
+  patientLogEntries PatientLogEntry[]
+
   @@index([tenantId])
+  @@index([crNo])
 }
 
 model ScheduleSlot {
-  id            String   @id @default(cuid())
-  tenantId      String   @default("tenant_sms_jaipur")
-  tenant        Tenant   @relation(fields: [tenantId], references: [id])
-  suiteName     String
-  patientId     String
-  procedureType String
-  operatorName  String
-  priority      String   @default("ELECTIVE")
-  scheduledTime DateTime
-  status        String   @default("SCHEDULED")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                    String        @id @default(cuid())
+  tenantId              String        @default("tenant_sms_jaipur")
+  tenant                Tenant        @relation(fields: [tenantId], references: [id])
+  suiteName             String        @default("Cath Lab 1 (Siemens Artis Zee)")
+  patientId             String
+  patient               Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  procedureType         String
+  operatorName          String?
+  priority              String        @default("ELECTIVE")
+  scheduledTime         DateTime      @default(now())
+  status                String        @default("SCHEDULED")
+  targetDate            DateTime?
+  slotTime              String?
+  isEmergency           Boolean       @default(false)
+  isHolidayOverride     Boolean       @default(false)
+  holidayOverrideReason String?
+  d1CallCompleted       Boolean       @default(false)
+  hardwareIndented      String?
+  vendorContact         String?
+  notes                 String?
+  createdById           String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
   @@index([tenantId])
   @@index([patientId])
@@ -86,13 +187,23 @@ model AuditLog {
   entityId    String
   staffId     String
   staff       Staff    @relation(fields: [staffId], references: [id])
-  ipAddress   String
-  userAgent   String
-  detailsJson String
-  timestamp   DateTime @default(now())
+  ipAddress           String
+  userAgent           String
+  detailsJson         String
+  isEmergencyOverride Boolean  @default(false)
+  overrideReason      String?
+  previousHash        String?
+  currentHash         String?
+  clientSequenceId    String?
+  nodeHash            String?
+  parentHashes        String[] @default([])
+  timestamp           DateTime @default(now())
 
   @@index([tenantId])
   @@index([staffId])
+  @@index([action])
+  @@index([entityType])
+  @@index([timestamp])
 }
 
 model UatFeedback {
@@ -117,3 +228,342 @@ model UatFeedback {
   @@index([clinicalModule])
   @@index([status])
 }
+
+// ---------------------------------------------------------------------------
+// Clinical Staff Identity & Authentication
+// ---------------------------------------------------------------------------
+
+model StaffUser {
+  id                  String            @id @default(cuid())
+  staffId             String            @unique // e.g. SMS-IR-042
+  email               String            @unique
+  fullName            String
+  role                UserRole
+  designation         String            // e.g. "Senior Resident (DM-IR)"
+  medicalRegNo        String?           // Required for signing reports
+  digitalSignatureUrl String?
+  pinHash             String            // Quick re-auth PIN for bedside verification
+  isActive            Boolean           @default(true)
+  reportsDrafted      ProcedureReport[] @relation("DraftedBy")
+  reportsVerified     ProcedureReport[] @relation("VerifiedBy")
+  auditLogs           StaffUserAuditLog[]
+  createdAt           DateTime          @default(now())
+}
+
+model StaffUserAuditLog {
+  id          String     @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String
+  staffUserId String
+  staffUser   StaffUser  @relation(fields: [staffUserId], references: [id])
+  ipAddress   String
+  userAgent   String
+  detailsJson String
+  timestamp   DateTime   @default(now())
+
+  @@index([staffUserId])
+}
+
+model ProcedureReport {
+  id                  String      @id @default(cuid())
+  caseId              String      @unique
+  indication          String      @default("")
+  accessSite          String      @default("Right Common Femoral Artery")
+  sheathSize          String      @default("6F")
+  fluoroscopyTime     Float       @default(0.0)
+  dapDose             Float       @default(0.0)
+  contrastVolumeMl    Float       @default(0.0)
+  technicalFindings   String      @default("")
+  complications       String      @default("None")
+  implantLotNumbers   String      @default("")
+  status              String      @default("DRAFT")
+  draftedById         String?
+  draftedBy           StaffUser?  @relation("DraftedBy", fields: [draftedById], references: [id])
+  draftedAt           DateTime?
+  verifiedById        String?
+  verifiedBy          StaffUser?  @relation("VerifiedBy", fields: [verifiedById], references: [id])
+  verifiedAt          DateTime?
+  lockedAt            DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Interventional Radiology Procedure & Registry Models
+// ---------------------------------------------------------------------------
+
+model Procedure {
+  id                  String    @id @default(cuid())
+  patientId           String
+  patient             Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  procedureCode       String
+  procedureName       String
+  accessSite          String
+  sheathSize          String
+  catheterUsed        String?
+  contrastVolumeMl    Float
+  fluoroscopyMinutes  Float?
+  dapGyCm2            Float?
+  complications       String?
+  hemostasisMethod    String?
+  operatorName        String?
+  performedAt         DateTime  @default(now())
+  createdAt           DateTime  @default(now())
+
+  @@index([patientId])
+  @@index([procedureCode])
+}
+
+model BiopsyLog {
+  id                      String         @id @default(cuid())
+  patientId               String
+  patient                 Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  modality                BiopsyModality @default(D9211_CT)
+  organ                   String
+  needleGauge             String
+  coresCount              Int            @default(2)
+  operatorName            String?
+  pathLab                 String         @default("SMS Central Pathology")
+  status                  BiopsyStatus   @default(PENDING_PATHOLOGY)
+  diagnosticYield         Boolean        @default(true)
+  histopathologyDiagnosis String?
+  complicationNoted       String?
+  performedAt             DateTime       @default(now())
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+
+  @@index([modality])
+  @@index([status])
+  @@index([patientId])
+}
+
+model ProcedureBlueprint {
+  id                    String            @id @default(cuid())
+  name                  String            @unique
+  procedureType         String            @unique
+  category              String
+  code                  String
+  rghsCode              String?
+  icd10                 String
+  defaultFollowupType   String            @default("Imaging (CT/MR/USG)")
+  defaultIntervalNumber Int               @default(4)
+  defaultIntervalUnit   String            @default("Weeks")
+  indications           String[]          @default([])
+  preOpCriteria         String[]          @default([])
+  techniqueSteps        String[]          @default([])
+  complications         String[]          @default([])
+  vendorContacts        String[]          @default([])
+  baseTariffInr         Float             @default(0.0)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  hardware              HardwareIndent[]
+  tariffs               SchemeTariff[]
+  patientLogs           PatientLogEntry[]
+
+  @@index([procedureType])
+  @@index([category])
+  @@index([code])
+}
+
+model HardwareIndent {
+  id                    String              @id @default(cuid())
+  procedureBlueprintId  String
+  procedureBlueprint    ProcedureBlueprint  @relation(fields: [procedureBlueprintId], references: [id], onDelete: Cascade)
+  category              String
+  itemName              String
+  specification         String
+  standardStore         String
+  estimatedCostInr      Float?
+  isImplant             Boolean             @default(false)
+  implantCode           String?
+  createdAt             DateTime            @default(now())
+
+  @@index([procedureBlueprintId])
+  @@index([category])
+  @@index([standardStore])
+}
+
+model SchemeTariff {
+  id                    String              @id @default(cuid())
+  procedureBlueprintId  String
+  procedureBlueprint    ProcedureBlueprint  @relation(fields: [procedureBlueprintId], references: [id], onDelete: Cascade)
+  scheme                SchemeType          @default(MAAY_CHIRANJEEVI)
+  schemeName            String
+  packageCode           String
+  packageName           String
+  tariffAmount          Float
+  nabhRate              Float?
+  nonNabhRate           Float?
+  implantCovered        Boolean             @default(false)
+  implantDetails        Json?
+  preAuthCriteria       String?
+  documentationChecklist String[]           @default([])
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@index([procedureBlueprintId])
+  @@index([packageCode])
+  @@index([scheme])
+}
+
+model PatientLogEntry {
+  id                        String              @id @default(cuid())
+  uhid                      String
+  patientName               String
+  age                       Int
+  sex                       String
+  contactNumber             String
+  alternateContact          String?
+  referringDoctor           String
+  diagnosis                 String
+  procedureTypeId           String?
+  procedureBlueprint        ProcedureBlueprint? @relation(fields: [procedureTypeId], references: [id])
+  procedureType             String
+  procedureDate             DateTime
+  admissionStatus           String              @default("Day Care")
+  dischargeDate             DateTime?
+  operator                  String
+  accessionNo               String?
+  anesthesia                String              @default("Local")
+  preProcCreatinine         Float?
+  preProcInrPlatelets       String?
+  contrastVolumeMl          Float               @default(0.0)
+  immediateComplication     String              @default("None")
+  technicalSuccess          String              @default("Yes")
+  deviceMaterialUsed        String
+  histopathologyStatus      String              @default("N/A")
+  suggestedFollowupType     String
+  suggestedFollowupInterval String
+  followupType              String
+  intervalNumber            Int                 @default(4)
+  intervalUnit              String              @default("Weeks")
+  followupDueDate           DateTime?
+  followupStatus            String              @default("Pending")
+  followupDoneDate          DateTime?
+  clinicalOutcome           String              @default("N/A")
+  followupOutcomeNotes      String?
+  nextFollowupDue           DateTime?
+  patientStatus             String              @default("Active")
+  payerScheme               String              @default("Chiranjeevi")
+  remarks                   String?
+  dateAdded                 DateTime            @default(now())
+  deletedAt                 DateTime?
+  createdAt                 DateTime            @default(now())
+  updatedAt                 DateTime            @updatedAt
+
+  patientId                 String?
+  patient                   Patient?            @relation(fields: [patientId], references: [id])
+
+  @@index([uhid])
+  @@index([procedureDate])
+  @@index([procedureType])
+  @@index([operator])
+  @@index([followupStatus])
+  @@index([followupDueDate])
+}
+
+model ClinicalGuideline {
+  id                         String   @id @default(cuid())
+  code                       String   @unique
+  society                    String
+  procedureName              String
+  title                      String
+  year                       Int
+  evidenceGrade              String
+  indications                String[]
+  contraindications          String[]
+  technicalSuccessThreshold  Float
+  majorComplicationThreshold Float
+  antibioticProphylaxis      String
+  preProcedureChecklist      String[]
+  postProcedureCare          String[]
+  gradingCriteria            Json
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  @@index([society])
+  @@index([procedureName])
+}
+
+model SchemePackage {
+  id                 String   @id @default(cuid())
+  packageCode        String   @unique
+  packageName        String
+  scheme             String
+  specialty          String
+  baseTariffINR      Float
+  nonNabhTariffINR   Float?
+  implantsIncluded   Boolean  @default(false)
+  preAuthRequired    Boolean  @default(false)
+  authorizedImplants Json?
+  requiredDocuments  String[] @default([])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([scheme])
+  @@index([packageCode])
+  @@index([specialty])
+  @@index([scheme, packageCode])
+  @@index([packageName])
+}
+
+model PatientCase {
+  id            String     @id @default(cuid())
+  tenantId      String     @default("tenant_sms_jaipur")
+  tenant        Tenant     @relation(fields: [tenantId], references: [id])
+  uhid          String
+  patientName   String
+  age           Int
+  gender        String
+  procedureName String
+  status        CaseStatus @default(SCHEDULED)
+  deletedAt     DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([tenantId, status, createdAt])
+  @@index([uhid])
+}
+
+model InventoryItem {
+  id             String              @id @default(cuid())
+  tenantId       String              @default("tenant_sms_jaipur")
+  sku            String              @unique
+  name           String
+  category       String
+  lotNumber      String?
+  expiryDate     DateTime?
+  quantityOnHand Int                 @default(0)
+  unitPrice      Float               @default(0.0)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  usages         CaseHardwareUsage[]
+
+  @@index([tenantId, category])
+  @@index([sku])
+}
+
+enum HardwareDisposition {
+  IMPLANTED_BILLED
+  WASTED_CONTAMINATED
+  DEFECTIVE_RETURNED
+}
+
+model CaseHardwareUsage {
+  id              String              @id @default(cuid())
+  caseId          String
+  inventoryItemId String
+  quantityUsed    Int                 @default(1)
+  disposition     HardwareDisposition @default(IMPLANTED_BILLED)
+  wasteReason     String?
+  witnessedById   String?
+  loggedAt        DateTime            @default(now())
+  inventoryItem   InventoryItem       @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([inventoryItemId])
+  @@index([disposition])
+}
+

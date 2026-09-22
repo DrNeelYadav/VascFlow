@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-virtual": "^3.13.0",
     "@vascule/db": "*",
     "@vascule/feature-ot-scheduling": "*",
     "@vascule/feature-patient-vitals": "*",

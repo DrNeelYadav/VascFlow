@@ -1,0 +1,54 @@
+{{- if .Values.databaseMigration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "vascule-os.fullname" . }}-db-migrate-{{ .Release.Revision }}
+  labels:
+    {{- include "vascule-os.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db-migration
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-1"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        {{- include "vascule-os.labels" . | nindent 8 }}
+        app.kubernetes.io/component: db-migration
+    spec:
+      restartPolicy: OnFailure
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: prisma-migrate
+          image: "{{ .Values.webApp.image.repository }}:{{ .Values.webApp.image.tag }}"
+          imagePullPolicy: {{ .Values.webApp.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - "npx prisma migrate deploy"
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: vascule-database-secrets
+                  key: database-url
+                  optional: false
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+{{- end }}

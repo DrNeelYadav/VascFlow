@@ -77,6 +77,16 @@ export const WINDOW_LEVEL_PRESETS: WindowLevelPreset[] = [
   { name: "Abdomen", center: 40, width: 400, shortcut: "6" },
 ];
 
+/**
+ * Dedicated high-speed angio-suite presets:
+ * Angio (600/200), Soft Tissue (400/40), Bone (2000/500)
+ */
+export const CLINICAL_ANGIO_PRESETS: WindowLevelPreset[] = [
+  { name: "Angio", center: 200, width: 600, shortcut: "A" },
+  { name: "Soft Tissue", center: 40, width: 400, shortcut: "S" },
+  { name: "Bone", center: 500, width: 2000, shortcut: "B" },
+];
+
 // ---------------------------------------------------------------------------
 // Viewer State
 // ---------------------------------------------------------------------------
@@ -101,6 +111,12 @@ export interface ViewerState {
   totalFrames: number;
   /** Currently selected interaction tool */
   activeTool: ViewerTool;
+  /** CornerstoneJS / WADO-RS endpoint URL */
+  wadoRsUrl?: string;
+  /** Cine playback status */
+  isPlayingCine?: boolean;
+  /** Cine playback framerate (1–30 fps) */
+  cineFps?: number;
 }
 
 /** Default viewer state at component mount. Uses Angiography preset. */
@@ -113,6 +129,8 @@ export const DEFAULT_VIEWER_STATE: ViewerState = {
   currentFrame: 0,
   totalFrames: 1,
   activeTool: "wwwl",
+  isPlayingCine: false,
+  cineFps: 15,
 };
 
 // ---------------------------------------------------------------------------

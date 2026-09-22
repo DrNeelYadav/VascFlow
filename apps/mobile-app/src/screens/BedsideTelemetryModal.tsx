@@ -56,31 +56,23 @@ export const BedsideTelemetryModal: React.FC<BedsideTelemetryModalProps> = ({
       style={{
         position: "fixed",
         top: 0,
-        left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.85)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        width: "460px",
+        maxWidth: "100%",
+        backgroundColor: "#090A0F",
+        borderLeft: "1px solid #1E293B",
         zIndex: 9999,
-        padding: "16px",
+        padding: "20px",
+        color: "#FFFFFF",
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        boxShadow: "-10px 0 25px -5px rgba(0, 0, 0, 0.7)",
+        display: "flex",
+        flexDirection: "column",
+        overflowY: "auto",
       }}
     >
-      <div
-        style={{
-          backgroundColor: "#090A0F",
-          border: "1px solid #1E293B",
-          borderRadius: "16px",
-          width: "100%",
-          maxWidth: "540px",
-          padding: "24px",
-          color: "#FFFFFF",
-          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
-        }}
-      >
-        {/* Header */}
+      {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
           <div>
             <span
@@ -131,32 +123,32 @@ export const BedsideTelemetryModal: React.FC<BedsideTelemetryModalProps> = ({
           }}
         >
           <div>
-            <div style={{ fontSize: "10px", color: "#64748B", fontWeight: 600 }}>ABP (MAP)</div>
-            <div style={{ fontSize: "14px", fontWeight: 700, color: "#38BDF8" }}>
+            <div style={{ fontSize: "10px", color: "#64748B", fontWeight: 600 }}>BP</div>
+            <div style={{ fontSize: "14px", fontWeight: 700, color: "#38BDF8", fontFamily: "monospace", letterSpacing: "-0.025em" }}>
               {patient.vitals.abp}
             </div>
-            <div style={{ fontSize: "10px", color: "#94A3B8" }}>{patient.vitals.map} mmHg</div>
+            <div style={{ fontSize: "10px", color: "#94A3B8", fontFamily: "monospace" }}>{patient.vitals.map} mmHg</div>
           </div>
           <div>
             <div style={{ fontSize: "10px", color: "#64748B", fontWeight: 600 }}>PULSE</div>
-            <div style={{ fontSize: "14px", fontWeight: 700, color: "#4ADE80" }}>
+            <div style={{ fontSize: "14px", fontWeight: 700, color: "#4ADE80", fontFamily: "monospace", letterSpacing: "-0.025em" }}>
               {patient.vitals.heartRate}
             </div>
             <div style={{ fontSize: "10px", color: "#94A3B8" }}>BPM</div>
           </div>
           <div>
             <div style={{ fontSize: "10px", color: "#64748B", fontWeight: 600 }}>SpO2</div>
-            <div style={{ fontSize: "14px", fontWeight: 700, color: "#A78BFA" }}>
+            <div style={{ fontSize: "14px", fontWeight: 700, color: "#A78BFA", fontFamily: "monospace", letterSpacing: "-0.025em" }}>
               {patient.vitals.spo2}%
             </div>
-            <div style={{ fontSize: "10px", color: "#94A3B8" }}>EtCO2 36</div>
+            <div style={{ fontSize: "10px", color: "#94A3B8", fontFamily: "monospace" }}>EtCO2 36</div>
           </div>
           <div>
             <div style={{ fontSize: "10px", color: "#64748B", fontWeight: 600 }}>TEMP / RR</div>
-            <div style={{ fontSize: "14px", fontWeight: 700, color: "#FBBF24" }}>
+            <div style={{ fontSize: "14px", fontWeight: 700, color: "#FBBF24", fontFamily: "monospace", letterSpacing: "-0.025em" }}>
               {patient.vitals.temperatureC}°C
             </div>
-            <div style={{ fontSize: "10px", color: "#94A3B8" }}>{patient.vitals.respiratoryRate}/min</div>
+            <div style={{ fontSize: "10px", color: "#94A3B8", fontFamily: "monospace" }}>{patient.vitals.respiratoryRate}/min</div>
           </div>
         </div>
 
@@ -267,6 +259,5 @@ export const BedsideTelemetryModal: React.FC<BedsideTelemetryModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
   );
 };

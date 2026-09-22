@@ -88,8 +88,8 @@ export default function HardwareMonitorPage() {
           pduType: "C-STORE-RQ (RDSR)",
           bytes: 4096,
           summary: "TACE Chemoembolization Segment 8 Run - 18 frames",
-          airKermaMGy: 42.5,
-          dapGyCm2: 2.4,
+          airKermaMGy: undefined,
+          dapGyCm2: undefined,
         },
       ],
     },
@@ -614,9 +614,16 @@ export default function HardwareMonitorPage() {
         <section className="rounded-xl border border-[#DADCE0] bg-[#FFFFFF] shadow-sm overflow-hidden">
           <div className="p-4 border-b border-[#DADCE0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8F9FA]">
             <div>
-              <h3 className="text-sm font-bold text-[#202124]">Live Hardware Event & Packet Ledger</h3>
-              <p className="text-xs text-[#5F6368]">
-                Real-time C-STORE RDSR PDUs received via port 11112 SCP listener
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-[#202124]">
+                  Hardware Inventory &amp; Depletion Ledger
+                </h3>
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
+                  Cath-Lab Store
+                </span>
+              </div>
+              <p className="text-xs text-[#5F6368] mt-0.5">
+                SMS Medical College, Jaipur • Rajasthan RMSCL SKU synchronization
               </p>
             </div>
 
@@ -645,6 +652,7 @@ export default function HardwareMonitorPage() {
                   <th className="px-4 py-2.5">Time (UTC)</th>
                   <th className="px-4 py-2.5">Suite Source</th>
                   <th className="px-4 py-2.5">Protocol / PDU</th>
+                  <th className="px-4 py-2.5 text-center">Quantity</th>
                   <th className="px-4 py-2.5">Length</th>
                   <th className="px-4 py-2.5">Summary / Acquired Radiation Metrics</th>
                 </tr>
@@ -663,6 +671,9 @@ export default function HardwareMonitorPage() {
                     </td>
                     <td className="px-4 py-3 font-mono text-[11px] text-[#1A73E8]">
                       {evt.pduType}
+                    </td>
+                    <td className="px-4 py-3 text-center font-mono font-bold text-xs text-[#137333]">
+                      1 Packet
                     </td>
                     <td className="px-4 py-3 font-mono text-[11px] text-[#5F6368]">
                       {evt.bytes} B
@@ -753,6 +764,10 @@ export default function HardwareMonitorPage() {
           </div>
         </div>
       )}
+      {/* Light subtle footer attribution */}
+      <div className="text-center py-4 text-xs text-zinc-400 print:hidden select-none">
+        Made by Dr. Neel Yadav
+      </div>
     </div>
   );
 }

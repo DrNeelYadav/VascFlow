@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { usePatientLogisticsStore, PatientLogisticsRecord } from "@/app/lib/logistics/patientLogisticsStore";
 import {
   BedDouble,
   Users,
@@ -10,7 +11,6 @@ import {
   CheckCircle2,
   Sparkles,
   AlertCircle,
-  Plus,
   X,
   Building,
   UserCheck,
@@ -21,7 +21,7 @@ export type BedStatus = "occupied" | "vacant" | "cleaning";
 
 export interface BedRecord {
   id: string;
-  ward: "liver_icu" | "ir_ward" | "cath_recovery" | "sicu";
+  ward: "ir_icu" | "old_gastro_ward";
   wardTitle: string;
   status: BedStatus;
   ptName: string;
@@ -32,102 +32,137 @@ export interface BedRecord {
 }
 
 const INITIAL_BEDS: BedRecord[] = [
-  // Liver ICU (3 beds)
+  // IR ICU
   {
     id: "ICU-01",
-    ward: "liver_icu",
-    wardTitle: "Liver ICU",
+    ward: "ir_icu",
+    wardTitle: "IR ICU",
     status: "occupied",
-    ptName: "Govind Ram",
-    crNo: "SMS-2026-077",
-    diag: "Post-TIPS POD 1 • Portosystemic Gradient 6 mmHg",
-    doctor: "Dr. Neel Yadav",
+    ptName: "Lakshmi",
+    crNo: "SMS-2026-LP01",
+    diag: "Splenic Artery Embolization for Hypersplenism • Post-Procedure",
+    doctor: "Dr. Meenu Bagarhatta (Sr. Prof & Head)",
     ptId: "PT01",
   },
   {
     id: "ICU-02",
-    ward: "liver_icu",
-    wardTitle: "Liver ICU",
-    status: "occupied",
-    ptName: "Kailash Chand",
-    crNo: "SMS-2026-081",
-    diag: "Acute BCS Post-Angioplasty POD 2",
-    doctor: "Dr. Nilesh Bansal",
-  },
-  {
-    id: "ICU-03",
-    ward: "liver_icu",
-    wardTitle: "Liver ICU",
+    ward: "ir_icu",
+    wardTitle: "IR ICU",
     status: "vacant",
     ptName: "-",
     crNo: "-",
-    diag: "Ready for High-Acuity Emergency STAT Admission",
+    diag: "Ready for Emergency STAT Admission",
+    doctor: "-",
+  },
+  {
+    id: "ICU-03",
+    ward: "ir_icu",
+    wardTitle: "IR ICU",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Ready for Emergency STAT Admission",
     doctor: "-",
   },
 
-  // IR Ward (5 beds)
+  // Old Gastro IR Ward
   {
     id: "Ward-01",
-    ward: "ir_ward",
-    wardTitle: "IR Ward",
+    ward: "old_gastro_ward",
+    wardTitle: "Old Gastro IR Ward",
     status: "occupied",
-    ptName: "Kamla Devi Sharma",
-    crNo: "SMS-2026-092",
-    diag: "SFA Critical Limb Ischemia • Scheduled Stenting",
-    doctor: "Dr. Pragati Sharma",
+    ptName: "Roshan",
+    crNo: "SMS-2026-RS01",
+    diag: "Percutaneous Liver Abscess Drainage • Post-Procedure • AJH (Allowed to go Home)",
+    doctor: "Dr. Naresh Mangalhara (Associate Professor)",
     ptId: "PT02",
   },
   {
     id: "Ward-02",
-    ward: "ir_ward",
-    wardTitle: "IR Ward",
-    status: "occupied",
-    ptName: "Anita Bairwa",
-    crNo: "SMS-2026-104",
-    diag: "Symptomatic Uterine Fibroids • Pre-UAE",
-    doctor: "Dr. Sahil Verma",
-    ptId: "PT05",
-  },
-  {
-    id: "Ward-03",
-    ward: "ir_ward",
-    wardTitle: "IR Ward",
-    status: "occupied",
-    ptName: "Mahesh Choudhary",
-    crNo: "SMS-2026-111",
-    diag: "BPH / LUTS • Planned PAE",
-    doctor: "Dr. Neel Yadav",
-    ptId: "PT06",
-  },
-  {
-    id: "Ward-04",
-    ward: "ir_ward",
-    wardTitle: "IR Ward",
+    ward: "old_gastro_ward",
+    wardTitle: "Old Gastro IR Ward",
     status: "vacant",
     ptName: "-",
     crNo: "-",
-    diag: "Clean & Ready for Elective Admission",
+    diag: "Sterilized & Available",
+    doctor: "-",
+  },
+  {
+    id: "Ward-03",
+    ward: "old_gastro_ward",
+    wardTitle: "Old Gastro IR Ward",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Sterilized & Available",
+    doctor: "-",
+  },
+  {
+    id: "Ward-04",
+    ward: "old_gastro_ward",
+    wardTitle: "Old Gastro IR Ward",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Sterilized & Available",
     doctor: "-",
   },
   {
     id: "Ward-05",
-    ward: "ir_ward",
-    wardTitle: "IR Ward",
+    ward: "old_gastro_ward",
+    wardTitle: "Old Gastro IR Ward",
     status: "vacant",
     ptName: "-",
     crNo: "-",
-    diag: "Clean & Ready for Elective Admission",
+    diag: "Sterilized & Available",
     doctor: "-",
   },
 ];
 
 export default function BedBoardPage() {
+  const { patients } = usePatientLogisticsStore();
   const [beds, setBeds] = useState<BedRecord[]>(INITIAL_BEDS);
+
+  // Synchronize bed records with live patient logistics store
+  useEffect(() => {
+    setBeds((prevBeds) =>
+      prevBeds.map((bed) => {
+        const matchingPatient = patients.find((p: PatientLogisticsRecord) => p.assignedBedId === bed.id);
+        if (matchingPatient) {
+          const isDischarged = matchingPatient.currentStage === "PACU_PHASE_2_DISCHARGED";
+          if (isDischarged) {
+            return {
+              ...bed,
+              status: "cleaning",
+              ptName: "-",
+              crNo: "-",
+              diag: "Terminal Sanitization in Progress (Post-Discharge)",
+              doctor: "-",
+            };
+          }
+          const dischargeNote = matchingPatient.dischargeStatus
+            ? ` • Discharge Status: ${matchingPatient.dischargeStatus}`
+            : "";
+          return {
+            ...bed,
+            status: "occupied",
+            ptName: matchingPatient.patientName,
+            crNo: matchingPatient.crNumber,
+            diag: `${matchingPatient.diagnosis} • Stage: ${matchingPatient.currentStage}${dischargeNote}`,
+            doctor: matchingPatient.primaryOperator,
+            ptId: matchingPatient.id,
+          };
+        }
+        return bed;
+      })
+    );
+  }, [patients]);
+
   const [selectedWard, setSelectedWard] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [transferModalBed, setTransferModalBed] = useState<BedRecord | null>(null);
-  const [targetWard, setTargetWard] = useState<string>("liver_icu");
+  const [targetWard, setTargetWard] = useState<string>("ir_icu");
   const [actionSuccessMessage, setActionSuccessMessage] = useState<string | null>(null);
 
   // Compute metrics
@@ -233,11 +268,9 @@ export default function BedBoardPage() {
           {/* Ward Tabs */}
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
             {[
-              { id: "all", label: "All Wards (28)" },
-              { id: "liver_icu", label: "Liver ICU (6)" },
-              { id: "ir_ward", label: "IR Ward D-Block (12)" },
-              { id: "cath_recovery", label: "Cath Holding (6)" },
-              { id: "sicu", label: "Surgical ICU (4)" },
+              { id: "all", label: "All Wards" },
+              { id: "old_gastro_ward", label: "Old Gastro IR Ward" },
+              { id: "ir_icu", label: "IR ICU" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -397,28 +430,10 @@ export default function BedBoardPage() {
                     <span>Sanitization Complete → Make Vacant</span>
                   </button>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setBeds((prev) =>
-                        prev.map((b) =>
-                          b.id === bed.id
-                            ? {
-                                ...b,
-                                status: "occupied",
-                                ptName: "New Admission",
-                                crNo: `SMS-2026-${Math.floor(100 + Math.random() * 900)}`,
-                                diag: "Transferred from OP Clinic / Cath-Lab",
-                                doctor: "Dr. Neel Yadav",
-                              }
-                            : b
-                        )
-                      );
-                    }}
-                    className="w-full py-1.5 px-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Admit Patient Here</span>
-                  </button>
+                  <div className="w-full py-1.5 px-2 rounded-full bg-[#F8F9FA] border border-[#DADCE0] text-[#5F6368] text-[11px] font-medium flex items-center justify-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#137333]" />
+                    <span>Bed Vacant &amp; Available</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -488,10 +503,8 @@ export default function BedBoardPage() {
                     onChange={(e) => setTargetWard(e.target.value)}
                     className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-[#202124] focus:border-[#1A73E8] focus:outline-none"
                   >
-                    <option value="liver_icu">Liver ICU (LICU)</option>
-                    <option value="ir_ward">IR Ward D-Block</option>
-                    <option value="cath_recovery">Cath-Lab Holding (PACU)</option>
-                    <option value="sicu">Surgical ICU (SICU)</option>
+                    <option value="old_gastro_ward">Old Gastro IR Ward</option>
+                    <option value="ir_icu">IR ICU</option>
                   </select>
                 </div>
 

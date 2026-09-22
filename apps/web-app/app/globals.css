@@ -3,11 +3,36 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 0%;
-  --foreground: 210 40% 98%;
-  --card: 0 0% 0%;
-  --card-foreground: 210 40% 98%;
-  --border: 217 33% 17%;
+  /* Canvas & Card Surfaces */
+  --background: 0 0% 98%;          /* #FAFAFA Clean Canvas */
+  --foreground: 240 10% 3.9%;      /* #09090B High-contrast Ink */
+  --card: 0 0% 100%;               /* #FFFFFF Utility Cards */
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+
+  /* Subtle Zinc Borders & Muted Surfaces */
+  --border: 240 5.9% 90%;          /* #E4E4E7 border-zinc-200 */
+  --input: 240 5.9% 90%;
+  --ring: 221.2 83.2% 53.3%;
+  --muted: 240 4.8% 95.9%;         /* #F4F4F5 zinc-100 */
+  --muted-foreground: 240 3.8% 46.1%; /* #71717A zinc-500 */
+
+  /* Clinical Slate/Blue Primary Action */
+  --primary: 221.2 83.2% 53.3%;    /* hsl(221.2 83.2% 53.3%) */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+
+  /* Semantic Restrained Clinical Status Tokens */
+  --verified: 160 84.1% 39.4%;     /* emerald-600: Verified / Signed / Finalized */
+  --verified-foreground: 0 0% 100%;
+  --holding: 37.7 92.1% 50.2%;     /* amber-600: Prep / Holding / Pending */
+  --holding-foreground: 0 0% 100%;
+  --alert: 346.8 77.2% 49.8%;       /* rose-600: Hard Safety Stop (MACD Exceeded, Sentinel) */
+  --alert-foreground: 0 0% 100%;
+  --destructive: 346.8 77.2% 49.8%;
+  --destructive-foreground: 0 0% 100%;
 }
 
 * {
@@ -16,28 +41,97 @@
 
 html,
 body {
-  background-color: #000000;
-  color: #ffffff;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background-color: #FAFAFA;
+  color: #09090B;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Precision scrollbar for clinical workstations */
+/* Precision slim scrollbar for clinical workstations */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #F4F4F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #D4D4D8;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #A1A1AA;
+}
+
+/* Institutional Clean Print Styles (Consent & Prep Workstation) */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm 8mm 10mm;
+  }
+
+  html,
+  body {
+    background-color: #FFFFFF !important;
+    color: #09090B !important;
+    font-size: 10.5pt !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  header,
+  nav,
+  aside,
+  footer,
+  .print\:hidden,
+  [data-print-hidden="true"],
+  [data-sidebar],
+  [data-header] {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: #FFFFFF !important;
+    overflow: visible !important;
+    height: auto !important;
+    display: block !important;
+    min-height: auto !important;
+  }
+
+  .print\:p-0 {
+    padding: 0 !important;
+  }
+
+  .print\:m-0 {
+    margin: 0 !important;
+  }
+
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+
+  .print\:border-none {
+    border: none !important;
+  }
+
+  .print-break-inside-avoid,
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-break-before {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
 }

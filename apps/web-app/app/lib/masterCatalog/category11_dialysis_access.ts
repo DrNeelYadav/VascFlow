@@ -1,0 +1,107 @@
+import { MasterProcedure } from './types';
+
+/**
+ * Category 11: Central Venous Access & Hemodialysis (3 Procedures)
+ * Strict Rajasthan MAAY / RGHS compatibility and SMS Medical College clinical protocols.
+ */
+export const CATEGORY_11_DIALYSIS_ACCESS: MasterProcedure[] = [
+  {
+    id: 'cat11-permacath-insertion',
+    categoryNumber: 11,
+    categoryName: 'Central Venous Access & Hemodialysis',
+    title: 'Right IJV Tunnelled Cuffed Hemodialysis Catheter (Permacath) Placement',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Tunnelled Dialysis Catheter (Permacath)',
+      packageCode: '1849-IN064A',
+      icd10: 'N18.6',
+      tariffInr: 15000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Right Internal Jugular Vein", "Cavoatrial Junction"],
+    sedation: 'Local Anesthesia',
+    accessSiteDefault: 'Right IJV puncture under ultrasound + Anterior chest wall exit site',
+    sheathDefault: 'Dual-lumen peel-away sheath (14F - 16F)',
+    cathetersAndWires: '18G needle, 0.035" J-wire, vascular tunneler, 14.5F 19-23cm Permacath',
+    microcatheterSystem: 'N/A',
+    embolicOrImplants: '14.5F 19cm/23cm Cuffed Dual-Lumen Tunnelled Catheter (Ash Split / Palindrome)',
+    proceduralNarrativeTemplate:
+      'Right IJV accessed under real-time ultrasound; 0.035" J-wire positioned in IVC. Subcutaneous tunnel created over right anterior chest wall with tunneler. Permacath pulled through tunnel placing Dacron cuff 2 cm inside subcutaneous tunnel from exit site. 15F peel-away sheath introduced into IJV. Catheter advanced through peel-away sheath under fluoroscopy, positioning tip precisely in mid right atrium. Both lumens aspirated with brisk flow (>350 mL/min) and flushed with heparin lock solution. Sheath peeled away. Suture closure of puncture and exit sites.',
+    postOpCare: {
+      immobilizationHours: 2,
+      immobilizationInstructions: 'Bedrest x 2 hours; head elevated 30 degrees.',
+      hematomaChecks: 'Inspect neck puncture and chest tunnel exit site for hematoma or oozing q30m x 2h.',
+      requiredImaging: 'Erect Chest X-ray at 2 hours to confirm catheter tip position at mid right atrium and rule out pneumothorax.',
+      hydrationProtocol: 'IV fluids as clinically required by nephrology.',
+      medications: ["Heparin lock solution instilled in catheter lumens (volume per lumen printed on hub)", "Tab Paracetamol 650mg SOS"],
+      redFlags: ["Catheter-related bloodstream infection", "Air embolism", "Pneumothorax / hemothorax", "Catheter kinking"],
+    },
+    consentId: 'consent-dialysis-access',
+  },
+  {
+    id: 'cat11-avf-fistulogram-angioplasty',
+    categoryNumber: 11,
+    categoryName: 'Central Venous Access & Hemodialysis',
+    title: 'Diagnostic Fistulogram & High-Pressure Balloon Angioplasty for Dysfunctional AVF',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Percutaneous Transluminal Angioplasty (PTA)',
+      packageCode: '1849-VS001A',
+      icd10: 'T82.8',
+      tariffInr: 18000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Arteriovenous Fistula Outflow Vein", "Anastomosis", "Juxta-anastomotic Segment"],
+    sedation: 'Local Anesthesia',
+    accessSiteDefault: 'Antegrade / Retrograde direct puncture of AVF vein under US',
+    sheathDefault: '6F Vascular Sheath',
+    cathetersAndWires: '0.035" stiff Glidewire, 5mm - 8mm x 40mm High-Pressure PTA Balloon (Conquest / Dorado 20-30 atm)',
+    microcatheterSystem: 'N/A',
+    embolicOrImplants: 'High-Pressure PTA Balloon',
+    proceduralNarrativeTemplate:
+      'Indicated for elevated venous dialysis pressures and prolonged post-cannulation bleeding in radiocephalic AVF. AVF vein accessed with 6F sheath. Diagnostic fistulography demonstrated a critical 85% stenosis in the juxta-anastomotic cephalic vein segment with significant collaterals. 0.035" Glidewire crossed lesion into brachial artery. 6mm x 40mm ultra-high-pressure balloon inflated to 26 atm for 90 seconds until balloon waist completely effaced. Completion angiogram showed excellent luminal restoration (>90% caliber), elimination of pressure gradient, and vigorous palpable thrill. Sheath removed; purse-string suture hemostasis.',
+    postOpCare: {
+      immobilizationHours: 2,
+      immobilizationInstructions: 'Keep access arm elevated on pillow for 2 hours; do NOT bend arm.',
+      hematomaChecks: 'Check puncture site and palpate AVF thrill q15m x 1h, then q30m x 2h.',
+      requiredImaging: 'Duplex ultrasound if loss of thrill.',
+      hydrationProtocol: 'Oral fluids.',
+      medications: ["Tab Paracetamol 650mg SOS"],
+      redFlags: ["AVF rupture / hematoma", "Acute thrombosis / loss of thrill", "Pseudoaneurysm"],
+    },
+    consentId: 'consent-fistula-angioplasty',
+  },
+  {
+    id: 'cat11-central-venous-stenting',
+    categoryNumber: 11,
+    categoryName: 'Central Venous Access & Hemodialysis',
+    title: 'Central Venous Stenosis (CVS) Dedicated Stenting for Failing AVF',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Venous Stenting',
+      packageCode: '1849-VS014A',
+      icd10: 'I87.1',
+      tariffInr: 35000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Innominate Vein", "Subclavian Vein", "SVC"],
+    sedation: 'Local Anesthesia',
+    accessSiteDefault: 'Transfemoral or via AVF Sheath Access',
+    sheathDefault: '8F - 10F Sheath',
+    cathetersAndWires: '0.035" stiff wire, 12mm-14mm x 60mm self-expanding bare / covered stent (Fluency / Abre)',
+    microcatheterSystem: 'N/A',
+    embolicOrImplants: '12mm x 60mm Self-Expanding Stent',
+    proceduralNarrativeTemplate:
+      'Indicated for massive ipsilateral arm edema and AVF dysfunction due to chronic central venous catheter stenosis of left innominate vein. Retrograde traversal of high-grade innominate vein stricture. Pre-dilated with 10mm balloon. 12mm x 60mm self-expanding dedicated stent deployed across stricture. Post-dilated to 12mm. Rapid inline drainage into SVC established with immediate decompression of arm collaterals. Dialysis flow restored.',
+    postOpCare: {
+      immobilizationHours: 4,
+      immobilizationInstructions: 'Bedrest x 4 hours.',
+      hematomaChecks: 'Arm check and vitals q30m x 2h.',
+      requiredImaging: 'Duplex at 24 hours.',
+      hydrationProtocol: 'IV Normal Saline 75 mL/hr.',
+      medications: ["Therapeutic anticoagulation if indicated"],
+      redFlags: ["Stent migration", "Central vein rupture", "Re-stenosis"],
+    },
+    consentId: 'consent-venous-stenting',
+  },
+];

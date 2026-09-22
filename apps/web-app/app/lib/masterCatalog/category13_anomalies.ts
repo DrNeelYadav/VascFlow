@@ -1,0 +1,108 @@
+import { MasterProcedure } from './types';
+
+/**
+ * Category 13: Vascular Anomalies & Malformations (3 Procedures)
+ * Strict Rajasthan MAAY / RGHS compatibility and SMS Medical College clinical protocols.
+ */
+export const CATEGORY_13_ANOMALIES: MasterProcedure[] = [
+  {
+    id: 'cat13-vm-bleomycin',
+    categoryNumber: 13,
+    categoryName: 'Vascular Anomalies & Malformations',
+    title: 'Percutaneous Sclerotherapy of Venous Malformations with Bleomycin',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Vascular Malformation Sclerotherapy',
+      packageCode: '1849-IN066A',
+      icd10: 'D18.0',
+      tariffInr: 25000,
+    },
+    modality: 'US',
+    targetAnatomy: ["Low-Flow Venous Malformation (Head / Neck / Extremity)"],
+    sedation: 'Local Anesthesia with Conscious Sedation',
+    accessSiteDefault: 'Direct percutaneous puncture under real-time ultrasound',
+    sheathDefault: '21G - 23G Butterfly Needle',
+    cathetersAndWires: 'Ultrasound machine, non-ionic contrast, Bleomycin (max 15 mg / session or 0.5 mg/kg)',
+    microcatheterSystem: 'N/A',
+    embolicOrImplants: 'Bleomycin Aqueous Solution / Foam',
+    proceduralNarrativeTemplate:
+      'Real-time ultrasound localized multi-septated spongy low-flow venous malformation with phleboliths. Sterile prep. Direct puncture with 21G butterfly needle into dominant venous lake. Slow dark venous blood return confirmed. Direct phlebography under subtraction fluoroscopy verified lesion boundaries and absence of rapid deep venous drainage. Bleomycin (10 units dissolved in 5 mL saline + 5 mL non-ionic contrast) injected slowly under continuous fluoroscopic vision. Pressure dressing applied.',
+    postOpCare: {
+      immobilizationHours: 2,
+      immobilizationInstructions: 'Bedrest x 2 hours; elevate treated limb if extremity.',
+      hematomaChecks: 'Monitor for acute local swelling, skin blanching, or airway edema q30m x 2h.',
+      requiredImaging: 'Bedside USG if excessive swelling; follow-up MRI at 6-8 weeks.',
+      hydrationProtocol: 'Oral fluids.',
+      medications: ["Tab Paracetamol 650mg TDS", "Tab Prednisolone 20mg OD x 3 days (reduces post-sclerosis swelling)"],
+      redFlags: ["Airway compromise (head/neck lesions)", "Skin ulceration / necrosis", "Pulmonary toxicity (cumulative dose monitoring)"],
+    },
+    consentId: 'consent-vascular-malformation',
+  },
+  {
+    id: 'cat13-avm-onyx',
+    categoryNumber: 13,
+    categoryName: 'Vascular Anomalies & Malformations',
+    title: 'High-Flow Arteriovenous Malformation (AVM) Transcatheter Embolization with Onyx',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Percutaneous Transcatheter Embolization',
+      packageCode: '1849-IN063A',
+      icd10: 'Q27.3',
+      tariffInr: 55000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["High-Flow AVM Nidus", "Arterial Feeders", "Dominant Draining Veins"],
+    sedation: 'Local Anesthesia with Conscious Sedation',
+    accessSiteDefault: 'Right CFA at femoral head level',
+    sheathDefault: '6F Sheath',
+    cathetersAndWires: '5F Guiding catheter, DMSO-compatible microcatheter (Apollo / Marathon / Sonic), 0.014" wire, DMSO, Onyx 18 / 34',
+    microcatheterSystem: '1.5F - 2.7F DMSO-compatible microcatheter',
+    embolicOrImplants: 'Onyx 18 / 34 (Ethylene Vinyl Alcohol Copolymer)',
+    proceduralNarrativeTemplate:
+      'Right CFA access. Selective arteriography identified complex high-flow AVM with multiple feeding pedicles and early venous drainage. DMSO-compatible detachable-tip microcatheter navigated superselectively into the nidus. Microcatheter flushed with non-ionic contrast, followed by 0.25 mL DMSO dead-space fill. Under continuous roadmap fluoroscopy, Onyx-18 slowly infused forming a proximal plug around the microcatheter tip. Reflux-and-push technique utilized to fill entire nidus and dominant outflow vein. Microcatheter detached cleanly. Post-embolization angiogram demonstrated total devascularization of AVM nidus.',
+    postOpCare: {
+      immobilizationHours: 6,
+      immobilizationInstructions: 'Strict supine flat bedrest x 6 hours; right leg straight.',
+      hematomaChecks: 'Monitor puncture site, limb neurovascular status, and facial/cranial nerve exams q15m x 1h, q30m x 2h, then q1h.',
+      requiredImaging: 'Repeat MRI / Angiography at 3 months.',
+      hydrationProtocol: 'IV Normal Saline 100 mL/hr.',
+      medications: ["IV Dexamethasone 8mg BD", "Tab Paracetamol 650mg TDS"],
+      redFlags: ["Ischemic skin necrosis", "Non-target intracranial/pulmonary embolization", "Compartment syndrome"],
+    },
+    consentId: 'consent-vascular-malformation',
+    calculatorId: 'cigarroa_macd',
+  },
+  {
+    id: 'cat13-pavm-plugs-coils',
+    categoryNumber: 13,
+    categoryName: 'Vascular Anomalies & Malformations',
+    title: 'Pulmonary Arteriovenous Malformation (PAVM) Embolization with Vascular Plugs / Coils',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Pulmonary AVM Embolization',
+      packageCode: '1849-CV023A',
+      icd10: 'Q28.0',
+      tariffInr: 40000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Pulmonary Artery Feeding Branch", "PAVM Sac", "Draining Pulmonary Vein"],
+    sedation: 'Local Anesthesia with Conscious Sedation',
+    accessSiteDefault: 'Right Common Femoral Vein under ultrasound',
+    sheathDefault: '7F - 8F 45cm Sheath',
+    cathetersAndWires: '0.035" stiff Glidewire, 5F Berman / Grollman catheter, Amplatzer Vascular Plug IV / II (6-12mm) and 0.018"/0.035" detachable coils',
+    microcatheterSystem: '2.7F microcatheter',
+    embolicOrImplants: 'Amplatzer Vascular Plug IV + Detachable Coils',
+    proceduralNarrativeTemplate:
+      'Indicated for hereditary hemorrhagic telangiectasia (HHT / Osler-Weber-Rendu) with feeding artery >2mm causing hypoxemia or paradoxical stroke risk. Right CFV access. Selective pulmonary arteriography identified 7mm feeding artery supplying a 20mm PAVM sac. 7F sheath navigated into feeding branch. Sizing performed. An Amplatzer Vascular Plug IV (9mm, 30-50% oversizing) deployed precisely in the distal feeding artery within 1 cm of sac, strictly preserving normal adjacent pulmonary arterial branches. Complementary detachable microcoils packed proximal to plug. Completion run showed complete occlusion of feeding artery with preserved normal pulmonary parenchyma. Arterial PO2 improved immediately from 68 to 92 mmHg on room air.',
+    postOpCare: {
+      immobilizationHours: 4,
+      immobilizationInstructions: 'Bedrest x 4 hours.',
+      hematomaChecks: 'Monitor SpO2, respiratory rate, and groin puncture site q15m x 1h, q30m x 2h, then q1h.',
+      requiredImaging: 'Erect Chest X-ray at 2 to 4 hours post-procedure to confirm plug stability and rule out pneumothorax.',
+      hydrationProtocol: 'Oral fluids.',
+      medications: ["Tab Paracetamol 650mg SOS"],
+      redFlags: ["Pleurisy / pleuritic chest pain (pulmonary infarction)", "Paradoxical plug migration into left atrium / systemic circulation", "Air embolism"],
+    },
+    consentId: 'consent-pavm-embolization',
+  },
+];

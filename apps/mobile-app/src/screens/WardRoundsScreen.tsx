@@ -305,22 +305,24 @@ export const WardRoundsScreen: React.FC = () => {
                     borderRadius: "8px",
                     fontSize: "12px",
                     marginBottom: "12px",
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                    letterSpacing: "-0.025em",
                   }}
                 >
                   <div>
-                    <span style={{ color: "#64748B" }}>ABP: </span>
+                    <span style={{ color: "#64748B", fontSize: "10px", display: "block" }}>BP</span>
                     <strong style={{ color: "#38BDF8" }}>{patient.vitals.abp}</strong>
                   </div>
                   <div>
-                    <span style={{ color: "#64748B" }}>HR: </span>
-                    <strong style={{ color: "#4ADE80" }}>{patient.vitals.heartRate} bpm</strong>
+                    <span style={{ color: "#64748B", fontSize: "10px", display: "block" }}>HR</span>
+                    <strong style={{ color: "#4ADE80" }}>{patient.vitals.heartRate}</strong>
                   </div>
                   <div>
-                    <span style={{ color: "#64748B" }}>SpO2: </span>
+                    <span style={{ color: "#64748B", fontSize: "10px", display: "block" }}>SpO2</span>
                     <strong style={{ color: "#A78BFA" }}>{patient.vitals.spo2}%</strong>
                   </div>
                   <div>
-                    <span style={{ color: "#64748B" }}>Contrast: </span>
+                    <span style={{ color: "#64748B", fontSize: "10px", display: "block" }}>CONTRAST</span>
                     <strong style={{ color: contrastPct > 80 ? "#F87171" : "#34D399" }}>
                       {contrastPct}%
                     </strong>

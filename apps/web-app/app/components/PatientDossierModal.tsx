@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   EndoflowPatient,
   ModalityType,
@@ -169,6 +169,18 @@ export function PatientDossierModal({
     return calculateEgfrCkdEpi(creat, age, sex === "Female");
   }, [creat, age, sex]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSaveAndLock = () => {
@@ -252,9 +264,12 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-white border border-[#DADCE0] rounded-2xl w-full max-w-6xl shadow-2xl flex flex-col max-h-[94vh] overflow-hidden">
-        {/* Sticky Top Header */}
+    <div
+      className="fixed inset-y-0 right-0 z-50 w-full sm:w-[460px] border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-2xl flex flex-col h-full overflow-hidden transition-transform duration-200 ease-in-out"
+      role="dialog"
+      aria-modal="false"
+    >
+      {/* Sticky Top Header */}
         <div className="px-5 py-3.5 border-b border-[#DADCE0] bg-[#FFFFFF] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3">
             <button
@@ -345,11 +360,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
               <div className="lg:col-span-7 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-4">
                 <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
                   <h3 className="font-bold text-xs uppercase tracking-wider text-[#1A73E8]">
-                    Patient Clinical Profile
+                    Clinical Profile
                   </h3>
-                  <span className="text-[11px] text-[#80868B]">
-                    SMS Medical College, Jaipur
-                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -359,6 +371,7 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     </label>
                     <input
                       type="text"
+                      autoFocus
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
@@ -1603,6 +1616,5 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
           </div>
         </div>
       </div>
-    </div>
   );
 }

@@ -25,7 +25,7 @@
         "apps/web-app/auth.ts"
       ],
       "@/*": [
-        "src/*"
+        "apps/web-app/*"
       ],
       "@vascule/ui-kit": [
         "packages/ui-kit/src"
@@ -50,6 +50,24 @@
       ],
       "@vascule/catalog/*": [
         "packages/catalog/src/*"
+      ],
+      "@vascule/utils": [
+        "packages/utils/src"
+      ],
+      "@vascule/utils/*": [
+        "packages/utils/src/*"
+      ],
+      "@vascule/feature-dicom-viewer": [
+        "packages/features/dicom-viewer/src"
+      ],
+      "@vascule/feature-dicom-viewer/*": [
+        "packages/features/dicom-viewer/src/*"
+      ],
+      "@vascule/db": [
+        "packages/db/index.ts"
+      ],
+      "@vascule/db/*": [
+        "packages/db/*"
       ]
     },
     "allowJs": true,
@@ -62,9 +80,9 @@
     ]
   },
   "include": [
-    "src",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    "apps/web-app/**/*.ts",
+    "apps/web-app/**/*.tsx",
+    "packages/**/*.ts"
   ],
   "exclude": [
     "node_modules",

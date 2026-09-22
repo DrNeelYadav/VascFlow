@@ -169,7 +169,7 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     unitName: "UNIT I",
     opdDays: "Mon,Tue,Wed,Thu,Fri,Sat",
     hid: "150223147650888",
-    patientName: "MR. Sunil Kumar",
+    patientName: "Varicose Veins Patient",
     age: "18Y",
     gender: "M",
     admissionNo: "A/SMSH/26/109750",
@@ -183,7 +183,7 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     abhaNumber: "91-5872-4410-5074",
     unitDoctors: [
       { name: "DR Meenu Bagarhatta", designation: "Senior Professor & Head" },
-      { name: "Dr Alok Verma", designation: "Assistant Professor" },
+      { name: "Dr Shashank Sharma", designation: "Professor" },
     ],
   },
   caseSummary: {
@@ -259,7 +259,7 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
       anaesthesiaType: "LOCAL",
       procedureDetail:
         "Under strict aseptic condition under ultrasound guidance. Left GSV punctured below the knee joint. 7 French sheath placed. Venogram taken. Venaseal closure system was used and tip of the delivery Catheter placed 5 centimetre distal to SFJ. Glue embolization done. Post procedure ultrasound revealed glue cast with resulting non compressibility. Sclerotherapy done for few varicosities in left lower limb. No intra/immediate post-op complications seen. Deep venous system patent on Doppler.",
-      processDoneBy: "Dr Alok Verma",
+      processDoneBy: "Dr Shashank Sharma",
     },
   ],
   ddcDrugs: [
@@ -280,7 +280,7 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     conditionOnDischarge: "Improved",
     followUp: "Follow up Doppler after 1 month in IR OPD Room 48 / Old Gastro Ward (Mon/Thu).",
     approvedBy: "DR Meenu Bagarhatta",
-    dischargePreparedBy: "Dr Alok Verma",
+    dischargePreparedBy: "Dr Shashank Sharma",
   },
   attachments: [
     {
@@ -302,18 +302,18 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
   ],
 };
 
-export const ANJUM_NISHA_DISCHARGE: IhmsDischargeSummaryData = {
+export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
   id: "IHMS-DIS-2026-002",
   patientId: "EX02",
   admissionDetails: {
     hospitalName: "SMS SUPER SPECIALITY HOSPITAL JAIPUR",
     hospitalAddress: "9 VIVEKANAND MARG NEAR TRAUMA HOSPITAL JAIPUR",
     departmentName: "INTERVENTIONAL RADIOLOGY / GASTROENTEROLOGY",
-    unitHead: "DR RUPESH KUMAR POKHARNA",
+    unitHead: "DR MEENU BAGARHATTA",
     unitName: "UNIT 1",
     opdDays: "Mon,Thu",
     hid: "240826303019538",
-    patientName: "MS. Anjum Nisha",
+    patientName: "Budd-Chiari Patient",
     age: "31Y",
     gender: "F",
     admissionNo: "A/SSH/26/17215",
@@ -413,7 +413,7 @@ export const ANJUM_NISHA_DISCHARGE: IhmsDischargeSummaryData = {
       anaesthesiaType: "LOCAL",
       procedureDetail:
         "Right IJV access under ultrasound guidance. Right atrium and suprahepatic IVC catheterized. Occlusion of right and left hepatic vein ostia confirmed. Cavogram demonstrates extrinsic caudate lobe compression. Therapeutic anticoagulation plan formulated.",
-      processDoneBy: "Dr Neel Yadav",
+      processDoneBy: "Dr Naresh Mangalhara",
     },
   ],
   ddcDrugs: [
@@ -435,8 +435,8 @@ export const ANJUM_NISHA_DISCHARGE: IhmsDischargeSummaryData = {
     generalAdvise: "Diet explained: High protein, low salt diet (<2g sodium/day). Daily morning weight monitoring. Fluid restriction to 1.5 L/day. Strict compliance with Apixaban anticoagulation.",
     conditionOnDischarge: "Improved",
     followUp: "In Gastro OPD Room No. 3, 4, 5 after 2 weeks; SOS on Monday/Thursday or immediate visit to IR Emergency in case of worsening distension.",
-    approvedBy: "DR RUPESH KUMAR POKHARNA",
-    dischargePreparedBy: "Dr Sudhir Maharshi",
+    approvedBy: "DR MEENU BAGARHATTA",
+    dischargePreparedBy: "Dr Naresh Mangalhara",
   },
   attachments: [
     {
@@ -458,9 +458,28 @@ export const ANJUM_NISHA_DISCHARGE: IhmsDischargeSummaryData = {
   ],
 };
 
+export const ANJUM_NISHA_DISCHARGE: IhmsDischargeSummaryData = BUDD_CHIARI_DISCHARGE;
+
 // ============================================================================
 // AUTOMATIC GENERATOR FOR ANY PATIENT
 // ============================================================================
+
+/**
+ * Pure deterministic numeric generator from string seed
+ * Avoids any Math.random() in hospital discharge records
+ */
+function deterministicDigits(seed: string, length: number): string {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    hash = (hash * 1664525 + 1013904223) >>> 0;
+    result += (hash % 10).toString();
+  }
+  return result;
+}
 
 export function generateIhmsDischargeForPatient(patient: {
   id: string;
@@ -468,12 +487,16 @@ export function generateIhmsDischargeForPatient(patient: {
   age: number;
   sex: "Male" | "Female";
   hid: string;
+  scanId?: string;
   unit: string;
   postedBy: string;
   summary: string;
   procedure: string;
   procedureKey: string;
   scheme: string;
+  chiefComplaints?: string;
+  clinicalHistory3Months?: string;
+  cectFindings?: string;
   ipd: { ward: string; bed: string; podDay: string };
   labs: {
     ast: number;
@@ -483,6 +506,24 @@ export function generateIhmsDischargeForPatient(patient: {
     creat: number;
     inr: number;
     plt: number;
+  };
+  inRoom?: {
+    activeSheathAccess?: string;
+    elapsedFluoroSeconds?: number;
+    contrastInjectedMl?: number;
+    macdThresholdMl?: number;
+    vitals?: string;
+    targetArtery?: string;
+    cathetersInUse?: string[];
+    currentStepDescription?: string;
+  };
+  postOp?: {
+    recoveryBed?: string;
+    punctureSiteSeal?: string;
+    distalPulses?: string;
+    instructions?: string;
+    sheathRemoved?: boolean;
+    dischargeReady?: boolean;
   };
   attachments?: ProceduralImageAttachment[];
 }): IhmsDischargeSummaryData {
@@ -528,6 +569,11 @@ export function generateIhmsDischargeForPatient(patient: {
     procedureDetail = `Under real-time image guidance and strict asepsis, local anesthesia infiltrated. 18G coaxial core needle introduced into the target lesion. 3 core biopsy specimens retrieved with adequate tissue yield for histopathology. Check sonography/CT showed zero hematoma, pneumothorax, or active bleeding.`;
   }
 
+  if (patient.inRoom && (patient.inRoom.contrastInjectedMl || patient.inRoom.elapsedFluoroSeconds)) {
+    const fluoroMins = patient.inRoom.elapsedFluoroSeconds ? (patient.inRoom.elapsedFluoroSeconds / 60).toFixed(1) : "0.0";
+    procedureDetail += ` Intra-Operative Telemetry: Access: ${patient.inRoom.activeSheathAccess || "Vascular Sheath"}. Contrast Administered: ${patient.inRoom.contrastInjectedMl || 0} mL (Safe MACD Limit: ${patient.inRoom.macdThresholdMl || 180} mL). Fluoroscopy Time: ${fluoroMins} min. Hemodynamic status: ${patient.inRoom.vitals || "Stable"}.`;
+  }
+
   // Discharge meds
   const meds: DischargeMedicationItem[] = [
     { sNo: 1, medicine: "Amoxicillin and Potassium Clavulanate Tab 625mg [505]", dosePower: "625mg", route: "ORAL", frequency: "BD", days: 5, instructions: "After food" },
@@ -547,6 +593,28 @@ export function generateIhmsDischargeForPatient(patient: {
   // Re-number
   meds.forEach((m, i) => (m.sNo = i + 1));
 
+  // Pure deterministic IDs
+  const admissionSeq = deterministicDigits(`${patient.id}_${patient.hid}`, 6);
+  const admissionNo = patient.scanId && patient.scanId.startsWith("A/SMSH/")
+    ? patient.scanId
+    : `A/SMSH/26/${admissionSeq}`;
+
+  const abha1 = deterministicDigits(`${patient.id}_abha1`, 4);
+  const abha2 = deterministicDigits(`${patient.id}_abha2`, 4);
+  const abha3 = deterministicDigits(`${patient.id}_abha3`, 4);
+  const abhaNumber = `91-${abha1}-${abha2}-${abha3}`;
+
+  // 3-Month Clinical History incorporation
+  const history3m = patient.clinicalHistory3Months?.trim()
+    || (patient.summary && (patient.summary.toLowerCase().includes("month") || patient.summary.toLowerCase().includes("history")) ? patient.summary : null)
+    || "Documented 3-month progressive clinical course with refractory symptoms necessitating specialized endovascular intervention.";
+
+  const complaints = patient.chiefComplaints?.trim()
+    ? `${patient.chiefComplaints.trim()} (3-month clinical progression: ${history3m}). Admitted for planned interventional procedure: ${patient.procedure}. Presentation: ${patient.summary}`
+    : `Admitted for planned interventional procedure: ${patient.procedure}. 3-Month Clinical Presentation: ${history3m}. ${patient.summary}`;
+
+  const caseHistory = `Patient was admitted to ${patient.ipd.ward} under ${patient.unit} for evaluation and endovascular intervention. 3-Month Clinical History: ${history3m}. Indication Summary: ${patient.summary}.${patient.cectFindings ? ` Cross-sectional CECT imaging findings: ${patient.cectFindings}.` : ""} Pre-procedure biochemical, hematological, and cross-sectional imaging workup verified. Vital signs stable throughout admission.`;
+
   return {
     id: `IHMS-DIS-${patient.id}`,
     patientId: patient.id,
@@ -561,7 +629,7 @@ export function generateIhmsDischargeForPatient(patient: {
       patientName: patient.name,
       age: `${patient.age}Y`,
       gender: patient.sex === "Male" ? "M" : "F",
-      admissionNo: `A/SMSH/26/${Math.floor(100000 + Math.random() * 90000)}`,
+      admissionNo,
       dateOfAdmission: new Date(Date.now() - 86400000).toLocaleDateString("en-IN") + " 09:30 AM",
       dateOfDischarge: new Date().toLocaleDateString("en-IN") + " 04:30 PM",
       admissionType: "ON DOCTOR ADVICE",
@@ -569,17 +637,17 @@ export function generateIhmsDischargeForPatient(patient: {
       patientCategory: patient.scheme || "MAAY",
       wardBed: `${patient.ipd.ward}/${patient.ipd.bed}`,
       abhaAddress: `${patient.name.toLowerCase().replace(/\s+/g, "")}@abdm`,
-      abhaNumber: `91-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`,
+      abhaNumber,
       unitDoctors: [
         { name: "DR Meenu Bagarhatta", designation: "Senior Professor & Head" },
-        { name: patient.postedBy || "Dr Neel Yadav", designation: "Interventional Radiologist" },
+        { name: patient.postedBy || "Dr Naresh Mangalhara", designation: "Associate Professor" },
       ],
     },
     caseSummary: {
       icdDiagnosis,
       diagnosis,
-      complaints: `Admitted for planned interventional procedure: ${patient.procedure}. Presentation: ${patient.summary}`,
-      caseHistory: `Patient was admitted to ${patient.ipd.ward} under ${patient.unit} for evaluation and endovascular intervention. Summary: ${patient.summary} Pre-procedure biochemical, hematological, and imaging workup completed. Vital signs stable throughout stay.`,
+      complaints,
+      caseHistory,
       pastHistory: "No prior history of diabetes, hypertension, tuberculosis, or major surgical intervention.",
       familyHistory: "Not significant.",
       personalHistory: "No addiction. Normal bowel and bladder habits.",
@@ -624,7 +692,9 @@ export function generateIhmsDischargeForPatient(patient: {
         neckRigidity: "Absent",
         kernigsSign: "Absent",
       },
-      localExamination: "Vascular access site dry and intact. Zero hematoma, bruit, or active oozing. Distal peripheral pulses palpable (+++) and equal.",
+      localExamination: patient.postOp?.punctureSiteSeal
+        ? `Vascular access (${patient.inRoom?.activeSheathAccess || "puncture site"}): ${patient.postOp.punctureSiteSeal}. Sheath status: ${patient.postOp.sheathRemoved ? "Removed with manual compression / closure" : "In situ"}. Distal peripheral pulses: ${patient.postOp.distalPulses || "palpable (+++)"}. Zero active bleeding or hematoma.`
+        : "Vascular access site dry and intact. Zero hematoma, bruit, or active oozing. Distal peripheral pulses palpable (+++) and equal.",
     },
     investigations: {
       ecg: "Normal Sinus Rhythm, HR 72/min, normal axis.",
@@ -650,7 +720,7 @@ export function generateIhmsDischargeForPatient(patient: {
         surgicalProcedure: patient.procedure,
         anaesthesiaType: anaesthesia,
         procedureDetail,
-        processDoneBy: patient.postedBy || "Dr Neel Yadav",
+        processDoneBy: patient.postedBy || "Dr Naresh Mangalhara",
       },
     ],
     ddcDrugs: [
@@ -660,11 +730,13 @@ export function generateIhmsDischargeForPatient(patient: {
     ],
     dischargeMedications: meds,
     dischargeDetails: {
-      generalAdvise: "Keep puncture site clean and dry for 48 hours. Push oral fluids for contrast clearance. Normal diet. Avoid heavy lifting (>5 kg) for 1 week. Report immediately to emergency in case of fever, bleeding, or increasing swelling.",
+      generalAdvise: patient.postOp?.instructions
+        ? `${patient.postOp.instructions} Keep puncture site clean and dry for 48 hours. Push oral fluids for contrast clearance. Normal diet. Avoid heavy lifting (>5 kg) for 1 week. Report immediately to emergency in case of fever, bleeding, or increasing swelling.`
+        : "Keep puncture site clean and dry for 48 hours. Push oral fluids for contrast clearance. Normal diet. Avoid heavy lifting (>5 kg) for 1 week. Report immediately to emergency in case of fever, bleeding, or increasing swelling.",
       conditionOnDischarge: "Improved",
       followUp: "Follow-up in Interventional Radiology OPD Room 48 / Old Gastro Ward after 2-4 weeks with repeat Doppler check.",
       approvedBy: "DR MEENU BAGARHATTA",
-      dischargePreparedBy: patient.postedBy || "Dr Neel Yadav",
+      dischargePreparedBy: patient.postedBy || "Dr Naresh Mangalhara",
     },
     attachments:
       patient.attachments && patient.attachments.length > 0

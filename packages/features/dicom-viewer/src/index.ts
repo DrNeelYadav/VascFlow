@@ -14,3 +14,5 @@ export {
   clampZoom,
   isCanonicalStudyView,
 } from "./types";
+export * from "./workers/dicomCodecWorker";
+export * from "./workers/dicomCodecBridge";

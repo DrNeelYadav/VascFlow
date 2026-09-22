@@ -4,333 +4,389 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Calendar,
-  CalendarCheck,
-  FileText,
+  Stethoscope,
+  BedDouble,
   Kanban,
+  Calendar,
+  BookOpen,
+  FileText,
   Activity,
-  Database,
+  ShieldCheck,
+  Package,
+  Settings,
   Plus,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
-  Layers,
-  BarChart3,
+  ChevronDown,
+  X,
+  GraduationCap,
 } from "lucide-react";
+import { useEndoflowStore } from "../dashboard/useEndoflowStore";
 
 export interface NavItem {
   id: string;
   name: string;
   href: string;
   icon: React.ElementType;
-  badge?: string;
-  badgeColor?: string;
+  badge?: string | number;
 }
-
-const HOSPITAL_WORKLISTS: NavItem[] = [
-  {
-    id: "today-bookings",
-    name: "Today's Bookings",
-    href: "/dashboard",
-    icon: Calendar,
-  },
-  {
-    id: "opd-ct-review",
-    name: "OPD CT Review",
-    href: "/dashboard/op-clinic",
-    icon: CalendarCheck,
-    badge: "CT",
-    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
-  },
-  {
-    id: "pipeline",
-    name: "Cath-Lab Pipeline",
-    href: "/dashboard/pipeline",
-    icon: Kanban,
-  },
-  {
-    id: "doppler-tracker",
-    name: "Doppler Tracker",
-    href: "/dashboard/doppler",
-    icon: Activity,
-  },
-  {
-    id: "discharge-cards",
-    name: "IHMS Discharge Cards",
-    href: "/dashboard/discharge",
-    icon: FileText,
-    badge: "IHMS",
-    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
-  },
-];
-
-const CLINICAL_TOOLS: NavItem[] = [
-  {
-    id: "census-registry",
-    name: "Departmental Census & Registry",
-    href: "/dashboard/census",
-    icon: BarChart3,
-    badge: "REGISTRY",
-    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
-  },
-  {
-    id: "ir-registry",
-    name: "100 IR Catalog",
-    href: "/dashboard/catalog",
-    icon: Database,
-    badge: "100",
-    badgeColor: "bg-[#E8F0FE] text-[#1A73E8]",
-  },
-  {
-    id: "scheme-codes",
-    name: "Scheme Tariffs",
-    href: "/dashboard/schemes",
-    icon: ShieldCheck,
-    badge: "MAAY/RGHS",
-    badgeColor: "bg-[#E6F4EA] text-[#137333]",
-  },
-  {
-    id: "data-tools",
-    name: "Data & Export Tools",
-    href: "#",
-    icon: Layers,
-  },
-];
 
 export function GoogleSidebar({
   onOpenBookingModal,
   onOpenDataTools,
+  isMobileOpen = false,
+  onCloseMobile,
 }: {
   onOpenBookingModal?: () => void;
   onOpenDataTools?: () => void;
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isExtrasOpen, setIsExtrasOpen] = useState<boolean>(false);
 
-  // Load persistence from localStorage
+  // Live indicators from store
+  const ctReviews = useEndoflowStore((s) => s.ctReviews);
+  const beds = useEndoflowStore((s) => s.beds);
+  const patients = useEndoflowStore((s) => s.patients);
+  const bookedCases = useEndoflowStore((s) => s.bookedCases);
+
+  const currentStaff = useEndoflowStore((s) => s.currentStaff);
+
+  const pendingReviewsCount = ctReviews.filter((r) => r.status === "Pending Review").length;
+  const occupiedBedsCount = beds.filter((b) => b.status === "occupied").length;
+  const activeCasesCount = patients.filter((p) => p.status !== "Discharged").length;
+  const bookedCasesCount = bookedCases.filter((c) => c.status !== "Completed").length;
+
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("vascule_sidebar_collapsed");
-      if (saved !== null) {
-        setIsCollapsed(saved === "true");
+      const savedCollapsed = localStorage.getItem("endoflow_sidebar_collapsed");
+      if (savedCollapsed !== null) {
+        setIsCollapsed(savedCollapsed === "true");
       }
-    } catch {
-      // Safe fallback
-    }
+      const savedExtras = localStorage.getItem("endoflow_sidebar_extras_open");
+      if (savedExtras !== null) {
+        setIsExtrasOpen(savedExtras === "true");
+      }
+    } catch {}
   }, []);
 
   const toggleCollapse = () => {
     const next = !isCollapsed;
     setIsCollapsed(next);
     try {
-      localStorage.setItem("vascule_sidebar_collapsed", String(next));
-    } catch {
-      // Safe fallback
-    }
+      localStorage.setItem("endoflow_sidebar_collapsed", String(next));
+    } catch {}
+  };
+
+  const toggleExtras = () => {
+    const next = !isExtrasOpen;
+    setIsExtrasOpen(next);
+    try {
+      localStorage.setItem("endoflow_sidebar_extras_open", String(next));
+    } catch {}
   };
 
   const isLinkActive = (href: string) => {
-    if (href === "/dashboard") {
-      return pathname === "/dashboard";
-    }
-    return pathname.startsWith(href.split("?")[0]);
+    if (href === "/dashboard" && pathname === "/dashboard") return true;
+    if (href !== "/dashboard" && pathname.startsWith(href)) return true;
+    return false;
   };
 
+  // 1. Core Clinical Workflow
+  const CORE_ITEMS: NavItem[] = [
+    {
+      id: "op-clinic",
+      name: "OPD Consultation",
+      href: "/dashboard/op-clinic",
+      icon: Stethoscope,
+      badge: pendingReviewsCount > 0 ? pendingReviewsCount : undefined,
+    },
+    {
+      id: "bed-board",
+      name: "Ward & Bed Board",
+      href: "/dashboard/bed-board",
+      icon: BedDouble,
+      badge: `${occupiedBedsCount}/8`,
+    },
+    {
+      id: "worklist",
+      name: "Today's Cath-Lab Worklist",
+      href: "/dashboard/worklist",
+      icon: Kanban,
+      badge: activeCasesCount > 0 ? activeCasesCount : undefined,
+    },
+    {
+      id: "calendar",
+      name: "OT Schedule & Calendar",
+      href: "/dashboard/calendar",
+      icon: Calendar,
+      badge: bookedCasesCount > 0 ? bookedCasesCount : undefined,
+    },
+    {
+      id: "logbook",
+      name: "Cath-Lab Master Logbook & Census",
+      href: "/dashboard/logbook",
+      icon: BookOpen,
+    },
+    {
+      id: "discharge",
+      name: "Discharge Summaries & Operative Notes",
+      href: "/dashboard/discharge",
+      icon: FileText,
+    },
+    ...(currentStaff?.code === "DM01"
+      ? [
+          {
+            id: "publications",
+            name: "Research Studio (VAPSA)",
+            href: "/dashboard/publications",
+            icon: GraduationCap,
+            badge: "PI Only",
+          },
+        ]
+      : []),
+  ];
+
+  // 2. Extras (Collapsible Group)
+  const EXTRAS_ITEMS: NavItem[] = [
+    {
+      id: "protocols",
+      name: "Clinical Protocols & Calculators",
+      href: "/dashboard/protocols",
+      icon: Activity,
+    },
+    {
+      id: "schemes",
+      name: "Scheme Tariffs",
+      href: "/dashboard/schemes",
+      icon: ShieldCheck,
+    },
+    {
+      id: "inventory",
+      name: "Consumables Inventory",
+      href: "/dashboard/inventory",
+      icon: Package,
+    },
+    ...(currentStaff?.role === "ADMIN"
+      ? [
+          {
+            id: "admin",
+            name: "Admin Console",
+            href: "/admin",
+            icon: Settings,
+          },
+        ]
+      : []),
+  ];
+
+  // Auto-expand Extras if current route matches one of the extras
+  useEffect(() => {
+    const isExtrasActive = EXTRAS_ITEMS.some((item) => isLinkActive(item.href));
+    if (isExtrasActive && !isExtrasOpen) {
+      setIsExtrasOpen(true);
+    }
+  }, [pathname]);
+
+  const isAnyExtraActive = EXTRAS_ITEMS.some((item) => isLinkActive(item.href));
+
   return (
-    <aside
-      className={`no-print shrink-0 bg-[#FFFFFF] border-r border-[#DADCE0] flex flex-col justify-between select-none transition-all duration-200 z-30 ${
-        isCollapsed ? "w-16" : "w-60"
-      }`}
-    >
-      {/* Top Section: Quick Action & Worklists */}
-      <div className="p-3 space-y-4 overflow-y-auto">
-        {/* Toggle Collapse Button & Branding */}
-        <div className="flex items-center justify-between px-1">
-          {!isCollapsed && (
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-[#1A73E8] text-white flex items-center justify-center font-bold text-xs">
-                IR
+    <>
+      {/* Mobile Drawer Backdrop Overlay */}
+      {isMobileOpen && (
+        <div
+          onClick={onCloseMobile}
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs md:hidden cursor-pointer"
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`h-full bg-[#FAFAFA] border-r border-[#E5E5EA] transition-all duration-200 select-none ${
+          isMobileOpen
+            ? "fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] shadow-2xl flex flex-col md:relative md:inset-auto md:z-20 md:shadow-none"
+            : "hidden md:flex flex-col md:relative md:z-20 shrink-0"
+        } ${isCollapsed && !isMobileOpen ? "md:w-16" : "md:w-64"}`}
+      >
+        <div className="flex-1 flex flex-col p-3 space-y-4 overflow-y-auto overflow-x-hidden">
+          {/* Header & Toggle Button */}
+          <div className="flex items-center justify-between px-1 pt-0.5">
+            {(!isCollapsed || isMobileOpen) && (
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#007AFF] ring-4 ring-[#007AFF]/20 animate-pulse" />
+                <div className="flex flex-col">
+                  <span className="text-[13px] font-semibold text-[#1C1C1E] tracking-tight leading-none">
+                    EndoFlow IR
+                  </span>
+                  <span className="text-[10px] text-[#8E8E93] font-medium leading-tight mt-0.5">
+                    Angiosuite Clinical Suite
+                  </span>
+                </div>
               </div>
-              <span className="text-xs font-bold tracking-tight text-[#202124]">
-                SMS Cath-Lab
-              </span>
-            </div>
-          )}
-          <button
-            onClick={toggleCollapse}
-            className="p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] hover:text-[#202124] transition-colors cursor-pointer ml-auto"
-            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
-              <ChevronLeft className="w-4 h-4" />
             )}
-          </button>
-        </div>
 
-        {/* Primary Quick Action Button */}
-        <div className="pt-1">
-          <button
-            onClick={onOpenBookingModal}
-            className={`w-full flex items-center justify-center gap-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium shadow-sm transition-all cursor-pointer ${
-              isCollapsed ? "h-10 w-10 p-0 mx-auto" : "py-2.5 px-4 text-xs"
-            }`}
-            title="Admit / Book Patient"
-          >
-            <Plus className="w-4 h-4 shrink-0" />
-            {!isCollapsed && <span>Admit / Book Case</span>}
-          </button>
-        </div>
+            {/* Mobile Close Button */}
+            {isMobileOpen && (
+              <button
+                type="button"
+                onClick={onCloseMobile}
+                className="p-1.5 rounded-lg text-[#8E8E93] hover:text-[#1C1C1E] hover:bg-[#E5E5EA]/60 transition-colors md:hidden cursor-pointer"
+                aria-label="Close navigation drawer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
 
-        {/* Section 1: Hospital Worklists */}
-        <div className="space-y-1">
-          {!isCollapsed && (
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#80868B] px-3 mb-1.5">
-              Hospital Worklists
-            </p>
-          )}
-
-          <div className="space-y-0.5">
-            {HOSPITAL_WORKLISTS.map((item) => {
-              const active = isLinkActive(item.href);
-              const Icon = item.icon;
-
-              // Data Tools is a button, not a link
-              if (item.id === "data-tools") {
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => onOpenDataTools?.()}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs transition-colors group text-[#3C4043] hover:bg-[#F1F3F4] hover:text-[#202124] ${
-                      isCollapsed ? "justify-center px-0" : ""
-                    } cursor-pointer`}
-                    title={item.name}
-                  >
-                    <Icon className="w-4 h-4 shrink-0 text-[#5F6368] group-hover:text-[#202124]" />
-                    {!isCollapsed && (
-                      <span className="flex-1 truncate text-left">{item.name}</span>
-                    )}
-                  </button>
-                );
-              }
-
-              return (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-full text-xs transition-colors group ${
-                    active
-                      ? "bg-[#E8F0FE] text-[#1A73E8] font-semibold"
-                      : "text-[#3C4043] hover:bg-[#F1F3F4] hover:text-[#202124]"
-                  } ${isCollapsed ? "justify-center px-0" : ""}`}
-                  title={item.name}
-                >
-                  <Icon
-                    className={`w-4 h-4 shrink-0 ${
-                      active ? "text-[#1A73E8]" : "text-[#5F6368] group-hover:text-[#202124]"
-                    }`}
-                  />
-                  {!isCollapsed && (
-                    <span className="flex-1 truncate">{item.name}</span>
-                  )}
-                  {!isCollapsed && item.badge && (
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0 ${
-                        item.badgeColor || "bg-[#F1F3F4] text-[#5F6368]"
-                      }`}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
+            {/* Desktop Collapse Toggle */}
+            <button
+              onClick={toggleCollapse}
+              className={`hidden md:flex p-1.5 rounded-lg text-[#8E8E93] hover:text-[#1C1C1E] hover:bg-[#E5E5EA]/60 transition-colors cursor-pointer ${
+                isCollapsed ? "mx-auto" : ""
+              }`}
+              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            >
+              {isCollapsed ? (
+                <ChevronRight className="w-4 h-4" />
+              ) : (
+                <ChevronLeft className="w-4 h-4" />
+              )}
+            </button>
           </div>
-        </div>
 
-        {/* Section 2: Clinical Tools & Reference */}
-        <div className="space-y-1 pt-2 border-t border-[#F1F3F4]">
-          {!isCollapsed && (
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#80868B] px-3 mb-1.5">
-              Tools &amp; Reference
-            </p>
-          )}
-
-          <div className="space-y-0.5">
-            {CLINICAL_TOOLS.map((item) => {
-              const active = item.href !== "#" && isLinkActive(item.href);
-              const Icon = item.icon;
-
-              if (item.id === "data-tools") {
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => onOpenDataTools?.()}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs transition-colors group text-[#3C4043] hover:bg-[#F1F3F4] hover:text-[#202124] ${
-                      isCollapsed ? "justify-center px-0" : ""
-                    } cursor-pointer`}
-                    title={item.name}
-                  >
-                    <Icon className="w-4 h-4 shrink-0 text-[#5F6368] group-hover:text-[#202124]" />
-                    {!isCollapsed && (
-                      <span className="flex-1 truncate text-left">{item.name}</span>
-                    )}
-                  </button>
-                );
-              }
-
-              return (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-full text-xs transition-colors group ${
-                    active
-                      ? "bg-[#E8F0FE] text-[#1A73E8] font-semibold"
-                      : "text-[#3C4043] hover:bg-[#F1F3F4] hover:text-[#202124]"
-                  } ${isCollapsed ? "justify-center px-0" : ""}`}
-                  title={item.name}
-                >
-                  <Icon
-                    className={`w-4 h-4 shrink-0 ${
-                      active ? "text-[#1A73E8]" : "text-[#5F6368] group-hover:text-[#202124]"
-                    }`}
-                  />
-                  {!isCollapsed && (
-                    <span className="flex-1 truncate">{item.name}</span>
-                  )}
-                  {!isCollapsed && item.badge && (
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold shrink-0 ${
-                        item.badgeColor || "bg-[#F1F3F4] text-[#5F6368]"
-                      }`}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Footer Section: Institutional & Security Connection */}
-      <div className="p-3 border-t border-[#DADCE0] text-center">
-        {!isCollapsed ? (
+          {/* Section A: Core Clinical Workflow */}
           <div className="space-y-1">
-            <div className="text-[11px] font-medium text-[#5F6368]">
-              SMS Medical College, Jaipur
-            </div>
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#E6F4EA] text-[#137333] text-[10px] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1E8E3E]" />
-              IHMS Cloud Active
+            {(!isCollapsed || isMobileOpen) && (
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8E8E93] px-2.5 mb-1.5">
+                Core Clinical Workflow
+              </p>
+            )}
+
+            <div className="space-y-0.5">
+              {CORE_ITEMS.map((item) => {
+                const active = isLinkActive(item.href);
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    onClick={() => onCloseMobile?.()}
+                    className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-[13px] transition-all group ${
+                      active
+                        ? "bg-[#007AFF]/10 text-[#007AFF] font-semibold"
+                        : "text-[#3A3A3C] hover:bg-[#F2F2F7] hover:text-[#1C1C1E] font-medium"
+                    } ${isCollapsed && !isMobileOpen ? "justify-center px-0 h-10" : ""}`}
+                    title={item.name}
+                  >
+                    <Icon
+                      className={`w-4 h-4 shrink-0 transition-colors ${
+                        active ? "text-[#007AFF]" : "text-[#8E8E93] group-hover:text-[#1C1C1E]"
+                      }`}
+                    />
+                    {(!isCollapsed || isMobileOpen) && (
+                      <span className="flex-1 truncate tracking-tight">{item.name}</span>
+                    )}
+                    {(!isCollapsed || isMobileOpen) && item.badge !== undefined && (
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-tight ${
+                          active
+                            ? "bg-[#007AFF] text-white"
+                            : "bg-[#E5E5EA] text-[#636366]"
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                    {isCollapsed && !isMobileOpen && item.badge !== undefined && (
+                      <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-[#007AFF]" />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
-        ) : (
-          <div className="w-2 h-2 rounded-full bg-[#1E8E3E] mx-auto" title="IHMS Active" />
+
+          {/* Section B: Extras (Collapsible Group) */}
+          <div className="pt-2 border-t border-[#E5E5EA]/80 space-y-1">
+            {(!isCollapsed || isMobileOpen) ? (
+              <button
+                onClick={toggleExtras}
+                className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#8E8E93] hover:text-[#1C1C1E] transition-colors group cursor-pointer"
+              >
+                <span className="flex items-center gap-1.5">
+                  Extras
+                  {isAnyExtraActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#007AFF]" />
+                  )}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-[#8E8E93] transition-transform duration-200 ${
+                    isExtrasOpen ? "rotate-0" : "-rotate-90"
+                  }`}
+                />
+              </button>
+            ) : (
+              <button
+                onClick={toggleExtras}
+                className="w-full flex justify-center py-1 text-[#8E8E93] hover:text-[#1C1C1E] cursor-pointer"
+                title="Toggle Extras"
+              >
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    isExtrasOpen ? "rotate-0" : "-rotate-90"
+                  }`}
+                />
+              </button>
+            )}
+
+            {isExtrasOpen && (
+              <div className="space-y-0.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                {EXTRAS_ITEMS.map((item) => {
+                  const active = isLinkActive(item.href);
+                  const Icon = item.icon;
+
+                  return (
+                    <Link
+                      key={item.id}
+                      href={item.href}
+                      onClick={() => onCloseMobile?.()}
+                      className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-[13px] transition-all group ${
+                        active
+                          ? "bg-[#007AFF]/10 text-[#007AFF] font-semibold"
+                          : "text-[#3A3A3C] hover:bg-[#F2F2F7] hover:text-[#1C1C1E] font-medium"
+                      } ${isCollapsed && !isMobileOpen ? "justify-center px-0 h-10" : ""}`}
+                      title={item.name}
+                    >
+                      <Icon
+                        className={`w-4 h-4 shrink-0 transition-colors ${
+                          active ? "text-[#007AFF]" : "text-[#8E8E93] group-hover:text-[#1C1C1E]"
+                        }`}
+                      />
+                      {(!isCollapsed || isMobileOpen) && (
+                        <span className="flex-1 truncate tracking-tight">{item.name}</span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Hospital Footer */}
+        {(!isCollapsed || isMobileOpen) && (
+          <div className="p-3 border-t border-[#E5E5EA] bg-white text-[11px] text-[#636366] leading-tight flex items-center justify-between">
+            <div>
+              <div className="font-semibold text-[#1C1C1E] tracking-tight">SMS Hospital, Jaipur</div>
+              <div className="text-[10px] text-[#8E8E93]">Dept of Radiodiagnosis &amp; IR</div>
+            </div>
+            <span className="px-2 py-0.5 text-[10px] rounded-full bg-[#34C759]/15 text-[#248A3D] font-semibold">
+              Verified
+            </span>
+          </div>
         )}
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

@@ -2,24 +2,22 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Vascule OS | The speed of thought in the Angio Suite",
+  title: "EndoFlow | Interventional Radiology Clinical System",
   description:
-    "Next-generation clinical vascular workflow operating system for high-acuity surgical and interventional radiology suites.",
-  applicationName: "Vascule OS",
-  authors: [{ name: "Vascule OS Systems Architecture" }],
+    "Clinical workflow system for interventional radiology suites.",
+  applicationName: "EndoFlow",
+  authors: [{ name: "EndoFlow Systems" }],
   keywords: [
-    "Vascule OS",
-    "Angio Suite",
+    "EndoFlow",
     "Cath Lab",
     "Interventional Radiology",
-    "Biometric Telemetry",
-    "Vascular Surgery",
+    "Clinical Workflow",
   ],
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
-  colorScheme: "dark",
+  themeColor: "#F8F9FA",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
@@ -32,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans antialiased selection:bg-[#2563EB] selection:text-[#FFFFFF] overflow-x-hidden">
+    <html lang="en">
+      <body className="min-h-screen bg-[#F8F9FA] text-[#202124] font-sans antialiased selection:bg-[#E8F0FE] selection:text-[#1A73E8] overflow-x-hidden">
         <Providers>{children}</Providers>
       </body>
     </html>

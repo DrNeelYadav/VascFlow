@@ -25,6 +25,12 @@ spec:
         app.kubernetes.io/component: web-app
       annotations:
         prometheus.io/scrape: "false"
+        {{- if and .Values.secrets .Values.secrets.vault .Values.secrets.vault.enabled }}
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: {{ .Values.secrets.vault.role | quote }}
+        vault.hashicorp.com/agent-inject-secret-database: {{ .Values.secrets.vault.databaseSecretPath | quote }}
+        vault.hashicorp.com/agent-inject-secret-abdm: {{ .Values.secrets.vault.abdmSecretPath | quote }}
+        {{- end }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -79,12 +85,36 @@ spec:
             - name: {{ $key }}
               value: {{ $val | quote }}
             {{- end }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: vascule-database-secrets
+                  key: database-url
+                  optional: true
+            - name: DATABASE_READ_REPLICA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: vascule-database-secrets
+                  key: database-read-replica-url
+                  optional: true
+            - name: ABDM_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vascule-database-secrets
+                  key: abdm-private-key
+                  optional: true
+            - name: ABDM_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vascule-database-secrets
+                  key: abdm-public-key
+                  optional: true
             - name: NEXTAUTH_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: vascule-security-secrets
+                  name: vascule-database-secrets
                   key: nextauth-secret
-                  optional: false
+                  optional: true
 {{- end }}
 ---
 {{- if .Values.webApp.enabled }}

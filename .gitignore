@@ -43,3 +43,11 @@ yarn-error.log*
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Local Archives and Docs
+_legacy_root_archive/
+_legacy_vite_archive/
+abstract_assets/
+*.docx
+*.xlsx
+

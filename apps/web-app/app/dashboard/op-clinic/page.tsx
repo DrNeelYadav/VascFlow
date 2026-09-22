@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import {
   useEndoflowStore,
   CtReviewRecord,
+  EndoflowPatient,
 } from "../useEndoflowStore";
 import {
   IR_CLINICAL_PROTOCOLS,
@@ -13,42 +14,52 @@ import {
   INSTITUTIONAL_STAFF_ACCOUNTS,
 } from "../../lib/staffAccounts";
 import {
-  RAJASTHAN_HOLIDAYS_2026,
   getHolidayForDate,
 } from "../../lib/rajasthanHolidays2026";
-import { RAJASTHAN_DISTRICTS } from "../../lib/rajasthanDistricts";
 import {
-  CalendarCheck,
-  Search,
-  Filter,
-  Eye,
+  getScheduledRadiationTasks,
+  RadiationSentinelTask,
+} from "../../lib/censusEngine";
+import {
   Stethoscope,
-  Clock,
-  CheckCircle2,
+  BedDouble,
   CalendarPlus,
-  ArrowRight,
-  User,
+  Search,
+  Eye,
+  CheckCircle2,
   Plus,
   X,
-  FileText,
-  AlertCircle,
-  Phone,
   Building,
+  Phone,
   Calendar,
-  Layers,
-  Sparkles,
-  ChevronRight,
-  ClipboardList,
   AlertTriangle,
   Radio,
+  ClipboardList,
+  ArrowRight,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  UserCheck,
+  FileText,
+  Clock,
+  Layers,
+  Activity,
+  History,
 } from "lucide-react";
 
-export default function OpCtReviewQueuePage() {
+export default function OpClinicConsultationDeskPage() {
   const {
     ctReviews,
     addCtReview,
     updateCtReview,
     convertCtReviewToBooking,
+    patients,
+    admitPatient,
+    beds,
+    updateBed,
+    bookCase,
+    bookedCases,
     currentStaff,
   } = useEndoflowStore();
 
@@ -57,61 +68,184 @@ export default function OpCtReviewQueuePage() {
     INSTITUTIONAL_STAFF_ACCOUNTS.find((s) => s.code === "DM01") ||
     INSTITUTIONAL_STAFF_ACCOUNTS[0];
 
-  // Filtering & Search
+  // Selected Mode: "desk" (Consultation Desk) or "queue" (Review Queue Directory)
+  const [activeTab, setActiveTab] = useState<"desk" | "queue">("desk");
+
+  // Patient Selector State
+  // "new" or a ctReview id (e.g. "CT-REV-001") or patient id (e.g. "PT01")
+  const [selectedPatientKey, setSelectedPatientKey] = useState<string>("CT-REV-001");
+
+  // Form Fields for Active Consultation
+  const [patientName, setPatientName] = useState<string>("");
+  const [age, setAge] = useState<number>(55);
+  const [sex, setSex] = useState<"Male" | "Female">("Male");
+  const [contactNumber, setContactNumber] = useState<string>("");
+  const [smsBillId, setSmsBillId] = useState<string>("");
+  const [ctNumber, setCtNumber] = useState<string>("");
+  const [accessionNumber, setAccessionNumber] = useState<string>("SONI-ACC-2026-001");
+  const [hospitalSource, setHospitalSource] = useState<string>("SONI Hospital");
+  const [organSystem, setOrganSystem] = useState<string>("Liver & Hepatobiliary");
+  const [diseaseKey, setDiseaseKey] = useState<string>("budd_chiari_dips");
+  const [primaryDiagnosis, setPrimaryDiagnosis] = useState<string>("");
+
+  // Key Clinical History Blocks
+  const [chiefComplaints, setChiefComplaints] = useState<string>("");
+  const [history3Months, setHistory3Months] = useState<string>("");
+  const [cectFindings, setCectFindings] = useState<string>("");
+
+  // Filtering & Search for Queue
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCenter, setSelectedCenter] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
 
-  // Modals
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
-  const [reviewingItem, setReviewingItem] = useState<CtReviewRecord | null>(null);
-  const [bookingConversionItem, setBookingConversionItem] = useState<CtReviewRecord | null>(null);
-
-  // Success Toast
-  const [successToast, setSuccessToast] = useState<string | null>(null);
-
-  // New Intake Form State
-  const [newName, setNewName] = useState<string>("");
-  const [newAge, setNewAge] = useState<number>(50);
-  const [newSex, setNewSex] = useState<"Male" | "Female">("Male");
-  const [newContact, setNewContact] = useState<string>("");
-  const [newSmsBillId, setNewSmsBillId] = useState<string>("");
-  const [newCtNumber, setNewCtNumber] = useState<string>("");
-  const [newCenter, setNewCenter] = useState<string>("SONI Hospital");
-  const [newDiagnosis, setNewDiagnosis] = useState<string>("");
-  const [newClinicalHistory, setNewClinicalHistory] = useState<string>("");
-  const [newReviewNotes, setNewReviewNotes] = useState<string>("");
-  const [newOrganSystem, setNewOrganSystem] = useState<string>("Liver & Hepatobiliary");
-  const [newDiseaseKey, setNewDiseaseKey] = useState<string>("budd_chiari_dips");
-
-  // Edit Review Notes State
-  const [editNotes, setEditNotes] = useState<string>("");
-  const [editClinicalHistory, setEditClinicalHistory] = useState<string>("");
-  const [editStatus, setEditStatus] = useState<CtReviewRecord["status"]>("Reviewed by Neel / Nilesh");
-
-  // Booking Conversion Form State
+  // 2-Step Booking Workflow States
+  const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
+  const [bookingStep, setBookingStep] = useState<1 | 2>(1);
+  const [urgencyLevel, setUrgencyLevel] = useState<"Elective" | "Urgent" | "Emergency">("Elective");
   const [bookingDate, setBookingDate] = useState<string>(
     new Date(Date.now() + 86400000).toISOString().split("T")[0]
   );
-  const [bookingDiseaseKey, setBookingDiseaseKey] = useState<string>("budd_chiari_dips");
+  const [calendarViewDate, setCalendarViewDate] = useState<Date>(
+    () => new Date("2026-09-21T00:00:00")
+  );
+  const [successBanner, setSuccessBanner] = useState<{
+    message: string;
+    linkHref?: string;
+    linkLabel?: string;
+  } | null>(null);
+  const [sentinelTasks, setSentinelTasks] = useState<RadiationSentinelTask[]>([]);
 
-  // Check holiday status on booking conversion date
+  useEffect(() => {
+    setSentinelTasks(getScheduledRadiationTasks());
+  }, []);
+
+  // Holiday check on Cath-Lab booking date
   const bookingDateHoliday = useMemo(() => {
     return getHolidayForDate(bookingDate);
   }, [bookingDate]);
 
-  // Filtered List
+  // Authentic Patients Directory (combined list for selection)
+  const availablePatients = useMemo(() => {
+    const list: { id: string; label: string; type: "review" | "admitted"; data: any }[] = [];
+
+    ctReviews.forEach((r) => {
+      list.push({
+        id: r.id,
+        label: `${r.patientName} (${r.age}y / ${r.sex}) • ${r.primaryDiagnosis.substring(0, 30)}... [${r.status}]`,
+        type: "review",
+        data: r,
+      });
+    });
+
+    patients.forEach((p) => {
+      list.push({
+        id: p.id,
+        label: `${p.name} (${p.age}y / ${p.sex}) • ${p.procedure.substring(0, 30)}... [${p.status}]`,
+        type: "admitted",
+        data: p,
+      });
+    });
+
+    return list;
+  }, [ctReviews, patients]);
+
+  // Load Patient Data into Consultation Desk
+  const loadPatientIntoDesk = (key: string) => {
+    setSelectedPatientKey(key);
+
+    if (key === "new") {
+      // Deterministic Bill & CT ID without Math.random()
+      const nextSeq = String(ctReviews.length + 101).padStart(4, "0");
+      setPatientName("");
+      setAge(50);
+      setSex("Male");
+      setContactNumber("9829000000");
+      setSmsBillId(`SMS-OPD-2026-${nextSeq}`);
+      setCtNumber(`SMS-CT-2026-${nextSeq}`);
+      setAccessionNumber(`SONI-ACC-2026-${nextSeq}`);
+      setHospitalSource("SMS Hospital");
+      setOrganSystem("Liver & Hepatobiliary");
+      setDiseaseKey("budd_chiari_dips");
+      setPrimaryDiagnosis("");
+      setChiefComplaints("");
+      setHistory3Months("");
+      setCectFindings("");
+      return;
+    }
+
+    // Find in CT Reviews
+    const review = ctReviews.find((r) => r.id === key);
+    if (review) {
+      setPatientName(review.patientName);
+      setAge(review.age);
+      setSex(review.sex);
+      setContactNumber(review.contactNumber || "9829000000");
+      setSmsBillId(review.smsBillId);
+      setCtNumber(review.ctNumber);
+      setAccessionNumber(review.accessionNumber || review.ctNumber || "SONI-ACC-2026-001");
+      setHospitalSource(review.hospitalSource || "SONI Hospital");
+      setOrganSystem(review.organSystem || "Liver & Hepatobiliary");
+      setDiseaseKey(review.diseaseKey || "budd_chiari_dips");
+      setPrimaryDiagnosis(review.primaryDiagnosis);
+      setChiefComplaints(
+        review.presentingComplaints ||
+          "Refractory vascular symptoms, progressive abdominal discomfort, and marked physical fatigue."
+      );
+      setHistory3Months(
+        review.clinicalHistory3Months ||
+          review.clinicalHistory ||
+          "Over the past 3 months, patient experienced progressive escalation of symptoms with recurrent hospital presentations and failing conservative management."
+      );
+      setCectFindings(
+        review.cectFindings ||
+          review.ctReviewNotes ||
+          "Cross-sectional CECT reveals anatomical vascular distortion, luminal narrowing, and prominent collaterals feasible for endovascular catheter intervention."
+      );
+      return;
+    }
+
+    // Find in Admitted Patients
+    const patient = patients.find((p) => p.id === key);
+    if (patient) {
+      setPatientName(patient.name);
+      setAge(patient.age);
+      setSex(patient.sex);
+      setContactNumber(patient.phone || "9829000000");
+      setSmsBillId(patient.hid);
+      setCtNumber(patient.scanId);
+      setAccessionNumber(patient.scanId || "SONI-ACC-98214");
+      setHospitalSource("SMS Hospital");
+      setDiseaseKey(patient.procedureKey);
+      const proto = IR_CLINICAL_PROTOCOLS.find((pr) => pr.key === patient.procedureKey);
+      if (proto) setOrganSystem(proto.organSystem);
+      setPrimaryDiagnosis(patient.procedure);
+      setChiefComplaints(
+        patient.chiefComplaints ||
+          patient.summary ||
+          "Chronic progressive vascular insufficiency requiring endovascular evaluation."
+      );
+      setHistory3Months(
+        patient.clinicalHistory3Months ||
+          patient.history3Months ||
+          "Past 3 months: progressive functional limitation, repeated outpatient clinic visits, and worsening imaging signs."
+      );
+      setCectFindings(
+        patient.cectFindings ||
+          "CECT angio demonstrates significant vessel remodeling and patent inflow/outflow suitable for targeted intervention."
+      );
+    }
+  };
+
+  // Initial load on mount
+  useEffect(() => {
+    loadPatientIntoDesk(selectedPatientKey);
+  }, []);
+
+  // Filtered Reviews for Queue Directory
   const filteredReviews = useMemo(() => {
     return ctReviews.filter((r) => {
-      // Center filter
-      if (selectedCenter !== "all" && r.hospitalSource !== selectedCenter) {
-        return false;
-      }
-      // Status filter
-      if (selectedStatus !== "all" && r.status !== selectedStatus) {
-        return false;
-      }
-      // Query filter
+      if (selectedCenter !== "all" && r.hospitalSource !== selectedCenter) return false;
+      if (selectedStatus !== "all" && r.status !== selectedStatus) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         return (
@@ -119,530 +253,645 @@ export default function OpCtReviewQueuePage() {
           r.ctNumber.toLowerCase().includes(q) ||
           r.smsBillId.toLowerCase().includes(q) ||
           r.primaryDiagnosis.toLowerCase().includes(q) ||
-          (r.clinicalHistory && r.clinicalHistory.toLowerCase().includes(q)) ||
-          r.contactNumber.includes(q) ||
-          r.ctReviewNotes.toLowerCase().includes(q)
+          (r.clinicalHistory && r.clinicalHistory.toLowerCase().includes(q))
         );
       }
       return true;
     });
   }, [ctReviews, selectedCenter, selectedStatus, searchQuery]);
 
-  // Handle Add CT Review Submit
-  const handleAddSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newName.trim() || !newCtNumber.trim()) return;
-
-    const matchedProtocol = IR_CLINICAL_PROTOCOLS.find((p) => p.key === newDiseaseKey);
-
-    addCtReview({
-      patientName: newName.trim(),
-      age: Number(newAge),
-      sex: newSex,
-      date: new Date().toISOString().split("T")[0],
-      primaryDiagnosis: newDiagnosis.trim() || "Suspected Vascular / Biliary Pathology",
-      clinicalHistory: newClinicalHistory.trim() || "Patient presented to OPD with symptomatic vascular/biliary disease.",
-      ctNumber: newCtNumber.trim(),
-      ctReviewNotes: newReviewNotes.trim() || "Review cross-sectional anatomy for catheter intervention feasibility.",
-      smsBillId: newSmsBillId.trim() || `SMS-BILL-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      hospitalSource: newCenter,
-      contactNumber: newContact.trim() || "9829000000",
-      organSystem: newOrganSystem,
-      diseaseKey: newDiseaseKey,
-      procedureTitle: matchedProtocol ? matchedProtocol.title : "Interventional Radiology Cath-Lab Procedure",
-    });
-
-    setShowAddModal(false);
-    setSuccessToast(`Patient ${newName} added to OPD CT Review Queue.`);
-    setTimeout(() => setSuccessToast(null), 3500);
-
-    // Reset Form
-    setNewName("");
-    setNewContact("");
-    setNewSmsBillId("");
-    setNewCtNumber("");
-    setNewDiagnosis("");
-    setNewClinicalHistory("");
-    setNewReviewNotes("");
-  };
-
-  // Handle Edit Notes Submit
-  const handleEditNotesSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reviewingItem) return;
-
-    updateCtReview(reviewingItem.id, {
-      ctReviewNotes: editNotes,
-      clinicalHistory: editClinicalHistory,
-      status: editStatus,
-    });
-
-    setReviewingItem(null);
-    setSuccessToast(`CT Review notes & status updated for ${reviewingItem.patientName}.`);
-    setTimeout(() => setSuccessToast(null), 3000);
-  };
-
-  // Handle Convert to Cath-Lab Booking
-  const handleConvertBookingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!bookingConversionItem) return;
-
-    const matchedProtocol = IR_CLINICAL_PROTOCOLS.find((p) => p.key === bookingDiseaseKey) || IR_CLINICAL_PROTOCOLS[0];
-
-    const result = convertCtReviewToBooking(
-      bookingConversionItem.id,
-      bookingDate,
-      bookingDiseaseKey,
-      matchedProtocol.title,
-      `${activeStaff.name} (${activeStaff.code})`
+  // Selected Procedure Protocol Details
+  const matchedProtocol = useMemo(() => {
+    return (
+      IR_CLINICAL_PROTOCOLS.find((p) => p.key === diseaseKey) ||
+      IR_CLINICAL_PROTOCOLS[0]
     );
+  }, [diseaseKey]);
 
-    if (result.success) {
-      setBookingConversionItem(null);
-      setSuccessToast(`Success! ${bookingConversionItem.patientName} booked in Cath-Lab for ${bookingDate}.`);
-      setTimeout(() => setSuccessToast(null), 4000);
+  // ==========================================================================
+  // ACTION 1: ADMIT TO WARD
+  // ==========================================================================
+  const handleAdmitToWard = () => {
+    if (!patientName.trim()) {
+      alert("Please enter a patient name before admitting.");
+      return;
+    }
+
+    // Find next available bed or fallback
+    const vacantBed = beds.find((b) => b.status === "vacant") || beds[0];
+    const generatedHid = smsBillId.trim() || `SMS-2026-${String(ctReviews.length + 101).padStart(4, "0")}`;
+    const generatedScanId = ctNumber.trim() || `SMS-CT-2026-${String(ctReviews.length + 501).padStart(4, "0")}`;
+
+    const newPatientId = selectedPatientKey.startsWith("PT")
+      ? selectedPatientKey
+      : `PT-OPD-${Date.now().toString().slice(-5)}`;
+
+    const newPatientRecord: EndoflowPatient = {
+      id: newPatientId,
+      name: patientName.trim(),
+      age: Number(age),
+      sex,
+      hid: generatedHid,
+      scanId: generatedScanId,
+      phone: contactNumber.trim() || "9829000000",
+      unit: "Unit I / Interventional Radiology (Old Gastro Ward Bed IR-1)",
+      postedBy: `${activeStaff.name} (${activeStaff.code})`,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      summary: `${chiefComplaints.trim() || primaryDiagnosis.trim()}. 3-Month Course: ${history3Months.trim()}`,
+      history3Months: history3Months.trim(),
+      clinicalHistory3Months: history3Months.trim(),
+      chiefComplaints: chiefComplaints.trim(),
+      cectFindings: cectFindings.trim(),
+      procedureKey: diseaseKey,
+      procedure: matchedProtocol.title,
+      modality: "CT",
+      status: "Pre-Op Pending",
+      scheme: "MAAY",
+      schemeTid: "TID-9482103",
+      beneficiaryId: "Jan Aadhaar 7821-9482-10",
+      preAuthStatus: "Approved",
+      ipd: {
+        admissionType: "IPD",
+        ward: "IR Ward D-Block",
+        bed: vacantBed ? vacantBed.title : "Bed 01",
+        podDay: "Pre-Op",
+      },
+      labs: {
+        ast: 25,
+        alt: 25,
+        bili: 0.8,
+        ldh: 180,
+        alb: 4.0,
+        creat: 0.9,
+        inr: 1.1,
+        plt: 220000,
+        fib: 280,
+        protc: 85,
+        prots: 90,
+        ascitesGrade: "none",
+      },
+      preOp: {
+        bedLocation: `IR Ward D-Block ${vacantBed ? vacantBed.title : "Bed 01"}`,
+        npoHours: 6,
+        inrChecked: true,
+        creatinineChecked: true,
+        consentSigned: true,
+        ivCannulaGauge: "18G Green",
+        calledToLab: false,
+        labCleared: true,
+      },
+    };
+
+    // Admit to store
+    admitPatient(newPatientRecord);
+
+    // Update bed assignment in Bed Board
+    if (vacantBed) {
+      updateBed(vacantBed.id, {
+        status: "occupied",
+        ptName: patientName.trim(),
+        crNo: generatedHid,
+        diag: matchedProtocol.title,
+        doctor: activeStaff.name,
+        ptId: newPatientId,
+      });
+    }
+
+    // If item was in review queue, update its status
+    if (selectedPatientKey.startsWith("CT-REV")) {
+      updateCtReview(selectedPatientKey, {
+        status: "To be reviewed by consultant",
+        reviewedBy: activeStaff.name,
+        reviewedAt: new Date().toLocaleDateString("en-IN"),
+      });
+    }
+
+    setSuccessBanner({
+      message: `Patient ${patientName.trim()} successfully admitted to IR Ward D-Block (${vacantBed ? vacantBed.title : "Bed 01"}).`,
+      linkHref: "/dashboard/bed-board",
+      linkLabel: "Open Ward & Bed Board →",
+    });
+
+    setTimeout(() => setSuccessBanner(null), 6000);
+  };
+
+  // ==========================================================================
+  // ACTION 2: BOOK FOR CATH-LAB
+  // ==========================================================================
+  const handleConfirmCathLabBooking = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!patientName.trim()) return;
+
+    if (selectedPatientKey.startsWith("CT-REV")) {
+      // Transition existing CT review record
+      const result = convertCtReviewToBooking(
+        selectedPatientKey,
+        bookingDate,
+        diseaseKey,
+        matchedProtocol.title,
+        `${activeStaff.name} (${activeStaff.code})`
+      );
+
+      if (result.success) {
+        setShowBookingModal(false);
+        setBookingStep(1);
+        setSuccessBanner({
+          message: `Cath-Lab Case Booked (${urgencyLevel})! ${patientName} scheduled for ${bookingDate} with ${matchedProtocol.title}.`,
+          linkHref: "/dashboard/calendar",
+          linkLabel: "View in Visual OT Calendar →",
+        });
+        setTimeout(() => setSuccessBanner(null), 6000);
+      }
+    } else {
+      // New consult or existing admitted patient -> bookCase
+      const bookingResult = bookCase({
+        patientName: patientName.trim(),
+        age: Number(age),
+        sex,
+        contactNumber: contactNumber.trim() || "9829000000",
+        ssoNumber: smsBillId.trim() || `SMS-2026-${String(ctReviews.length + 101).padStart(4, "0")}`,
+        accessionNumber: accessionNumber.trim() || `SONI-ACC-2026-${String(ctReviews.length + 101).padStart(4, "0")}`,
+        location: "Jaipur",
+        scheduledDate: bookingDate,
+        urgency: urgencyLevel,
+        organSystem,
+        diseaseKey,
+        procedureTitle: matchedProtocol.title,
+        bookedBy: `${activeStaff.name} (${activeStaff.code})`,
+        orderedLabs: [
+          "Liver Function Tests (Total & Direct Bilirubin, AST, ALT, Albumin)",
+          "Renal Function Tests (Serum Creatinine, BUN, Electrolytes)",
+          "Coagulation Profile (PT, INR, aPTT)",
+          "Complete Blood Count (Hb, TLC, Platelets)",
+        ],
+        specialInvestigations: [
+          `CT Scan #${ctNumber} (${hospitalSource}) [Acc #${accessionNumber}]: ${cectFindings}`,
+          `Chief Complaints: ${chiefComplaints}`,
+          `3-Month Clinical Course: ${history3Months}`,
+        ],
+        preScanAnatomy: {},
+        hardwareChecklist: [
+          { id: "h1", item: "Vascular Access Sheath", spec: "6F 45cm Destination Sheath", checked: true },
+          { id: "h2", item: "Selective Diagnostic Catheter", spec: "5F Cobra C2 / Simmons 1", checked: true },
+          { id: "h3", item: "Hydrophilic Guidewire", spec: "0.035\" 260cm Terumo Glidewire", checked: true },
+        ],
+        postOpPlan: `Admitted for planned endovascular intervention: ${matchedProtocol.title}. 3-Month History: ${history3Months}. Pre-procedure hydration & pre-op vitals check verified.`,
+        npoVerified: false,
+        labsVerified: false,
+        bloodProductsVerified: false,
+        hardwareVerified: false,
+        screenedBy: null,
+        screenedAt: null,
+        keptForTomorrow: false,
+        admissionCardUpdated: false,
+        codeAdditionStatus: "Pending",
+      });
+
+      if (bookingResult.success) {
+        setShowBookingModal(false);
+        setBookingStep(1);
+        setSuccessBanner({
+          message: `Cath-Lab Case Booked (${urgencyLevel})! ${patientName} scheduled for ${bookingDate} with ${matchedProtocol.title}.`,
+          linkHref: "/dashboard/calendar",
+          linkLabel: "View in Visual OT Calendar →",
+        });
+        setTimeout(() => setSuccessBanner(null), 6000);
+      }
+    }
+  };
+
+  // ==========================================================================
+  // ACTION 3: SAVE / UPDATE OPD CONSULT IN QUEUE
+  // ==========================================================================
+  const handleSaveConsult = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!patientName.trim()) return;
+
+    if (selectedPatientKey.startsWith("CT-REV")) {
+      updateCtReview(selectedPatientKey, {
+        patientName: patientName.trim(),
+        age: Number(age),
+        sex,
+        contactNumber: contactNumber.trim(),
+        smsBillId: smsBillId.trim(),
+        ctNumber: ctNumber.trim(),
+        hospitalSource,
+        organSystem,
+        diseaseKey,
+        procedureTitle: matchedProtocol.title,
+        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
+        presentingComplaints: chiefComplaints.trim(),
+        clinicalHistory: history3Months.trim(),
+        clinicalHistory3Months: history3Months.trim(),
+        ctReviewNotes: cectFindings.trim(),
+        cectFindings: cectFindings.trim(),
+        reviewedBy: activeStaff.name,
+        reviewedAt: new Date().toLocaleDateString("en-IN"),
+      });
+
+      setSuccessBanner({
+        message: `OPD Consultation & Triage records updated for ${patientName}.`,
+      });
+      setTimeout(() => setSuccessBanner(null), 4000);
+    } else {
+      // Add new CT Review intake with deterministic sequential ID
+      const newSeq = String(ctReviews.length + 101).padStart(4, "0");
+      addCtReview({
+        patientName: patientName.trim(),
+        age: Number(age),
+        sex,
+        date: new Date().toISOString().split("T")[0],
+        primaryDiagnosis: primaryDiagnosis.trim() || matchedProtocol.title,
+        clinicalHistory: history3Months.trim() || "3-month symptomatic progression.",
+        clinicalHistory3Months: history3Months.trim(),
+        presentingComplaints: chiefComplaints.trim() || "Vascular/Biliary complaints.",
+        ctNumber: ctNumber.trim() || `SMS-CT-2026-${newSeq}`,
+        accessionNumber: `SMS-ACC-2026-${newSeq}`,
+        ctReviewNotes: cectFindings.trim() || "Review cross-sectional imaging for catheter access.",
+        cectFindings: cectFindings.trim(),
+        smsBillId: smsBillId.trim() || `SMS-OPD-2026-${newSeq}`,
+        hospitalSource,
+        contactNumber: contactNumber.trim() || "9829000000",
+        organSystem,
+        diseaseKey,
+        procedureTitle: matchedProtocol.title,
+      });
+
+      setSuccessBanner({
+        message: `New OPD Consultation saved for ${patientName}.`,
+      });
+      setTimeout(() => setSuccessBanner(null), 4000);
     }
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      {/* 1. Header Banner */}
-      <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="space-y-5 max-w-7xl mx-auto pb-12">
+      {/* 1. Apple-Style Header Banner */}
+      <div className="bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC] flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
-            <Eye className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#007AFF]/10 text-[#007AFF] flex items-center justify-center font-bold text-sm shrink-0">
+            <Stethoscope className="w-6 h-6 stroke-[1.8]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-bold text-[#202124] tracking-tight">
-                OPD CT Review Queue &amp; Angio Workup
+              <h1 className="text-base sm:text-lg font-semibold text-[#1C1C1E] tracking-tight">
+                OPD Consultation &amp; Triage Desk
               </h1>
-              <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]">
-                {ctReviews.length} Records
+              <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-[#007AFF]/10 text-[#007AFF]">
+                {ctReviews.length} Active Records
               </span>
             </div>
-            <p className="text-xs text-[#5F6368] mt-0.5">
-              Department of Radiodiagnosis &amp; Interventional Radiology • SMS Medical College, Jaipur
+            <p className="text-xs text-[#8E8E93] mt-0.5">
+              SMS Medical College &amp; Attached Hospitals, Jaipur • Radiodiagnosis &amp; Interventional Radiology
             </p>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+        {/* Segmented Control Mode Switcher */}
+        <div className="flex items-center bg-[#F2F2F7] p-1 rounded-xl shrink-0 self-stretch sm:self-auto">
           <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+            onClick={() => setActiveTab("desk")}
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeTab === "desk"
+                ? "bg-white text-[#1C1C1E] shadow-xs"
+                : "text-[#8E8E93] hover:text-[#1C1C1E]"
+            }`}
           >
-            <Plus className="w-4 h-4" />
-            <span>Add CT Review Intake</span>
+            <ClipboardList className="w-3.5 h-3.5" />
+            <span>Consultation Desk</span>
           </button>
-          <Link
-            href="/dashboard"
-            className="px-3.5 py-1.5 rounded-full border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
+          <button
+            onClick={() => setActiveTab("queue")}
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeTab === "queue"
+                ? "bg-white text-[#1C1C1E] shadow-xs"
+                : "text-[#8E8E93] hover:text-[#1C1C1E]"
+            }`}
           >
-            Back to Dashboard
-          </Link>
+            <Eye className="w-3.5 h-3.5" />
+            <span>Review Queue ({ctReviews.length})</span>
+          </button>
         </div>
       </div>
 
-      {/* 2. Success Toast */}
-      {successToast && (
-        <div className="p-3.5 rounded-xl bg-[#E6F4EA] border border-[#CEEAD6] text-[#137333] text-xs font-semibold flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#137333] shrink-0" />
-            <span>{successToast}</span>
+      {/* 2. Success Banner / Notification */}
+      {successBanner && (
+        <div className="p-3.5 rounded-2xl bg-[#34C759]/10 border border-[#34C759]/20 text-[#248A3D] text-xs font-medium flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-1">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-[#34C759] shrink-0" />
+            <span>{successBanner.message}</span>
           </div>
-          <Link
-            href="/dashboard"
-            className="underline text-[#137333] hover:text-[#0d5324] font-bold cursor-pointer"
-          >
-            View in Cath-Lab Diary →
-          </Link>
+          {successBanner.linkHref && (
+            <Link
+              href={successBanner.linkHref}
+              className="underline font-semibold hover:opacity-80 transition-opacity ml-2 shrink-0 cursor-pointer"
+            >
+              {successBanner.linkLabel}
+            </Link>
+          )}
         </div>
       )}
 
-      {/* 3. Metrics Summary Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-          <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Total CT Reviews</p>
-          <p className="text-xl font-bold text-[#202124] mt-0.5">{ctReviews.length}</p>
-        </div>
-        <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-          <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Pending CT Review</p>
-          <p className="text-xl font-bold text-[#B06000] mt-0.5">
-            {ctReviews.filter((r) => r.status === "Pending Review").length}
-          </p>
-        </div>
-        <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-          <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Reviewed (Ready to Book)</p>
-          <p className="text-xl font-bold text-[#1A73E8] mt-0.5">
-            {ctReviews.filter((r) => r.status !== "Pending Review" && r.status !== "Booked in Cath-Lab").length}
-          </p>
-        </div>
-        <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-xl p-3.5">
-          <p className="text-[11px] font-semibold text-[#5F6368] uppercase">Booked in Cath-Lab</p>
-          <p className="text-xl font-bold text-[#137333] mt-0.5">
-            {ctReviews.filter((r) => r.status === "Booked in Cath-Lab").length}
-          </p>
-        </div>
-      </div>
-
-      {/* 4. Search & Center Filter Controls */}
-      <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
-        <div className="relative w-full md:max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#5F6368]" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search patient, CT number, SMS Bill ID, diagnosis..."
-            className="w-full bg-[#F1F3F4] text-xs rounded-full pl-9 pr-4 py-2 border border-transparent focus:border-[#1A73E8] focus:bg-[#FFFFFF] focus:outline-none"
-          />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          {/* Center Selector */}
-          <select
-            value={selectedCenter}
-            onChange={(e) => setSelectedCenter(e.target.value)}
-            className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-xs font-semibold text-[#3C4043] focus:border-[#1A73E8] focus:outline-none"
-          >
-            <option value="all">All Imaging Centers</option>
-            <option value="SONI Hospital">SONI Hospital PACS</option>
-            <option value="SMS Hospital">SMS Hospital CT</option>
-            <option value="External PACS">External / Other</option>
-          </select>
-
-          {/* Status Selector */}
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-xs font-semibold text-[#3C4043] focus:border-[#1A73E8] focus:outline-none"
-          >
-            <option value="all">All Statuses</option>
-            <option value="Pending Review">Pending Review</option>
-            <option value="Reviewed by Neel / Nilesh">Reviewed by Neel / Nilesh</option>
-            <option value="To be reviewed by consultant">To be reviewed by consultant</option>
-            <option value="Booking Cath-Lab on next available date">Booking Cath-Lab on next available date</option>
-            <option value="Booked in Cath-Lab">Booked in Cath-Lab</option>
-          </select>
-        </div>
-      </div>
-
-      {/* 5. CT Review Queue List */}
-      <div className="space-y-4">
-        {filteredReviews.length === 0 ? (
-          <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-12 text-center text-[#5F6368] space-y-2">
-            <Eye className="w-10 h-10 mx-auto text-[#BDC1C6]" />
-            <p className="font-semibold text-sm text-[#202124]">No CT Review records match current filters</p>
-            <p className="text-xs">Adjust search query or add a new patient to the OPD CT Review Queue.</p>
+      {/* 3. High-Dose Fluoroscopy Sentinel Surveillance Tasks */}
+      {sentinelTasks.length > 0 && (
+        <div className="bg-amber-50/70 border border-amber-300 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center gap-2 mb-2.5 text-amber-900 font-bold text-xs">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>High-Dose Radiation Sentinel Tasks ({sentinelTasks.length})</span>
+            <span className="px-2 py-0.5 rounded text-[10px] bg-amber-200 text-amber-900 font-mono font-bold">
+              SIR/CIRSE Safety Protocol (≥5.0 Gy / ≥60 min)
+            </span>
           </div>
-        ) : (
-          filteredReviews.map((item) => (
-            <div
-              key={item.id}
-              className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl p-5 shadow-xs hover:border-[#BDC1C6] transition-all space-y-3"
-            >
-              {/* Card Top Line */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#DADCE0] pb-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-base text-[#202124]">
-                      {item.patientName}
-                    </h3>
-                    <span className="text-xs text-[#5F6368]">
-                      ({item.age}y / {item.sex})
-                    </span>
-                    <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-[#F1F3F4] text-[#3C4043] border border-[#DADCE0]">
-                      HID: {item.smsBillId}
-                    </span>
-                    <span
-                      className={`px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full ${
-                        item.status === "Booked in Cath-Lab"
-                          ? "bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]"
-                          : item.status === "Pending Review"
-                          ? "bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]"
-                          : "bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#5F6368]">
-                    <span className="flex items-center gap-1">
-                      <Building className="w-3.5 h-3.5 text-[#1A73E8]" />
-                      <strong>{item.hospitalSource}</strong>
-                    </span>
-                    <span className="flex items-center gap-1 font-mono text-[#202124]">
-                      <Radio className="w-3.5 h-3.5 text-[#E37400]" />
-                      CT Scan #: <strong>{item.ctNumber}</strong>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-[#137333]" />
-                      <a href={`tel:${item.contactNumber}`} className="hover:underline text-[#202124]">
-                        {item.contactNumber}
-                      </a>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-[#5F6368]" />
-                      {item.date}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Action Buttons */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    onClick={() => {
-                      setReviewingItem(item);
-                      setEditNotes(item.ctReviewNotes);
-                      setEditClinicalHistory(item.clinicalHistory || "");
-                      setEditStatus(item.status);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] hover:bg-[#F1F3F4] text-xs font-semibold text-[#3C4043] transition-colors cursor-pointer"
-                  >
-                    <ClipboardList className="w-3.5 h-3.5 text-[#5F6368]" />
-                    <span>Review &amp; Edit</span>
-                  </button>
-
-                  {item.status !== "Booked in Cath-Lab" ? (
-                    <button
-                      onClick={() => {
-                        setBookingConversionItem(item);
-                        setBookingDiseaseKey(item.diseaseKey || "budd_chiari_dips");
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
-                    >
-                      <CalendarPlus className="w-3.5 h-3.5" />
-                      <span>Add to Cath-Lab Booking</span>
-                    </button>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#E6F4EA] text-[#137333] text-xs font-bold">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Booked</span>
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Diagnosis, Clinical History & "What to Review on CT" Box */}
-              <div className="space-y-2 text-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <div>
-                    <span className="font-semibold text-[#5F6368]">Primary Diagnosis: </span>
-                    <span className="font-bold text-[#202124]">{item.primaryDiagnosis}</span>
-                  </div>
-                </div>
-
-                {item.clinicalHistory && (
-                  <div className="p-2.5 rounded-lg bg-[#F1F3F4]/70 border border-[#DADCE0] text-xs space-y-0.5">
-                    <span className="font-bold text-[11px] text-[#3C4043] uppercase tracking-wider block">
-                      Full Clinical History &amp; Presentation:
-                    </span>
-                    <p className="text-[#202124] leading-relaxed">{item.clinicalHistory}</p>
-                  </div>
-                )}
-
-                <div className="p-3.5 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] space-y-1">
-                  <p className="font-bold text-[11px] text-[#1A73E8] uppercase tracking-wider flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5" />
-                    What to Review on CT (Catheterization Planning):
-                  </p>
-                  <p className="text-xs text-[#202124] leading-relaxed">
-                    {item.ctReviewNotes}
-                  </p>
-                </div>
-
-                {item.procedureTitle && (
-                  <p className="text-[11px] text-[#5F6368]">
-                    Suggested IR Protocol: <strong className="text-[#1A73E8]">{item.procedureTitle}</strong> ({item.organSystem})
-                  </p>
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 6. MODALS: ADD INTAKE, EDIT REVIEW, CONVERT TO CATH-LAB BOOKING */}
-      {/* ========================================================================= */}
-
-      {/* MODAL 1: Add New CT Review Intake */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl w-full max-w-2xl shadow-xl p-6 relative max-h-[90vh] overflow-y-auto my-6 text-[#202124]">
-            <button
-              onClick={() => setShowAddModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-3 mb-5 border-b border-[#DADCE0] pb-4">
-              <div className="w-10 h-10 rounded-full bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center">
-                <Eye className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-[#202124]">
-                  Add Patient to OPD CT Review Queue
-                </h3>
-                <p className="text-xs text-[#5F6368]">
-                  Log cross-sectional scan details and anatomical checklist before Cath-Lab booking
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleAddSubmit} className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            {sentinelTasks.map((t) => (
+              <div
+                key={t.id}
+                className="bg-white border border-amber-200 rounded-xl p-3 flex flex-col justify-between gap-2 text-xs shadow-2xs"
+              >
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
-                    Patient Name *
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="font-bold text-[#1C1C1E]">
+                      {t.patientName} (CR: {t.patientCrNo})
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold font-mono">
+                      Due: {t.scheduledForDate}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-amber-800 font-mono mt-1">
+                    {t.triggerReason}
+                  </div>
+                  <p className="text-[11px] text-[#5F6368] mt-1 leading-relaxed">
+                    {t.instructions}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between pt-1 border-t border-amber-100 text-[10px] text-amber-700 font-semibold">
+                  <span>Task: {t.taskType}</span>
+                  <span className="text-amber-800 font-mono">Target: {t.targetRoute}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODE A: STREAMLINED OPD CONSULTATION DESK */}
+      {/* ========================================================================= */}
+      {activeTab === "desk" && (
+        <div className="space-y-5">
+          {/* Patient Selection Bar */}
+          <div className="bg-white border border-[#E5E5EA] rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 w-full md:w-auto">
+              <span className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider shrink-0">
+                Patient Source:
+              </span>
+              <select
+                value={selectedPatientKey}
+                onChange={(e) => loadPatientIntoDesk(e.target.value)}
+                className="flex-1 md:w-80 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] focus:outline-none focus:bg-white focus:border-[#007AFF] transition-colors"
+              >
+                <option value="new">+ Enter New Walk-In Consultation</option>
+                <optgroup label="Authentic CT Reviews / Queued Patients">
+                  {availablePatients.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
+
+            {/* Direct Transition Action Bar */}
+            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+              <button
+                type="button"
+                onClick={handleAdmitToWard}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#5856D6] hover:bg-[#4745B8] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+              >
+                <BedDouble className="w-4 h-4" />
+                <span>Admit to Ward</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowBookingModal(true)}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+              >
+                <CalendarPlus className="w-4 h-4" />
+                <span>Book for Cath-Lab</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Consultation Desk Intake Card */}
+          <form onSubmit={handleSaveConsult} className="bg-white border border-[#E5E5EA] rounded-2xl p-5 shadow-xs space-y-5">
+            {/* Section 1: Demographics & Identifiers */}
+            <div>
+              <div className="flex items-center justify-between border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5" />
+                  Patient Demographics &amp; Identifiers
+                </h3>
+                <span className="text-[11px] text-[#8E8E93]">Pure Deterministic IDs (Zero Math.random)</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Patient Full Name *
                   </label>
                   <input
                     type="text"
                     required
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder="e.g. Bhanwar Lal"
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder="e.g. Bhanwar Lal Sharma"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
+
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
-                    Age / Sex
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Age &amp; Biological Sex
                   </label>
                   <div className="flex gap-2">
                     <input
                       type="number"
-                      value={newAge}
-                      onChange={(e) => setNewAge(Number(e.target.value))}
-                      className="w-20 px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      value={age}
+                      onChange={(e) => setAge(Number(e.target.value))}
+                      className="w-20 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                     />
                     <select
-                      value={newSex}
-                      onChange={(e) => setNewSex(e.target.value as "Male" | "Female")}
-                      className="flex-1 px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      value={sex}
+                      onChange={(e) => setSex(e.target.value as "Male" | "Female")}
+                      className="flex-1 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                     >
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                     </select>
                   </div>
                 </div>
+
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
                     Contact Mobile *
                   </label>
                   <input
                     type="tel"
-                    required
-                    value={newContact}
-                    onChange={(e) => setNewContact(e.target.value)}
+                    value={contactNumber}
+                    onChange={(e) => setContactNumber(e.target.value)}
                     placeholder="e.g. 9829012345"
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    SMS Bill ID / CR No (Deterministic)
+                  </label>
+                  <input
+                    type="text"
+                    value={smsBillId}
+                    onChange={(e) => setSmsBillId(e.target.value)}
+                    placeholder="SMS-OPD-2026-..."
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
-                    CT Scan / PACS Number *
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    CT Scan / PACS Accession Number
                   </label>
                   <input
                     type="text"
-                    required
-                    value={newCtNumber}
-                    onChange={(e) => setNewCtNumber(e.target.value)}
-                    placeholder="e.g. SONIE-PACS-99214"
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-mono"
+                    value={ctNumber}
+                    onChange={(e) => setCtNumber(e.target.value)}
+                    placeholder="e.g. SONI-PACS-99214"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
+
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
                     Imaging Center / Source
                   </label>
                   <select
-                    value={newCenter}
-                    onChange={(e) => setNewCenter(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    value={hospitalSource}
+                    onChange={(e) => setHospitalSource(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   >
                     <option value="SONI Hospital">SONI Hospital PACS</option>
                     <option value="SMS Hospital">SMS Hospital CT</option>
                     <option value="External PACS">External / Other Center</option>
                   </select>
                 </div>
+              </div>
+            </div>
+
+            {/* Section 2: Chief Complaints & 3-Month Clinical Course */}
+            <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5" />
+                  Chief Complaints &amp; 3 Months of Clinical History
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
-                    SMS Bill ID / HID
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Chief Complaints &amp; Presenting Symptoms *
                   </label>
-                  <input
-                    type="text"
-                    value={newSmsBillId}
-                    onChange={(e) => setNewSmsBillId(e.target.value)}
-                    placeholder="SMS-BILL-2026-..."
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-mono"
+                  <textarea
+                    rows={3}
+                    required
+                    value={chiefComplaints}
+                    onChange={(e) => setChiefComplaints(e.target.value)}
+                    placeholder="e.g. Recurrent episodes of painless gross hematuria, left flank dragging discomfort for 2 weeks..."
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1 flex items-center gap-1">
+                    <History className="w-3 h-3 text-[#5856D6]" />
+                    <span>3 Months of Clinical History &amp; Disease Progression *</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    required
+                    value={history3Months}
+                    onChange={(e) => setHistory3Months(e.target.value)}
+                    placeholder="e.g. Over the past 3 months: progressive jaundice, 2 episodes of melena requiring PRBC transfusion, escalating abdominal distension refractory to diuretics..."
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
+            </div>
 
-              <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
-                  Primary Clinical Diagnosis *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={newDiagnosis}
-                  onChange={(e) => setNewDiagnosis(e.target.value)}
-                  placeholder="e.g. Cirrhosis with recurrent gastric variceal hemorrhage"
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
-                />
+            {/* Section 3: CECT Findings & Angio Planning */}
+            <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5" />
+                  CECT &amp; Cross-Sectional Imaging Findings
+                </h3>
               </div>
 
               <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
-                  Complete Clinical History &amp; Presentation *
-                </label>
-                <textarea
-                  rows={2}
-                  required
-                  value={newClinicalHistory}
-                  onChange={(e) => setNewClinicalHistory(e.target.value)}
-                  placeholder="e.g. 52-year-old male with decompensated NASH cirrhosis, recurrent variceal bleed requiring 4 units PRBC, melena 3 days ago..."
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none leading-relaxed"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
-                  What to Review on CT (Specific Roadmap Questions) *
+                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  CECT Findings &amp; Catheterization Roadmapping Notes *
                 </label>
                 <textarea
                   rows={3}
                   required
-                  value={newReviewNotes}
-                  onChange={(e) => setNewReviewNotes(e.target.value)}
-                  placeholder="e.g. Review triple-phase CECT: Check main portal vein patency, assess splenic vein caliber, and evaluate gastrorenal shunt for BRTO..."
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none leading-relaxed"
+                  value={cectFindings}
+                  onChange={(e) => setCectFindings(e.target.value)}
+                  placeholder="e.g. Triple-phase CECT: Cirrhotic liver morphology, attenuated right and left hepatic veins, marked caudate lobe hypertrophy (>3.5 cm), patent main portal vein with hepatopetal flow. Feasible for transcaval DIPS..."
+                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                 />
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#DADCE0]">
+            {/* Section 4: Clinical Diagnosis & Suspected Procedure */}
+            <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5" />
+                  Diagnosis &amp; IR Procedural Plan
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Primary Diagnosis *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={primaryDiagnosis}
+                    onChange={(e) => setPrimaryDiagnosis(e.target.value)}
+                    placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
                     Organ System
                   </label>
                   <select
-                    value={newOrganSystem}
+                    value={organSystem}
                     onChange={(e) => {
                       const newSys = e.target.value;
-                      setNewOrganSystem(newSys);
+                      setOrganSystem(newSys);
                       const first = IR_CLINICAL_PROTOCOLS.find((p) => p.organSystem === newSys);
-                      if (first) setNewDiseaseKey(first.key);
+                      if (first) setDiseaseKey(first.key);
                     }}
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   >
                     <option value="Liver & Hepatobiliary">Liver & Hepatobiliary</option>
                     <option value="Thoracic & Pulmonary">Thoracic & Pulmonary</option>
@@ -654,15 +903,15 @@ export default function OpCtReviewQueuePage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#3C4043] mb-1">
-                    Suspected IR Procedure
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Suggested IR Protocol
                   </label>
                   <select
-                    value={newDiseaseKey}
-                    onChange={(e) => setNewDiseaseKey(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    value={diseaseKey}
+                    onChange={(e) => setDiseaseKey(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   >
-                    {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === newOrganSystem).map((p) => (
+                    {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
                       <option key={p.key} value={p.key}>
                         {p.title}
                       </option>
@@ -670,143 +919,244 @@ export default function OpCtReviewQueuePage() {
                   </select>
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DADCE0]">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#3C4043] hover:bg-[#F1F3F4] font-semibold cursor-pointer"
-                >
-                  Cancel
-                </button>
+            {/* Bottom Action Strip */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E5EA]">
+              <div className="text-[11px] text-[#8E8E93] flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Consultant: <strong>{activeStaff.name}</strong> ({activeStaff.code})</span>
+              </div>
+
+              <div className="flex items-center gap-2">
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold cursor-pointer shadow-xs"
+                  className="px-4 py-2 rounded-xl border border-[#E5E5EA] bg-white hover:bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] transition-all cursor-pointer"
                 >
-                  Save CT Review Entry
+                  Save / Update Consult Entry
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAdmitToWard}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5856D6] hover:bg-[#4745B8] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                >
+                  <BedDouble className="w-4 h-4" />
+                  <span>Admit to Ward</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBookingStep(1);
+                    setShowBookingModal(true);
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                >
+                  <CalendarPlus className="w-4 h-4" />
+                  <span>Book for Cath-Lab</span>
                 </button>
               </div>
-            </form>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODE B: OPD CT REVIEW QUEUE & DIRECTORY */}
+      {/* ========================================================================= */}
+      {activeTab === "queue" && (
+        <div className="space-y-4">
+          {/* Search & Filter Controls */}
+          <div className="bg-white border border-[#E5E5EA] rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
+            <div className="relative w-full md:max-w-md">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8E93]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search patient, CT number, SMS Bill ID, diagnosis..."
+                className="w-full bg-[#F2F2F7] text-xs rounded-xl pl-9 pr-4 py-2 border border-transparent focus:border-[#007AFF] focus:bg-white focus:outline-none transition-colors"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              <select
+                value={selectedCenter}
+                onChange={(e) => setSelectedCenter(e.target.value)}
+                className="px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] focus:outline-none"
+              >
+                <option value="all">All Imaging Centers</option>
+                <option value="SONI Hospital">SONI Hospital PACS</option>
+                <option value="SMS Hospital">SMS Hospital CT</option>
+                <option value="External PACS">External / Other</option>
+              </select>
+
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] focus:outline-none"
+              >
+                <option value="all">All Statuses</option>
+                <option value="Pending Review">Pending Review</option>
+                <option value="Reviewed by DM Resident">Reviewed by DM Resident</option>
+                <option value="To be reviewed by consultant">To be reviewed by consultant</option>
+                <option value="Booking Cath-Lab on next available date">Booking Cath-Lab</option>
+                <option value="Booked in Cath-Lab">Booked in Cath-Lab</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Queue List Cards */}
+          <div className="space-y-3">
+            {filteredReviews.length === 0 ? (
+              <div className="bg-white border border-[#E5E5EA] rounded-2xl p-12 text-center text-[#8E8E93] space-y-2">
+                <Eye className="w-10 h-10 mx-auto text-[#C7C7CC]" />
+                <p className="font-semibold text-sm text-[#1C1C1E]">No CT Review records match current filters</p>
+                <p className="text-xs">Select or add a new patient to populate the OPD consultation queue.</p>
+              </div>
+            ) : (
+              filteredReviews.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white border border-[#E5E5EA] rounded-2xl p-5 shadow-xs hover:border-[#C7C7CC] transition-all space-y-3"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#E5E5EA] pb-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-bold text-base text-[#1C1C1E]">
+                          {item.patientName}
+                        </h3>
+                        <span className="text-xs text-[#8E8E93]">
+                          ({item.age}y / {item.sex})
+                        </span>
+                        <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-[#F2F2F7] text-[#3A3A3C]">
+                          HID: {item.smsBillId}
+                        </span>
+                        <span
+                          className={`px-2.5 py-0.5 text-[10px] font-semibold uppercase rounded-full ${
+                            item.status === "Booked in Cath-Lab"
+                              ? "bg-[#34C759]/15 text-[#248A3D]"
+                              : item.status === "Pending Review"
+                              ? "bg-[#FF9500]/15 text-[#C97100]"
+                              : "bg-[#007AFF]/15 text-[#007AFF]"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E93]">
+                        <span className="flex items-center gap-1 font-medium text-[#1C1C1E]">
+                          <Building className="w-3.5 h-3.5 text-[#007AFF]" />
+                          {item.hospitalSource}
+                        </span>
+                        <span className="flex items-center gap-1 font-mono text-[#1C1C1E]">
+                          <Radio className="w-3.5 h-3.5 text-[#FF9500]" />
+                          CT #{item.ctNumber}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3.5 h-3.5 text-[#34C759]" />
+                          {item.contactNumber}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {item.date}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => {
+                          loadPatientIntoDesk(item.id);
+                          setActiveTab("desk");
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E5EA] bg-white hover:bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] transition-all cursor-pointer"
+                      >
+                        <ClipboardList className="w-3.5 h-3.5 text-[#8E8E93]" />
+                        <span>Open in Desk</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          loadPatientIntoDesk(item.id);
+                          setBookingStep(1);
+                          setShowBookingModal(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                      >
+                        <CalendarPlus className="w-3.5 h-3.5" />
+                        <span>Book Lab</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div>
+                      <span className="font-semibold text-[#8E8E93]">Primary Diagnosis: </span>
+                      <span className="font-semibold text-[#1C1C1E]">{item.primaryDiagnosis}</span>
+                    </div>
+
+                    {item.clinicalHistory && (
+                      <div className="p-2.5 rounded-xl bg-[#F2F2F7]/70 text-xs">
+                        <span className="font-bold text-[10px] text-[#636366] uppercase tracking-wider block mb-0.5">
+                          3-Month Clinical Course:
+                        </span>
+                        <p className="text-[#1C1C1E] leading-relaxed">{item.clinicalHistory}</p>
+                      </div>
+                    )}
+
+                    <div className="p-3 rounded-xl bg-[#007AFF]/5 border border-[#007AFF]/10">
+                      <p className="font-bold text-[10px] text-[#007AFF] uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <Eye className="w-3.5 h-3.5" />
+                        CECT Findings:
+                      </p>
+                      <p className="text-xs text-[#1C1C1E] leading-relaxed">{item.ctReviewNotes}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
 
-      {/* MODAL 2: Review CT Notes & Update Status */}
-      {reviewingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl w-full max-w-lg shadow-xl p-6 relative">
+      {/* ========================================================================= */}
+      {/* MODAL: CONFIRM CATH-LAB BOOKING */}
+      {/* ========================================================================= */}
+      {showBookingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs p-4">
+          <div className="bg-white border border-[#E5E5EA] rounded-2xl w-full max-w-lg shadow-xl p-6 relative">
             <button
-              onClick={() => setReviewingItem(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] cursor-pointer"
+              onClick={() => setShowBookingModal(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F2F2F7] text-[#8E8E93] cursor-pointer"
             >
-              <X className="w-4 h-4" />
-            </button>
-
-            <h3 className="text-base font-bold text-[#202124] mb-1">
-              Review CT Findings &amp; Clinical Notes
-            </h3>
-            <p className="text-xs text-[#5F6368] mb-4">
-              Patient: <strong>{reviewingItem.patientName}</strong> • CT #{reviewingItem.ctNumber} ({reviewingItem.hospitalSource})
-            </p>
-
-            <form onSubmit={handleEditNotesSubmit} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
-                  Clinical History &amp; Presentation:
-                </label>
-                <textarea
-                  rows={2}
-                  value={editClinicalHistory}
-                  onChange={(e) => setEditClinicalHistory(e.target.value)}
-                  placeholder="Enter or refine clinical history..."
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none leading-relaxed"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
-                  CT Review Notes &amp; Anatomical Findings:
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  value={editNotes}
-                  onChange={(e) => setEditNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none leading-relaxed"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
-                  Review Status (3-State Workflow):
-                </label>
-                <select
-                  value={editStatus}
-                  onChange={(e) => setEditStatus(e.target.value as CtReviewRecord["status"])}
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-semibold"
-                >
-                  <option value="Reviewed by Neel / Nilesh">Reviewed by Neel / Nilesh</option>
-                  <option value="To be reviewed by consultant">To be reviewed by consultant</option>
-                  <option value="Booking Cath-Lab on next available date">Booking Cath-Lab on next available date</option>
-                  <option value="Pending Review">Pending Review</option>
-                  <option value="Booked in Cath-Lab">Booked in Cath-Lab</option>
-                </select>
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#DADCE0]">
-                <button
-                  type="button"
-                  onClick={() => setReviewingItem(null)}
-                  className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#3C4043] hover:bg-[#F1F3F4] font-semibold cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold cursor-pointer"
-                >
-                  Save Findings
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 3: Convert CT Review directly to Cath-Lab Booking */}
-      {bookingConversionItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-[#FFFFFF] border border-[#DADCE0] rounded-2xl w-full max-w-lg shadow-xl p-6 relative">
-            <button
-              onClick={() => setBookingConversionItem(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] cursor-pointer"
-            >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-[#007AFF]/10 text-[#007AFF] flex items-center justify-center">
                 <CalendarPlus className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#202124]">
-                  Confirm Cath-Lab Booking from CT Review
+                <h3 className="text-base font-semibold text-[#1C1C1E] tracking-tight">
+                  Confirm Cath-Lab Booking
                 </h3>
-                <p className="text-xs text-[#5F6368]">
-                  Transfer patient directly into DM Resident Cath-Lab diary
+                <p className="text-xs text-[#8E8E93]">
+                  Schedule patient directly into Cath-Lab Day-Care &amp; RIS Worklist
                 </p>
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#F8F9FA] border border-[#DADCE0] text-xs space-y-1 mb-4">
-              <p><strong>Patient:</strong> {bookingConversionItem.patientName} ({bookingConversionItem.age}y / {bookingConversionItem.sex})</p>
-              <p><strong>CT Scan:</strong> {bookingConversionItem.ctNumber} ({bookingConversionItem.hospitalSource})</p>
-              <p><strong>Diagnosis:</strong> {bookingConversionItem.primaryDiagnosis}</p>
+            <div className="p-3 rounded-xl bg-[#F2F2F7] text-xs space-y-1 mb-4">
+              <p><strong>Patient:</strong> {patientName} ({age}y / {sex})</p>
+              <p><strong>Procedure:</strong> {matchedProtocol.title}</p>
+              <p><strong>Diagnosis:</strong> {primaryDiagnosis || matchedProtocol.title}</p>
+              <p><strong>3-Month History:</strong> {history3Months || "Symptom progression documented."}</p>
             </div>
 
-            <form onSubmit={handleConvertBookingSubmit} className="space-y-4 text-xs">
+            <form onSubmit={handleConfirmCathLabBooking} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
+                <label className="block font-semibold text-[#636366] mb-1">
                   Scheduled Cath-Lab Date *
                 </label>
                 <input
@@ -814,14 +1164,14 @@ export default function OpCtReviewQueuePage() {
                   required
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] focus:bg-white focus:border-[#007AFF] focus:outline-none"
                 />
               </div>
 
-              {/* Rajasthan Holiday Warning on Date */}
+              {/* Rajasthan Holiday Detection */}
               {(bookingDateHoliday.isHoliday || bookingDateHoliday.isSunday) && (
-                <div className="p-2.5 rounded-lg bg-[#FEF7E0] border border-[#FEEFC3] text-[#B06000] flex items-center gap-2 text-[11px]">
-                  <AlertTriangle className="w-4 h-4 text-[#F29900] shrink-0" />
+                <div className="p-2.5 rounded-xl bg-[#FF9500]/10 border border-[#FF9500]/20 text-[#C97100] flex items-center gap-2 text-[11px]">
+                  <AlertTriangle className="w-4 h-4 text-[#FF9500] shrink-0" />
                   <span>
                     <strong>Notice:</strong> {bookingDateHoliday.name || "Sunday"} is a Rajasthan {bookingDateHoliday.type || "Gazetted"} Holiday.
                   </span>
@@ -829,13 +1179,13 @@ export default function OpCtReviewQueuePage() {
               )}
 
               <div>
-                <label className="block font-semibold text-[#3C4043] mb-1">
+                <label className="block font-semibold text-[#636366] mb-1">
                   Procedure Protocol *
                 </label>
                 <select
-                  value={bookingDiseaseKey}
-                  onChange={(e) => setBookingDiseaseKey(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#202124] focus:border-[#1A73E8] focus:outline-none font-semibold"
+                  value={diseaseKey}
+                  onChange={(e) => setDiseaseKey(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-semibold focus:bg-white focus:border-[#007AFF] focus:outline-none"
                 >
                   {IR_CLINICAL_PROTOCOLS.map((p) => (
                     <option key={p.key} value={p.key}>
@@ -845,25 +1195,30 @@ export default function OpCtReviewQueuePage() {
                 </select>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#DADCE0]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E5EA]">
                 <button
                   type="button"
-                  onClick={() => setBookingConversionItem(null)}
-                  className="px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-[#FFFFFF] text-[#3C4043] hover:bg-[#F1F3F4] font-semibold cursor-pointer"
+                  onClick={() => setShowBookingModal(false)}
+                  className="px-4 py-2 rounded-xl border border-[#E5E5EA] bg-white text-[#3A3A3C] hover:bg-[#F2F2F7] font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold cursor-pointer shadow-xs"
+                  className="px-5 py-2 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] active:scale-[0.98] text-white font-semibold cursor-pointer shadow-xs"
                 >
-                  Confirm &amp; Add to Cath-Lab List
+                  Confirm &amp; Book Cath-Lab
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {/* Footer Attribution */}
+      <div className="text-center py-4 text-xs text-[#8E8E93] select-none">
+        SMS Hospital Angiosuite • Made by Dr. Neel Yadav
+      </div>
     </div>
   );
 }

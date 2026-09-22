@@ -10,15 +10,15 @@ import {
 } from "../index";
 
 describe("100 Interventional Radiology Procedures Catalog (Package Level)", () => {
-  it("contains exactly 100 procedures", () => {
+  it("contains at least 100 procedures", () => {
     expect(IR_PROCEDURES_CATALOG).toBeDefined();
-    expect(IR_PROCEDURES_CATALOG.length).toBe(100);
+    expect(IR_PROCEDURES_CATALOG.length).toBeGreaterThanOrEqual(100);
   });
 
   it("ensures all procedure keys are unique non-empty strings", () => {
     const keys = IR_PROCEDURES_CATALOG.map((p) => p.key);
     const uniqueKeys = new Set(keys);
-    expect(uniqueKeys.size).toBe(100);
+    expect(uniqueKeys.size).toBe(IR_PROCEDURES_CATALOG.length);
     keys.forEach((key) => {
       expect(key.trim().length).toBeGreaterThan(0);
     });

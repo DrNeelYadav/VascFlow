@@ -380,13 +380,13 @@ export function VitalsDashboard({
             <CardContent className="p-0 space-y-2">
               <div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white">
-                    {hemo.systolic} / {hemo.diastolic}
+                  <span className="text-2xl font-bold font-mono tracking-tight text-white">
+                    {hemo.systolic}/{hemo.diastolic}
                   </span>
                   <span className="text-xs font-mono text-[#94A3B8]">mmHg</span>
                 </div>
                 <p className="text-[11px] font-mono text-[#60A5FA] mt-0.5">
-                  Mean Arterial Pressure (MAP): {hemo.map} mmHg
+                  MAP {hemo.map} mmHg
                 </p>
               </div>
 
@@ -422,13 +422,13 @@ export function VitalsDashboard({
             <CardContent className="p-0 space-y-2">
               <div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white">
+                  <span className="text-2xl font-bold font-mono tracking-tight text-white">
                     {hemo.heartRate}
                   </span>
                   <span className="text-xs font-mono text-[#94A3B8]">BPM</span>
                 </div>
                 <p className="text-[11px] font-mono text-[#10B981] mt-0.5">
-                  {hemo.rhythmStatus} • No Ectopy
+                  {hemo.rhythmStatus}
                 </p>
               </div>
 
@@ -464,13 +464,13 @@ export function VitalsDashboard({
             <CardContent className="p-0 space-y-2">
               <div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white">
+                  <span className="text-2xl font-bold font-mono tracking-tight text-white">
                     {hemo.spo2Percent}
                   </span>
-                  <span className="text-xs font-mono text-[#94A3B8]">% SpO2</span>
+                  <span className="text-xs font-mono text-[#94A3B8]">%</span>
                 </div>
                 <p className="text-[11px] font-mono text-[#94A3B8] mt-0.5">
-                  2L O2 Nasal Cannula • Pleth Index: 4.2
+                  2L O2 NC • PI 4.2
                 </p>
               </div>
 
@@ -505,13 +505,13 @@ export function VitalsDashboard({
             <CardContent className="p-0 space-y-2">
               <div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold font-mono text-white">
+                  <span className="text-2xl font-bold font-mono tracking-tight text-white">
                     {hemo.actSeconds}
                   </span>
-                  <span className="text-xs font-mono text-[#94A3B8]">seconds</span>
+                  <span className="text-xs font-mono text-[#94A3B8]">s</span>
                 </div>
                 <p className="text-[11px] font-mono text-[#F59E0B] mt-0.5">
-                  Target: {hemo.actTargetMin}–{hemo.actTargetMax}s (EVAR Standard)
+                  Target: {hemo.actTargetMin}–{hemo.actTargetMax}s
                 </p>
               </div>
 
@@ -592,33 +592,28 @@ export function VitalsDashboard({
           </Card>
 
           {/* Nephrotoxic Contrast Exposure Tracker */}
-          <Card variant="oled" className="bg-[#090A0F] border-[#1E293B] p-5 space-y-4">
-            <CardHeader className="p-0 space-y-1">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#38BDF8]" />
-                  Contrast Exposure
-                </CardTitle>
-                <span className="text-xs font-mono text-[#10B981] bg-[#064E3B]/40 border border-[#10B981]/30 px-2 py-0.5 rounded">
-                  SAFE MARGIN
-                </span>
-              </div>
-              <CardDescription className="text-xs text-[#94A3B8]">
-                CIN nephrotoxicity threshold tracking
-              </CardDescription>
+          <Card variant="oled" className="bg-[#090A0F] border-[#1E293B] p-4 space-y-3">
+            <CardHeader className="p-0 space-y-0 flex flex-row items-center justify-between">
+              <span className="font-mono text-xs text-[#94A3B8] flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#38BDF8]" />
+                CONTRAST EXPOSURE
+              </span>
+              <span className="text-[10px] font-mono text-[#10B981] bg-[#064E3B]/40 border border-[#10B981]/30 px-1.5 py-0.5 rounded">
+                CONTRAST: {contrast.injectedMl}ml
+              </span>
             </CardHeader>
 
-            <CardContent className="p-0 space-y-3">
-              <div className="space-y-1.5">
+            <CardContent className="p-0 space-y-2.5">
+              <div className="space-y-1">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-bold font-mono text-white">
+                  <span className="text-2xl font-bold font-mono tracking-tight text-white">
                     {contrast.injectedMl}
                   </span>
                   <span className="text-xs font-mono text-[#94A3B8]">
-                    mL / {contrast.macdThresholdMl} mL MACD
+                    / {contrast.macdThresholdMl}ml MACD
                   </span>
                 </div>
-                <div className="w-full bg-[#111827] h-2.5 rounded-full overflow-hidden">
+                <div className="w-full bg-[#111827] h-2 rounded-full overflow-hidden">
                   <div
                     className="bg-[#38BDF8] h-full rounded-full transition-all duration-300"
                     style={{ width: `${contrastPercentage}%` }}
@@ -626,13 +621,13 @@ export function VitalsDashboard({
                 </div>
               </div>
 
-              <div className="text-xs font-mono text-[#94A3B8] space-y-1.5 pt-2 border-t border-[#1E293B]">
+              <div className="text-[11px] font-mono text-[#94A3B8] space-y-1 pt-2 border-t border-[#1E293B]">
                 <div className="flex justify-between">
-                  <span>Contrast Agent:</span>
+                  <span>Agent:</span>
                   <span className="text-white font-medium">{contrast.agentName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Baseline eGFR:</span>
+                  <span>eGFR:</span>
                   <span className="text-white font-medium">
                     {contrast.patientEgfr} mL/min
                   </span>

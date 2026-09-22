@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { prisma } from "./index";
+import { computeDagNodeHash, GENESIS_DAG_HASH } from "./src/audit/auditMerkleDag";
 
 /**
  * Standard audit actions complying with HIPAA § 164.312(b) audit controls.
@@ -24,6 +25,10 @@ export interface AuditLogInput {
   userAgent?: string;
   details?: Record<string, unknown> | string;
   encryptPayload?: boolean;
+  isEmergencyOverride?: boolean;
+  overrideReason?: string;
+  clientSequenceId?: string;
+  parentHashes?: string[];
 }
 
 export interface StoredAuditDetails {
@@ -32,6 +37,11 @@ export interface StoredAuditDetails {
   tamperHash: string;
   algorithm: "SHA256-HMAC";
   timestamp: string;
+  previousHash?: string;
+  currentHash?: string;
+  clientSequenceId?: string;
+  nodeHash?: string;
+  parentHashes?: string[];
 }
 
 export interface AuditLogRecord {
@@ -43,6 +53,13 @@ export interface AuditLogRecord {
   ipAddress: string;
   userAgent: string;
   detailsJson: string;
+  isEmergencyOverride?: boolean;
+  overrideReason?: string | null;
+  previousHash?: string | null;
+  currentHash?: string | null;
+  clientSequenceId?: string | null;
+  nodeHash?: string | null;
+  parentHashes?: string[];
   timestamp: Date;
 }
 
@@ -165,6 +182,82 @@ export function verifyAuditIntegrity(
   }
 }
 
+let inMemoryLastHash = "GENESIS_HASH_00000000000000000000000000000000";
+
+/**
+ * Computes SHA-256 sequential cryptographic hash linking an audit record to its predecessor.
+ */
+export function calculateSequentialHash(
+  previousHash: string,
+  timestampIso: string,
+  actorStaffId: string,
+  action: string,
+  entityType: string,
+  entityId: string,
+  payloadData: string
+): string {
+  const canonical = [
+    previousHash,
+    timestampIso,
+    actorStaffId,
+    action.toUpperCase(),
+    entityType,
+    entityId,
+    payloadData,
+  ].join("|");
+
+  return crypto.createHash("sha256").update(canonical).digest("hex");
+}
+
+/**
+ * Verifies that an array of sequentially chained audit records has not been altered,
+ * reordered, inserted, or truncated.
+ */
+export function verifyAuditChain(
+  records: Array<{
+    previousHash?: string | null;
+    currentHash?: string | null;
+    timestamp: Date | string;
+    staffId: string;
+    action: string;
+    entityType: string;
+    entityId: string;
+    detailsJson: string;
+  }>
+): { valid: boolean; brokenAtIndex?: number } {
+  for (let i = 0; i < records.length; i++) {
+    const rec = records[i];
+    if (i > 0) {
+      const prev = records[i - 1];
+      if (rec.previousHash !== prev.currentHash) {
+        return { valid: false, brokenAtIndex: i };
+      }
+    }
+
+    let payloadData = "{}";
+    try {
+      const parsed = JSON.parse(rec.detailsJson);
+      payloadData = parsed.data || "{}";
+    } catch {}
+
+    const ts = typeof rec.timestamp === "string" ? rec.timestamp : rec.timestamp.toISOString();
+    const expected = calculateSequentialHash(
+      rec.previousHash || "GENESIS_HASH_00000000000000000000000000000000",
+      ts,
+      rec.staffId,
+      rec.action,
+      rec.entityType,
+      rec.entityId,
+      payloadData
+    );
+
+    if (rec.currentHash && rec.currentHash !== expected) {
+      return { valid: false, brokenAtIndex: i };
+    }
+  }
+  return { valid: true };
+}
+
 /**
  * Writes an immutable, tamper-evident audit log entry to the database.
  * If encryptPayload is enabled, sensitive fields are encrypted via AES-256-GCM.
@@ -194,6 +287,33 @@ export async function logAuditTrail(
     payloadData = "{}";
   }
 
+  // Retrieve previous hash from database or memory chain
+  let previousHash = inMemoryLastHash;
+  try {
+    if (typeof (client as any).auditLog?.findFirst === "function") {
+      const lastRecord = await (client as any).auditLog.findFirst({
+        orderBy: { timestamp: "desc" },
+        select: { currentHash: true },
+      });
+      if (lastRecord?.currentHash) {
+        previousHash = lastRecord.currentHash;
+      }
+    }
+  } catch {
+    // Database offline fallback
+  }
+
+  const currentHash = calculateSequentialHash(
+    previousHash,
+    timestampIso,
+    input.actorStaffId,
+    input.action,
+    input.entityType,
+    input.entityId,
+    payloadData
+  );
+  inMemoryLastHash = currentHash;
+
   const tamperHash = computeTamperHash(
     timestampIso,
     input.actorStaffId,
@@ -205,12 +325,38 @@ export async function logAuditTrail(
     hmacSecret
   );
 
+  const clientSequenceId =
+    input.clientSequenceId ||
+    `audit_seq_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
+  const parentHashes =
+    input.parentHashes && input.parentHashes.length > 0
+      ? [...input.parentHashes].sort()
+      : [previousHash || GENESIS_DAG_HASH];
+
+  const nodeHash = computeDagNodeHash({
+    clientSequenceId,
+    parentHashes,
+    timestamp: timestampIso,
+    actorStaffId: input.actorStaffId,
+    action: input.action.toUpperCase(),
+    entityType: input.entityType,
+    entityId: input.entityId,
+    payloadData,
+    isEmergencyOverride: input.isEmergencyOverride ?? false,
+    overrideReason: input.overrideReason || null,
+  });
+
   const auditDetails: StoredAuditDetails = {
     data: payloadData,
     isEncrypted: shouldEncrypt,
     tamperHash,
     algorithm: "SHA256-HMAC",
     timestamp: timestampIso,
+    previousHash,
+    currentHash,
+    clientSequenceId,
+    nodeHash,
+    parentHashes,
   };
 
   const detailsJson = JSON.stringify(auditDetails);
@@ -225,6 +371,13 @@ export async function logAuditTrail(
         ipAddress,
         userAgent,
         detailsJson,
+        isEmergencyOverride: input.isEmergencyOverride ?? false,
+        overrideReason: input.overrideReason || null,
+        previousHash,
+        currentHash,
+        clientSequenceId,
+        nodeHash,
+        parentHashes,
         timestamp: now,
       },
     });
@@ -247,6 +400,13 @@ export async function logAuditTrail(
       ipAddress,
       userAgent,
       detailsJson,
+      isEmergencyOverride: input.isEmergencyOverride ?? false,
+      overrideReason: input.overrideReason || null,
+      previousHash,
+      currentHash,
+      clientSequenceId,
+      nodeHash,
+      parentHashes,
       timestamp: now,
     };
   }

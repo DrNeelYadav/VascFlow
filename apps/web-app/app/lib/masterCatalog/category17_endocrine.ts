@@ -1,0 +1,108 @@
+import { MasterProcedure } from './types';
+
+/**
+ * Category 17: Endocrine, Head & Neck Interventions (2 Procedures)
+ * Strict Rajasthan MAAY / RGHS compatibility and SMS Medical College clinical protocols.
+ */
+export const CATEGORY_17_ENDOCRINE: MasterProcedure[] = [
+  {
+    id: 'cat17-thyroid-rfa',
+    categoryNumber: 17,
+    categoryName: 'Endocrine, Head & Neck Interventions',
+    title: 'Ultrasound-Guided Radiofrequency Ablation (RFA) of Benign Thyroid Nodules',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Radiofrequency Ablation (RFA)',
+      packageCode: '1849-MG080A',
+      icd10: 'E04.1',
+      tariffInr: 25000,
+    },
+    modality: 'US',
+    targetAnatomy: ["Benign Thyroid Nodule (Colloid / Adenomatous)"],
+    sedation: 'Local Anesthesia',
+    accessSiteDefault: 'Transisthmic approach under high-frequency linear ultrasound',
+    sheathDefault: '18G Internally Cooled RFA Thyroid Needle (7cm, 5-10mm active tip)',
+    cathetersAndWires: 'Linear 12-18 MHz probe, 18G RFA needle, RF generator, peristaltic cold saline pump',
+    microcatheterSystem: 'N/A',
+    embolicOrImplants: 'N/A',
+    proceduralNarrativeTemplate:
+      'High-frequency ultrasound mapped 3.5cm symptomatic benign thyroid nodule causing dysphagia. Benignity confirmed on dual prior FNACs. Local anesthesia with 1% lignocaine; hydrodissection with 5% Dextrose performed into thyroid capsule to create danger-zone safety buffer protecting recurrent laryngeal nerve in tracheoesophageal groove. Under real-time continuous ultrasound, 18G thyroid RFA needle inserted via transisthmic approach. Moving-shot technique utilized: nodule divided into multiple conceptual units, ablating from posterior to anterior and medial to lateral. Transient hyperechoic vapor clouds enveloped entire nodule. Completion ultrasound confirmed total ablation of nodular tissue with patent carotid artery and normal vocal cord movement on real-time US.',
+    postOpCare: {
+      immobilizationHours: 2,
+      immobilizationInstructions: 'Bedrest x 2 hours with ice pack applied over anterior neck.',
+      hematomaChecks: 'Inspect neck for swelling, monitor voice quality (check for hoarseness) q30m x 2h.',
+      requiredImaging: 'Thyroid Ultrasound at 1, 3, and 6 months to record volume reduction ratio (VRR).',
+      hydrationProtocol: 'Oral fluids.',
+      medications: ["Tab Paracetamol 650mg TDS x 3 days", "Tab Ibuprofen 400mg BD x 2 days"],
+      redFlags: ["Recurrent laryngeal nerve injury / vocal cord palsy", "Neck hematoma", "Skin burn"],
+    },
+    consentId: 'consent-thyroid-ablation',
+  },
+  {
+    id: 'cat17-avs-conn',
+    categoryNumber: 17,
+    categoryName: 'Endocrine, Head & Neck Interventions',
+    title: 'Adrenal Vein Sampling (AVS) with Cosyntropin Stimulation for Primary Aldosteronism',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Adrenal Vein Sampling (AVS)',
+      packageCode: '1849-CV027A',
+      icd10: 'E26.0',
+      tariffInr: 25000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Right Adrenal Vein", "Left Adrenal Vein", "Infrarenal IVC"],
+    sedation: 'Local Anesthesia',
+    accessSiteDefault: 'Right Common Femoral Vein under US',
+    sheathDefault: '5F - 6F Sheath',
+    cathetersAndWires: '0.035" wire, 5F dedicated Adrenal catheters (Cobra, Mikaelson, C2, Bentson-Hanafee)',
+    microcatheterSystem: 'N/A',
+    embolicOrImplants: 'N/A',
+    proceduralNarrativeTemplate:
+      'For differentiation of unilateral aldosterone-producing adenoma from bilateral adrenal hyperplasia. Continuous IV cosyntropin infusion running at 50 mcg/hr. Right CFV access. 5F catheter navigated into left common phrenic/adrenal vein trunk; blood samples drawn for aldosterone and cortisol. Cannulation of small, slit-like right adrenal vein directly entering posterior IVC achieved with dedicated C2 catheter; position confirmed by gentle hand contrast injection demonstrating typical triangular glandular blush. Blood samples drawn from right adrenal vein, left adrenal vein, and infrarenal IVC. Selectivity index (adrenal cortisol / IVC cortisol >5.0) and lateralization index calculated. Catheter removed; manual compression.',
+    postOpCare: {
+      immobilizationHours: 4,
+      immobilizationInstructions: 'Bedrest x 4 hours.',
+      hematomaChecks: 'Groin check q30m x 2h.',
+      requiredImaging: 'None routine.',
+      hydrationProtocol: 'Oral fluids.',
+      medications: ["Continue baseline antihypertensives"],
+      redFlags: ["Adrenal vein rupture / hematoma", "Adrenal infarction", "Groin hematoma"],
+    },
+    consentId: 'consent-adrenal-sampling',
+  },
+{
+    id: 'cat17-adrenal-vein-sampling-avs',
+    categoryNumber: 17,
+    categoryName: 'Endocrine Interventions',
+    title: 'Adrenal Vein Sampling (AVS) with Cortisol & Aldosterone Selectivity Telemetry',
+    maayRghsCompatibility: {
+      schemeName: 'BOTH',
+      packageName: 'Diagnostic Venous Sampling',
+      packageCode: '2849-IR00004950000515',
+      icd10: 'E26.0',
+      tariffInr: 25000,
+    },
+    modality: 'XA',
+    targetAnatomy: ["Right Adrenal Vein", "Left Adrenal Vein", "Infrarenal IVC"],
+    sedation: 'Local Anesthesia without Sedation (sedation alters ACTH levels)',
+    accessSiteDefault: 'Right Common Femoral Vein (6F Sheath)',
+    sheathDefault: '6F 11cm Introducer Sheath',
+    cathetersAndWires: '5F C2 / Cobra / Mikaelsson (for Left Adrenal) and 5F Simmons-1 / Sidewinder / dedicated AVS catheter (for Right Adrenal)',
+    microcatheterSystem: '2.0F Microcatheter with sideholes for gentle aspiration',
+    embolicOrImplants: 'N/A (Diagnostic Blood Sampling Kits)',
+    proceduralNarrativeTemplate:
+      'Indicated for lateralization of primary aldosteronism (Conn syndrome) to distinguish unilateral adenoma from bilateral adrenal hyperplasia. Under local anesthesia (avoiding conscious sedation), right common femoral vein accessed. Cosyntropin (synthetic ACTH 250 mcg in 250 mL NS at 50 mL/hr) continuously infused. 5F catheter engaged left common trunk (phrenic-adrenal vein); diagnostic venogram confirmed opacification of left adrenal gland without extravasation; duplicate blood samples aspirated. Right adrenal vein engaged at T12 level using dedicated hockey-stick/Simmons catheter; gentle hand injection confirmed typical triangular emissary adrenal venogram; duplicate blood samples aspirated. Peripheral IVC control blood samples collected simultaneously. Cortisol levels confirmed successful cannulation selectivity (Selectivity Index > 3.0 bilaterally). Aldosterone/cortisol lateralization index (LI) computed.',
+    postOpCare: {
+      immobilizationHours: 4,
+      immobilizationInstructions: 'Bedrest for 4 hours with leg straight. Pressure bandage over right femoral vein access.',
+      hematomaChecks: 'Monitor groin puncture site every 30 min x 2h, then q1h.',
+      requiredImaging: 'None routine unless acute adrenal hemorrhage suspected.',
+      hydrationProtocol: 'Oral fluids ad libitum.',
+      medications: ["Resume baseline mineralocorticoid receptor antagonist (Spironolactone/Eplerenone) after sampling completion"],
+      redFlags: ["Severe acute flank pain or hypotension (? adrenal vein rupture / adrenal hemorrhage)", "Groin hematoma"],
+    },
+    consentId: 'consent-adrenal-sampling',
+    calculatorId: 'cigarroa_macd',
+  },
+];

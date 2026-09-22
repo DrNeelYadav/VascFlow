@@ -3495,5 +3495,431 @@ export const IR_PROCEDURES_CATALOG: IRProcedure[] = [
         "desc": "14F-18F dual-lumen Gastrojejunostomy tube with balloon retention"
       }
     ]
+  },
+{
+    "key": "venaseal_varicose_glue",
+    "title": "VenaSeal Cyanoacrylate Superglue Closure of Great/Small Saphenous Vein",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "US",
+    "targetVessels": [
+      "Great Saphenous Vein",
+      "Small Saphenous Vein",
+      "Anterior Accessory Saphenous Vein"
+    ],
+    "defaultPanelCostINR": 35000,
+    "requiredLabs": [
+      "Venous Duplex Mapping",
+      "CBC",
+      "PT / INR",
+      "Serum Creatinine"
+    ],
+    "clinicalCriteria": "Symptomatic lower extremity varicose veins CEAP C2-C6, truncal venous reflux > 0.5s at SFJ/SPJ.",
+    "preOpChecklist": [
+      {
+        "id": "ven_duplex",
+        "label": "Standing venous duplex mapping completed and marked",
+        "required": true
+      },
+      {
+        "id": "ven_dvt",
+        "label": "Deep venous patency confirmed (no deep vein thrombosis)",
+        "required": true
+      },
+      {
+        "id": "ven_consent",
+        "label": "Bilingual consent signed including avoidance of high heat",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "VenaSeal Closure System",
+        "desc": "5F delivery catheter, 3 mL cyanoacrylate dispenser gun, J-wire"
+      },
+      {
+        "item": "Access Micro-Set",
+        "desc": "21G echogenic needle with 4F/5F micro-introducer sheath"
+      },
+      {
+        "item": "Ultrasound Guidance",
+        "desc": "High-frequency linear probe (10-15 MHz)"
+      }
+    ]
+  },
+  {
+    "key": "venous_foam_sclerotherapy_ugfs",
+    "title": "Ultrasound-Guided Foam Sclerotherapy (UGFS) for Varicose Tributaries & Perforators",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "US",
+    "targetVessels": [
+      "Tributary Varicosities",
+      "Incompetent Perforating Veins",
+      "Reticular Veins"
+    ],
+    "defaultPanelCostINR": 15000,
+    "requiredLabs": [
+      "Venous Duplex Mapping",
+      "CBC",
+      "Platelet Count"
+    ],
+    "clinicalCriteria": "Residual or recurrent varicose tributaries, incompetent perforating veins CEAP C2-C6.",
+    "preOpChecklist": [
+      {
+        "id": "ugfs_map",
+        "label": "Target tributaries mapped and marked under ultrasound",
+        "required": true
+      },
+      {
+        "id": "ugfs_consent",
+        "label": "Bilingual informed consent signed discussing hyperpigmentation risk",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Sclerosant",
+        "desc": "Polidocanol 1% - 3% (Aetoxisclerol) ampoules"
+      },
+      {
+        "item": "Tessari Stopcock Kit",
+        "desc": "Dual 5 mL Luer-lock syringes with 3-way connector for 1:4 gas-liquid foam"
+      },
+      {
+        "item": "Access Needles",
+        "desc": "23G - 25G butterfly needles with USG guidance"
+      }
+    ]
+  },
+  {
+    "key": "venous_perforator_sclero_glue",
+    "title": "Incompetent Venous Perforator Sclerotherapy & Cyanoacrylate Glue Closure",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "US",
+    "targetVessels": [
+      "Cockett Perforators",
+      "Boyd Perforators",
+      "Dodd Perforators"
+    ],
+    "defaultPanelCostINR": 22000,
+    "requiredLabs": [
+      "Venous Duplex Ultrasound",
+      "CBC",
+      "PT / INR"
+    ],
+    "clinicalCriteria": "Pathological incompetent perforating veins diameter >= 3.5 mm with outward flow > 0.35s beneath active venous ulcer (C6).",
+    "preOpChecklist": [
+      {
+        "id": "perf_usg",
+        "label": "Perforator fascia defect and depth mapped",
+        "required": true
+      },
+      {
+        "id": "perf_dvt",
+        "label": "Tibial deep veins confirmed patent",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Micro-Catheter / Needle",
+        "desc": "20G - 22G echogenic needle or 2.0F microcatheter"
+      },
+      {
+        "item": "Cyanoacrylate / Sclerosant",
+        "desc": "N-butyl cyanoacrylate (Histoacryl / Glubran) + Lipiodol or Polidocanol"
+      }
+    ]
+  },
+  {
+    "key": "gsv_endovenous_laser_rfa_glue",
+    "title": "Great Saphenous Vein (GSV) Truncal Multi-Modal Ablation (EVLA / RFA / Glue)",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "US",
+    "targetVessels": [
+      "Great Saphenous Vein"
+    ],
+    "defaultPanelCostINR": 32000,
+    "requiredLabs": [
+      "Venous Duplex Mapping",
+      "CBC",
+      "PT / INR"
+    ],
+    "clinicalCriteria": "Primary GSV insufficiency with reflux > 0.5s, venous claudication, stasis dermatitis or ulceration.",
+    "preOpChecklist": [
+      {
+        "id": "gsv_map",
+        "label": "SFJ to medial malleolus vein diameter measured",
+        "required": true
+      },
+      {
+        "id": "gsv_consent",
+        "label": "Informed bilingual consent signed",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Ablation Kit",
+        "desc": "1470nm Radial Laser Fiber or ClosureFast RFA Catheter or VenaSeal kit"
+      },
+      {
+        "item": "Tumescent Infusion",
+        "desc": "Tumescent anesthesia pump with 0.1% buffered lidocaine solution"
+      }
+    ]
+  },
+  {
+    "key": "ssv_endovenous_laser_rfa_glue",
+    "title": "Small Saphenous Vein (SSV) Truncal Endovenous Ablation (EVLA / RFA / Glue)",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "US",
+    "targetVessels": [
+      "Small Saphenous Vein"
+    ],
+    "defaultPanelCostINR": 28000,
+    "requiredLabs": [
+      "Venous Duplex Ultrasound",
+      "CBC"
+    ],
+    "clinicalCriteria": "Symptomatic small saphenous vein reflux with saphenopopliteal junction incompetence.",
+    "preOpChecklist": [
+      {
+        "id": "ssv_sural",
+        "label": "Sural nerve intimacy identified along distal calf",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Laser / RFA Catheter",
+        "desc": "Radial 1470nm fiber / 7F RFA catheter"
+      },
+      {
+        "item": "Access Kit",
+        "desc": "4F-5F micro-introducer set"
+      }
+    ]
+  },
+  {
+    "key": "varicose_vein_embolization_glue",
+    "title": "Varicose Vein & Pelvic Leak Embolization Using Cyanoacrylate Glue",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "XA",
+    "targetVessels": [
+      "Ovarian Vein",
+      "Internal Iliac Tributaries",
+      "Pelvic Escape Points"
+    ],
+    "defaultPanelCostINR": 42000,
+    "requiredLabs": [
+      "Pelvic Venous MRV / CTV",
+      "CBC",
+      "Serum Creatinine"
+    ],
+    "clinicalCriteria": "Pelvic venous disorders (PeVD), chronic pelvic ache, atypical vulvar / sciatic varicose veins.",
+    "preOpChecklist": [
+      {
+        "id": "pevd_ctv",
+        "label": "CT/MR Venography ruling out Nutcracker and May-Thurner syndrome",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Access Sheath",
+        "desc": "6F 45-65 cm Ansel sheath via right internal jugular or common femoral vein"
+      },
+      {
+        "item": "Glue System",
+        "desc": "Glubran 2 / Histoacryl with Lipiodol in 1:1 to 1:2 ratio and 5% Dextrose flushing"
+      }
+    ]
+  },
+  {
+    "key": "varicose_vein_embolization_coils",
+    "title": "Varicose Vein & Incompetent Venous Channel Embolization Using Coils",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "XA",
+    "targetVessels": [
+      "Left Ovarian Vein",
+      "Right Ovarian Vein",
+      "Internal Iliac Branches"
+    ],
+    "defaultPanelCostINR": 45000,
+    "requiredLabs": [
+      "CBC",
+      "PT / INR",
+      "Serum Creatinine"
+    ],
+    "clinicalCriteria": "Pelvic congestion syndrome, vulvoperineal varices with proven retrograde reflux.",
+    "preOpChecklist": [
+      {
+        "id": "coil_size",
+        "label": "Target vein diameter calibrated on venogram",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Coils",
+        "desc": "0.035 Nester / Interlock fibered platinum coils 8 - 16 mm diameter"
+      },
+      {
+        "item": "Catheter",
+        "desc": "5F Cobra C2 / Simmons 1 catheter"
+      }
+    ]
+  },
+  {
+    "key": "varicose_vein_embolization_glue_coils",
+    "title": "Varicose Vein & Tributary Embolization with Combined Glue & Coils (Sandwich Technique)",
+    "category": "Venous Interventions & Thromboembolic Disease",
+    "domain": "venous",
+    "modality": "XA",
+    "targetVessels": [
+      "Pelvic Venous Plexus",
+      "Refluxing Truncal Veins"
+    ],
+    "defaultPanelCostINR": 52000,
+    "requiredLabs": [
+      "CBC",
+      "PT / INR",
+      "Serum Creatinine"
+    ],
+    "clinicalCriteria": "High-flow pelvic venous incompetence requiring robust sandwich occlusion.",
+    "preOpChecklist": [
+      {
+        "id": "sand_prep",
+        "label": "Coils and glue ratios prepared sterilely",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Coils + Glue",
+        "desc": "Interlocking coils base frame + n-BCA glue injection + completion capping coil"
+      }
+    ]
+  },
+  {
+    "key": "budd_chiari_collateral_embo_glue",
+    "title": "Budd-Chiari Syndrome: Collateral & Variceal Embolization Using Cyanoacrylate Glue",
+    "category": "Hepato-Pancreato-Biliary & Portal Hypertension",
+    "domain": "portal_htn",
+    "modality": "XA",
+    "targetVessels": [
+      "Gastroesophageal Varices",
+      "Ascites Drainage Collaterals",
+      "Short Gastric Veins"
+    ],
+    "defaultPanelCostINR": 48000,
+    "requiredLabs": [
+      "CBC",
+      "PT / INR",
+      "LFT",
+      "Serum Ammonia"
+    ],
+    "clinicalCriteria": "Budd-Chiari syndrome with life-threatening acute or recurrent variceal hemorrhage refractory to endoscopy.",
+    "preOpChecklist": [
+      {
+        "id": "bcs_usg",
+        "label": "Hepatic vein and IVC patency evaluated with Doppler",
+        "required": true
+      },
+      {
+        "id": "bcs_coag",
+        "label": "Fresh frozen plasma / platelets ready if INR > 1.8",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Microcatheter",
+        "desc": "2.7F Progreat / Merit Maestro microcatheter system"
+      },
+      {
+        "item": "Glue Formulation",
+        "desc": "N-butyl cyanoacrylate mixed with Lipiodol (1:1 ratio) with 5% Dextrose flush"
+      }
+    ]
+  },
+  {
+    "key": "budd_chiari_collateral_embo_coils",
+    "title": "Budd-Chiari Syndrome: Spontaneous Shunt & Collateral Embolization Using Coils",
+    "category": "Hepato-Pancreato-Biliary & Portal Hypertension",
+    "domain": "portal_htn",
+    "modality": "XA",
+    "targetVessels": [
+      "Spontaneous Splenorenal Shunt",
+      "Gastrorenal Shunt"
+    ],
+    "defaultPanelCostINR": 52000,
+    "requiredLabs": [
+      "CBC",
+      "PT / INR",
+      "LFT",
+      "Serum Ammonia"
+    ],
+    "clinicalCriteria": "Budd-Chiari syndrome with refractory hepatic encephalopathy secondary to spontaneous splenorenal shunt steal.",
+    "preOpChecklist": [
+      {
+        "id": "shunt_cta",
+        "label": "Shunt diameter and origin delineated on CT portal venogram",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Detachable Coils",
+        "desc": "Concerto / Interlock detachable coils 10 - 20 mm"
+      },
+      {
+        "item": "Guiding Sheath",
+        "desc": "6F - 7F 45 cm Ansel sheath"
+      }
+    ]
+  },
+  {
+    "key": "budd_chiari_collateral_embo_glue_coils",
+    "title": "Budd-Chiari Syndrome: Complex Variceal & Shunt Embolization with Combined Glue & Coils",
+    "category": "Hepato-Pancreato-Biliary & Portal Hypertension",
+    "domain": "portal_htn",
+    "modality": "XA",
+    "targetVessels": [
+      "High-Flow Variceal Channels",
+      "Atypical Collateral Pathways"
+    ],
+    "defaultPanelCostINR": 60000,
+    "requiredLabs": [
+      "CBC",
+      "PT / INR",
+      "Serum Creatinine",
+      "Total Bilirubin"
+    ],
+    "clinicalCriteria": "Complex high-velocity collateral variceal channels in BCS at risk of pulmonary glue migration.",
+    "preOpChecklist": [
+      {
+        "id": "mig_prot",
+        "label": "Coil scaffold sizing verified to prevent systemic glue embolization",
+        "required": true
+      }
+    ],
+    "hardwareRequisition": [
+      {
+        "item": "Scaffold Coils",
+        "desc": "Dense packing fibered platinum coils"
+      },
+      {
+        "item": "Liquid Embolic",
+        "desc": "N-BCA glue / Onyx-18 liquid embolic system"
+      }
+    ]
   }
 ];

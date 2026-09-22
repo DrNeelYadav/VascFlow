@@ -62,6 +62,12 @@
       ],
       "@vascule/catalog/*": [
         "../../packages/catalog/src/*"
+      ],
+      "@vascule/utils": [
+        "../../packages/utils/src"
+      ],
+      "@vascule/utils/*": [
+        "../../packages/utils/src/*"
       ]
     }
   },

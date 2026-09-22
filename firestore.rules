@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Clinical Cases Collection
+    match /cases/{caseId} {
+      allow read, write: if true; // Institutional intranet & web-app access
+    }
+
+    // Cath Lab Hardware & Inventory Collection
+    match /inventory/{sku} {
+      allow read, write: if true;
+    }
+
+    match /inventory_usage/{usageId} {
+      allow read, create: if true;
+    }
+
+    // Rajasthan Health Schemes Packages Catalog
+    match /schemes/{packageId} {
+      allow read: if true;
+      allow write: if false; // Read-only master tariff registry
+    }
+
+    // Immutable Regulatory Audit Trail (Append-Only)
+    match /audit_logs/{logId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if false; // Tamper-evident, append-only
+    }
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import {
   Calendar,
@@ -27,6 +27,36 @@ import {
 import { BookingChart } from "./BookingChart";
 import { StatusTransitionModal } from "./StatusTransitionModal";
 import { StatEmergencyModal } from "./StatEmergencyModal";
+import { db, isFirebaseConfigured } from "../../lib/firebase";
+import { doc, updateDoc, setDoc } from "firebase/firestore";
+
+const WORKLIST_STORAGE_KEY = "vascflow_ris_worklist";
+
+function normalizeCase(c: any): PatientWorklistEntry {
+  return {
+    caseId: c.caseId || c.id || `CASE-${Date.now()}`,
+    crNumber: c.crNumber || c.uhid || "SMS-2026-000",
+    patientName: c.patientName || "Unknown Patient",
+    procedureName: c.procedureName || c.procedure || "Interventional Radiology Procedure",
+    plannedTime:
+      c.plannedTime ||
+      (c.createdAt
+        ? new Date(c.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        : "09:00 AM"),
+    operatorResident: c.operatorResident || "Dr. Neel Yadav",
+    supervisingConsultant: c.supervisingConsultant || "Dr. Meenu Bagarhatta",
+    status: (c.status as CaseStatus) || "SCHEDULED",
+    fastingConfirmed: c.fastingConfirmed ?? true,
+    contrastAllergy: c.contrastAllergy ?? false,
+    room: c.room || "Cath Lab (Philips Azurion)",
+    modality: c.modality || "XA",
+    durationMinutes: c.durationMinutes || 60,
+    startHour: c.startHour,
+    endHour: c.endHour,
+    isStat: c.isStat ?? false,
+    statIndication: c.statIndication,
+  };
+}
 
 export default function RisWorklistPage() {
   const [cases, setCases] = useState<PatientWorklistEntry[]>(INITIAL_RIS_WORKLIST_CASES);
@@ -35,8 +65,81 @@ export default function RisWorklistPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isStatModalOpen, setIsStatModalOpen] = useState<boolean>(false);
 
-  const handleActivateStatCase = (newStatEntry: PatientWorklistEntry) => {
-    setCases((prev) => [newStatEntry, ...prev]);
+  // 1. On mount: check cached cases in localStorage, then fetch latest cases from /api/cases
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem(WORKLIST_STORAGE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCases(parsed);
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to load cached worklist from localStorage:", err);
+    }
+
+    fetch("/api/cases")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const normalized = data.map(normalizeCase);
+          setCases(normalized);
+          try {
+            localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(normalized));
+          } catch (e) {
+            console.warn("Failed to cache cases to localStorage:", e);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not fetch latest cases from /api/cases:", err);
+      });
+  }, []);
+
+  const handleActivateStatCase = async (newStatEntry: PatientWorklistEntry) => {
+    setCases((prev) => {
+      const updated = [newStatEntry, ...prev];
+      try {
+        localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.warn("Failed to persist stat case to localStorage:", e);
+      }
+      return updated;
+    });
+
+    try {
+      await fetch("/api/cases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...newStatEntry,
+          id: newStatEntry.caseId,
+          uhid: newStatEntry.crNumber,
+          procedure: newStatEntry.procedureName,
+          room: newStatEntry.room || "Cath Lab (Philips Azurion)",
+        }),
+      });
+    } catch (err) {
+      console.warn("Failed to POST stat case to /api/cases:", err);
+    }
+
+    if (typeof window !== "undefined" && isFirebaseConfigured()) {
+      try {
+        const caseDocRef = doc(db, "cases", newStatEntry.caseId);
+        setDoc(caseDocRef, {
+          ...newStatEntry,
+          id: newStatEntry.caseId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }).catch(() => {});
+      } catch (err) {
+        console.warn("Firestore direct setDoc warning:", err);
+      }
+    }
   };
 
   const [activeModalTarget, setActiveModalTarget] = useState<{
@@ -60,15 +163,23 @@ export default function RisWorklistPage() {
     });
   };
 
-  const executeStatusTransition = async (
+  const handleStatusChange = async (
     caseId: string,
     nextStatus: CaseStatus,
-    notes: string,
+    notes: string = "",
     emergencyOverride?: { isEmergencyOverride: boolean; overrideReason: string }
   ) => {
-    setCases((prev) =>
-      prev.map((c) => (c.caseId === caseId ? { ...c, status: nextStatus } : c))
-    );
+    setCases((prev) => {
+      const updated = prev.map((c) =>
+        c.caseId === caseId ? { ...c, status: nextStatus } : c
+      );
+      try {
+        localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.warn("Failed to persist updated cases to localStorage:", e);
+      }
+      return updated;
+    });
 
     try {
       await fetch(`/api/cases/${caseId}/status`, {
@@ -77,12 +188,57 @@ export default function RisWorklistPage() {
         body: JSON.stringify({
           nextStatus,
           notes,
+          staffId: "dr.roy@smsmc.gov.in",
           isEmergencyOverride: emergencyOverride?.isEmergencyOverride,
           overrideReason: emergencyOverride?.overrideReason,
         }),
       });
     } catch (err) {
       console.warn("Status transition fallback applied:", err);
+    }
+
+    if (typeof window !== "undefined" && isFirebaseConfigured()) {
+      try {
+        const caseDocRef = doc(db, "cases", caseId);
+        updateDoc(caseDocRef, {
+          status: nextStatus,
+          notes,
+          updatedAt: new Date().toISOString(),
+        }).catch(() => {});
+      } catch (err) {
+        console.warn("Firestore direct status update warning:", err);
+      }
+    }
+  };
+
+  const executeStatusTransition = handleStatusChange;
+
+  const handleResetOrRefresh = async () => {
+    setActiveTab("ALL");
+    setSearchQuery("");
+    try {
+      const res = await fetch("/api/cases");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const normalized = data.map(normalizeCase);
+          setCases(normalized);
+          try {
+            localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(normalized));
+          } catch (e) {
+            console.warn("Failed to cache cases to localStorage:", e);
+          }
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to reload from /api/cases, resetting to demo cases:", err);
+    }
+    setCases(INITIAL_RIS_WORKLIST_CASES);
+    try {
+      localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(INITIAL_RIS_WORKLIST_CASES));
+    } catch (e) {
+      console.warn("Failed to cache demo cases to localStorage:", e);
     }
   };
 
@@ -170,11 +326,7 @@ export default function RisWorklistPage() {
             </span>
           </div>
           <button
-            onClick={() => {
-              setCases(INITIAL_RIS_WORKLIST_CASES);
-              setActiveTab("ALL");
-              setSearchQuery("");
-            }}
+            onClick={handleResetOrRefresh}
             className="rounded-xl border border-[#DADCE0] bg-white p-2 text-[#5F6368] hover:text-[#202124] hover:bg-[#F1F3F4] shadow-xs transition"
             title="Reset / refresh worklist"
           >
@@ -461,7 +613,14 @@ export default function RisWorklistPage() {
       {/* 5. Worklist Table */}
       <WorklistTable
         cases={cases}
-        onCasesChange={setCases}
+        onCasesChange={(updatedCases) => {
+          setCases(updatedCases);
+          try {
+            localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(updatedCases));
+          } catch (e) {
+            console.warn("Failed to update localStorage:", e);
+          }
+        }}
         activeFilter={activeTab}
         searchQuery={searchQuery}
         onOpenTransitionModal={handleOpenTransitionModal}

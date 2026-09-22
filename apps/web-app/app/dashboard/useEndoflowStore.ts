@@ -1,9 +1,19 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { z } from "zod";
 import {
   StaffAccount,
   INSTITUTIONAL_STAFF_ACCOUNTS,
 } from "../lib/staffAccounts";
+import { db, isFirebaseConfigured } from "../lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import {
+  DEMO_8_BEDS,
+  DEMO_CT_REVIEWS,
+  DEMO_ENDOFLOW_PATIENTS,
+  DEMO_BOOKED_CASES,
+  DEMO_DOPPLER_RECORDS,
+} from "../lib/demoSeedData";
 
 // ============================================================================
 // STRICT ZOD VALIDATION SCHEMAS & TYPES (ZERO VULNERABILITIES)
@@ -161,20 +171,20 @@ export interface BedRecord {
   ptId?: string;
 }
 
-export const INITIAL_8_BEDS: BedRecord[] = [
+export const CLEAN_VACANT_8_BEDS: BedRecord[] = [
   // 3 ICU Beds
   {
     id: "ICU-01",
     type: "ICU",
     title: "Liver ICU Bed 01",
-    status: "occupied",
-    ptName: "Lakshmi",
-    crNo: "SMS-2026-LP01",
-    diag: "Hypersplenism — Post Splenic Artery Embolization",
-    doctor: "Dr. Meenu Bagarhatta",
-    vitals: "120/80 mmHg, HR 76, SpO2 99%",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Ready for Emergency STAT Admission",
+    doctor: "-",
+    vitals: "-",
     hemostasisIntact: true,
-    distalPulses: "Strong (+++)",
+    distalPulses: "-",
   },
   {
     id: "ICU-02",
@@ -208,14 +218,14 @@ export const INITIAL_8_BEDS: BedRecord[] = [
     id: "Ward-01",
     type: "Ward",
     title: "Old Gastro IR Ward Bed 01",
-    status: "occupied",
-    ptName: "Roshan",
-    crNo: "SMS-2026-RS01",
-    diag: "Liver Abscess — Allowed to go Home (AJH)",
-    doctor: "Dr. Naresh Mangalhara",
-    vitals: "118/74 mmHg, HR 78, SpO2 98%",
+    status: "vacant",
+    ptName: "-",
+    crNo: "-",
+    diag: "Sterilized & Available for Elective Admission",
+    doctor: "-",
+    vitals: "-",
     hemostasisIntact: true,
-    distalPulses: "Strong (+++)",
+    distalPulses: "-",
   },
   {
     id: "Ward-02",
@@ -270,6 +280,8 @@ export const INITIAL_8_BEDS: BedRecord[] = [
     distalPulses: "-",
   },
 ];
+
+export const INITIAL_8_BEDS: BedRecord[] = CLEAN_VACANT_8_BEDS;
 
 // ============================================================================
 // DM RESIDENT OPD BOOKED CASES & REMINDERS
@@ -414,71 +426,7 @@ export type DopplerRecord = z.infer<typeof DopplerRecordSchema>;
 
 export const INITIAL_DOPPLER_RECORDS: DopplerRecord[] = [];
 
-export const INITIAL_CT_REVIEWS: CtReviewRecord[] = [
-  {
-    id: "CT-REV-001",
-    patientName: "Bhanwar Lal Gurjar",
-    age: 58,
-    sex: "Male",
-    date: new Date().toISOString().split("T")[0],
-    primaryDiagnosis: "Cirrhosis with recurrent refractory UGI variceal bleeding",
-    clinicalHistory: "58-year-old male with HCV-related cirrhosis, history of 2 prior bandings. Melena since 3 days, refractory to medical therapy.",
-    presentingComplaints: "Recurrent hematemesis, melena, weakness, abdominal distension.",
-    ctNumber: "SONI-PACS-99214",
-    ctReviewNotes: "Review triple-phase CECT: Check main portal vein patency, assess splenic vein caliber and gastrorenal shunt for potential BRTO/TIPS.",
-    smsBillId: "SMS-BILL-2026-8812",
-    hospitalSource: "SONI Hospital",
-    contactNumber: "9829144321",
-    status: "Reviewed by Neel / Nilesh",
-    reviewedBy: "Dr. Neel Yadav",
-    reviewedAt: "13/09/2026 14:30",
-    organSystem: "Liver & Hepatobiliary",
-    diseaseKey: "brto_parto_gastric_varices",
-    procedureTitle: "Balloon-Occluded Retrograde Transvenous Obliteration (BRTO)",
-  },
-  {
-    id: "CT-REV-002",
-    patientName: "Shanti Devi Agarwal",
-    age: 64,
-    sex: "Female",
-    date: new Date().toISOString().split("T")[0],
-    primaryDiagnosis: "Right lung mass with active intermittent hemoptysis",
-    clinicalHistory: "64-year-old female known case of bronchogenic CA, experiencing 150ml fresh hemoptysis episodes daily. Hemodynamically stable.",
-    presentingComplaints: "Hemoptysis, chronic cough, right-sided pleuritic chest pain.",
-    ctNumber: "SMS-CT-2026-4402",
-    ctReviewNotes: "Review CT Thorax Angio: Identify hypertrophied right bronchial artery origin (T5/T6) and non-bronchial systemic collaterals.",
-    smsBillId: "SMS-BILL-2026-9041",
-    hospitalSource: "SMS Hospital",
-    contactNumber: "9414233890",
-    status: "To be reviewed by consultant",
-    reviewedBy: "Dr. Nilesh DM",
-    reviewedAt: "13/09/2026 16:00",
-    organSystem: "Thoracic & Pulmonary",
-    diseaseKey: "bronchial_artery_embo_bae",
-    procedureTitle: "Bronchial Artery Embolization (BAE) - Massive Hemoptysis",
-  },
-  {
-    id: "CT-REV-003",
-    patientName: "Mangi Lal Kumawat",
-    age: 52,
-    sex: "Male",
-    date: new Date().toISOString().split("T")[0],
-    primaryDiagnosis: "Malignant obstructive jaundice (Hilar Cholangiocarcinoma)",
-    clinicalHistory: "52-year-old male presenting with progressive painless jaundice, pruritus, clay-colored stools. Total Bilirubin 18.4 mg/dL.",
-    presentingComplaints: "Deep jaundice, dark urine, severe generalized itching, anorexia.",
-    ctNumber: "SONI-PACS-98741",
-    ctReviewNotes: "Review CECT Abdomen: Assess Bismuth-Corlette level (Type IIIa) and right vs left ductal dilatation for unilateral/bilateral PTBD.",
-    smsBillId: "SMS-BILL-2026-7721",
-    hospitalSource: "SONI Hospital",
-    contactNumber: "9829567123",
-    status: "Booking Cath-Lab on next available date",
-    reviewedBy: "Dr. Neel Yadav",
-    reviewedAt: "13/09/2026 17:15",
-    organSystem: "Liver & Hepatobiliary",
-    diseaseKey: "ptbd_biliary_stenting",
-    procedureTitle: "Percutaneous Transhepatic Biliary Drainage (PTBD) & SEMS Stenting",
-  },
-];
+export const INITIAL_CT_REVIEWS: CtReviewRecord[] = [];
 
 export const INITIAL_BOOKED_CASES: BookedCaseRecord[] = [];
 
@@ -537,6 +485,7 @@ export interface EndoflowState {
 
   // Patient Updates
   updatePatient: (id: string, updates: Partial<EndoflowPatient>) => void;
+  addPatient: (patient: EndoflowPatient) => Promise<void>;
 
   // State Actions
   advanceStage: (patientId: string, nextStatus: ClinicalStage) => void;
@@ -555,18 +504,57 @@ export interface EndoflowState {
   setSearchQuery: (query: string) => void;
   setFilterModality: (modality: string) => void;
   resetToDefaultPatients: () => void;
+  loadDemoSeedData: () => void;
 }
 
+// ============================================================================
+// SSR-SAFE STORAGE ADAPTER FOR ZUSTAND PERSIST
+// ============================================================================
+
+const safeStorage = createJSONStorage(() => {
+  if (typeof window !== "undefined") return window.localStorage;
+  return { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+});
+
+// ============================================================================
+// ASYNC FIRESTORE PERSISTENCE HELPER (TRY/CATCH WRAPPED)
+// ============================================================================
+
+async function syncPatientToFirestore(patient: EndoflowPatient): Promise<void> {
+  try {
+    if (!isFirebaseConfigured() || !db) return;
+    const sanitized = JSON.parse(JSON.stringify(patient));
+    const writePromise = setDoc(doc(db, "patients", patient.id), sanitized, { merge: true });
+    // 1.5s timeout guard ensures offline or unconfigured networks never stall the UI
+    await Promise.race([
+      writePromise,
+      new Promise<void>((_, reject) =>
+        setTimeout(() => reject(new Error("Firestore sync timed out")), 1500)
+      ),
+    ]);
+  } catch (error) {
+    console.warn(`[Firestore] Failed to persist patient ${patient?.id}:`, error);
+  }
+}
 
 // ============================================================================
 // ZUSTAND STORE IMPLEMENTATION
 // ============================================================================
 
-export const useEndoflowStore = create<EndoflowState>((set, get) => ({
-  patients: INITIAL_ENDOFLOW_PATIENTS,
-  activeCaseId: null,
-  searchQuery: "",
-  filterModality: "all",
+export const useEndoflowStore = create<EndoflowState>()(
+  persist(
+    (set, get) => ({
+      patients: [],
+      activeCaseId: null,
+      searchQuery: "",
+      filterModality: "all",
+
+      addPatient: async (patient: EndoflowPatient) => {
+        set((state) => ({
+          patients: [patient, ...state.patients.filter((p) => p.id !== patient.id)],
+        }));
+        await syncPatientToFirestore(patient);
+      },
 
   advanceStage: (patientId: string, nextStatus: ClinicalStage) => {
     // Validate nextStatus with Zod
@@ -616,6 +604,11 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
         activeCaseId: parsedStatus === "In Cath-Lab" ? patientId : state.activeCaseId === patientId ? null : state.activeCaseId,
       };
     });
+
+    const target = get().patients.find((p) => p.id === patientId);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   callPatientToLab: (patientId: string) => {
@@ -643,6 +636,11 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
       }),
       activeCaseId: patientId,
     }));
+
+    const target = get().patients.find((p) => p.id === patientId);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   startInRoomCase: (patientId: string, accessSite?: string) => {
@@ -680,6 +678,11 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
       }),
       activeCaseId: state.activeCaseId === patientId ? null : state.activeCaseId,
     }));
+
+    const target = get().patients.find((p) => p.id === patientId);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   dischargePatient: (patientId: string) => {
@@ -695,6 +698,11 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
         };
       }),
     }));
+
+    const target = get().patients.find((p) => p.id === patientId);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   updateInRoomTelemetry: (patientId: string, telemetry: Partial<InRoomTelemetry>) => {
@@ -710,6 +718,11 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
         };
       }),
     }));
+
+    const target = get().patients.find((p) => p.id === patientId);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   updatePreOpCheck: (patientId: string, updates: Partial<PreOpPrep>) => {
@@ -725,6 +738,11 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
         };
       }),
     }));
+
+    const target = get().patients.find((p) => p.id === patientId);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   updatePostOpCheck: (patientId: string, updates: Partial<PostOpMonitoring>) => {
@@ -740,6 +758,11 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
         };
       }),
     }));
+
+    const target = get().patients.find((p) => p.id === patientId);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   admitPatient: (rawPatient: unknown) => {
@@ -757,13 +780,16 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
     set((state) => ({
       patients: [parseResult.data, ...state.patients],
     }));
+
+    void syncPatientToFirestore(parseResult.data);
+
     return { success: true };
   },
 
   currentStaff: INSTITUTIONAL_STAFF_ACCOUNTS.find((s) => s.code === "DM01") || null,
   setCurrentStaff: (staff: StaffAccount | null) => set({ currentStaff: staff }),
 
-  beds: INITIAL_8_BEDS,
+  beds: CLEAN_VACANT_8_BEDS,
   updateBed: (bedId: string, updates: Partial<BedRecord>) => {
     set((state) => ({
       beds: state.beds.map((b) => (b.id === bedId ? { ...b, ...updates } : b)),
@@ -1047,17 +1073,36 @@ export const useEndoflowStore = create<EndoflowState>((set, get) => ({
         pt.id === id ? { ...pt, ...updates } : pt
       ),
     }));
+    const target = get().patients.find((p) => p.id === id);
+    if (target) {
+      void syncPatientToFirestore(target);
+    }
   },
 
   setSearchQuery: (query: string) => set({ searchQuery: query }),
   setFilterModality: (modality: string) => set({ filterModality: modality }),
   resetToDefaultPatients: () =>
     set({
-      patients: INITIAL_ENDOFLOW_PATIENTS,
+      patients: [],
       activeCaseId: null,
-      beds: INITIAL_8_BEDS,
-      bookedCases: INITIAL_BOOKED_CASES,
-      ctReviews: INITIAL_CT_REVIEWS,
-      dopplerRecords: INITIAL_DOPPLER_RECORDS,
+      beds: CLEAN_VACANT_8_BEDS,
+      bookedCases: [],
+      ctReviews: [],
+      dopplerRecords: [],
     }),
-}));
+  loadDemoSeedData: () =>
+    set({
+      patients: DEMO_ENDOFLOW_PATIENTS,
+      beds: DEMO_8_BEDS,
+      bookedCases: DEMO_BOOKED_CASES,
+      ctReviews: DEMO_CT_REVIEWS,
+      dopplerRecords: DEMO_DOPPLER_RECORDS,
+      activeCaseId: "PT03",
+    }),
+    }),
+    {
+      name: "vascflow-clinical-storage-v1",
+      storage: safeStorage,
+    }
+  )
+);

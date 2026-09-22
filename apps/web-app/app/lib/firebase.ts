@@ -8,6 +8,9 @@ export const firebaseConfig = {
   authDomain:
     process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ||
     "endoflow-54b71.firebaseapp.com",
+  databaseURL:
+    process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL ||
+    "https://endoflow-54b71-default-rtdb.firebaseio.com",
   projectId:
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
     "endoflow-54b71",
@@ -35,6 +38,7 @@ export const app: FirebaseApp =
  * Primary Google Cloud Firestore instance for VascFlow OS collections.
  */
 export const db: Firestore = getFirestore(app);
+export const FIRESTORE: Firestore = db;
 
 /**
  * Checks whether Firebase credentials are properly configured.

@@ -46,13 +46,13 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
         supervisingConsultant: activePatient.postedBy || "Dr. Meenu Bagarhatta (Sr. Prof & Head)",
       }
     : {
-        caseId: "DEMO-001",
-        crNumber: "SMS-2026-CR-001",
-        patientName: "Ramesh Sharma",
-        age: 58,
-        gender: "Male",
-        diagnosis: "Hepatocellular Carcinoma (Segment VII) • Post-Hepatitis B",
-        procedureName: "cTACE Chemoembolization",
+        caseId: "SMS-2026-LP01",
+        crNumber: "SMS-2026-LP01",
+        patientName: "Lakshmi",
+        age: 45,
+        gender: "Female",
+        diagnosis: "Hypersplenism • Splenic Artery Embolization",
+        procedureName: "Splenic Artery Embolization",
         status: "IN_PROCEDURE",
         supervisingConsultant: "Dr. Meenu Bagarhatta (Sr. Prof & Head)",
       };

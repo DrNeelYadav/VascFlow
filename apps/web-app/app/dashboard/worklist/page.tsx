@@ -71,8 +71,15 @@ export default function RisWorklistPage() {
       const cached = localStorage.getItem(WORKLIST_STORAGE_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setCases(parsed);
+        if (Array.isArray(parsed)) {
+          const sanitized = parsed.filter(
+            (c: any) =>
+              c.patientName !== "Ramesh Sharma" &&
+              c.patientName !== "Kamla Devi" &&
+              c.caseId !== "case_sms_001" &&
+              c.caseId !== "case_sms_002"
+          );
+          setCases(sanitized);
         }
       }
     } catch (err) {
@@ -85,8 +92,16 @@ export default function RisWorklistPage() {
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const normalized = data.map(normalizeCase);
+        if (Array.isArray(data)) {
+          const normalized = data
+            .map(normalizeCase)
+            .filter(
+              (c: PatientWorklistEntry) =>
+                c.patientName !== "Ramesh Sharma" &&
+                c.patientName !== "Kamla Devi" &&
+                c.caseId !== "case_sms_001" &&
+                c.caseId !== "case_sms_002"
+            );
           setCases(normalized);
           try {
             localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(normalized));

@@ -11,32 +11,7 @@ import {
 } from "firebase/firestore";
 
 // Fallback seed worklist cases for unseeded or offline environments
-const INITIAL_FALLBACK_CASES = [
-  {
-    id: "case_sms_001",
-    uhid: "SMS-2026-CR-001",
-    patientName: "Ramesh Sharma",
-    age: 58,
-    sex: "Male",
-    diagnosis: "Hepatocellular Carcinoma (Segment VII) • Post-Hepatitis B",
-    procedure: "cTACE Chemoembolization",
-    status: "IN_PROCEDURE",
-    room: "Cath Lab 1",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "case_sms_002",
-    uhid: "SMS-2026-CR-002",
-    patientName: "Kamla Devi",
-    age: 44,
-    sex: "Female",
-    diagnosis: "Symptomatic Uterine Fibroids (FIGO 3/4)",
-    procedure: "Uterine Artery Embolization (UAE)",
-    status: "SCHEDULED",
-    room: "Cath Lab 2",
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-];
+const INITIAL_FALLBACK_CASES: Array<Record<string, any>> = [];
 
 const inMemoryCases: Array<Record<string, any>> = [...INITIAL_FALLBACK_CASES];
 

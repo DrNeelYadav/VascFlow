@@ -42,6 +42,13 @@ export const SsoIhmsPrefill: React.FC<SsoIhmsPrefillProps> = ({ summaryData }) =
       category: "Clinical History",
     },
     {
+      label: "Risk Factors / Etiology",
+      fieldName: "txtRiskFactors",
+      domSelector: "#txtRiskFactors, textarea[name*='RiskFactor'], textarea[name*='risk']",
+      value: summaryData.caseSummary.riskFactor,
+      category: "Clinical History",
+    },
+    {
       label: "Local Examination",
       fieldName: "txtLocalExam",
       domSelector: "#txtLocalExam, textarea[name*='LocalExam']",
@@ -63,10 +70,33 @@ export const SsoIhmsPrefill: React.FC<SsoIhmsPrefillProps> = ({ summaryData }) =
       category: "Cath-Lab Notes",
     },
     {
+      label: "Post-Operative Notes & Recovery",
+      fieldName: "txtPostOpNotes",
+      domSelector: "#txtPostOpNotes, textarea[name*='PostOpNotes'], textarea[name*='postop']",
+      value: `Access Site Hemostasis: ${summaryData.postOperativeNotes?.accessSiteHemostasis || "Hemostasis Intact. Puncture site clean, dry & sealed."}\nTelemetry Vitals: ${summaryData.postOperativeNotes?.telemetryVitals || "Stable"}\nSheath Removal: ${summaryData.postOperativeNotes?.sheathRemovalTime || "Immediate post-procedure"} (${summaryData.postOperativeNotes?.sheathStatus || "Removed"})\nRecovery Status: ${summaryData.postOperativeNotes?.recoveryStatus || "Conscious, oriented, stable"}\nRecovery Bed: ${summaryData.postOperativeNotes?.recoveryBed || summaryData.admissionDetails.wardBed}\nDistal Pulses: ${summaryData.postOperativeNotes?.distalPulses || "Strong (+++) bilaterally equal"}\nImmediate Complications: ${summaryData.postOperativeNotes?.immediateComplications || "Nil"}\nRecorded By: ${summaryData.postOperativeNotes?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy}`,
+      category: "Cath-Lab Notes",
+    },
+    {
       label: "Discharge Advice & Red Flags",
       fieldName: "txtDischargeAdvice",
       domSelector: "#txtDischargeAdvice, textarea[name*='DischargeAdvice'], textarea[name*='advice']",
-      value: `${summaryData.dischargeDetails.generalAdvise}\n\nFollow-up: ${summaryData.dischargeDetails.followUp}`,
+      value: `${summaryData.dischargeDetails.generalAdvise}\n\nFollow-up: ${summaryData.dischargeDetails.followUp}${
+        summaryData.dischargeDetails.followUpDate
+          ? `\nNext Appointment Date: ${summaryData.dischargeDetails.followUpDate}`
+          : ""
+      }`,
+      category: "Discharge & Rx",
+    },
+    {
+      label: "Discharge Medications (RMSCL EDL)",
+      fieldName: "txtDischargeMedications",
+      domSelector: "#txtDischargeMedications, textarea[name*='Medication'], textarea[name*='treatment']",
+      value: summaryData.dischargeMedications
+        .map(
+          (m) =>
+            `${m.sNo}. ${m.medicine} - Dose: ${m.dosePower}, Route: ${m.route}, Freq: ${m.frequency}, Days: ${m.days} (${m.instructions})`
+        )
+        .join("\n"),
       category: "Discharge & Rx",
     },
     {

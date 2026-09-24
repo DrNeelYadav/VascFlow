@@ -60,11 +60,11 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under strict aseptic precautions, ultrasound-guided right intercostal approach, 21G Chiba needle puncture of dilated right posterior sectoral duct, contrast cholangiogram demonstrating level of obstruction at ${c.obstructionLevel}, 0.035" Amplatz Super Stiff guidewire negotiation across stricture into duodenum (for internal-external) or proximal positioning (external only). 8.5F/10F Ring biliary drainage catheter placement with locking pigtail in duodenum. ${c.drainageType === 'SEMS conversion' ? `10mm x 60-80mm self-expanding ${c.stentType} nitinol biliary stent deployed across stricture with 1.5 cm margins, Gelfoam tract embolization.` : ''} Bile output color: ${c.bileColor}.`,
     synthesizeDiagnosis: (c) => `Obstructive jaundice secondary to ${c.obstructionLevel} obstruction, managed with ${c.drainageType} drainage.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Ursodeoxycholic Acid', medicine: 'Udca', dosePower: '300mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'After meals' },
-      { sNo: 0, genericName: 'Metronidazole', medicine: 'Metrogyl', dosePower: '400mg', route: 'ORAL', frequency: 'TID', days: 7, instructions: 'After meals' },
-      { sNo: 0, genericName: 'Ciprofloxacin', medicine: 'Ciplox', dosePower: '500mg', route: 'ORAL', frequency: 'BD', days: 7, instructions: 'After meals' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Before meals' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' }
+      { sNo: 0, genericName: 'Ursodeoxycholic Acid', medicine: 'Tab. Ursodeoxycholic Acid 300mg [RMSCL DDC #658]', dosePower: '300mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'After meals' },
+      { sNo: 0, genericName: 'Metronidazole', medicine: 'Tab. Metronidazole 400mg [RMSCL DDC #140]', dosePower: '400mg', route: 'ORAL', frequency: 'TID', days: 7, instructions: 'After meals' },
+      { sNo: 0, genericName: 'Ciprofloxacin', medicine: 'Tab. Ciprofloxacin 500mg [RMSCL DDC #112]', dosePower: '500mg', route: 'ORAL', frequency: 'BD', days: 7, instructions: 'After meals' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Before meals' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['Weekly LFT for first month', 'Daily bile bag output monitoring (volume, color, consistency)', 'Catheter flush with 10mL NS q8h', 'Tube exchange at 3 months', 'SEMS patency check with MRCP at 6 months'],
@@ -97,13 +97,13 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under strict aseptic technique and ultrasound guidance, direct percutaneous puncture of the malformation using 22G spinal needle / 20G IV cannula, initial aspiration confirming ${c.malformationType} character, slow injection of ${c.sclerosant} under real-time US monitoring with circumferential compression to prevent non-target spread. Total volume ${c.volume} mL. Post-sclerotherapy firm compression dressing applied.`,
     synthesizeDiagnosis: (c) => `${c.malformationType} malformation of ${c.location}, treated with ${c.sclerosant} sclerotherapy.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Prednisolone', medicine: 'Wysolone', dosePower: '20mg', route: 'ORAL', frequency: 'OD', days: 5, instructions: 'Tapering dose' },
-      { sNo: 0, genericName: 'Diclofenac', medicine: 'Voveran', dosePower: '50mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'After meals' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain' }
+      { sNo: 0, genericName: 'Prednisolone', medicine: 'Tab. Prednisolone 20mg [RMSCL DDC #621]', dosePower: '20mg', route: 'ORAL', frequency: 'OD', days: 5, instructions: 'Tapering dose' },
+      { sNo: 0, genericName: 'Diclofenac', medicine: 'Tab. Diclofenac 50mg + Serratiopeptidase 10mg [RMSCL DDC #622]', dosePower: '50mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'After meals' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain' }
     ],
     conditionalMedications: [
-      { condition: 'If skin breakdown present', conditionKey: 'skinInvolvement', conditionValue: true, medication: { sNo: 0, genericName: 'Amoxicillin-Clavulanate', medicine: 'Augmentin', dosePower: '625mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'After meals' } }
+      { condition: 'If skin breakdown present', conditionKey: 'skinInvolvement', conditionValue: true, medication: { sNo: 0, genericName: 'Amoxicillin-Clavulanate', medicine: 'Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]', dosePower: '625mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'After meals' } }
     ],
     followUpInstructions: ['MRI at 6-8 weeks for response assessment', 'Repeat session at 8-12 weeks if residual', 'Compression garment for extremity lesions x 3 months'],
     redFlagWarnings: ['Severe swelling with airway compromise (head-neck lesions)', 'Skin necrosis / blistering over injection site', 'Deep vein thrombosis', 'Nerve palsy (numbness/weakness)'],
@@ -124,7 +124,17 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
       { key: 'hemoptysisVolume', label: 'Hemoptysis Volume', type: 'select', options: [{ value: 'massive >200mL/24h', label: 'Massive >200mL/24h' }, { value: 'moderate 100-200mL', label: 'Moderate 100-200mL' }, { value: 'mild <100mL', label: 'Mild <100mL' }], defaultValue: 'moderate 100-200mL' },
       { key: 'etiology', label: 'Etiology', type: 'select', options: [{ value: 'post-TB sequelae', label: 'Post-TB Sequelae' }, { value: 'bronchiectasis', label: 'Bronchiectasis' }, { value: 'aspergilloma', label: 'Aspergilloma' }, { value: 'malignancy', label: 'Malignancy' }, { value: 'cryptogenic', label: 'Cryptogenic' }], defaultValue: 'post-TB sequelae' },
       { key: 'arteries', label: 'Arteries Embolized', type: 'select', options: [{ value: 'right bronchial', label: 'Right Bronchial' }, { value: 'left bronchial', label: 'Left Bronchial' }, { value: 'intercostobronchial trunk', label: 'Intercostobronchial Trunk' }, { value: 'non-bronchial systemic', label: 'Non-bronchial Systemic' }], defaultValue: 'right bronchial' },
-      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [{ value: 'PVA 355-500μm', label: 'PVA 355-500μm' }, { value: 'Gelfoam pledgets', label: 'Gelfoam Pledgets' }, { value: 'microcoils', label: 'Microcoils' }], defaultValue: 'PVA 355-500μm' },
+      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [
+        { value: 'PVA 300-500 µm', label: 'PVA 300-500 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 100-300 µm', label: 'PVA 100-300 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 500-710 µm', label: 'PVA 500-710 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 710-1000 µm', label: 'PVA 710-1000 µm (Polyvinyl Alcohol)' },
+        { value: 'Embosphere / Microspheres (300-500 µm)', label: 'Embosphere / Microspheres (300-500 µm)' },
+        { value: 'Embosphere / Microspheres (500-700 µm)', label: 'Embosphere / Microspheres (500-700 µm)' },
+        { value: 'Gelfoam slurry / Torpedoes', label: 'Gelfoam slurry / Torpedoes' },
+        { value: 'PVA 300-500 µm + Microcoils', label: 'PVA 300-500 µm + Microcoils' },
+        { value: 'microcoils', label: 'Microcoils alone' }
+      ], defaultValue: 'PVA 300-500 µm' },
       { key: 'spinalArtery', label: 'Spinal Artery Identified and Protected', type: 'checkbox', defaultValue: true },
       { key: 'bilateral', label: 'Bilateral Embolization', type: 'checkbox', defaultValue: false }
     ],
@@ -134,11 +144,11 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, right CFA access with 5F sheath, 5F Cobra/Mikaelsson catheter advanced to descending thoracic aorta, selective bronchial arteriogram demonstrating hypertrophied ${c.arteries} with parenchymal blush. Superselective microcatheterization with 2.7F Progreat beyond anterior spinal artery origin (${c.spinalArtery ? 'spinal artery protected' : 'no spinal artery visualized'}). Embolization with ${c.embolicAgent} to near-stasis. Completion angiogram confirming devascularization of target territory with preserved spinal cord supply. ${c.bilateral ? 'Bilateral procedure performed.' : ''}`,
     synthesizeDiagnosis: (c) => `Hemoptysis secondary to ${c.etiology}, treated with BAE of ${c.arteries}.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Tranexamic Acid', medicine: 'Pause', dosePower: '500mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For bleeding control' },
-      { sNo: 0, genericName: 'Codeine Phosphate', medicine: 'Codeine', dosePower: '10mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'Antitussive' },
-      { sNo: 0, genericName: 'Azithromycin', medicine: 'Azee', dosePower: '500mg', route: 'ORAL', frequency: 'OD', days: 3, instructions: 'Antibiotic coverage' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' }
+      { sNo: 0, genericName: 'Tranexamic Acid', medicine: 'Tab. Tranexamic Acid 500mg [RMSCL DDC #463]', dosePower: '500mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For bleeding control' },
+      { sNo: 0, genericName: 'Codeine Phosphate', medicine: 'Syp. Dextromethorphan Hydrobromide 10ml [RMSCL DDC #86]', dosePower: '10ml', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'Antitussive' },
+      { sNo: 0, genericName: 'Azithromycin', medicine: 'Tab. Azithromycin 500mg [RMSCL DDC #115]', dosePower: '500mg', route: 'ORAL', frequency: 'OD', days: 3, instructions: 'Antibiotic coverage' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['Chest X-ray at 48h and 2 weeks', 'Pulmonology follow-up at 2 weeks', 'CT pulmonary angiography at 3 months for recurrence surveillance'],
@@ -159,7 +169,17 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     criteriaFields: [
       { key: 'tumorStage', label: 'Tumor Stage', type: 'select', options: [{ value: 'Radkowski I', label: 'Radkowski I' }, { value: 'Radkowski II', label: 'Radkowski II' }, { value: 'Radkowski III', label: 'Radkowski III' }], defaultValue: 'Radkowski II' },
       { key: 'arteries', label: 'Feeding Arteries', type: 'select', options: [{ value: 'internal maxillary', label: 'Internal Maxillary' }, { value: 'ascending pharyngeal', label: 'Ascending Pharyngeal' }, { value: 'middle meningeal', label: 'Middle Meningeal' }, { value: 'ophthalmic feeders', label: 'Ophthalmic Feeders' }], defaultValue: 'internal maxillary' },
-      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [{ value: 'PVA 150-250μm', label: 'PVA 150-250μm' }, { value: 'Embosphere 300-500μm', label: 'Embosphere 300-500μm' }, { value: 'n-BCA glue', label: 'n-BCA Glue' }], defaultValue: 'PVA 150-250μm' },
+      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [
+        { value: 'PVA 300-500 µm', label: 'PVA 300-500 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 100-300 µm', label: 'PVA 100-300 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 500-710 µm', label: 'PVA 500-710 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 710-1000 µm', label: 'PVA 710-1000 µm (Polyvinyl Alcohol)' },
+        { value: 'Embosphere / Microspheres (300-500 µm)', label: 'Embosphere / Microspheres (300-500 µm)' },
+        { value: 'Embosphere / Microspheres (500-700 µm)', label: 'Embosphere / Microspheres (500-700 µm)' },
+        { value: 'Gelfoam slurry / Torpedoes', label: 'Gelfoam slurry / Torpedoes' },
+        { value: 'Lipiodol + Doxorubicin emulsion', label: 'Lipiodol + Doxorubicin emulsion' },
+        { value: 'n-BCA glue', label: 'n-BCA Glue (1:3 with Lipiodol)' }
+      ], defaultValue: 'PVA 300-500 µm' },
       { key: 'icaInvolvement', label: 'ICA Involvement', type: 'checkbox', defaultValue: false },
       { key: 'surgeryWindow', label: 'Surgery Scheduled Within', type: 'select', options: [{ value: '24-48h', label: '24-48h' }, { value: '72h', label: '72h' }], defaultValue: '24-48h' }
     ],
@@ -169,10 +189,10 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, right CFA access, 5F diagnostic catheter selective ECA angiogram demonstrating hypervascular mass with dominant arterial supply from ${c.arteries}. Superselective microcatheterization with 2.4F Progreat. Pre-embolization tumor blush scoring performed. Devascularization with ${c.embolicAgent} achieving >80% reduction in tumor vascularity. Protective test injection confirming no dangerous anastomoses to ophthalmic or ICA territories. ICA involvement: ${c.icaInvolvement ? 'Yes' : 'No'}.`,
     synthesizeDiagnosis: (c) => `JNA (${c.tumorStage}), successfully embolized pre-operatively.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Dexamethasone', medicine: 'Dexona', dosePower: '4mg', route: 'ORAL', frequency: 'TID', days: 2, instructions: 'To reduce post-embolization swelling' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
-      { sNo: 0, genericName: 'Amoxicillin-Clavulanate', medicine: 'Augmentin', dosePower: '625mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'Prophylactic' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 5, instructions: 'Before meals' }
+      { sNo: 0, genericName: 'Dexamethasone', medicine: 'Tab. Dexamethasone 4mg [RMSCL DDC #125]', dosePower: '4mg', route: 'ORAL', frequency: 'TID', days: 2, instructions: 'To reduce post-embolization swelling' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
+      { sNo: 0, genericName: 'Amoxicillin-Clavulanate', medicine: 'Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]', dosePower: '625mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'Prophylactic' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 5, instructions: 'Before meals' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['ENT surgical excision within 24-48h of embolization', 'Post-op MRI at 3 months for residual/recurrence'],
@@ -193,7 +213,15 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     criteriaFields: [
       { key: 'indication', label: 'Indication', type: 'select', options: [{ value: 'hypersplenism', label: 'Hypersplenism' }, { value: 'trauma Grade III-V', label: 'Trauma Grade III-V' }, { value: 'pseudoaneurysm', label: 'Pseudoaneurysm' }, { value: 'pre-TIPS', label: 'Pre-TIPS' }], defaultValue: 'hypersplenism' },
       { key: 'level', label: 'Embolization Level', type: 'select', options: [{ value: 'proximal main SA', label: 'Proximal Main SA' }, { value: 'distal superselective', label: 'Distal Superselective' }, { value: 'partial polar', label: 'Partial Polar' }], defaultValue: 'partial polar' },
-      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [{ value: 'PVA 500-700μm', label: 'PVA 500-700μm' }, { value: 'Gelfoam', label: 'Gelfoam' }, { value: 'microcoils', label: 'Microcoils' }], defaultValue: 'PVA 500-700μm' },
+      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [
+        { value: 'PVA 300-500 µm', label: 'PVA 300-500 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 500-710 µm', label: 'PVA 500-710 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 710-1000 µm', label: 'PVA 710-1000 µm (Polyvinyl Alcohol)' },
+        { value: 'PVA 100-300 µm', label: 'PVA 100-300 µm (Polyvinyl Alcohol)' },
+        { value: 'Gelfoam slurry / Torpedoes', label: 'Gelfoam slurry / Torpedoes' },
+        { value: 'Embosphere / Microspheres (500-700 µm)', label: 'Embosphere / Microspheres (500-700 µm)' },
+        { value: 'microcoils', label: 'Microcoils' }
+      ], defaultValue: 'PVA 500-710 µm' },
       { key: 'targetDevasc', label: 'Target Devascularization', type: 'select', options: [{ value: '30-50%', label: '30-50%' }, { value: '50-70%', label: '50-70%' }], defaultValue: '30-50%' },
       { key: 'platelets', label: 'Pre-op Platelet Count', type: 'number', defaultValue: 50000 }
     ],
@@ -203,10 +231,10 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, right CFA access with 5F sheath, 5F Cobra/Simmons catheter selective celiac axis and splenic arteriogram. ${c.indication === 'hypersplenism' ? `Superselective ${c.level} embolization with ${c.embolicAgent} to achieve approximately ${c.targetDevasc} parenchymal devascularization, preserving upper pole and short gastric territories.` : `Coil embolization proximal and distal to the pseudoaneurysm neck (sandwich technique).`} Completion angiogram confirming successful ${c.indication === 'pseudoaneurysm' ? 'exclusion' : 'embolization'}.`,
     synthesizeDiagnosis: (c) => `Splenic artery embolization for ${c.indication}.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 7, instructions: 'For post-embolization syndrome' },
-      { sNo: 0, genericName: 'Diclofenac', medicine: 'Voveran', dosePower: '50mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'After meals' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Before meals' },
-      { sNo: 0, genericName: 'Ondansetron', medicine: 'Emeset', dosePower: '4mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For nausea' }
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 7, instructions: 'For post-embolization syndrome' },
+      { sNo: 0, genericName: 'Diclofenac', medicine: 'Tab. Diclofenac 50mg + Serratiopeptidase 10mg [RMSCL DDC #622]', dosePower: '50mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'After meals' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Before meals' },
+      { sNo: 0, genericName: 'Ondansetron', medicine: 'Tab. Ondansetron 4mg [RMSCL DDC #167]', dosePower: '4mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For nausea' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['CBC at 1 week (platelet count response)', 'CT abdomen at 1 month (splenic infarct assessment)', 'Vaccination compliance at 2 weeks (Pneumococcal + Meningococcal + H. influenzae)'],
@@ -228,7 +256,20 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
       { key: 'tumorBurden', label: 'Tumor Burden', type: 'select', options: [{ value: 'single ≤5cm', label: 'Single ≤5cm' }, { value: 'multifocal 2-3 lesions', label: 'Multifocal 2-3 lesions' }, { value: 'diffuse/infiltrative', label: 'Diffuse/Infiltrative' }], defaultValue: 'single ≤5cm' },
       { key: 'bclcStage', label: 'BCLC Stage', type: 'select', options: [{ value: 'A', label: 'A' }, { value: 'B', label: 'B' }, { value: 'C', label: 'C' }], defaultValue: 'B' },
       { key: 'arteries', label: 'Target Arteries', type: 'select', options: [{ value: 'right hepatic', label: 'Right Hepatic' }, { value: 'left hepatic', label: 'Left Hepatic' }, { value: 'segment-specific', label: 'Segment-specific' }], defaultValue: 'segment-specific' },
-      { key: 'drugCombo', label: 'Drug Combination', type: 'select', options: [{ value: 'Doxorubicin 30-50mg + Lipiodol', label: 'cTACE (Doxorubicin + Lipiodol)' }, { value: 'DEB-TACE DC Bead 100-300μm', label: 'DEB-TACE DC Bead' }], defaultValue: 'Doxorubicin 30-50mg + Lipiodol' },
+      { key: 'drugCombo', label: 'Drug / Embolic Regimen', type: 'select', options: [
+        { value: 'Lipiodol + Doxorubicin emulsion + Gelfoam slurry', label: 'Lipiodol + Doxorubicin emulsion + Gelfoam slurry' },
+        { value: 'Lipiodol + Doxorubicin emulsion + PVA 100-300 µm', label: 'Lipiodol + Doxorubicin emulsion + PVA 100-300 µm' },
+        { value: 'Lipiodol + Doxorubicin emulsion + PVA 300-500 µm', label: 'Lipiodol + Doxorubicin emulsion + PVA 300-500 µm' },
+        { value: 'Lipiodol + Doxorubicin emulsion + PVA 500-710 µm', label: 'Lipiodol + Doxorubicin emulsion + PVA 500-710 µm' },
+        { value: 'Lipiodol + Doxorubicin emulsion + PVA 710-1000 µm', label: 'Lipiodol + Doxorubicin emulsion + PVA 710-1000 µm' },
+        { value: 'Lipiodol + Doxorubicin emulsion', label: 'Lipiodol + Doxorubicin emulsion alone' },
+        { value: 'Gelfoam slurry / Torpedoes', label: 'Gelfoam slurry / Torpedoes' },
+        { value: 'DEB-TACE DC Bead 100-300 µm', label: 'DEB-TACE DC Bead (100-300 µm)' },
+        { value: 'DEB-TACE DC Bead 300-500 µm', label: 'DEB-TACE DC Bead (300-500 µm)' },
+        { value: 'Embosphere / Microspheres (100-300 µm)', label: 'Embosphere / Microspheres (100-300 µm)' },
+        { value: 'Embosphere / Microspheres (300-500 µm)', label: 'Embosphere / Microspheres (300-500 µm)' },
+        { value: 'Embosphere / Microspheres (500-700 µm)', label: 'Embosphere / Microspheres (500-700 µm)' }
+      ], defaultValue: 'Lipiodol + Doxorubicin emulsion + Gelfoam slurry' },
       { key: 'pvStatus', label: 'Portal Vein Status', type: 'select', options: [{ value: 'patent', label: 'Patent' }, { value: 'branch thrombosis', label: 'Branch Thrombosis' }, { value: 'main PVT', label: 'Main PVT' }], defaultValue: 'patent' },
       { key: 'childPugh', label: 'Child-Pugh Class', type: 'select', options: [{ value: 'A', label: 'A' }, { value: 'B', label: 'B' }], defaultValue: 'A' },
       { key: 'sessions', label: 'TACE Session', type: 'select', options: [{ value: '1st', label: '1st' }, { value: '2nd', label: '2nd' }, { value: '3rd+', label: '3rd+' }], defaultValue: '1st' }
@@ -236,15 +277,15 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeComplaints: (c) => `Patient admitted for ${c.sessions} session of TACE for HCC (BCLC ${c.bclcStage}, Child-Pugh ${c.childPugh}).`,
     synthesizeHistory: (c) => `Known case of HCC with ${c.tumorBurden}. Portal vein status: ${c.pvStatus}.`,
     synthesizeLocalExam: (c) => `Abdominal examination essentially benign.`,
-    synthesizeOperativeNote: (c) => `Under LA, right CFA access with 5F sheath, 5F RH/Cobra catheter celiac trunk then selective proper hepatic arteriogram. Tumor-feeding artery identified arising from ${c.arteries}. Superselective microcatheterization with 2.7F Progreat. ${c.drugCombo.includes('Lipiodol') ? 'Slow injection of Doxorubicin (30-50mg) emulsified in Lipiodol (10mL) until tumor bed saturation, followed by Gelfoam slurry embolization to sub-stasis.' : `DC Bead loaded with Doxorubicin injected under fluoroscopy.`} Completion hepatic angiogram confirming devascularization of target lesion with preserved portal flow.`,
+    synthesizeOperativeNote: (c) => `Under LA, right CFA access with 5F sheath, 5F RH/Cobra catheter celiac trunk then selective proper hepatic arteriogram. Tumor-feeding artery identified arising from ${c.arteries}. Superselective microcatheterization with 2.7F Progreat. ${c.drugCombo.includes('Lipiodol') ? `Slow injection of Doxorubicin (30-50mg) emulsified in Lipiodol (10mL) until tumor bed saturation, followed by embolization with ${c.drugCombo.includes('PVA') ? c.drugCombo.substring(c.drugCombo.indexOf('PVA')) : c.drugCombo.includes('Gelfoam') ? 'Gelfoam slurry' : 'embolic particulate'} to sub-stasis.` : `${c.drugCombo} loaded with chemotherapeutic injected under continuous fluoroscopy.`} Completion hepatic angiogram confirming devascularization of target lesion with preserved portal flow.`,
     synthesizeDiagnosis: (c) => `HCC (${c.tumorBurden}), managed with ${c.drugCombo.includes('Lipiodol') ? 'cTACE' : 'DEB-TACE'}.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Ondansetron', medicine: 'Emeset', dosePower: '4mg', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'Antiemetic' },
-      { sNo: 0, genericName: 'Tramadol', medicine: 'Tramazac', dosePower: '50mg', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'For analgesia' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
-      { sNo: 0, genericName: 'Lactulose', medicine: 'Looz', dosePower: '15mL', route: 'ORAL', frequency: 'BD', days: 14, instructions: 'Hepatic protection' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Before meals' },
-      { sNo: 0, genericName: 'Silymarin', medicine: 'Silybon', dosePower: '140mg', route: 'ORAL', frequency: 'TID', days: 30, instructions: 'Hepatoprotective' }
+      { sNo: 0, genericName: 'Ondansetron', medicine: 'Tab. Ondansetron 4mg [RMSCL DDC #167]', dosePower: '4mg', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'Antiemetic' },
+      { sNo: 0, genericName: 'Tramadol', medicine: 'Tab. Tramadol 37.5mg + Paracetamol 325mg [RMSCL DDC #624]', dosePower: '1 Tab', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'For analgesia' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
+      { sNo: 0, genericName: 'Lactulose', medicine: 'Syp. Lactulose 30ml [RMSCL DDC #512]', dosePower: '15mL', route: 'ORAL', frequency: 'BD', days: 14, instructions: 'Hepatic protection' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Before meals' },
+      { sNo: 0, genericName: 'Silymarin', medicine: 'Tab. Silymarin 140mg [RMSCL DDC #658]', dosePower: '140mg', route: 'ORAL', frequency: 'TID', days: 30, instructions: 'Hepatoprotective' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['LFT + AFP at 4 weeks', 'Contrast-enhanced CT/MRI (mRECIST) at 4-6 weeks for response assessment', 'Repeat TACE if viable residual tumor'],
@@ -265,7 +306,16 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     criteriaFields: [
       { key: 'source', label: 'Bleeding Source', type: 'select', options: [{ value: 'GDA pseudoaneurysm', label: 'GDA Pseudoaneurysm' }, { value: 'LGA', label: 'LGA' }, { value: 'jejunal branch', label: 'Jejunal Branch' }, { value: 'splenic', label: 'Splenic' }], defaultValue: 'GDA pseudoaneurysm' },
       { key: 'etiology', label: 'Etiology', type: 'select', options: [{ value: 'peptic ulcer', label: 'Peptic Ulcer' }, { value: 'post-surgical', label: 'Post-surgical' }, { value: 'pancreatitis', label: 'Pancreatitis' }], defaultValue: 'peptic ulcer' },
-      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [{ value: 'microcoils', label: 'Microcoils' }, { value: 'Gelfoam', label: 'Gelfoam' }, { value: 'n-BCA glue', label: 'n-BCA Glue' }], defaultValue: 'microcoils' },
+      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [
+        { value: 'microcoils', label: 'Microcoils' },
+        { value: 'Gelfoam slurry / Torpedoes', label: 'Gelfoam slurry / Torpedoes' },
+        { value: 'PVA 300-500 µm', label: 'PVA 300-500 µm' },
+        { value: 'PVA 500-710 µm', label: 'PVA 500-710 µm' },
+        { value: 'PVA 710-1000 µm', label: 'PVA 710-1000 µm' },
+        { value: 'PVA 100-300 µm', label: 'PVA 100-300 µm' },
+        { value: 'Embosphere / Microspheres', label: 'Embosphere / Microspheres' },
+        { value: 'n-BCA glue', label: 'n-BCA glue' }
+      ], defaultValue: 'microcoils' },
       { key: 'transfusion', label: 'Transfusion Units Required', type: 'number', defaultValue: 2 },
       { key: 'stability', label: 'Hemodynamic Stability', type: 'select', options: [{ value: 'stable', label: 'Stable' }, { value: 'unstable requiring resuscitation', label: 'Unstable' }], defaultValue: 'stable' }
     ],
@@ -275,10 +325,10 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA (or MAC if hemodynamically unstable), right CFA access with 5F sheath, 5F Cobra/Simmons catheter celiac axis angiogram and SMA injection. Active contrast extravasation / pseudoaneurysm identified arising from ${c.source}. Superselective microcatheterization with 2.7F Progreat. Embolization with ${c.embolicAgent} achieving complete occlusion proximal and distal to the bleeding point (sandwich technique). Completion angiogram confirming no residual extravasation and preserved collateral arcade.`,
     synthesizeDiagnosis: (c) => `UGIB from ${c.source}, successfully embolized.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'PPI therapy' },
-      { sNo: 0, genericName: 'Sucralfate', medicine: 'Sucrafil', dosePower: '1g', route: 'ORAL', frequency: 'QID', days: 14, instructions: 'Take on empty stomach' },
-      { sNo: 0, genericName: 'Ferrous Sulfate', medicine: 'Fero', dosePower: '200mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'For anemia' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' }
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'PPI therapy' },
+      { sNo: 0, genericName: 'Sucralfate', medicine: 'Syp. Sucralfate 1g / 10ml [RMSCL DDC #340]', dosePower: '10ml', route: 'ORAL', frequency: 'QID', days: 14, instructions: 'Take on empty stomach' },
+      { sNo: 0, genericName: 'Ferrous Sulfate', medicine: 'Tab. Ferrous Sulfate 200mg [RMSCL DDC #15]', dosePower: '200mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'For anemia' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['CBC and hemodynamic monitoring daily for 48-72h', 'Upper GI endoscopy at 6 weeks for ulcer healing assessment', 'H. pylori eradication if positive'],
@@ -299,7 +349,16 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     criteriaFields: [
       { key: 'indication', label: 'Indication', type: 'select', options: [{ value: 'PPH', label: 'PPH' }, { value: 'symptomatic fibroids', label: 'Symptomatic Fibroids' }, { value: 'adenomyosis', label: 'Adenomyosis' }, { value: 'uterine AVM', label: 'Uterine AVM' }], defaultValue: 'PPH' },
       { key: 'bilateral', label: 'Bilateral UAE', type: 'checkbox', defaultValue: true },
-      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [{ value: 'PVA 500-700μm', label: 'PVA 500-700μm' }, { value: 'Gelfoam', label: 'Gelfoam' }, { value: 'Embosphere', label: 'Embosphere' }, { value: 'n-BCA for AVM', label: 'n-BCA for AVM' }], defaultValue: 'Gelfoam' },
+      { key: 'embolicAgent', label: 'Embolic Agent', type: 'select', options: [
+        { value: 'PVA 300-500 µm', label: 'PVA 300-500 µm' },
+        { value: 'PVA 500-710 µm', label: 'PVA 500-710 µm' },
+        { value: 'PVA 710-1000 µm', label: 'PVA 710-1000 µm' },
+        { value: 'PVA 100-300 µm', label: 'PVA 100-300 µm' },
+        { value: 'Gelfoam slurry / Torpedoes', label: 'Gelfoam slurry / Torpedoes' },
+        { value: 'Embosphere / Microspheres (500-700 µm)', label: 'Embosphere / Microspheres (500-700 µm)' },
+        { value: 'Embosphere / Microspheres (700-900 µm)', label: 'Embosphere / Microspheres (700-900 µm)' },
+        { value: 'n-BCA for AVM', label: 'n-BCA for AVM' }
+      ], defaultValue: 'Gelfoam slurry / Torpedoes' },
       { key: 'bloodLoss', label: 'Blood Loss Estimate', type: 'number', defaultValue: 1000 },
       { key: 'spasmManaged', label: 'Uterine Artery Spasm Managed', type: 'checkbox', defaultValue: false }
     ],
@@ -309,14 +368,14 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, right CFA access with 5F sheath, 5F Cobra/Roberts Uterine catheter selective internal iliac and uterine arteriogram bilaterally. ${c.indication === 'PPH' ? `Active contrast extravasation noted. Superselective embolization with ${c.embolicAgent} to complete stasis.` : `Superselective ${c.bilateral ? 'bilateral' : 'unilateral'} uterine artery embolization with ${c.embolicAgent} to sluggish antegrade flow endpoint, preserving ovarian supply.`} Completion pelvic angiogram confirming devascularization. ${c.spasmManaged ? 'Vasospasm managed with intra-arterial vasodilators.' : ''}`,
     synthesizeDiagnosis: (c) => `${c.indication}, successfully treated with UAE.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Diclofenac', medicine: 'Voveran', dosePower: '50mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'Post-embolization pain' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
-      { sNo: 0, genericName: 'Ondansetron', medicine: 'Emeset', dosePower: '4mg', route: 'ORAL', frequency: 'SOS', days: 3, instructions: 'For nausea' },
-      { sNo: 0, genericName: 'Ciprofloxacin', medicine: 'Ciplox', dosePower: '500mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'Prophylactic' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' }
+      { sNo: 0, genericName: 'Diclofenac', medicine: 'Tab. Diclofenac 50mg + Serratiopeptidase 10mg [RMSCL DDC #622]', dosePower: '50mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'Post-embolization pain' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
+      { sNo: 0, genericName: 'Ondansetron', medicine: 'Tab. Ondansetron 4mg [RMSCL DDC #167]', dosePower: '4mg', route: 'ORAL', frequency: 'SOS', days: 3, instructions: 'For nausea' },
+      { sNo: 0, genericName: 'Ciprofloxacin', medicine: 'Tab. Ciprofloxacin 500mg [RMSCL DDC #112]', dosePower: '500mg', route: 'ORAL', frequency: 'BD', days: 5, instructions: 'Prophylactic' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' }
     ],
     conditionalMedications: [
-      { condition: 'If indicated for PPH', conditionKey: 'indication', conditionValue: 'PPH', medication: { sNo: 0, genericName: 'Tranexamic Acid', medicine: 'Pause', dosePower: '500mg', route: 'ORAL', frequency: 'TID', days: 3, instructions: 'For bleeding control' } }
+      { condition: 'If indicated for PPH', conditionKey: 'indication', conditionValue: 'PPH', medication: { sNo: 0, genericName: 'Tranexamic Acid', medicine: 'Tab. Tranexamic Acid 500mg [RMSCL DDC #463]', dosePower: '500mg', route: 'ORAL', frequency: 'TID', days: 3, instructions: 'For bleeding control' } }
     ],
     followUpInstructions: ['Pelvic MRI at 3-6 months for fibroid volume assessment', 'Gynecology follow-up at 2 weeks', 'Menstrual diary for symptom tracking'],
     redFlagWarnings: ['Severe pelvic pain unresponsive to prescribed analgesia', 'Foul-smelling vaginal discharge (endometritis/fibroid necrosis)', 'Fever >101°F', 'Recurrent heavy vaginal bleeding'],
@@ -347,12 +406,12 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, right/left femoral vein access with 7F sheath. Venogram demonstrating severe stenosis/occlusion of ${c.vein}. Sharp recanalization with stiff hydrophilic wire + support catheter. Sequential balloon angioplasty with ${c.balloonSize}mm high-pressure balloon. ${c.procedure === 'PTA + stenting' ? `Deployment of ${c.stentType} stent across the stenosis with post-dilatation.` : ''} Completion venogram confirming <30% residual stenosis with restored antegrade flow.`,
     synthesizeDiagnosis: (c) => `${c.vein} stenosis (${c.etiology}), managed by ${c.procedure}.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'Before meals' }
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 5, instructions: 'For pain/fever' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'Before meals' }
     ],
     conditionalMedications: [
-      { condition: 'If Stented', conditionKey: 'procedure', conditionValue: 'PTA + stenting', medication: { sNo: 0, genericName: 'Aspirin', medicine: 'Ecosprin', dosePower: '75mg', route: 'ORAL', frequency: 'OD', days: 180, instructions: 'Post-stenting' } },
-      { condition: 'If Stented', conditionKey: 'procedure', conditionValue: 'PTA + stenting', medication: { sNo: 0, genericName: 'Clopidogrel', medicine: 'Plavix', dosePower: '75mg', route: 'ORAL', frequency: 'OD', days: 90, instructions: 'Post-stenting' } }
+      { condition: 'If Stented', conditionKey: 'procedure', conditionValue: 'PTA + stenting', medication: { sNo: 0, genericName: 'Aspirin', medicine: 'Tab. Aspirin 75mg [RMSCL DDC #22]', dosePower: '75mg', route: 'ORAL', frequency: 'OD', days: 180, instructions: 'Post-stenting' } },
+      { condition: 'If Stented', conditionKey: 'procedure', conditionValue: 'PTA + stenting', medication: { sNo: 0, genericName: 'Clopidogrel', medicine: 'Tab. Clopidogrel 75mg [RMSCL DDC #25]', dosePower: '75mg', route: 'ORAL', frequency: 'OD', days: 90, instructions: 'Post-stenting' } }
     ],
     followUpInstructions: ['Arm/facial edema assessment at 1 week', 'Duplex ultrasound at 1 month and 3 months', 'Hemodialysis reassessment if dialysis-related'],
     redFlagWarnings: ['Sudden worsening of facial/arm swelling (re-stenosis / stent thrombosis)', 'Chest pain or breathlessness (SVC syndrome)', 'Access site hematoma'],
@@ -382,8 +441,8 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, direct fistula puncture with 6F micro-puncture set under US guidance. Fistulogram demonstrating stenosis at ${c.stenosisLocation} with reduced antegrade flow. Serial balloon angioplasty with ${c.balloonSpecs} at ${c.pressure} atm for 60-120 seconds x 3 inflations. Post-dilatation fistulogram confirming <30% residual stenosis with ${c.thrill ? 'restored continuous machinery thrill' : 'partial thrill'}. Hemostasis achieved with manual compression / figure-of-8 suture.`,
     synthesizeDiagnosis: (c) => `Dialysis AV Fistula dysfunction due to ${c.stenosisLocation} stenosis, successfully treated with fistuloplasty.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Aspirin', medicine: 'Ecosprin', dosePower: '75mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'Continue chronic' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 3, instructions: 'For pain/fever' }
+      { sNo: 0, genericName: 'Aspirin', medicine: 'Tab. Aspirin 75mg [RMSCL DDC #22]', dosePower: '75mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'Continue chronic' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'SOS', days: 3, instructions: 'For pain/fever' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['Thrill palpation daily by patient/nurse', 'Duplex at 1 month', 'Hemodialysis performance assessment at next session (Kt/V, venous pressure)', 'Repeat fistuloplasty if clinical re-stenosis'],
@@ -415,8 +474,8 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, right CFA access with 5F sheath, 5F Cobra/Simmons catheter selective left renal vein, then catheterization of left internal spermatic (gonadal) vein. Venogram demonstrating reflux to pampiniform plexus. Superselective positioning at inguinal ring level. Sequential deployment of ${c.coils} platinum microcoils (3-5mm) in sandwich fashion, interleaved with ${c.technique === 'coils + foam' ? '3% sodium tetradecyl sulfate (STS) foam (2-3mL)' : c.technique}. Completion venogram confirming complete occlusion with no residual reflux.`,
     synthesizeDiagnosis: (c) => `${c.laterality} varicocele (Grade ${c.grade}), successfully embolized.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'For pain' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 5, instructions: 'Before meals' }
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'For pain' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 5, instructions: 'Before meals' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['Scrotal duplex at 3 months for recurrence check', 'Semen analysis at 3-6 months if subfertility was the indication', 'Andrology/urology follow-up'],
@@ -449,13 +508,13 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA, right IJV access with 10F guiding sheath positioned in hepatic vein / IVC. ${c.decompression === 'transcaval DIPS' ? `Colapinto RUPS-100 transcaval puncture needle advanced under fluoroscopic guidance from IVC segment through caudate lobe into portal vein. Confirmed portal access with contrast injection and pressure measurement (Gradient: ${c.preGradient} mmHg). Tract dilatation with 8x40mm high-pressure balloon. Deployment of ${c.stentType} stent-graft. Post-deployment balloon molding. Final gradient measurement: ${c.postGradient} mmHg (target <12 mmHg).` : `Ultra-high-pressure balloon dilatation of IVC web/membrane (Venoplasty).`}`,
     synthesizeDiagnosis: (c) => `Budd-Chiari syndrome treated with ${c.decompression}.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Enoxaparin', medicine: 'Clexane', dosePower: '1mg/kg', route: 'SUBCUTANEOUS', frequency: 'BD', days: 5, instructions: 'Bridging therapy' },
-      { sNo: 0, genericName: 'Apixaban', medicine: 'Eliquis', dosePower: '5mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'Long-term anticoagulation' },
-      { sNo: 0, genericName: 'Torsemide', medicine: 'Dytor', dosePower: '20mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'For ascites' },
-      { sNo: 0, genericName: 'Spironolactone', medicine: 'Aldactone', dosePower: '50mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'For ascites' },
-      { sNo: 0, genericName: 'Lactulose', medicine: 'Looz', dosePower: '15mL', route: 'ORAL', frequency: 'TID', days: 30, instructions: 'Encephalopathy prophylaxis' },
-      { sNo: 0, genericName: 'Rifaximin', medicine: 'Rcifax', dosePower: '550mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'Encephalopathy prophylaxis' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'Before meals' }
+      { sNo: 0, genericName: 'Enoxaparin', medicine: 'Inj. Enoxaparin Sodium 60mg / 0.6ml [RMSCL DDC #821]', dosePower: '1mg/kg', route: 'SUBCUTANEOUS', frequency: 'BD', days: 5, instructions: 'Bridging therapy' },
+      { sNo: 0, genericName: 'Apixaban', medicine: 'Tab. Apixaban 5mg [RMSCL DDC #820]', dosePower: '5mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'Long-term anticoagulation' },
+      { sNo: 0, genericName: 'Torsemide', medicine: 'Tab. Torsemide 20mg [RMSCL DDC #445]', dosePower: '20mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'For ascites' },
+      { sNo: 0, genericName: 'Spironolactone', medicine: 'Tab. Spironolactone 50mg [RMSCL DDC #448]', dosePower: '50mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'For ascites' },
+      { sNo: 0, genericName: 'Lactulose', medicine: 'Syp. Lactulose 30ml [RMSCL DDC #512]', dosePower: '15mL', route: 'ORAL', frequency: 'TID', days: 30, instructions: 'Encephalopathy prophylaxis' },
+      { sNo: 0, genericName: 'Rifaximin', medicine: 'Tab. Rifaximin 550mg [RMSCL DDC #659]', dosePower: '550mg', route: 'ORAL', frequency: 'BD', days: 30, instructions: 'Encephalopathy prophylaxis' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 30, instructions: 'Before meals' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['Doppler shunt patency at 24h, 1 week, 1 month, 3 months, 6 months', 'LFT + INR weekly x 4 weeks', 'Ascites volume assessment', 'Low-salt diet (<2g Na/day)', 'Hepatic encephalopathy screening'],
@@ -487,12 +546,12 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under LA and US guidance, patient prone. Posterior calyceal puncture of ${c.laterality} kidney ${c.calyx} calyx using 18G trocar needle under real-time ultrasound. Aspiration confirming ${c.urineOutput} urine. 0.035" Amplatz Extra-Stiff guidewire advanced into renal pelvis and coiled. Sequential tract dilatation. ${c.catheterSize} locking pigtail nephrostomy catheter deployed with tip coiled in renal pelvis. Immediate drainage of urine. Catheter secured to skin with 2-0 Silk sutures. Connected to urobag.`,
     synthesizeDiagnosis: (c) => `${c.laterality} PCN placed for ${c.indication}.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Ciprofloxacin', medicine: 'Ciplox', dosePower: '500mg', route: 'ORAL', frequency: 'BD', days: 7, instructions: 'Or culture-directed antibiotics' },
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
-      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Pan', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' }
+      { sNo: 0, genericName: 'Ciprofloxacin', medicine: 'Tab. Ciprofloxacin 500mg [RMSCL DDC #112]', dosePower: '500mg', route: 'ORAL', frequency: 'BD', days: 7, instructions: 'Or culture-directed antibiotics' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'TID', days: 5, instructions: 'For pain/fever' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 7, instructions: 'Before meals' }
     ],
     conditionalMedications: [
-      { condition: 'If Ureteric Calculus', conditionKey: 'indication', conditionValue: 'ureteric calculus', medication: { sNo: 0, genericName: 'Tamsulosin', medicine: 'Veltam', dosePower: '0.4mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Bedtime' } }
+      { condition: 'If Ureteric Calculus', conditionKey: 'indication', conditionValue: 'ureteric calculus', medication: { sNo: 0, genericName: 'Tamsulosin', medicine: 'Tab. Tamsulosin 0.4mg [RMSCL DDC #664]', dosePower: '0.4mg', route: 'ORAL', frequency: 'OD', days: 14, instructions: 'Bedtime' } }
     ],
     followUpInstructions: ['Daily urine output monitoring (volume, color, clarity)', 'Serum creatinine at 48h and 1 week', 'Urology follow-up for definitive management (DJ stenting / PCNL / surgery)', 'Nephrostomy tube exchange at 6-8 weeks if long-term'],
     redFlagWarnings: ['Fever >101°F with rigors (urosepsis)', 'Sudden cessation of urine drainage (tube blockage/displacement)', 'Persistent hematuria >48h', 'Flank pain with perinephric collection'],
@@ -518,7 +577,9 @@ export const ALL_PROCEDURE_DISCHARGE_TEMPLATES: ProcedureDischargeTemplate[] = [
     synthesizeOperativeNote: (c) => `Under US guidance, access gained to target vein. Endovenous ablation performed successfully without immediate complications.`,
     synthesizeDiagnosis: (c) => `${c.laterality} lower limb varicose veins.`,
     defaultMedications: [
-      { sNo: 0, genericName: 'Paracetamol', medicine: 'Dolo', dosePower: '650mg', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'For pain' }
+      { sNo: 0, genericName: 'Micronized Purified Flavonoid Fraction', medicine: 'Tab. Micronized Purified Flavonoid Fraction (Daflon) 500mg [RMSCL DDC #622]', dosePower: '500mg', route: 'ORAL', frequency: 'BD', days: 14, instructions: 'Post meals' },
+      { sNo: 0, genericName: 'Paracetamol', medicine: 'Tab. Paracetamol 650mg [RMSCL DDC #28]', dosePower: '650mg', route: 'ORAL', frequency: 'BD', days: 3, instructions: 'For pain' },
+      { sNo: 0, genericName: 'Pantoprazole', medicine: 'Tab. Pantoprazole 40mg [RMSCL DDC #142]', dosePower: '40mg', route: 'ORAL', frequency: 'OD', days: 5, instructions: 'Before meals' }
     ],
     conditionalMedications: [],
     followUpInstructions: ['USG Doppler after 1 month'],

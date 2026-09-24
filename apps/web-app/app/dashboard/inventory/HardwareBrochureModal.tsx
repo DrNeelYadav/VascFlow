@@ -12,6 +12,7 @@ import {
   Layers,
   AlertCircle,
   Stethoscope,
+  Lock,
 } from "lucide-react";
 import { MasterHardwareItem } from "@/app/lib/hardwareCatalog";
 import { HardwarePackagingImage } from "./HardwarePackagingImage";
@@ -23,6 +24,7 @@ interface HardwareBrochureModalProps {
   onStageItem?: (item: MasterHardwareItem) => void;
   onUpdateQuantity?: (id: string, delta: number) => void;
   currentStock?: number;
+  canAdjustStock?: boolean;
 }
 
 export function HardwareBrochureModal({
@@ -32,6 +34,7 @@ export function HardwareBrochureModal({
   onStageItem,
   onUpdateQuantity,
   currentStock,
+  canAdjustStock = false,
 }: HardwareBrochureModalProps) {
   if (!isOpen || !item) return null;
 
@@ -195,29 +198,40 @@ export function HardwareBrochureModal({
 
         {/* Footer Actions */}
         <div className="p-4 bg-[#F8F9FA] border-t border-[#DADCE0] flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-[#5F6368]">Quick Store Stock Adjust:</span>
-            <div className="inline-flex items-center bg-white rounded-lg p-0.5 border border-[#DADCE0] shadow-xs">
-              <button
-                onClick={() => onUpdateQuantity && onUpdateQuantity(item.id, -1)}
-                disabled={stock <= 0}
-                className="w-7 h-7 rounded flex items-center justify-center text-[#3C4043] hover:bg-gray-100 hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
-                title="Decrease Stock"
-              >
-                <Minus className="w-3.5 h-3.5" />
-              </button>
-              <span className="w-8 text-center font-mono font-bold text-xs text-[#202124]">
-                {stock}
-              </span>
-              <button
-                onClick={() => onUpdateQuantity && onUpdateQuantity(item.id, 1)}
-                className="w-7 h-7 rounded flex items-center justify-center text-[#3C4043] hover:bg-gray-100 hover:text-[#137333] transition cursor-pointer"
-                title="Increase Stock (Restock)"
-              >
-                <Plus className="w-3.5 h-3.5" />
-              </button>
+          {canAdjustStock && onUpdateQuantity ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-[#5F6368]">Quick Store Stock Adjust:</span>
+              <div className="inline-flex items-center bg-white rounded-lg p-0.5 border border-[#DADCE0] shadow-xs">
+                <button
+                  onClick={() => onUpdateQuantity(item.id, -1)}
+                  disabled={stock <= 0}
+                  className="w-7 h-7 rounded flex items-center justify-center text-[#3C4043] hover:bg-gray-100 hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
+                  title="Decrease Stock"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="w-8 text-center font-mono font-bold text-xs text-[#202124]">
+                  {stock}
+                </span>
+                <button
+                  onClick={() => onUpdateQuantity(item.id, 1)}
+                  className="w-7 h-7 rounded flex items-center justify-center text-[#3C4043] hover:bg-gray-100 hover:text-[#137333] transition cursor-pointer"
+                  title="Increase Stock (Restock)"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-[#5F6368]">Store Stock:</span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100 border border-[#DADCE0] text-xs font-medium text-[#5F6368]">
+                <Lock className="w-3 h-3 text-[#5F6368]" />
+                <span className="font-mono font-bold text-[#202124]">{stock} {item.unit}</span>
+                <span className="text-[10px] text-[#5F6368]">(Read-Only)</span>
+              </span>
+            </div>
+          )}
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
             <button

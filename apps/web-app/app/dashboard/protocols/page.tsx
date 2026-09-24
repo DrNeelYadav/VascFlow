@@ -83,10 +83,13 @@ export default function DrugProtocolsPage() {
   const [bcsEnceph, setBcsEnceph] = useState<boolean>(false);
   const [bcsAscitesGrade, setBcsAscitesGrade] = useState<"none" | "controlled" | "refractory">("controlled");
   const [bcsEncephGrade, setBcsEncephGrade] = useState<1 | 2 | 3>(1);
-  // Imaging morphology:
+  // Imaging morphology & liver volumetry:
   const [bcsCaudateWidthMm, setBcsCaudateWidthMm] = useState<number>(42);
   const [bcsRightLobeWidthMm, setBcsRightLobeWidthMm] = useState<number>(55);
+  const [bcsLiverVolumeMl, setBcsLiverVolumeMl] = useState<number>(1350);
+  const [bcsCaudateVolMl, setBcsCaudateVolMl] = useState<number>(115);
   const [bcsCavalWeb, setBcsCavalWeb] = useState<boolean>(false);
+  const [bcsInputsCollapsed, setBcsInputsCollapsed] = useState<boolean>(false);
   // Angiosuite hemodynamics:
   const [bcsWhvpMmHg, setBcsWhvpMmHg] = useState<number>(24);
   const [bcsFhvpMmHg, setBcsFhvpMmHg] = useState<number>(6);
@@ -179,6 +182,22 @@ export default function DrugProtocolsPage() {
   const caudateRightLobeResult = useMemo(() => {
     return calculateCaudateRightLobeRatio(bcsCaudateWidthMm, bcsRightLobeWidthMm);
   }, [bcsCaudateWidthMm, bcsRightLobeWidthMm]);
+
+  const liverVolumetryData = useMemo(() => {
+    const tlv = bcsLiverVolumeMl > 0 ? bcsLiverVolumeMl : 1350;
+    const clv = bcsCaudateVolMl > 0 ? bcsCaudateVolMl : 115;
+    const caudateRatioPercent = parseFloat(((clv / tlv) * 100).toFixed(1));
+    const isCaudateVolHypertrophic = caudateRatioPercent > 7.5;
+    const standardEslv = Math.round(bcsWeightKg * 22); // ~22 mL/kg standard functional baseline
+    return {
+      tlv,
+      clv,
+      caudateRatioPercent,
+      isCaudateVolHypertrophic,
+      standardEslv,
+      rightLobeResidualVol: Math.max(0, tlv - clv),
+    };
+  }, [bcsLiverVolumeMl, bcsCaudateVolMl, bcsWeightKg]);
 
   const hvpgResult = useMemo(() => {
     return calculateHvpg(bcsWhvpMmHg, bcsFhvpMmHg);
@@ -658,12 +677,12 @@ export default function DrugProtocolsPage() {
                     className="appearance-none pl-3 pr-8 py-1.5 text-xs font-bold bg-white border border-[#007AFF]/40 rounded-xl text-[#007AFF] focus:border-[#007AFF] outline-none cursor-pointer shadow-xs"
                   >
                     <option value="ALL">⚡ View All 9 Calculators (Complete Panel)</option>
+                    <option value="CRL">📐 6. Harbin &amp; Awaya Caudate/Right Lobe Ratio (C/RL) &amp; Volumetry</option>
                     <option value="ROTTERDAM">1. Rotterdam BCS-PI Score (Prognosis &amp; Survival)</option>
                     <option value="CLICHY">2. Clichy Prognostic Score (BCS-TIPS Shunt Indication)</option>
                     <option value="MELD">3. MELD 3.0 Score (TIPS Candidacy &amp; 90-Day Mortality)</option>
                     <option value="CTP">4. Child-Turcotte-Pugh (CTP) Score &amp; Functional Class</option>
                     <option value="ALBI">5. ALBI Grade (Objective Albumin-Bilirubin Reserve)</option>
-                    <option value="CRL">6. Harbin &amp; Awaya Caudate/Right Lobe Ratio (C/RL)</option>
                     <option value="HVPG">7. Hepatic Venous Pressure Gradient (HVPG &amp; Target)</option>
                     <option value="COMPOSITE">8. BCS Composite Shunt &amp; Collateral Embolization Risk</option>
                     <option value="MACD">9. Cigarroa MACD Contrast Ceiling (CI-AKI Guardrail)</option>
@@ -696,11 +715,156 @@ export default function DrugProtocolsPage() {
             )}
           </div>
 
+          {/* Quick-Access Mobile & Desktop Tab Bar (Budd-Chiari 9 Calculators) */}
+          {activeProtocol.id === "bcs" && (
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[11px]">
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("ALL")}
+                className={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "ALL"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                ⚡ All 9 Panel
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("CRL")}
+                className={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer ${
+                  bcsActiveCalcTab === "CRL"
+                    ? "bg-purple-700 text-white shadow-xs"
+                    : "bg-purple-50 text-purple-800 hover:bg-purple-100 border border-purple-200"
+                }`}
+              >
+                <Gauge className="w-3 h-3" />
+                <span>CT/MR Caudate &amp; Liver Ratio</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-black ${
+                    bcsActiveCalcTab === "CRL" ? "bg-white/20 text-white" : "bg-purple-200 text-purple-900"
+                  }`}
+                >
+                  {caudateRightLobeResult.cRlRatio}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("ROTTERDAM")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "ROTTERDAM"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                1. Rotterdam ({rotterdamResult.bcsPiScore})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("CLICHY")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "CLICHY"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                2. Clichy ({clichyResult.clichyScore})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("MELD")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "MELD"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                3. MELD 3.0 ({meldResult.score})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("CTP")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "CTP"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                4. CTP ({bcsChildPughResult.classGrade})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("ALBI")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "ALBI"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                5. ALBI (G{albiResult.grade})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("HVPG")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "HVPG"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                7. HVPG ({hvpgResult.hvpgMmHg} mmHg)
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("COMPOSITE")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "COMPOSITE"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                8. Composite
+              </button>
+              <button
+                type="button"
+                onClick={() => setBcsActiveCalcTab("MACD")}
+                className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                  bcsActiveCalcTab === "MACD"
+                    ? "bg-[#007AFF] text-white shadow-xs"
+                    : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
+                }`}
+              >
+                9. MACD Limit ({bcsMacdResult.macdMl} mL)
+              </button>
+            </div>
+          )}
+
           {/* 1. BCS PROTOCOL FUSION: ALL 9 CLINICAL CALCULATORS SUITE */}
           {activeProtocol.id === "bcs" && (
-            <div className="space-y-4">
-              {/* Organized Inputs: 3 Neat Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div className="space-y-3.5">
+              {/* Organized Inputs: 3 Neat Cards with Mobile Collapsible Bar */}
+              <div className="flex items-center justify-between text-xs px-0.5">
+                <span className="text-[11px] font-semibold text-[#8E8E93]">
+                  {bcsActiveCalcTab === "CRL"
+                    ? "Direct morphologic parameters active in single frame below"
+                    : "Clinical, Imaging & Hemodynamic Parameters"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setBcsInputsCollapsed(!bcsInputsCollapsed)}
+                  className="text-[11px] text-[#007AFF] font-bold hover:underline cursor-pointer flex items-center gap-1"
+                >
+                  {bcsInputsCollapsed ? "Show All 3 Input Panels" : "Collapse External Inputs"}
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      bcsInputsCollapsed ? "" : "rotate-180"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {!bcsInputsCollapsed && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {/* Inputs Group 1: Laboratory Serum Biomarkers */}
                 <div className="p-3 bg-white rounded-xl border border-[#E5E5EA] space-y-2">
                   <div className="text-[11px] font-bold text-[#1C1C1E] flex items-center gap-1.5 border-b border-[#F2F2F7] pb-1.5">
@@ -861,7 +1025,35 @@ export default function DrugProtocolsPage() {
                       />
                       <span className="text-[10px] text-[#8E8E93]">At right portal vein bifurcation level</span>
                     </div>
-                    <div className="pt-2 border-t border-[#F2F2F7]">
+                    <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#F2F2F7]">
+                      <div>
+                        <label className="text-[9px] font-bold uppercase text-[#8E8E93] block">Total Liver Vol (mL)</label>
+                        <input
+                          type="number"
+                          step="25"
+                          min="500"
+                          max="3500"
+                          value={bcsLiverVolumeMl}
+                          onChange={(e) => setBcsLiverVolumeMl(parseFloat(e.target.value) || 0)}
+                          className="w-full px-2 py-1 rounded border border-[#E5E5EA] bg-[#FAFAFA] text-xs font-mono font-bold focus:bg-white focus:border-[#007AFF] outline-none"
+                        />
+                        <span className="text-[10px] text-[#8E8E93]">eSLV: ~{liverVolumetryData.standardEslv} mL</span>
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-bold uppercase text-[#8E8E93] block">Caudate Vol (mL)</label>
+                        <input
+                          type="number"
+                          step="5"
+                          min="10"
+                          max="600"
+                          value={bcsCaudateVolMl}
+                          onChange={(e) => setBcsCaudateVolMl(parseFloat(e.target.value) || 0)}
+                          className="w-full px-2 py-1 rounded border border-[#E5E5EA] bg-[#FAFAFA] text-xs font-mono font-bold focus:bg-white focus:border-[#007AFF] outline-none"
+                        />
+                        <span className="text-[10px] text-[#8E8E93]">{liverVolumetryData.caudateRatioPercent}% TLV</span>
+                      </div>
+                    </div>
+                    <div className="pt-1.5 border-t border-[#F2F2F7]">
                       <label className="flex items-center gap-1.5 text-[11px] font-medium text-[#1C1C1E] cursor-pointer">
                         <input
                           type="checkbox"
@@ -945,9 +1137,10 @@ export default function DrugProtocolsPage() {
                   </div>
                 </div>
               </div>
+              )}
 
               {/* Live Fused Results Matrix (All 9 Calculators) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-3.5">
                 {/* 1. Rotterdam Score */}
                 {(bcsActiveCalcTab === "ALL" || bcsActiveCalcTab === "ROTTERDAM") && (
                   <div className="p-3.5 rounded-xl bg-white border border-[#E5E5EA] space-y-2 shadow-xs">
@@ -1120,41 +1313,425 @@ export default function DrugProtocolsPage() {
                   </div>
                 )}
 
-                {/* 6. Caudate / Right Lobe Ratio (C/RL) */}
+                {/* 6. Single-Frame Cross-Sectional CT/MR Caudate Lobe & Liver Volume Table */}
                 {(bcsActiveCalcTab === "ALL" || bcsActiveCalcTab === "CRL") && (
-                  <div className="p-3.5 rounded-xl bg-white border border-[#E5E5EA] space-y-2 shadow-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#1C1C1E] flex items-center gap-1.5">
-                        <Gauge className="w-3.5 h-3.5 text-purple-600" />
-                        6. Harbin &amp; Awaya C/RL Ratio
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                          caudateRightLobeResult.harbinCirrhosisPredicted
-                            ? "bg-red-50 text-red-700 border border-red-200"
+                  <div
+                    className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border bg-white shadow-xs space-y-3 max-w-full overflow-hidden transition-all ${
+                      bcsActiveCalcTab === "CRL"
+                        ? "col-span-full border-purple-300 ring-2 ring-purple-100"
+                        : "col-span-1 sm:col-span-2 xl:col-span-2 border-[#E5E5EA]"
+                    }`}
+                  >
+                    {/* Frame Header */}
+                    <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#F2F2F7]">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                          <Gauge className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold text-[#1C1C1E] tracking-tight">
+                              6. Cross-Sectional CT/MR Caudate Lobe &amp; Liver Volumetry
+                            </span>
+                            <span className="text-[10px] font-mono text-[#8E8E93] hidden xs:inline">
+                              Harbin (1980) &amp; Awaya (2002)
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-[#8E8E93] truncate">
+                            Caudate / Right Lobe (C/RL) ratio &amp; parenchymal volumetric distribution
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Diagnostic Badges */}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                            caudateRightLobeResult.harbinCirrhosisPredicted
+                              ? "bg-red-50 text-red-700 border border-red-200"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}
+                        >
+                          Harbin: {caudateRightLobeResult.harbinCirrhosisPredicted ? "Hypertrophy (≥ 0.65)" : "Normal (< 0.65)"}
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                            caudateRightLobeResult.awayaCirrhosisPredicted
+                              ? "bg-amber-50 text-amber-700 border border-amber-200"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}
+                        >
+                          Awaya: {caudateRightLobeResult.awayaCirrhosisPredicted ? "Borderline (≥ 0.58)" : "Normal (< 0.58)"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Crisp High-Density Metric Strip (4 Stat Cards) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {/* 1. Harbin Ratio */}
+                      <div className="p-2 sm:p-2.5 rounded-lg bg-purple-50/60 border border-purple-100 flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-purple-900 uppercase">
+                          <span>Harbin C/RL</span>
+                          <span className="text-[9px] font-mono text-purple-700">Cutoff 0.65</span>
+                        </div>
+                        <div className="my-0.5">
+                          <span className="text-xl sm:text-2xl font-black font-mono text-purple-700">
+                            {caudateRightLobeResult.cRlRatio}
+                          </span>
+                        </div>
+                        <div className="text-[9px] font-medium text-purple-800/80 truncate">
+                          {caudateRightLobeResult.harbinCirrhosisPredicted ? "96% Specific Hypertrophy" : "Normal Segment I"}
+                        </div>
+                      </div>
+
+                      {/* 2. Awaya Ratio */}
+                      <div className="p-2 sm:p-2.5 rounded-lg bg-indigo-50/60 border border-indigo-100 flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-indigo-900 uppercase">
+                          <span>Awaya Ratio</span>
+                          <span className="text-[9px] font-mono text-indigo-700">Cutoff 0.58</span>
+                        </div>
+                        <div className="my-0.5">
+                          <span className="text-xl sm:text-2xl font-black font-mono text-indigo-700">
+                            {caudateRightLobeResult.cRlRatio}
+                          </span>
+                        </div>
+                        <div className="text-[9px] font-medium text-indigo-800/80 truncate">
+                          {caudateRightLobeResult.awayaCirrhosisPredicted ? "100% Spec Early Cirrhosis" : "Non-cirrhotic ratio"}
+                        </div>
+                      </div>
+
+                      {/* 3. Transverse Diameters */}
+                      <div className="p-2 sm:p-2.5 rounded-lg bg-[#F9F9FB] border border-[#E5E5EA] flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-[#636366] uppercase">
+                          <span>Widths (C / RL)</span>
+                          <span className="text-[9px] font-mono text-[#8E8E93]">PV Bifurcation</span>
+                        </div>
+                        <div className="my-0.5">
+                          <span className="text-lg sm:text-xl font-black font-mono text-[#1C1C1E]">
+                            {bcsCaudateWidthMm} <span className="text-xs text-[#8E8E93] font-normal">/</span> {bcsRightLobeWidthMm} <span className="text-xs text-[#8E8E93] font-normal">mm</span>
+                          </span>
+                        </div>
+                        <div className="text-[9px] text-[#8E8E93] truncate">
+                          Caudate: {bcsCaudateWidthMm >= 35 ? "Hypertrophic (≥35)" : "Normal (<35)"}
+                        </div>
+                      </div>
+
+                      {/* 4. Liver Volumetry Fraction */}
+                      <div className="p-2 sm:p-2.5 rounded-lg bg-[#F9F9FB] border border-[#E5E5EA] flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-[#636366] uppercase">
+                          <span>Caudate Vol %</span>
+                          <span className="text-[9px] font-mono text-[#8E8E93]">TLV Ratio</span>
+                        </div>
+                        <div className="my-0.5">
+                          <span className="text-lg sm:text-xl font-black font-mono text-[#1C1C1E]">
+                            {liverVolumetryData.caudateRatioPercent}%
+                          </span>
+                        </div>
+                        <div className="text-[9px] text-[#8E8E93] truncate">
+                          {bcsCaudateVolMl} of {bcsLiverVolumeMl} mL ({liverVolumetryData.isCaudateVolHypertrophic ? "Hypertrophy >7.5%" : "Norm 3.5-5%"})
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Compact Mobile-Optimized Direct Input Adjusters */}
+                    <div className="p-2.5 rounded-lg bg-[#FAFAFC] border border-[#E5E5EA] space-y-2">
+                      <div className="flex items-center justify-between flex-wrap gap-1">
+                        <span className="text-[10px] font-bold uppercase text-[#8E8E93] tracking-wider">
+                          Single-Frame CT/MR Live Adjusters
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setBcsCaudateWidthMm(30);
+                              setBcsRightLobeWidthMm(65);
+                              setBcsLiverVolumeMl(1400);
+                              setBcsCaudateVolMl(55);
+                            }}
+                            className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-white hover:bg-emerald-50 border border-[#E5E5EA] text-[#636366] cursor-pointer"
+                          >
+                            Normal
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setBcsCaudateWidthMm(38);
+                              setBcsRightLobeWidthMm(62);
+                              setBcsLiverVolumeMl(1300);
+                              setBcsCaudateVolMl(85);
+                            }}
+                            className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-white hover:bg-amber-50 border border-[#E5E5EA] text-[#636366] cursor-pointer"
+                          >
+                            Awaya (0.61)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setBcsCaudateWidthMm(46);
+                              setBcsRightLobeWidthMm(55);
+                              setBcsLiverVolumeMl(1250);
+                              setBcsCaudateVolMl(140);
+                            }}
+                            className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-white hover:bg-red-50 border border-[#E5E5EA] text-[#636366] cursor-pointer"
+                          >
+                            Harbin (0.84)
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div>
+                          <label className="text-[9px] font-bold text-[#636366] block truncate">
+                            Caudate Width (mm)
+                          </label>
+                          <input
+                            type="number"
+                            step="1"
+                            min="10"
+                            max="120"
+                            value={bcsCaudateWidthMm}
+                            onChange={(e) => setBcsCaudateWidthMm(parseFloat(e.target.value) || 0)}
+                            className="w-full px-2 py-1 rounded border border-[#E5E5EA] bg-white text-xs font-mono font-bold focus:border-purple-600 outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-bold text-[#636366] block truncate">
+                            Right Lobe Width (mm)
+                          </label>
+                          <input
+                            type="number"
+                            step="1"
+                            min="20"
+                            max="150"
+                            value={bcsRightLobeWidthMm}
+                            onChange={(e) => setBcsRightLobeWidthMm(parseFloat(e.target.value) || 0)}
+                            className="w-full px-2 py-1 rounded border border-[#E5E5EA] bg-white text-xs font-mono font-bold focus:border-purple-600 outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-bold text-[#636366] block truncate">
+                            Total Liver Vol (mL)
+                          </label>
+                          <input
+                            type="number"
+                            step="25"
+                            min="500"
+                            max="3500"
+                            value={bcsLiverVolumeMl}
+                            onChange={(e) => setBcsLiverVolumeMl(parseFloat(e.target.value) || 0)}
+                            className="w-full px-2 py-1 rounded border border-[#E5E5EA] bg-white text-xs font-mono font-bold focus:border-purple-600 outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-bold text-[#636366] block truncate">
+                            Caudate Vol (mL)
+                          </label>
+                          <input
+                            type="number"
+                            step="5"
+                            min="10"
+                            max="600"
+                            value={bcsCaudateVolMl}
+                            onChange={(e) => setBcsCaudateVolMl(parseFloat(e.target.value) || 0)}
+                            className="w-full px-2 py-1 rounded border border-[#E5E5EA] bg-white text-xs font-mono font-bold focus:border-purple-600 outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Clean, Compact Single-Frame Table */}
+                    <div className="overflow-x-auto rounded-lg border border-[#E5E5EA] bg-white max-w-full">
+                      <table className="w-full text-left border-collapse text-[11px] leading-tight">
+                        <thead>
+                          <tr className="bg-[#F2F2F7] text-[#8E8E93] uppercase font-bold text-[9px] border-b border-[#E5E5EA]">
+                            <th className="py-1.5 px-2.5">Morphometric Parameter</th>
+                            <th className="py-1.5 px-2 text-right">Value</th>
+                            <th className="py-1.5 px-2 text-center">Diagnostic Cutoff</th>
+                            <th className="py-1.5 px-2.5">Clinical Correlation &amp; Specificity</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#F2F2F7] font-medium text-[#1C1C1E]">
+                          {/* Row 1: Caudate Lobe Width */}
+                          <tr className="hover:bg-[#FAFAFC]">
+                            <td className="py-1.5 px-2.5 font-bold">
+                              Transverse Caudate Width (C)
+                            </td>
+                            <td className="py-1.5 px-2 text-right font-mono font-bold text-purple-700 whitespace-nowrap">
+                              {bcsCaudateWidthMm} mm
+                            </td>
+                            <td className="py-1.5 px-2 text-center font-mono text-[#8E8E93] whitespace-nowrap">
+                              &lt; 35 mm
+                            </td>
+                            <td className="py-1.5 px-2.5">
+                              <span
+                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  bcsCaudateWidthMm >= 35 ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-700"
+                                }`}
+                              >
+                                {bcsCaudateWidthMm >= 35 ? "Segment I Hypertrophy (≥ 35 mm)" : "Normal Transverse Caliber"}
+                              </span>
+                            </td>
+                          </tr>
+
+                          {/* Row 2: Right Lobe Width */}
+                          <tr className="hover:bg-[#FAFAFC]">
+                            <td className="py-1.5 px-2.5 font-bold">
+                              Right Lobe Transverse Width (RL)
+                            </td>
+                            <td className="py-1.5 px-2 text-right font-mono font-bold text-[#1C1C1E] whitespace-nowrap">
+                              {bcsRightLobeWidthMm} mm
+                            </td>
+                            <td className="py-1.5 px-2 text-center font-mono text-[#8E8E93] whitespace-nowrap">
+                              50 – 70 mm
+                            </td>
+                            <td className="py-1.5 px-2.5 text-[#636366]">
+                              {bcsRightLobeWidthMm < 50 ? (
+                                <span className="text-amber-700 font-semibold">Atrophic Right Lobe (Peripheral parenchymal loss)</span>
+                              ) : (
+                                "Measured at right portal vein bifurcation level"
+                              )}
+                            </td>
+                          </tr>
+
+                          {/* Row 3: Harbin C/RL Ratio */}
+                          <tr className="bg-purple-50/30 hover:bg-purple-50/50">
+                            <td className="py-1.5 px-2.5 font-bold text-purple-900">
+                              Harbin C/RL Ratio
+                            </td>
+                            <td className="py-1.5 px-2 text-right font-mono font-black text-purple-700 whitespace-nowrap">
+                              {caudateRightLobeResult.cRlRatio}
+                            </td>
+                            <td className="py-1.5 px-2 text-center font-mono font-bold text-purple-900 whitespace-nowrap">
+                              ≥ 0.65
+                            </td>
+                            <td className="py-1.5 px-2.5">
+                              <span
+                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  caudateRightLobeResult.harbinCirrhosisPredicted
+                                    ? "bg-red-100 text-red-800 border border-red-200"
+                                    : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                                }`}
+                              >
+                                {caudateRightLobeResult.harbinCirrhosisPredicted
+                                  ? "Positive: 96% Specific for Cirrhosis / Outflow Block"
+                                  : "Negative: Non-hypertrophic ratio (< 0.65)"}
+                              </span>
+                            </td>
+                          </tr>
+
+                          {/* Row 4: Awaya Modified Ratio */}
+                          <tr className="bg-indigo-50/30 hover:bg-indigo-50/50">
+                            <td className="py-1.5 px-2.5 font-bold text-indigo-900">
+                              Awaya Modified C/RL Ratio
+                            </td>
+                            <td className="py-1.5 px-2 text-right font-mono font-black text-indigo-700 whitespace-nowrap">
+                              {caudateRightLobeResult.cRlRatio}
+                            </td>
+                            <td className="py-1.5 px-2 text-center font-mono font-bold text-indigo-900 whitespace-nowrap">
+                              ≥ 0.58
+                            </td>
+                            <td className="py-1.5 px-2.5">
+                              <span
+                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  caudateRightLobeResult.awayaCirrhosisPredicted
+                                    ? "bg-amber-100 text-amber-800 border border-amber-200"
+                                    : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                                }`}
+                              >
+                                {caudateRightLobeResult.awayaCirrhosisPredicted
+                                  ? "Positive: 100% Specific for Early / Borderline Cirrhosis"
+                                  : "Negative: Normal axial morphology (< 0.58)"}
+                              </span>
+                            </td>
+                          </tr>
+
+                          {/* Row 5: Total Liver Volume (TLV) */}
+                          <tr className="hover:bg-[#FAFAFC]">
+                            <td className="py-1.5 px-2.5 font-bold">
+                              Total Functional Liver Volume (TLV)
+                            </td>
+                            <td className="py-1.5 px-2 text-right font-mono font-bold text-[#1C1C1E] whitespace-nowrap">
+                              {bcsLiverVolumeMl} mL
+                            </td>
+                            <td className="py-1.5 px-2 text-center font-mono text-[#8E8E93] whitespace-nowrap">
+                              ~{liverVolumetryData.standardEslv} mL
+                            </td>
+                            <td className="py-1.5 px-2.5 text-[#636366]">
+                              {bcsLiverVolumeMl < 1000 ? (
+                                <span className="text-red-700 font-bold">Severe Micro-Hepatomegaly (&lt; 1,000 mL)</span>
+                              ) : (
+                                `Standard eSLV estimate (~22 mL/kg baseline: ${liverVolumetryData.standardEslv} mL)`
+                              )}
+                            </td>
+                          </tr>
+
+                          {/* Row 6: Caudate Volume Index */}
+                          <tr className="hover:bg-[#FAFAFC]">
+                            <td className="py-1.5 px-2.5 font-bold">
+                              Caudate Segment I Volume Fraction
+                            </td>
+                            <td className="py-1.5 px-2 text-right font-mono font-bold text-[#1C1C1E] whitespace-nowrap">
+                              {bcsCaudateVolMl} mL ({liverVolumetryData.caudateRatioPercent}%)
+                            </td>
+                            <td className="py-1.5 px-2 text-center font-mono text-[#8E8E93] whitespace-nowrap">
+                              3.5% – 5.0%
+                            </td>
+                            <td className="py-1.5 px-2.5">
+                              <span
+                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  liverVolumetryData.isCaudateVolHypertrophic
+                                    ? "bg-red-50 text-red-700"
+                                    : "bg-emerald-50 text-emerald-700"
+                                }`}
+                              >
+                                {liverVolumetryData.isCaudateVolHypertrophic
+                                  ? "Marked Compensatory Hypertrophy (> 7.5% TLV)"
+                                  : "Preserved Volumetric Proportions"}
+                              </span>
+                            </td>
+                          </tr>
+
+                          {/* Row 7: IVC Morphology & Web */}
+                          <tr className="hover:bg-[#FAFAFC]">
+                            <td className="py-1.5 px-2.5 font-bold">
+                              IVC Morphology &amp; Membranous Web
+                            </td>
+                            <td className="py-1.5 px-2 text-right font-mono font-bold text-[#1C1C1E] whitespace-nowrap">
+                              {bcsCavalWeb ? "Web Present" : "Patent IVC"}
+                            </td>
+                            <td className="py-1.5 px-2 text-center font-mono text-[#8E8E93] whitespace-nowrap">
+                              Unobstructed
+                            </td>
+                            <td className="py-1.5 px-2.5 text-[#636366]">
+                              {bcsCavalWeb ? (
+                                <span className="text-purple-700 font-bold">Sinus-XL 24-28mm IVC membranotomy &amp; stenting</span>
+                              ) : caudateRightLobeResult.cRlRatio >= 0.65 ? (
+                                <span className="text-purple-700 font-bold">Caudate vein / Transcaval DIPS anatomical corridor</span>
+                              ) : (
+                                "Standard transjugular RHV / MHV access viable"
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Actionable Procedural Guidance & Anatomy Rationale */}
+                    <div className="p-2.5 rounded-lg bg-purple-50/70 border border-purple-100 flex items-start gap-2 text-[11px] text-purple-950">
+                      <Zap className="w-3.5 h-3.5 text-purple-600 shrink-0 mt-0.5" />
+                      <div className="space-y-0.5">
+                        <span className="font-bold">Procedural Pathway: </span>
+                        <span>
+                          {bcsCavalWeb
+                            ? "IVC membranous occlusion requires concurrent balloon membranotomy and Sinus-XL 24-28mm stenting prior to or during portal decompression."
+                            : caudateRightLobeResult.cRlRatio >= 0.65
+                            ? "Harbin C/RL ≥ 0.65 pathognomonic for severe caudate hypertrophy and hepatic vein effacement. Transcaval DIPS (direct puncture through caudate lobe to portal vein) is indicated over conventional transjugular TIPS."
                             : caudateRightLobeResult.awayaCirrhosisPredicted
-                            ? "bg-amber-50 text-amber-700 border border-amber-200"
-                            : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        }`}
-                      >
-                        {caudateRightLobeResult.harbinCirrhosisPredicted
-                          ? "Caudate Hypertrophy (≥ 0.65)"
-                          : caudateRightLobeResult.awayaCirrhosisPredicted
-                          ? "Borderline (≥ 0.58)"
-                          : "Normal Anatomy"}
-                      </span>
+                            ? "Awaya C/RL ≥ 0.58 indicates early morphologic remodeling. Correlate with wedged HVPG and Doppler patency of right/middle hepatic veins."
+                            : "Normal caudate morphology. Favorable anatomy for standard transjugular Viatorr 8-10mm TIPS creation."}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-black font-mono text-purple-700">
-                        {caudateRightLobeResult.cRlRatio}
-                      </span>
-                      <span className="text-xs text-[#8E8E93]">
-                        Formula: {bcsCaudateWidthMm} / {bcsRightLobeWidthMm} mm
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#636366] leading-relaxed border-t border-[#F2F2F7] pt-2">
-                      {caudateRightLobeResult.recommendation}
-                    </p>
                   </div>
                 )}
 

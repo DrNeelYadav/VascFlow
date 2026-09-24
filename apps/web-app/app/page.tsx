@@ -11,6 +11,12 @@ import {
 } from "./lib/staffAccounts";
 import { useEndoflowStore } from "./dashboard/useEndoflowStore";
 import { EndoFlowLogo } from "./components/EndoFlowLogo";
+import { ChangePasswordModal } from "./components/ChangePasswordModal";
+import {
+  persistStaffSession,
+  getPersistedStaffSession,
+  getRememberedStaffCode,
+} from "./lib/auth/sessionPersistence";
 import {
   ArrowRight,
   Activity,
@@ -21,6 +27,7 @@ import {
   Cpu,
   Workflow,
   ShieldCheck,
+  KeyRound,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -30,6 +37,8 @@ export default function LandingPage() {
   const [staffCode, setStaffCode] = useState<string>("DM01");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(true);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -38,6 +47,17 @@ export default function LandingPage() {
 
   React.useEffect(() => {
     setEffectiveAccounts(getEffectiveStaffAccounts());
+    // Auto-restore remembered staff code or active session
+    const active = getPersistedStaffSession();
+    if (active?.code) {
+      setStaffCode(active.code);
+    } else {
+      const remembered = getRememberedStaffCode();
+      if (remembered?.code) {
+        setStaffCode(remembered.code);
+        setRememberMe(remembered.rememberMe);
+      }
+    }
   }, []);
 
   const selectedStaffAccount =
@@ -71,11 +91,7 @@ export default function LandingPage() {
 
     setCurrentStaff(staff);
     try {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("vascule_staff_session", JSON.stringify(staff));
-        document.cookie = `vascule_token=auth_${staff.code}_${Date.now()}; path=/; SameSite=Lax`;
-        document.cookie = `authjs.session-token=mock_session_${staff.code}; path=/; SameSite=Lax`;
-      }
+      persistStaffSession(staff, { rememberMe });
     } catch {
       // Safe fallback
     }
@@ -161,14 +177,24 @@ export default function LandingPage() {
               </div>
 
               {/* Login Form */}
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <form
+                method="POST"
+                onSubmit={handleLoginSubmit}
+                className="space-y-4"
+                autoComplete="on"
+              >
                 {/* Staff ID */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-medium text-[#202124]">
+                  <label htmlFor="username" className="block text-xs font-medium text-[#202124]">
                     Department Staff ID
                   </label>
                   <input
                     type="text"
+                    id="username"
+                    name="username"
+                    autoComplete="username"
+                    autoCapitalize="characters"
+                    spellCheck={false}
                     required
                     value={staffCode}
                     onChange={(e) => {
@@ -248,16 +274,24 @@ export default function LandingPage() {
                 {/* Security PIN */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-medium text-[#202124]">
+                    <label htmlFor="password" className="block text-xs font-medium text-[#202124]">
                       Institutional PIN / Password
                     </label>
-                    <span className="text-[11px] text-[#5F6368]">
-                      Enter designated PIN
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowChangePasswordModal(true)}
+                      className="text-[11px] text-[#1A73E8] hover:underline cursor-pointer flex items-center gap-1"
+                    >
+                      <KeyRound className="w-3 h-3" />
+                      <span>Change Password</span>
+                    </button>
                   </div>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
+                      id="password"
+                      name="password"
+                      autoComplete="current-password"
                       required
                       value={password}
                       onChange={(e) => {
@@ -280,6 +314,23 @@ export default function LandingPage() {
                       )}
                     </button>
                   </div>
+                </div>
+
+                {/* Remember Me & Session Persistence Checkbox */}
+                <div className="flex items-center justify-between pt-0.5">
+                  <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-[#5F6368] hover:text-[#202124]">
+                    <input
+                      type="checkbox"
+                      name="remember-me"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-4 h-4 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8] cursor-pointer"
+                    />
+                    <span>Remember my ID & keep me logged in</span>
+                  </label>
+                  <span className="text-[10px] text-[#5F6368] bg-[#F1F3F4] px-1.5 py-0.5 rounded font-mono">
+                    30-Day Session
+                  </span>
                 </div>
 
                 {/* DM Resident / Staff Identity Lookup Indicator */}
@@ -410,6 +461,18 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Resident / Staff Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        defaultStaffCode={staffCode || "DM01"}
+        onSuccess={(newCode) => {
+          if (newCode) setStaffCode(newCode);
+          setPassword("");
+          setErrorMsg(null);
+        }}
+      />
     </div>
   );
 }

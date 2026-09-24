@@ -51,7 +51,6 @@ import {
   Zap,
   Pause,
   Play,
-  Truck,
 } from "lucide-react";
 
 export const BLANK_PATIENT_FORM = {
@@ -471,8 +470,6 @@ export default function OpClinicConsultationDeskPage() {
 
       setSuccessBanner({
         message: `🚨 STAT Cath-Lab Activated for ${effectiveName}! Transferred directly to Table without locking Ward beds.`,
-        linkHref: "/dashboard/logistics",
-        linkLabel: "Open Patient Logistics & Status Board →",
       });
       setTimeout(() => setSuccessBanner(null), 6000);
       return;
@@ -754,22 +751,6 @@ export default function OpClinicConsultationDeskPage() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <Link
-            href="/dashboard/logistics"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-linear-to-r from-[#EA4335] to-[#D93025] hover:from-[#D93025] hover:to-[#B31412] text-white text-xs font-black shadow-xs hover:shadow-md transition active:scale-95"
-            title="Immediate zero-delay STAT emergency fast-path direct to table & logistics board"
-          >
-            <Zap className="w-3.5 h-3.5 fill-white animate-pulse" />
-            <span>STAT EMERGENCY FAST-PATH</span>
-          </Link>
-          <Link
-            href="/dashboard/logistics"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] hover:bg-white text-[#1C1C1E] text-xs font-semibold shadow-xs transition"
-          >
-            <Truck className="w-3.5 h-3.5 text-[#007AFF]" />
-            <span className="hidden md:inline">Logistics Board</span>
-          </Link>
-
           {/* Segmented Control Mode Switcher */}
           <div className="flex items-center bg-[#F2F2F7] p-1 rounded-xl shrink-0 self-stretch sm:self-auto">
             <button
@@ -1346,26 +1327,6 @@ export default function OpClinicConsultationDeskPage() {
                   <p className="text-[10px] text-amber-800">
                     Documenting SOS triggers ensures patient has explicit clinical boundary conditions without occupying an inpatient hospital bed.
                   </p>
-                </div>
-              )}
-
-              {/* Conditional STAT Emergency Fast-Path Callout */}
-              {disposition === "STAT_CATH_LAB" && (
-                <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in fade-in">
-                  <div className="flex items-center gap-2.5">
-                    <Zap className="w-4 h-4 text-red-600 fill-red-600 animate-pulse shrink-0" />
-                    <div>
-                      <span className="font-bold text-red-900 block">STAT Emergency Fast-Path Direct To Table</span>
-                      <span className="text-[11px] text-red-700">Zero-delay bypasses regular ward bed queues and assigns straight to Angiosuite Table.</span>
-                    </div>
-                  </div>
-                  <Link
-                    href="/dashboard/logistics"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition shrink-0"
-                  >
-                    <Truck className="w-3.5 h-3.5" />
-                    <span>Open Logistics &amp; Status Board →</span>
-                  </Link>
                 </div>
               )}
             </div>

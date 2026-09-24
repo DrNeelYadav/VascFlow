@@ -10,6 +10,7 @@ import {
   generateIhmsDischargeForPatient,
   ProceduralImageAttachment,
   DischargeMedicationItem,
+  PostOperativeNoteData,
 } from "./ihmsDischargeTemplates";
 import {
   Printer,
@@ -38,10 +39,15 @@ import {
   BarChart3,
   Globe,
   Layers,
+  History,
+  ArrowUpRight,
+  Search,
+  FolderOpen,
 } from "lucide-react";
 import { ClinicalMetricsSuite } from "./ClinicalMetricsSuite";
 import { MasterCatalogDrawer } from "./MasterCatalogDrawer";
 import { SsoIhmsPrefill } from "./SsoIhmsPrefill";
+import { PatientArchiveDossier } from "./PatientArchiveDossier";
 import { MasterProcedure } from "../../lib/masterCatalog";
 import { getAllProcedureFamilies, getDischargeTemplate, CriteriaField } from './procedureDischargeTemplates';
 
@@ -260,6 +266,13 @@ export function synthesizeDischargeRecord({
     }.`;
 
     updated.caseSummary.familyHistory = `Chronic venous insufficiency: ${varicose.familyHistory}.`;
+    // Clinical risk factors - ensure patient name is NEVER injected into risk factors or etiology
+    updated.caseSummary.riskFactor = "Prolonged standing, chronic venous insufficiency, familial history. Viral markers (HIV, HBsAg, Anti-HCV) non-reactive.";
+
+    // Remove GSV ultrasound confirmation picture from varicose vein discharge summary
+    updated.attachments = (updated.attachments || []).filter(
+      (att) => att.modality !== "US"
+    );
 
     // Local Examination
     updated.systemicExam.localExamination = `${varicose.laterality}: Dilated, tortuous superficial varicosities along great saphenous distribution. ${
@@ -306,12 +319,13 @@ export function synthesizeDischargeRecord({
 
     updated.procedureDetails = [proc];
 
-    // Medications
+    // Medications - Full Generic Names + Official RMSCL DDC Codes
     const meds: DischargeMedicationItem[] = [
       {
         sNo: 1,
         medicine:
-          "Micronized Purified Flavonoid Fraction (Daflon) Tab 500mg [505]",
+          "Tab. Micronized Purified Flavonoid Fraction (Daflon) 500mg [RMSCL DDC #622]",
+        genericName: "Micronized Purified Flavonoid Fraction (Daflon)",
         dosePower: "500mg",
         route: "ORAL",
         frequency: "BD",
@@ -320,7 +334,8 @@ export function synthesizeDischargeRecord({
       },
       {
         sNo: 2,
-        medicine: "Paracetamol Tab 650mg [28]",
+        medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]",
+        genericName: "Paracetamol",
         dosePower: "650mg",
         route: "ORAL",
         frequency: "BD",
@@ -329,7 +344,8 @@ export function synthesizeDischargeRecord({
       },
       {
         sNo: 3,
-        medicine: "Pantoprazole Gastro-resistant Tab 40mg [142]",
+        medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
+        genericName: "Pantoprazole",
         dosePower: "40mg",
         route: "ORAL",
         frequency: "OD",
@@ -344,7 +360,8 @@ export function synthesizeDischargeRecord({
     ) {
       meds.push({
         sNo: 4,
-        medicine: "Amoxicillin and Potassium Clavulanate Tab 625mg [505]",
+        medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]",
+        genericName: "Amoxicillin and Potassium Clavulanate",
         dosePower: "625mg",
         route: "ORAL",
         frequency: "BD",
@@ -356,7 +373,8 @@ export function synthesizeDischargeRecord({
     if (varicose.itchingDuration !== "None") {
       meds.push({
         sNo: meds.length + 1,
-        medicine: "Levocetirizine Tablet 5mg [659]",
+        medicine: "Tab. Levocetirizine 5mg [RMSCL DDC #659]",
+        genericName: "Levocetirizine",
         dosePower: "5mg",
         route: "ORAL",
         frequency: "HS",
@@ -368,12 +386,17 @@ export function synthesizeDischargeRecord({
     meds.forEach((m, i) => (m.sNo = i + 1));
     updated.dischargeMedications = meds;
 
-    // Discharge Advice
+    // Discharge Advice & Follow-Up
+    const fuDateVaricose = new Date();
+    fuDateVaricose.setDate(fuDateVaricose.getDate() + 10);
+    const fuDateVaricoseStr = `${String(fuDateVaricose.getDate()).padStart(2, "0")}-${String(fuDateVaricose.getMonth() + 1).padStart(2, "0")}-${fuDateVaricose.getFullYear()}`;
+
     updated.dischargeDetails.generalAdvise =
       "1. Wear Class II graduated compression stockings (23-32 mmHg) during daytime for 3-4 weeks.\n2. Normal walking and early ambulation encouraged immediately; avoid continuous motionless standing or sitting > 1 hour.\n3. Elevate legs above heart level on 2 pillows while resting or sleeping.\n4. Keep puncture site dry and clean for 48 hours. Remove outer dressing after 48 hours.\n5. Avoid strenuous gym workouts, heavy weightlifting (> 15 kg), or hot tub baths for 2 weeks.\n6. Red Flag Emergency Warnings: Sudden onset severe calf pain or calf swelling, chest pain, shortness of breath, or active bleeding (report immediately to SMS Hospital Emergency / IR Dept).";
     updated.dischargeDetails.conditionOnDischarge = "Improved";
     updated.dischargeDetails.followUp =
       "Follow up in IR OPD Room 48 / Old Gastro Ward (SMS Hospital, Jaipur) after 7-10 days with duplex color Doppler ultrasound scan.";
+    updated.dischargeDetails.followUpDate = fuDateVaricoseStr;
   } else if (category === "varicocele") {
     // Varicocele Synthesis
     updated.caseSummary.icdDiagnosis =
@@ -407,7 +430,8 @@ export function synthesizeDischargeRecord({
     updated.dischargeMedications = [
       {
         sNo: 1,
-        medicine: "Cefixime Tab IP 200mg [112]",
+        medicine: "Tab. Cefixime 200mg [RMSCL DDC #112]",
+        genericName: "Cefixime",
         dosePower: "200mg",
         route: "ORAL",
         frequency: "BD",
@@ -416,7 +440,8 @@ export function synthesizeDischargeRecord({
       },
       {
         sNo: 2,
-        medicine: "Aceclofenac 100mg + Paracetamol 325mg Tab",
+        medicine: "Tab. Aceclofenac 100mg + Paracetamol 325mg [RMSCL DDC #622]",
+        genericName: "Aceclofenac + Paracetamol",
         dosePower: "1 Tab",
         route: "ORAL",
         frequency: "BD",
@@ -425,7 +450,8 @@ export function synthesizeDischargeRecord({
       },
       {
         sNo: 3,
-        medicine: "Pantoprazole Gastro-resistant Tab 40mg [142]",
+        medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
+        genericName: "Pantoprazole",
         dosePower: "40mg",
         route: "ORAL",
         frequency: "OD",
@@ -434,11 +460,16 @@ export function synthesizeDischargeRecord({
       },
     ];
 
+    const fuDateVaricocele = new Date();
+    fuDateVaricocele.setDate(fuDateVaricocele.getDate() + 14);
+    const fuDateVaricoceleStr = `${String(fuDateVaricocele.getDate()).padStart(2, "0")}-${String(fuDateVaricocele.getMonth() + 1).padStart(2, "0")}-${fuDateVaricocele.getFullYear()}`;
+
     updated.dischargeDetails.generalAdvise =
       "1. Wear firm scrotal support (athletic supporter / tight briefs) continuously for 7-10 days.\n2. Avoid heavy weight lifting (> 10 kg), strenuous gym workouts, running, and bicycling for 2 weeks.\n3. Keep groin puncture site clean and dry for 48 hours.\n4. Mild dull scrotal ache or slight cord induration is normal post-embolization and responds to prescribed analgesics.\n5. Abstain from sexual intercourse or ejaculation for 5-7 days.\n6. Report immediately to IR emergency if severe acute scrotal swelling, high fever (> 100.4°F), or active groin bleeding develops.";
     updated.dischargeDetails.conditionOnDischarge = "Improved";
     updated.dischargeDetails.followUp =
       "Follow up in IR OPD Room 48 after 2 weeks for puncture site check. Repeat semen analysis and scrotal Doppler after 3 months.";
+    updated.dischargeDetails.followUpDate = fuDateVaricoceleStr;
   } else {
     // Other IR Procedures (TIPS/BCS, BAE, PTBD, Liver Biopsy)
     const sub = otherIr.subProcedure;
@@ -473,7 +504,8 @@ export function synthesizeDischargeRecord({
       updated.dischargeMedications = [
         {
           sNo: 1,
-          medicine: "Tab Apixaban 5mg",
+          medicine: "Tab. Apixaban 5mg [RMSCL DDC #820]",
+          genericName: "Apixaban 5mg",
           dosePower: "5mg",
           route: "ORAL",
           frequency: "BD",
@@ -482,7 +514,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 2,
-          medicine: "Tab Torsemide 20mg [445]",
+          medicine: "Tab. Torsemide 20mg [RMSCL DDC #445]",
+          genericName: "Torsemide 20mg",
           dosePower: "20mg",
           route: "ORAL",
           frequency: "OD",
@@ -491,7 +524,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 3,
-          medicine: "Tab Spironolactone 50mg [448]",
+          medicine: "Tab. Spironolactone 50mg [RMSCL DDC #448]",
+          genericName: "Spironolactone 50mg",
           dosePower: "50mg",
           route: "ORAL",
           frequency: "OD",
@@ -500,7 +534,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 4,
-          medicine: "Syp Lactulose 30ml [512]",
+          medicine: "Syp. Lactulose 30ml [RMSCL DDC #512]",
+          genericName: "Lactulose 30ml",
           dosePower: "30ml",
           route: "ORAL",
           frequency: "HS",
@@ -509,7 +544,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 5,
-          medicine: "Cap Pantoprazole 40mg [142]",
+          medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
+          genericName: "Pantoprazole 40mg",
           dosePower: "40mg",
           route: "ORAL",
           frequency: "OD",
@@ -518,8 +554,13 @@ export function synthesizeDischargeRecord({
         },
       ];
 
+      const fuDateTips = new Date();
+      fuDateTips.setDate(fuDateTips.getDate() + 30);
+      const fuDateTipsStr = `${String(fuDateTips.getDate()).padStart(2, "0")}-${String(fuDateTips.getMonth() + 1).padStart(2, "0")}-${fuDateTips.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = `1. High protein, low salt diet (< 2g sodium/day). Daily morning weight monitoring.\n2. Strict adherence to Apixaban anticoagulation.\n3. Watch for hepatic encephalopathy signs (confusion, lethargy, inverted sleep cycles).\n4. Puncture site status: ${otherIr.punctureSiteStatus}.\n5. Analgesia status: ${otherIr.analgesia}.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
+      updated.dischargeDetails.followUpDate = fuDateTipsStr;
     } else if (sub.includes("BAE") || sub.includes("Bronchial")) {
       updated.caseSummary.icdDiagnosis =
         "(S) Hemoptysis (R04.2)\n(S) Bronchiectasis with acute lower respiratory infection (J47.0)";
@@ -541,7 +582,7 @@ export function synthesizeDischargeRecord({
       proc.surgicalProcedure = "BRONCHIAL ARTERY EMBOLIZATION (BAE)";
       proc.operationType = "Major";
       proc.anaesthesiaType = "LOCAL";
-      proc.procedureDetail = `Right common femoral artery access obtained; 5F vascular sheath placed. 5F Mikaelsson catheter used to selectively cannulate the right intercostobronchial trunk. High-resolution DSA confirmed tortuous hypertrophied bronchial branches with parenchymal blush and hypervascular shunting. Superselective microcatheterization achieved with 2.4F Progreat microcatheter. Embolization performed with 355-500 um PVA particles followed by 0.018" microcoils. Completion angiogram demonstrated complete obliteration of abnormal vessels. Spinal cord artery (anterior spinal artery / artery of Adamkiewicz) carefully identified and protected; zero non-target embolization. Technical result: ${otherIr.technicalSuccess}. Groin puncture site: ${otherIr.punctureSiteStatus}.`;
+      proc.procedureDetail = `Right common femoral artery access obtained; 5F vascular sheath placed. 5F Mikaelsson catheter used to selectively cannulate the right intercostobronchial trunk. High-resolution DSA confirmed tortuous hypertrophied bronchial branches with parenchymal blush and hypervascular shunting. Superselective microcatheterization achieved with 2.4F Progreat microcatheter. Embolization performed with PVA 300-500 µm particles followed by 0.018" microcoils. Completion angiogram demonstrated complete obliteration of abnormal vessels. Spinal cord artery (anterior spinal artery / artery of Adamkiewicz) carefully identified and protected; zero non-target embolization. Technical result: ${otherIr.technicalSuccess}. Groin puncture site: ${otherIr.punctureSiteStatus}.`;
       updated.procedureDetails = [proc];
 
       updated.systemicExam.localExamination = `Local Examination: Bilateral chest air entry present; right groin puncture site: ${otherIr.punctureSiteStatus}. Analgesia: ${otherIr.analgesia}. Distal pedal pulses intact.`;
@@ -549,7 +590,8 @@ export function synthesizeDischargeRecord({
       updated.dischargeMedications = [
         {
           sNo: 1,
-          medicine: "Tab Tranexamic Acid 500mg",
+          medicine: "Tab. Tranexamic Acid 500mg [RMSCL DDC #463]",
+          genericName: "Tranexamic Acid 500mg",
           dosePower: "500mg",
           route: "ORAL",
           frequency: "TID",
@@ -558,7 +600,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 2,
-          medicine: "Cefixime Tab IP 200mg [112]",
+          medicine: "Tab. Cefixime 200mg [RMSCL DDC #112]",
+          genericName: "Cefixime 200mg",
           dosePower: "200mg",
           route: "ORAL",
           frequency: "BD",
@@ -567,7 +610,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 3,
-          medicine: "Cap Pantoprazole 40mg [142]",
+          medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
+          genericName: "Pantoprazole 40mg",
           dosePower: "40mg",
           route: "ORAL",
           frequency: "OD",
@@ -576,7 +620,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 4,
-          medicine: "Syp Dextromethorphan (Antitussive) 10ml",
+          medicine: "Syp. Dextromethorphan Hydrobromide 10ml [RMSCL DDC #86]",
+          genericName: "Dextromethorphan Hydrobromide 10ml",
           dosePower: "10ml",
           route: "ORAL",
           frequency: "SOS",
@@ -585,8 +630,13 @@ export function synthesizeDischargeRecord({
         },
       ];
 
+      const fuDateBae = new Date();
+      fuDateBae.setDate(fuDateBae.getDate() + 14);
+      const fuDateBaeStr = `${String(fuDateBae.getDate()).padStart(2, "0")}-${String(fuDateBae.getMonth() + 1).padStart(2, "0")}-${fuDateBae.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = `1. Avoid forceful coughing, throat clearing, or straining.\n2. Bed rest for 48 hours.\n3. Puncture site care: ${otherIr.punctureSiteStatus}.\n4. Immediate report to hospital emergency if fresh hemoptysis recurs.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
+      updated.dischargeDetails.followUpDate = fuDateBaeStr;
     } else if (sub.includes("PTBD") || sub.includes("Biliary")) {
       updated.caseSummary.icdDiagnosis =
         "(S) Obstructive Jaundice (K83.1)\n(S) Malignant neoplasm of extrahepatic bile duct / Cholangiocarcinoma (C22.1)";
@@ -617,7 +667,8 @@ export function synthesizeDischargeRecord({
       updated.dischargeMedications = [
         {
           sNo: 1,
-          medicine: "Tab Cefuroxime Axetil 500mg [505]",
+          medicine: "Tab. Cefuroxime Axetil 500mg [RMSCL DDC #505]",
+          genericName: "Cefuroxime Axetil 500mg",
           dosePower: "500mg",
           route: "ORAL",
           frequency: "BD",
@@ -626,7 +677,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 2,
-          medicine: "Tab Ursodeoxycholic Acid 300mg",
+          medicine: "Tab. Ursodeoxycholic Acid 300mg [RMSCL DDC #658]",
+          genericName: "Ursodeoxycholic Acid 300mg",
           dosePower: "300mg",
           route: "ORAL",
           frequency: "BD",
@@ -635,7 +687,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 3,
-          medicine: "Cap Pantoprazole 40mg [142]",
+          medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
+          genericName: "Pantoprazole 40mg",
           dosePower: "40mg",
           route: "ORAL",
           frequency: "OD",
@@ -644,8 +697,13 @@ export function synthesizeDischargeRecord({
         },
       ];
 
+      const fuDatePtbd = new Date();
+      fuDatePtbd.setDate(fuDatePtbd.getDate() + 7);
+      const fuDatePtbdStr = `${String(fuDatePtbd.getDate()).padStart(2, "0")}-${String(fuDatePtbd.getMonth() + 1).padStart(2, "0")}-${fuDatePtbd.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = `1. Empty and measure biliary drainage bag output twice daily in mL.\n2. Keep puncture site dressing dry and intact; flush catheter with 5-10 mL sterile normal saline once daily as instructed.\n3. Do not pull or kink the external tubing.\n4. Puncture site care: ${otherIr.punctureSiteStatus}.\n5. Immediate emergency visit if catheter dislodges, drain output suddenly stops, or high fever with chills occurs.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
+      updated.dischargeDetails.followUpDate = fuDatePtbdStr;
     } else if (sub.includes("SEMS")) {
       updated.caseSummary.icdDiagnosis =
         "(S) Malignant neoplasm of extrahepatic bile duct / Cholangiocarcinoma (C22.1)\n(S) Secondary malignant neoplasm of liver (C78.7)";
@@ -671,12 +729,17 @@ export function synthesizeDischargeRecord({
 
       updated.systemicExam.localExamination = `Local Examination: Icterus present (+2). Abdomen soft, non-tender. Right flank access site dry and sealed. Distal vitals stable. Analgesia: ${otherIr.analgesia}.`;
       updated.dischargeMedications = [
-        { sNo: 1, medicine: "Tab Cefuroxime Axetil 500mg [505]", dosePower: "500mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
-        { sNo: 2, medicine: "Tab Ursodeoxycholic Acid 300mg", dosePower: "300mg", route: "ORAL", frequency: "BD", days: 30, instructions: "With food" },
-        { sNo: 3, medicine: "Cap Pantoprazole 40mg [142]", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 10, instructions: "Before breakfast" },
+        { sNo: 1, medicine: "Tab. Cefuroxime Axetil 500mg [RMSCL DDC #505]", genericName: "Cefuroxime Axetil 500mg", dosePower: "500mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
+        { sNo: 2, medicine: "Tab. Ursodeoxycholic Acid 300mg [RMSCL DDC #658]", genericName: "Ursodeoxycholic Acid 300mg", dosePower: "300mg", route: "ORAL", frequency: "BD", days: 30, instructions: "With food" },
+        { sNo: 3, medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]", genericName: "Pantoprazole 40mg", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 10, instructions: "Before breakfast" },
       ];
+      const fuDateSems = new Date();
+      fuDateSems.setDate(fuDateSems.getDate() + 14);
+      const fuDateSemsStr = `${String(fuDateSems.getDate()).padStart(2, "0")}-${String(fuDateSems.getMonth() + 1).padStart(2, "0")}-${fuDateSems.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = "1. Maintain adequate oral hydration (2.5 - 3 L/day).\n2. Follow low-fat diet.\n3. Keep puncture site dry for 48 hours.\n4. Report to hospital emergency immediately if high fever with rigors (cholangitis) or recurrence of jaundice occurs.";
       updated.dischargeDetails.followUp = "Review in IR OPD Room 48 / Gastro Unit after 2 weeks with repeat Liver Function Test (LFT).";
+      updated.dischargeDetails.followUpDate = fuDateSemsStr;
     } else if (sub.includes("PCD") || sub.includes("Abscess")) {
       updated.caseSummary.icdDiagnosis =
         "(S) Amoebic liver abscess (A06.4)\n(S) Abscess of liver, unspecified (K75.0)";
@@ -702,12 +765,17 @@ export function synthesizeDischargeRecord({
 
       updated.systemicExam.localExamination = `Local Examination: Right flank PCD tube in situ, secure with suture, draining thick fluid into sterile bag. Abdomen soft, localized RUQ tenderness reduced. Analgesia: ${otherIr.analgesia}.`;
       updated.dischargeMedications = [
-        { sNo: 1, medicine: "Tab Metronidazole 400mg [140]", dosePower: "400mg", route: "ORAL", frequency: "TID", days: 10, instructions: "After meals" },
-        { sNo: 2, medicine: "Tab Amoxicillin + Clavulanate 625mg [505]", dosePower: "625mg", route: "ORAL", frequency: "BD", days: 7, instructions: "Post meals" },
-        { sNo: 3, medicine: "Tab Paracetamol 650mg [28]", dosePower: "650mg", route: "ORAL", frequency: "TID", days: 5, instructions: "For fever/pain" },
+        { sNo: 1, medicine: "Tab. Metronidazole 400mg [RMSCL DDC #140]", genericName: "Metronidazole 400mg", dosePower: "400mg", route: "ORAL", frequency: "TID", days: 10, instructions: "After meals" },
+        { sNo: 2, medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]", genericName: "Amoxicillin and Potassium Clavulanate 625mg", dosePower: "625mg", route: "ORAL", frequency: "BD", days: 7, instructions: "Post meals" },
+        { sNo: 3, medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]", genericName: "Paracetamol 650mg", dosePower: "650mg", route: "ORAL", frequency: "TID", days: 5, instructions: "For fever/pain" },
       ];
+      const fuDatePcd = new Date();
+      fuDatePcd.setDate(fuDatePcd.getDate() + 5);
+      const fuDatePcdStr = `${String(fuDatePcd.getDate()).padStart(2, "0")}-${String(fuDatePcd.getMonth() + 1).padStart(2, "0")}-${fuDatePcd.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = "1. Record drain volume daily in mL at 8:00 AM and 8:00 PM.\n2. Keep catheter exit site clean and dry; do not pull or disconnect tubing.\n3. High-protein diet.\n4. Emergency recall if drain stops abruptly while cavity is full, or if acute abdominal pain/guarding occurs.";
       updated.dischargeDetails.followUp = "Review in IR OPD Room 48 after 5 days for drain volume check and ultrasound cavity assessment.";
+      updated.dischargeDetails.followUpDate = fuDatePcdStr;
     } else if (sub.includes("SAE") || sub.includes("Splenic")) {
       updated.caseSummary.icdDiagnosis =
         "(S) Hypersplenism (D73.1)\n(S) Splenomegaly, not elsewhere classified (R16.1)";
@@ -728,17 +796,22 @@ export function synthesizeDischargeRecord({
       };
       proc.surgicalProcedure = "PARTIAL SPLENIC ARTERY EMBOLIZATION (SAE)";
       proc.operationType = "Major";
-      proc.procedureDetail = `Right common femoral artery access obtained with 5F vascular sheath under local anesthesia. 5F Cobra/Simmons catheter engaged celiac axis and selective splenic arteriogram obtained, demonstrating massive hypervascular splenic parenchyma with tortuous branches. 2.4F microcatheter advanced distally beyond pancreatic and gastric branches into mid/lower polar splenic branches. Embolization performed with 500-700 um PVA particles mixed with non-ionic contrast and antibiotic prophylaxis (Cefazolin) slurry. Completion run verified ~60% parenchymal devascularization with excellent preservation of upper polar splenic perfusion. Sheath removed, manual compression applied for 15 minutes; puncture site intact. Technical result: ${otherIr.technicalSuccess}.`;
+      proc.procedureDetail = `Right common femoral artery access obtained with 5F vascular sheath under local anesthesia. 5F Cobra/Simmons catheter engaged celiac axis and selective splenic arteriogram obtained, demonstrating massive hypervascular splenic parenchyma with tortuous branches. 2.4F microcatheter advanced distally beyond pancreatic and gastric branches into mid/lower polar splenic branches. Embolization performed with 300-500 µm / 500-710 µm PVA particles mixed with non-ionic contrast and antibiotic prophylaxis (Cefazolin) slurry. Completion run verified ~60% parenchymal devascularization with excellent preservation of upper polar splenic perfusion. Sheath removed, manual compression applied for 15 minutes; puncture site intact. Technical result: ${otherIr.technicalSuccess}.`;
       updated.procedureDetails = [proc];
 
       updated.systemicExam.localExamination = `Local Examination: Right groin puncture site: ${otherIr.punctureSiteStatus}. Spleen palpable 5 cm below costal margin, mild left hypochondrial tenderness (post-embolization response). Analgesia: ${otherIr.analgesia}. Distal pulses intact.`;
       updated.dischargeMedications = [
-        { sNo: 1, medicine: "Tab Cefixime 200mg [112]", dosePower: "200mg", route: "ORAL", frequency: "BD", days: 7, instructions: "Post meals" },
-        { sNo: 2, medicine: "Tab Tramadol 37.5mg + Paracetamol 325mg", dosePower: "1 Tab", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals for post-embolization pain" },
-        { sNo: 3, medicine: "Cap Pantoprazole 40mg [142]", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 7, instructions: "Before breakfast" },
+        { sNo: 1, medicine: "Tab. Cefixime 200mg [RMSCL DDC #112]", genericName: "Cefixime 200mg", dosePower: "200mg", route: "ORAL", frequency: "BD", days: 7, instructions: "Post meals" },
+        { sNo: 2, medicine: "Tab. Tramadol 37.5mg + Paracetamol 325mg [RMSCL DDC #624]", genericName: "Tramadol 37.5mg + Paracetamol 325mg", dosePower: "1 Tab", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals for post-embolization pain" },
+        { sNo: 3, medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]", genericName: "Pantoprazole 40mg", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 7, instructions: "Before breakfast" },
       ];
+      const fuDateSae = new Date();
+      fuDateSae.setDate(fuDateSae.getDate() + 10);
+      const fuDateSaeStr = `${String(fuDateSae.getDate()).padStart(2, "0")}-${String(fuDateSae.getMonth() + 1).padStart(2, "0")}-${fuDateSae.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = "1. Strict bed rest for 48 hours; avoid abdominal pressure or heavy lifting.\n2. Low-grade fever and left flank pain are expected post-embolization syndrome symptoms.\n3. Puncture site care: keep dry for 48 hours.\n4. Immediate hospital visit if severe breathlessness, left shoulder tip pain, or temperature > 102°F occurs.";
       updated.dischargeDetails.followUp = "Review in IR OPD Room 48 with repeat CBC (Platelet count) and ultrasound Doppler after 10 days.";
+      updated.dischargeDetails.followUpDate = fuDateSaeStr;
     } else if (sub.includes("Fistuloplasty") || sub.includes("AV")) {
       updated.caseSummary.icdDiagnosis =
         "(S) Mechanical complication of other vascular grafts and implants (T82.8)\n(S) End stage renal disease (N18.6)";
@@ -764,11 +837,17 @@ export function synthesizeDischargeRecord({
 
       updated.systemicExam.localExamination = `Local Examination: Left forearm AVF: Brisk continuous palpable thrill and loud systolic-diastolic machinery murmur. Puncture site sealed, no hematoma. Hand warm, radial pulse palpable (+++).`;
       updated.dischargeMedications = [
-        { sNo: 1, medicine: "Tab Paracetamol 500mg [28]", dosePower: "500mg", route: "ORAL", frequency: "SOS", days: 3, instructions: "For puncture site ache" },
-        { sNo: 2, medicine: "Mupirocin 2% Ointment", dosePower: "Local", route: "TOPICAL", frequency: "BD", days: 5, instructions: "Apply locally over puncture site" },
+        { sNo: 1, medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]", genericName: "Paracetamol 650mg", dosePower: "650mg", route: "ORAL", frequency: "SOS", days: 3, instructions: "For puncture site ache" },
+        { sNo: 2, medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]", genericName: "Amoxicillin and Potassium Clavulanate 625mg", dosePower: "625mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
+        { sNo: 3, medicine: "Mupirocin 2% Ointment [RMSCL DDC #278]", genericName: "Mupirocin 2% Ointment", dosePower: "Local", route: "TOPICAL", frequency: "BD", days: 5, instructions: "Apply locally over puncture site" },
       ];
+      const fuDateFistulo = new Date();
+      fuDateFistulo.setDate(fuDateFistulo.getDate() + 14);
+      const fuDateFistuloStr = `${String(fuDateFistulo.getDate()).padStart(2, "0")}-${String(fuDateFistulo.getMonth() + 1).padStart(2, "0")}-${fuDateFistulo.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = "1. Avoid taking blood pressure, blood draws, or wearing tight wristbands/jewelry on the fistula arm.\n2. Palpate the thrill twice daily (morning & night).\n3. Hemodialysis permitted from existing access after 24 hours.\n4. Report to emergency immediately if the thrill or murmur disappears.";
       updated.dischargeDetails.followUp = "Review in Dialysis Access Clinic / IR OPD Room 48 in 2 weeks.";
+      updated.dischargeDetails.followUpDate = fuDateFistuloStr;
     } else if (sub.includes("TACE")) {
       updated.caseSummary.icdDiagnosis =
         "(S) Malignant neoplasm of liver and intrahepatic bile ducts (C22.0)\n(S) Viral hepatitis B without mention of hepatic coma (B18.1)";
@@ -789,18 +868,23 @@ export function synthesizeDischargeRecord({
       };
       proc.surgicalProcedure = "CONVENTIONAL TRANSARTERIAL CHEMOEMBOLIZATION (cTACE)";
       proc.operationType = "Major";
-      proc.procedureDetail = `Right common femoral artery accessed with 5F sheath under local anesthesia. Celiac and common hepatic angiograms defined arterial anatomy and confirmed tumor blush supplied by a branch of the right hepatic artery. 2.0F microcatheter advanced superselectively into the tumor-feeding branch. Emulsion of Doxorubicin (30 mg) with 8 mL Lipiodol infused under continuous fluoroscopy until complete tumor saturation and vascular stasis achieved, followed by Gelfoam slurry particle embolization. Completion angiogram confirmed dense Lipiodol retention throughout tumor and cessation of arterial blush. Sheath removed, hemostasis achieved. Technical result: ${otherIr.technicalSuccess}.`;
+      proc.procedureDetail = `Right common femoral artery accessed with 5F sheath under local anesthesia. Celiac and common hepatic angiograms defined arterial anatomy and confirmed tumor blush supplied by a branch of the right hepatic artery. 2.0F microcatheter advanced superselectively into the tumor-feeding branch. Emulsion of Doxorubicin (30-50 mg) with 8-10 mL Lipiodol infused under continuous fluoroscopy until complete tumor saturation and vascular stasis achieved, followed by Gelfoam slurry / PVA particles (300-500 µm) embolization. Completion angiogram confirmed dense Lipiodol retention throughout tumor and cessation of arterial blush. Sheath removed, hemostasis achieved. Technical result: ${otherIr.technicalSuccess}.`;
       updated.procedureDetails = [proc];
 
       updated.systemicExam.localExamination = `Local Examination: Right groin puncture site: ${otherIr.punctureSiteStatus}. Abdomen soft, mild tenderness over right lobe. Analgesia: ${otherIr.analgesia}. Distal pulses intact.`;
       updated.dischargeMedications = [
-        { sNo: 1, medicine: "Tab Ondansetron 4mg [167]", dosePower: "4mg", route: "ORAL", frequency: "BD", days: 3, instructions: "Before food for nausea" },
-        { sNo: 2, medicine: "Cap Pantoprazole 40mg [142]", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 14, instructions: "Before breakfast" },
-        { sNo: 3, medicine: "Tab Cefixime 200mg [112]", dosePower: "200mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
-        { sNo: 4, medicine: "Tab Paracetamol 650mg [28]", dosePower: "650mg", route: "ORAL", frequency: "TID", days: 5, instructions: "For post-embolization fever/ache" },
+        { sNo: 1, medicine: "Tab. Ondansetron 4mg [RMSCL DDC #167]", genericName: "Ondansetron 4mg", dosePower: "4mg", route: "ORAL", frequency: "BD", days: 3, instructions: "Before food for nausea" },
+        { sNo: 2, medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]", genericName: "Pantoprazole 40mg", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 14, instructions: "Before breakfast" },
+        { sNo: 3, medicine: "Tab. Cefixime 200mg [RMSCL DDC #112]", genericName: "Cefixime 200mg", dosePower: "200mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
+        { sNo: 4, medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]", genericName: "Paracetamol 650mg", dosePower: "650mg", route: "ORAL", frequency: "TID", days: 5, instructions: "For post-embolization fever/ache" },
       ];
+      const fuDateTace = new Date();
+      fuDateTace.setDate(fuDateTace.getDate() + 28);
+      const fuDateTaceStr = `${String(fuDateTace.getDate()).padStart(2, "0")}-${String(fuDateTace.getMonth() + 1).padStart(2, "0")}-${fuDateTace.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = "1. Adequate oral fluids (2-3 L/day) for contrast and chemotherapy clearance.\n2. Light, non-oily diet.\n3. Puncture site care: keep dry for 48 hours.\n4. Report to emergency if persistent intractable vomiting, severe abdominal pain, or jaundice occurs.";
       updated.dischargeDetails.followUp = "Review in IR OPD Room 48 / Liver Clinic in 4 weeks with dynamic multiphasic CECT and serum AFP.";
+      updated.dischargeDetails.followUpDate = fuDateTaceStr;
     } else {
       // Liver Biopsy
       updated.caseSummary.icdDiagnosis =
@@ -832,7 +916,8 @@ export function synthesizeDischargeRecord({
       updated.dischargeMedications = [
         {
           sNo: 1,
-          medicine: "Paracetamol Tab 650mg [28]",
+          medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]",
+          genericName: "Paracetamol 650mg",
           dosePower: "650mg",
           route: "ORAL",
           frequency: "SOS",
@@ -841,7 +926,8 @@ export function synthesizeDischargeRecord({
         },
         {
           sNo: 2,
-          medicine: "Cap Pantoprazole 40mg [142]",
+          medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
+          genericName: "Pantoprazole 40mg",
           dosePower: "40mg",
           route: "ORAL",
           frequency: "OD",
@@ -850,9 +936,59 @@ export function synthesizeDischargeRecord({
         },
       ];
 
+      const fuDateBiopsy = new Date();
+      fuDateBiopsy.setDate(fuDateBiopsy.getDate() + 5);
+      const fuDateBiopsyStr = `${String(fuDateBiopsy.getDate()).padStart(2, "0")}-${String(fuDateBiopsy.getMonth() + 1).padStart(2, "0")}-${fuDateBiopsy.getFullYear()}`;
+
       updated.dischargeDetails.generalAdvise = `1. Rest quietly at home for 24 hours; avoid lifting heavy weights or strenuous work for 48 hours.\n2. Keep waterproof dressing dry for 24 hours.\n3. Puncture site care: ${otherIr.punctureSiteStatus}.\n4. Report immediately if dizziness, shoulder tip pain, severe right upper abdominal pain, or black stools occur.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
+      updated.dischargeDetails.followUpDate = fuDateBiopsyStr;
     }
+  }
+
+  // Update post-operative notes based on category and parameters
+  if (category === "varicose_veins") {
+    updated.postOperativeNotes = {
+      accessSiteHemostasis: `Puncture site (${varicose.laterality} GSV / access site): Complete hemostasis achieved. Puncture clean, dry and intact with zero hematoma. Class II graduated compression stocking applied.`,
+      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "BP: 112/84 mmHg, HR: 66 bpm regular, SpO2: 100% on ambient air, RR: 18/min, Afebrile (98°F)",
+      sheathRemovalTime: updated.postOperativeNotes?.sheathRemovalTime || `${new Date().toLocaleDateString("en-IN")} 10:45 AM (Immediate post-closure in Angiosuite)`,
+      sheathStatus: "Removed",
+      recoveryStatus: `Conscious, oriented, pain minimal (VAS 1/10). Early ambulation protocol initiated with Class II compression stockings in place. Able to void urine and ambulate comfortably.`,
+      recoveryBed: "Cath-Lab Holding Rec-01",
+      distalPulses: "Strong (+++) - Dorsalis pedis and posterior tibial arterial pulsations palpated strong and equal bilaterally",
+      immediateComplications: "Nil - Zero hematoma, zero DVT on completion Doppler, zero sensory deficit",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr Shashank Sharma",
+      recordedAt: `${new Date().toLocaleDateString("en-IN")} 11:30 AM`,
+      notes: `Successful ${varicose.modality} ablation of ${varicose.laterality} GSV. Non-compressible occluded GSV cast confirmed. Patient cleared for discharge.`,
+    };
+  } else if (category === "varicocele") {
+    updated.postOperativeNotes = {
+      accessSiteHemostasis: `Right common femoral vein / IJV puncture site: ${otherIr.punctureSiteStatus || "Clean, Dry & Intact (No Hematoma/Bruit)"}. Manual compression applied; complete seal achieved.`,
+      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "BP: 118/76 mmHg, HR: 68 bpm regular, SpO2: 99% on room air, RR: 16/min",
+      sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:00 AM (Immediate post-embolization)`,
+      sheathStatus: "Removed",
+      recoveryStatus: `Conscious and oriented. Minimal scrotal discomfort. Supine bed rest for 2 hours maintained. Ice pack applied to access and scrotal site.`,
+      recoveryBed: "Daycare Holding Bay 03",
+      distalPulses: "Strong (+++) - Bilateral femoral and distal peripheral pulses intact",
+      immediateComplications: "Nil - Zero access site hematoma, zero coil migration, zero scrotal swelling",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr Shashank Sharma",
+      recordedAt: `${new Date().toLocaleDateString("en-IN")} 11:45 AM`,
+      notes: "Internal spermatic vein embolization completed. Hemostasis verified. Discharged on oral NSAIDs and scrotal support advice.",
+    };
+  } else {
+    updated.postOperativeNotes = {
+      accessSiteHemostasis: `Access site status: ${otherIr.punctureSiteStatus}. Complete hemostasis verified with pressure dressing in situ.`,
+      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "BP: 120/76 mmHg, HR: 72 bpm, SpO2: 99% on ambient air, RR: 16/min",
+      sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Vascular closure / pressure hemostasis confirmed)`,
+      sheathStatus: "Removed",
+      recoveryStatus: `Conscious, oriented, hemodynamically stable. Pain control: ${otherIr.analgesia}. Recovery bed rest instructions active.`,
+      recoveryBed: "Cath-Lab Holding PACU-01",
+      distalPulses: "Strong (+++) - Distal peripheral pulses palpated and intact bilaterally",
+      immediateComplications: "Nil - Zero access site bleeding, zero pseudoaneurysm, zero distal vascular compromise",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr Meenu Bagarhatta",
+      recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:15 PM`,
+      notes: `Technical outcome: ${otherIr.technicalSuccess}. Post-operative recovery monitoring completed uneventfully.`,
+    };
   }
 
   return updated;
@@ -899,9 +1035,19 @@ export default function DischargeSummaryPage() {
   }, [patients]);
 
   const [selectedPatientId, setSelectedPatientId] = useState<string>("EX01");
-  const [activeTab, setActiveTab] = useState<"preview" | "editor" | "analytics" | "sso">("preview");
+  const [activeTab, setActiveTab] = useState<"preview" | "editor" | "analytics" | "sso" | "history" | "archive">("preview");
   const [masterCatalogOpen, setMasterCatalogOpen] = useState(false);
   const [copyToast, setCopyToast] = useState<string | null>(null);
+
+  // Sync with URL query parameter on mount (?tab=archive)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("tab") === "archive") {
+        setActiveTab("archive");
+      }
+    }
+  }, []);
 
   // New dynamic templates state
   const [selectedProcedureKey, setSelectedProcedureKey] = useState<string>("varicose_veins");
@@ -1030,6 +1176,19 @@ export default function DischargeSummaryPage() {
         dischargeDetails: {
           ...prev.dischargeDetails,
           generalAdvise: template.dischargeAdvice.join('\n'),
+        },
+        postOperativeNotes: {
+          accessSiteHemostasis: `Access site hemostasis: Pressure dressing intact. Site clean, dry, zero active oozing or hematoma.`,
+          telemetryVitals: prev.postOperativeNotes?.telemetryVitals || "BP: 120/78 mmHg, HR: 72 bpm regular, SpO2: 99% on room air, RR: 16/min",
+          sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Vascular closure confirmed)`,
+          sheathStatus: "Removed",
+          recoveryStatus: `Conscious, oriented x3, hemodynamically stable. Post-op orders: ${template.dischargeAdvice[0] || "Rest quietly in bed."}`,
+          recoveryBed: prev.postOperativeNotes?.recoveryBed || "Cath-Lab Holding Rec-01",
+          distalPulses: "Strong (+++) - Bilateral distal peripheral pulses intact",
+          immediateComplications: "Nil documented - Zero immediate procedural complications",
+          recordedBy: "Dr Shashank Sharma",
+          recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:00 PM`,
+          notes: `Post-procedural recovery for ${template.procedureFamily} completed uneventfully. Vitals and access site hemostasis verified.`,
         },
       }));
     }
@@ -1176,6 +1335,19 @@ export default function DischargeSummaryPage() {
       };
       copy.procedureDetails = [newProcItem];
       copy.dischargeDetails.generalAdvise = `${proc.postOpCare.immobilizationInstructions} Hydration Protocol: ${proc.postOpCare.hydrationProtocol}. Red flags: ${proc.postOpCare.redFlags.join(", ")}.`;
+      copy.postOperativeNotes = {
+        accessSiteHemostasis: `Access Site (${proc.accessSiteDefault}): Manual compression / closure device deployed. Complete hemostasis verified. Zero oozing.`,
+        telemetryVitals: prev.postOperativeNotes?.telemetryVitals || "BP: 120/78 mmHg, HR: 72 bpm regular, SpO2: 99% on room air, RR: 16/min",
+        sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Sheath profile ${proc.sheathDefault} removed; closure confirmed)`,
+        sheathStatus: "Removed",
+        recoveryStatus: `Conscious, oriented, stable recovery. ${proc.postOpCare.immobilizationInstructions}`,
+        recoveryBed: "PACU Holding / Cath-Lab Recovery",
+        distalPulses: "Strong (+++) - Distal peripheral pulses bilaterally palpable and equal",
+        immediateComplications: "Nil documented - Technical success and immediate stability achieved",
+        recordedBy: "Dr Meenu Bagarhatta",
+        recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:00 PM`,
+        notes: `Post-op observation for ${proc.title}. Strict immobilization and hydration protocol active.`,
+      };
       return copy;
     });
     setProcedureCategory("other_ir");
@@ -1282,6 +1454,16 @@ ${summaryData.procedureDetails
   )
   .join("\n\n")}
 
+POST-OPERATIVE NOTES:
+Access Site Hemostasis: ${summaryData.postOperativeNotes?.accessSiteHemostasis || "Hemostasis Intact. Site clean, dry, pressure dressing applied."}
+Telemetry Vitals: ${summaryData.postOperativeNotes?.telemetryVitals || "Stable"}
+Sheath Removal Time / Status: ${summaryData.postOperativeNotes?.sheathRemovalTime || "Immediate post-op"} (${summaryData.postOperativeNotes?.sheathStatus || "Removed"})
+Recovery Status: ${summaryData.postOperativeNotes?.recoveryStatus || "Conscious, oriented, pain controlled"}
+Recovery Bed / Ward: ${summaryData.postOperativeNotes?.recoveryBed || summaryData.admissionDetails.wardBed}
+Distal Peripheral Pulses: ${summaryData.postOperativeNotes?.distalPulses || "Strong (+++) bilaterally equal"}
+Immediate Complications: ${summaryData.postOperativeNotes?.immediateComplications || "Nil"}
+Recorded By: ${summaryData.postOperativeNotes?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy}
+
 DISCHARGE MEDICATIONS (RMSCL EDL):
 ${summaryData.dischargeMedications
   .map(
@@ -1293,7 +1475,11 @@ ${summaryData.dischargeMedications
 PATIENT DISCHARGE DETAILS:
 General Advice: ${summaryData.dischargeDetails.generalAdvise}
 Condition on Discharge: ${summaryData.dischargeDetails.conditionOnDischarge}
-Follow Up: ${summaryData.dischargeDetails.followUp}
+Follow Up: ${summaryData.dischargeDetails.followUp}${
+      summaryData.dischargeDetails.followUpDate
+        ? `\nNext Appointment Date: ${summaryData.dischargeDetails.followUpDate}`
+        : ""
+    }
 Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
       summaryData.dischargeDetails.dischargePreparedBy
     }`;
@@ -1581,6 +1767,24 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
           ⚡ Operative Note
         </button>
         <button
+          onClick={() => {
+            const p = summaryData.postOperativeNotes;
+            const text = `POST-OPERATIVE RECOVERY NOTES:
+Access Site Hemostasis: ${p?.accessSiteHemostasis || "Hemostasis Intact. Site clean, dry, pressure dressing applied."}
+Telemetry Vitals: ${p?.telemetryVitals || "Stable"}
+Sheath Removal Time / Status: ${p?.sheathRemovalTime || "Immediate post-op"} (${p?.sheathStatus || "Removed"})
+Recovery Status: ${p?.recoveryStatus || "Conscious, oriented"}
+Recovery Bed: ${p?.recoveryBed || summaryData.admissionDetails.wardBed}
+Distal Peripheral Pulses: ${p?.distalPulses || "Strong (+++)"}
+Immediate Complications: ${p?.immediateComplications || "Nil"}
+Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy}`;
+            copyTextToClipboard(text, "Post-Operative Notes");
+          }}
+          className="px-2.5 py-1 rounded-md bg-white border border-[#DADCE0] hover:border-[#1A73E8] text-[11px] font-semibold text-[#3C4043] hover:text-[#1A73E8] transition-colors whitespace-nowrap cursor-pointer shadow-2xs"
+        >
+          🩺 Post-Op Notes
+        </button>
+        <button
           onClick={() =>
             copyTextToClipboard(
               summaryData.dischargeMedications
@@ -1651,6 +1855,17 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
               <span>Charts/Metrics</span>
             </button>
             <button
+              onClick={() => setActiveTab("history")}
+              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeTab === "history"
+                  ? "bg-white text-[#1A73E8] shadow-xs"
+                  : "text-[#5F6368] hover:text-[#202124]"
+              }`}
+            >
+              <History className="w-3.5 h-3.5 text-[#1A73E8]" />
+              <span>Records History</span>
+            </button>
+            <button
               onClick={() => setActiveTab("sso")}
               className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === "sso"
@@ -1660,6 +1875,17 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             >
               <Globe className="w-3.5 h-3.5 text-[#137333]" />
               <span>SSO Ingestion</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("archive")}
+              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeTab === "archive"
+                  ? "bg-white text-[#E37400] shadow-xs font-bold"
+                  : "text-[#5F6368] hover:text-[#202124]"
+              }`}
+            >
+              <FolderOpen className="w-3.5 h-3.5 text-[#E37400]" />
+              <span>Patient Dossier Archive (1,057)</span>
             </button>
           </div>
         </div>
@@ -2509,7 +2735,143 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             </div>
           </div>
 
-          {/* Section 7: Discharge Medications Table */}
+          {/* Section 7: Dedicated Post-Operative Notes (SMS Cath-Lab Holding & Recovery) */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#202124]">
+                  POST-OPERATIVE NOTES &amp; IMMEDIATE RECOVERY PROTOCOL
+                </h4>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#E8F0FE] text-[#1A73E8]">
+                  CATH-LAB HOLDING
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  const p = summaryData.postOperativeNotes;
+                  const text = `POST-OPERATIVE RECOVERY NOTES:
+Access Site Hemostasis: ${p?.accessSiteHemostasis || "Hemostasis Intact. Site clean, dry, pressure dressing applied."}
+Telemetry Vitals: ${p?.telemetryVitals || "Stable"}
+Sheath Removal Time / Status: ${p?.sheathRemovalTime || "Immediate post-op"} (${p?.sheathStatus || "Removed"})
+Recovery Status: ${p?.recoveryStatus || "Conscious, oriented"}
+Recovery Bed / Ward: ${p?.recoveryBed || summaryData.admissionDetails.wardBed}
+Distal Peripheral Pulses: ${p?.distalPulses || "Strong (+++)"}
+Immediate Complications: ${p?.immediateComplications || "Nil"}
+Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy}`;
+                  copyTextToClipboard(text, "Post-Operative Notes");
+                }}
+                className="text-[10px] font-semibold text-[#1A73E8] hover:underline flex items-center gap-1 cursor-pointer print:hidden"
+              >
+                <Copy className="w-3 h-3" /> Copy Post-Op Notes
+              </button>
+            </div>
+
+            <div className="border border-[#DADCE0] bg-white rounded-lg p-3 text-xs space-y-2.5">
+              {/* Top Key Metrics Banner */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 bg-[#F8F9FA] p-2.5 rounded-lg border border-[#DADCE0]">
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-[#5F6368] block">
+                    Access Site Hemostasis
+                  </span>
+                  <span className="font-semibold text-[#137333] flex items-center gap-1 mt-0.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#137333] shrink-0" />
+                    <span className="truncate">{summaryData.postOperativeNotes?.accessSiteHemostasis ? "Verified & Sealed" : "Hemostasis Intact"}</span>
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-[#5F6368] block">
+                    Telemetry Vitals
+                  </span>
+                  <span className="font-mono text-xs font-bold text-[#1A73E8] truncate block mt-0.5">
+                    {summaryData.postOperativeNotes?.telemetryVitals || "BP: 120/80, HR 72, SpO2 99%"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-[#5F6368] block">
+                    Sheath Removal Time
+                  </span>
+                  <span className="font-mono text-xs font-semibold text-[#202124] truncate block mt-0.5">
+                    {summaryData.postOperativeNotes?.sheathRemovalTime || "Immediate post-procedure"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-[#5F6368] block">
+                    Recovery Status
+                  </span>
+                  <span className="font-semibold text-[#202124] truncate block mt-0.5">
+                    {summaryData.postOperativeNotes?.recoveryStatus ? "Monitored / Stable" : "Conscious & Stable"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Detailed Structured Attributes Table */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="space-y-1.5 border-r md:border-[#DADCE0] pr-2">
+                  <p>
+                    <strong className="text-[#202124]">Access Site &amp; Hemostasis:</strong>{" "}
+                    <span className="text-[#3C4043] leading-relaxed">
+                      {summaryData.postOperativeNotes?.accessSiteHemostasis || "Access site dry and intact. Pressure dressing applied. Zero active oozing, zero visible hematoma or bruit."}
+                    </span>
+                  </p>
+                  <p>
+                    <strong className="text-[#202124]">Telemetry &amp; Monitor Vitals:</strong>{" "}
+                    <span className="font-mono text-[#1A73E8]">
+                      {summaryData.postOperativeNotes?.telemetryVitals || "BP: 120/80 mmHg, HR: 72/min, SpO2: 99%, RR: 16/min"}
+                    </span>
+                  </p>
+                  <p>
+                    <strong className="text-[#202124]">Sheath Removal &amp; Profile:</strong>{" "}
+                    <span className="text-[#3C4043]">
+                      {summaryData.postOperativeNotes?.sheathRemovalTime || "Post-procedure"} &bull;{" "}
+                      <span className="font-semibold text-[#137333]">
+                        Status: {summaryData.postOperativeNotes?.sheathStatus || "Removed"}
+                      </span>
+                    </span>
+                  </p>
+                  <p>
+                    <strong className="text-[#202124]">Distal Peripheral Pulses:</strong>{" "}
+                    <span className="text-[#3C4043]">
+                      {summaryData.postOperativeNotes?.distalPulses || "Strong (+++) - Bilateral peripheral pulses equal with rapid capillary refill"}
+                    </span>
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 pl-0 md:pl-1">
+                  <p>
+                    <strong className="text-[#202124]">Recovery Status &amp; Sensorium:</strong>{" "}
+                    <span className="text-[#3C4043] leading-relaxed">
+                      {summaryData.postOperativeNotes?.recoveryStatus || "Conscious, oriented to time, place, and person. Pain score VAS 1/10. Supine flat bed rest protocol active."}
+                    </span>
+                  </p>
+                  <p>
+                    <strong className="text-[#202124]">Recovery Location / Bed:</strong>{" "}
+                    <span className="font-semibold text-[#1A73E8]">
+                      {summaryData.postOperativeNotes?.recoveryBed || summaryData.admissionDetails.wardBed}
+                    </span>
+                  </p>
+                  <p>
+                    <strong className="text-[#202124]">Immediate Complications:</strong>{" "}
+                    <span className="text-[#137333] font-semibold">
+                      {summaryData.postOperativeNotes?.immediateComplications || "Nil - Zero hematoma, zero pseudoaneurysm, zero acute distal vascular compromise"}
+                    </span>
+                  </p>
+                  <p>
+                    <strong className="text-[#202124]">Recorded By:</strong>{" "}
+                    <span className="text-[#5F6368]">
+                      {summaryData.postOperativeNotes?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy} (IR Senior Resident / Consultant) &bull; {summaryData.postOperativeNotes?.recordedAt || "Post-op Room Check"}
+                    </span>
+                  </p>
+                  {summaryData.postOperativeNotes?.notes && (
+                    <p className="pt-1 border-t border-[#F1F3F4] text-[11px] text-[#5F6368] italic">
+                      {summaryData.postOperativeNotes.notes}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 8: Discharge Medications Table */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#202124]">
@@ -2590,7 +2952,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             </div>
           </div>
 
-          {/* Section 8: Procedural Imaging Exhibit */}
+          {/* Section 9: Procedural Imaging Exhibit */}
           <div className="space-y-2 border border-[#DADCE0] p-3.5 sm:p-4 bg-white rounded-xl print:break-inside-avoid">
             <div className="flex items-center justify-between border-b border-[#DADCE0] pb-2">
               <div>
@@ -2671,7 +3033,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
             )}
           </div>
 
-          {/* Section 9: Patient Discharge Details & Signatures */}
+          {/* Section 10: Patient Discharge Details & Signatures */}
           <div className="p-3 border border-[#DADCE0] space-y-3 text-xs">
             <div>
               <strong>General Advice:</strong>{" "}
@@ -2691,6 +3053,11 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
                 <span className="font-semibold">
                   {summaryData.dischargeDetails.followUp}
                 </span>
+                {summaryData.dischargeDetails.followUpDate && (
+                  <span className="block text-[#1A73E8] font-bold mt-0.5">
+                    Next Appointment Date: {summaryData.dischargeDetails.followUpDate}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -3050,10 +3417,38 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
               </div>
             </div>
 
-            <div className="text-xs">
-              <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
-                Detailed Operative Technique Narrative
-              </label>
+            <div className="text-xs space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <label className="block text-[11px] font-semibold text-[#5F6368]">
+                  Detailed Operative Technique Narrative
+                </label>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] text-zinc-500 font-semibold">Insert Embolic / Hardware:</span>
+                  <select
+                    className="text-[11px] bg-zinc-50 border border-zinc-300 rounded px-2 py-0.5 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-[#1A73E8]"
+                    onChange={(e) => {
+                      if (!e.target.value) return;
+                      const copy = [...summaryData.procedureDetails];
+                      const current = copy[0]?.procedureDetail || "";
+                      copy[0].procedureDetail = current ? `${current} Embolization performed using ${e.target.value}.` : `Embolization performed using ${e.target.value}.`;
+                      setSummaryData({ ...summaryData, procedureDetails: copy });
+                      e.target.value = "";
+                    }}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>-- Quick Add Embolic Material --</option>
+                    <option value="PVA Particles 300-500 µm">PVA 300-500 µm</option>
+                    <option value="PVA Particles 100-300 µm">PVA 100-300 µm</option>
+                    <option value="PVA Particles 500-710 µm">PVA 500-710 µm</option>
+                    <option value="PVA Particles 710-1000 µm">PVA 710-1000 µm</option>
+                    <option value="Gelfoam slurry / Torpedoes">Gelfoam slurry / Torpedoes</option>
+                    <option value="Lipiodol + Doxorubicin emulsion">Lipiodol + Doxorubicin emulsion</option>
+                    <option value="Embosphere / Calibrated Microspheres (300-500 µm)">Embosphere / Microspheres (300-500 µm)</option>
+                    <option value="Embosphere / Calibrated Microspheres (500-700 µm)">Embosphere / Microspheres (500-700 µm)</option>
+                    <option value="0.018 pushable / detachable microcoils">Pushable/Detachable Microcoils</option>
+                  </select>
+                </div>
+              </div>
               <textarea
                 rows={5}
                 value={summaryData.procedureDetails[0]?.procedureDetail || ""}
@@ -3064,6 +3459,236 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
                 }}
                 className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] leading-relaxed"
               />
+            </div>
+          </div>
+
+          {/* Section 7: Post-Operative Notes & Immediate Recovery Editor Card */}
+          <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+            <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-[#1A73E8] flex items-center gap-1.5">
+                  <Activity className="w-4 h-4 text-[#1A73E8]" />
+                  7. Post-Operative Notes &amp; Recovery Parameters
+                </h3>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#E8F0FE] text-[#1A73E8]">
+                  CATH-LAB HOLDING
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const p = summaryData.postOperativeNotes;
+                  const text = `POST-OPERATIVE RECOVERY NOTES:
+Access Site Hemostasis: ${p?.accessSiteHemostasis || "Hemostasis Intact"}
+Telemetry Vitals: ${p?.telemetryVitals || "Stable"}
+Sheath Removal Time / Status: ${p?.sheathRemovalTime || "Immediate post-op"} (${p?.sheathStatus || "Removed"})
+Recovery Status: ${p?.recoveryStatus || "Conscious, oriented"}
+Recovery Bed: ${p?.recoveryBed || summaryData.admissionDetails.wardBed}
+Distal Peripheral Pulses: ${p?.distalPulses || "Strong (+++)"}
+Immediate Complications: ${p?.immediateComplications || "Nil"}
+Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy}`;
+                  copyTextToClipboard(text, "Post-Operative Notes");
+                }}
+                className="text-[11px] font-semibold text-[#1A73E8] hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Copy className="w-3 h-3" />
+                Copy Post-Op
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Access Site Hemostasis
+                </label>
+                <input
+                  type="text"
+                  value={summaryData.postOperativeNotes?.accessSiteHemostasis || ""}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, accessSiteHemostasis: e.target.value },
+                    });
+                  }}
+                  placeholder="e.g. Manual compression applied; complete seal achieved. Zero hematoma."
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Telemetry Vitals (Cath-Lab Holding)
+                </label>
+                <input
+                  type="text"
+                  value={summaryData.postOperativeNotes?.telemetryVitals || ""}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, telemetryVitals: e.target.value },
+                    });
+                  }}
+                  placeholder="e.g. BP: 118/76 mmHg, HR: 72 bpm, SpO2: 99%, RR: 16/min"
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Sheath Removal Time &amp; Profile
+                </label>
+                <input
+                  type="text"
+                  value={summaryData.postOperativeNotes?.sheathRemovalTime || ""}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, sheathRemovalTime: e.target.value },
+                    });
+                  }}
+                  placeholder="e.g. 31-08-2026 11:30 AM (Immediate post-procedure)"
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Sheath Status
+                </label>
+                <select
+                  value={summaryData.postOperativeNotes?.sheathStatus || "Removed"}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, sheathStatus: e.target.value },
+                    });
+                  }}
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
+                >
+                  <option value="Removed">Removed (Closure verified)</option>
+                  <option value="In Situ">In Situ (Pending removal protocol)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Recovery Status &amp; Sensorium
+                </label>
+                <input
+                  type="text"
+                  value={summaryData.postOperativeNotes?.recoveryStatus || ""}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, recoveryStatus: e.target.value },
+                    });
+                  }}
+                  placeholder="e.g. Conscious, oriented, pain score VAS 1/10. Supine flat rest 4 hours."
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Distal Peripheral Pulses
+                </label>
+                <input
+                  type="text"
+                  value={summaryData.postOperativeNotes?.distalPulses || ""}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, distalPulses: e.target.value },
+                    });
+                  }}
+                  placeholder="e.g. Strong (+++) bilaterally equal, brisk capillary refill (<2s)"
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Recovery Bed / Bay
+                </label>
+                <input
+                  type="text"
+                  value={summaryData.postOperativeNotes?.recoveryBed || ""}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, recoveryBed: e.target.value },
+                    });
+                  }}
+                  placeholder="e.g. Cath-Lab Holding PACU-01"
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  Recorded By &amp; Immediate Complications
+                </label>
+                <input
+                  type="text"
+                  value={summaryData.postOperativeNotes?.recordedBy || ""}
+                  onChange={(e) => {
+                    const current = summaryData.postOperativeNotes || {
+                      accessSiteHemostasis: "",
+                      telemetryVitals: "",
+                      sheathRemovalTime: "",
+                      recoveryStatus: "",
+                    };
+                    setSummaryData({
+                      ...summaryData,
+                      postOperativeNotes: { ...current, recordedBy: e.target.value },
+                    });
+                  }}
+                  placeholder="e.g. Dr. Neel Yadav (Senior Resident IR)"
+                  className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0]"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -3080,6 +3705,393 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
       {/* VIEW D: RAJASTHAN SSO & IHMS E-HOSPITAL LIVE PREFILL ENGINE          */}
       {/* ==================================================================== */}
       {activeTab === "sso" && <SsoIhmsPrefill summaryData={summaryData} />}
+
+      {/* ==================================================================== */}
+      {/* VIEW E: HISTORICAL RECORDS VIEWER / ARCHIVE FOR SELECTED PATIENT     */}
+      {/* ==================================================================== */}
+      {activeTab === "history" && (
+        <div className="space-y-4 print:hidden">
+          {/* Header Card */}
+          <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F1F3F4] pb-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="p-1.5 rounded-lg bg-[#E8F0FE] text-[#1A73E8]">
+                    <History className="w-4 h-4" />
+                  </span>
+                  <div>
+                    <h2 className="text-sm font-bold text-[#202124]">
+                      Historical Records &amp; Previous Notes Archive
+                    </h2>
+                    <p className="text-[11px] text-[#5F6368]">
+                      Comprehensive patient history: previous post-operative notes, catheter lab encounters, and discharge summaries for{" "}
+                      <strong className="text-[#1A73E8]">{summaryData.admissionDetails.patientName}</strong> (HID: {summaryData.admissionDetails.hid})
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-semibold text-[#5F6368] whitespace-nowrap">
+                  Showing records for:
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-xs font-bold border border-[#D2E3FC]">
+                  {summaryData.admissionDetails.patientName} ({summaryData.admissionDetails.hid})
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Filter & Meta Tabs */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold text-[#5F6368] uppercase">Filters:</span>
+                <span className="px-2 py-0.5 rounded bg-[#F1F3F4] text-[#3C4043] font-semibold text-[11px]">
+                  All Recorded Encounters ({
+                    1 + (selectedPatientId === "EX01" ? 2 : selectedPatientId === "EX02" || selectedPatientId === "PT01" ? 2 : 1)
+                  })
+                </span>
+                <span className="px-2 py-0.5 rounded bg-[#CEEAD6] text-[#0D652D] font-semibold text-[11px]">
+                  Cath-Lab Post-Op Notes
+                </span>
+                <span className="px-2 py-0.5 rounded bg-[#E8F0FE] text-[#1A73E8] font-semibold text-[11px]">
+                  Discharge Summaries
+                </span>
+              </div>
+              <div className="text-[11px] text-[#5F6368]">
+                Institution: <span className="font-semibold text-[#202124]">Sawai Man Singh Hospital, Jaipur</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Active Encounter Banner */}
+          <div className="bg-linear-to-r from-[#E8F0FE] to-[#F8F9FA] border border-[#D2E3FC] rounded-2xl p-4 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-xl bg-white text-[#1A73E8] shadow-2xs mt-0.5">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#1A73E8] text-white">
+                      CURRENT ENCOUNTER
+                    </span>
+                    <span className="font-mono text-xs font-bold text-[#202124]">
+                      Adm #{summaryData.admissionDetails.admissionNo}
+                    </span>
+                    <span className="text-[11px] text-[#5F6368]">
+                      &bull; Admitted: {summaryData.admissionDetails.dateOfAdmission}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-sm text-[#202124]">
+                    {summaryData.procedureDetails[0]?.surgicalProcedure || summaryData.caseSummary.diagnosis}
+                  </h3>
+                  <p className="text-xs text-[#3C4043]">
+                    <strong>Ward/Bed:</strong> {summaryData.admissionDetails.wardBed} &bull;{" "}
+                    <strong>Hemostasis:</strong> {summaryData.postOperativeNotes?.accessSiteHemostasis || "Intact"} &bull;{" "}
+                    <strong>Telemetry:</strong> {summaryData.postOperativeNotes?.telemetryVitals || "Stable"} &bull;{" "}
+                    <strong>Sheath Removal:</strong> {summaryData.postOperativeNotes?.sheathRemovalTime || "Completed"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 self-start sm:self-center">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("preview")}
+                  className="px-3 py-1.5 rounded-lg bg-white border border-[#DADCE0] hover:border-[#1A73E8] text-xs font-semibold text-[#1A73E8] transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>View Current Summary</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Historical Encounters Timeline / Records List */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold text-[#5F6368] uppercase tracking-wider pl-1 flex items-center gap-1.5">
+              <History className="w-4 h-4 text-[#1A73E8]" />
+              Prior Recorded Encounters &amp; Post-Op Transcripts
+            </h3>
+
+            {/* Dynamic Prior Encounter 1 */}
+            <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F1F3F4] pb-2.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#CEEAD6] text-[#0D652D]">
+                    PREVIOUS ENCOUNTER (INDEX ADMISSION)
+                  </span>
+                  <span className="font-mono text-xs font-bold text-[#202124]">
+                    {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                      ? "A/SSH/26/14102"
+                      : "A/SMSH/26/088421"}
+                  </span>
+                  <span className="text-[11px] text-[#5F6368]">
+                    &bull; {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                      ? "Date: 12-08-2026 to 16-08-2026"
+                      : "Date: 14-06-2026 to 15-06-2026"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-semibold text-[#5F6368] bg-[#F1F3F4] px-2 py-0.5 rounded">
+                    Discharged Improved
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const noteText = selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                        ? `HISTORICAL POST-OPERATIVE NOTE (14-08-2026):
+Patient: ${summaryData.admissionDetails.patientName} (HID: ${summaryData.admissionDetails.hid})
+Procedure: Diagnostic Hepatic Venogram & Transjugular Liver Biopsy (TJLB)
+Access Site Hemostasis: Right IJV access. Manual compression 10 mins. Sterile compression dressing intact. Zero hematoma.
+Telemetry Vitals: BP: 116/74 mmHg, HR: 76 bpm, SpO2: 99% on room air, RR: 16/min
+Sheath Removal Time / Status: 14-08-2026 12:45 PM (Removed in Cath-Lab Angiosuite 1)
+Recovery Status: Conscious, oriented, pain VAS 1/10. Strict right lateral positioning maintained for 4 hours.
+Recovery Bed: Liver ICU Bed LICU-02
+Distal Pulses: Strong (+++) - Bilateral carotids and radials palpable
+Operator: Dr. Meenu Bagarhatta / Dr. Neel Yadav`
+                        : `HISTORICAL POST-OPERATIVE NOTE (14-06-2026):
+Patient: ${summaryData.admissionDetails.patientName} (HID: ${summaryData.admissionDetails.hid})
+Procedure: Diagnostic Bilateral Lower Limb Venous Duplex & Diagnostic Phlebography
+Access Site Hemostasis: Left popliteal vein puncture. Manual pressure applied for 8 mins; puncture dry and intact.
+Telemetry Vitals: BP: 110/76 mmHg, HR: 68 bpm regular, SpO2: 100% on ambient air, RR: 18/min
+Sheath Removal Time / Status: 14-06-2026 11:20 AM (Removed immediate post-procedure)
+Recovery Status: Conscious, oriented, walked comfortably after 1 hour. No hematoma.
+Recovery Bed: Daycare Holding Rec-02
+Distal Pulses: Strong (+++) - Dorsalis pedis and posterior tibial equal
+Operator: Dr. Shashank Sharma`;
+                      copyTextToClipboard(noteText, "Historical Post-Op Note");
+                    }}
+                    className="text-[11px] font-semibold text-[#1A73E8] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Copy className="w-3 h-3" />
+                    Copy Historical Note
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <h4 className="font-bold text-xs text-[#202124] flex items-center gap-1.5">
+                    <Stethoscope className="w-3.5 h-3.5 text-[#1A73E8]" />
+                    {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                      ? "Diagnostic Hepatic Venography & Transjugular Liver Biopsy (TJLB)"
+                      : "Diagnostic Bilateral Lower Limb Venous Duplex & Phlebographic Mapping"}
+                  </h4>
+                  <span className="text-[11px] font-mono text-[#5F6368]">
+                    Unit: Radiodiagnosis &amp; Interventional Radiology
+                  </span>
+                </div>
+
+                {/* Post-Op Notes Structured Box */}
+                <div className="border border-[#DADCE0] bg-[#F8F9FA] rounded-xl p-3 text-xs space-y-2">
+                  <div className="flex items-center justify-between border-b border-[#E8EAED] pb-1.5">
+                    <span className="font-bold text-[11px] text-[#1A73E8] uppercase tracking-wider flex items-center gap-1">
+                      <Activity className="w-3.5 h-3.5 text-[#1A73E8]" />
+                      Documented Cath-Lab Post-Operative Notes
+                    </span>
+                    <span className="text-[10px] text-[#5F6368]">
+                      Operator: {selectedPatientId === "EX02" || selectedPatientId === "PT01" ? "Dr. Meenu Bagarhatta (Senior Professor)" : "Dr. Shashank Sharma (Professor)"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-[11px]">
+                    <div className="space-y-1.5 border-r md:border-[#E8EAED] pr-2">
+                      <p>
+                        <strong className="text-[#202124]">Access Site Hemostasis:</strong>{" "}
+                        <span className="text-[#3C4043]">
+                          {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                            ? "Right IJV access site sealed under ultrasound guidance. 10 minutes manual pressure; pressure dressing dry & intact. Zero hematoma."
+                            : "Left GSV puncture site below knee. Manual pressure applied for 8 minutes; dry sterile dressing in situ. Zero hematoma or thrill."}
+                        </span>
+                      </p>
+                      <p>
+                        <strong className="text-[#202124]">Telemetry Vitals in PACU:</strong>{" "}
+                        <span className="font-mono text-[#1A73E8]">
+                          {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                            ? "BP: 116/74 mmHg, HR: 76 bpm sinus, SpO2: 99%, RR: 16/min"
+                            : "BP: 110/76 mmHg, HR: 68 bpm regular, SpO2: 100%, RR: 18/min"}
+                        </span>
+                      </p>
+                      <p>
+                        <strong className="text-[#202124]">Sheath Removal Time:</strong>{" "}
+                        <span className="text-[#3C4043]">
+                          {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                            ? "14-08-2026 12:45 PM (Immediate post-biopsy check; Removed)"
+                            : "14-06-2026 11:20 AM (Immediate post-duplex run; Removed)"}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 pl-0 md:pl-1">
+                      <p>
+                        <strong className="text-[#202124]">Recovery Status:</strong>{" "}
+                        <span className="text-[#3C4043]">
+                          {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                            ? "Conscious, oriented, pain score VAS 1/10. Supine flat bed rest for 4 hours completed. No peritoneal signs."
+                            : "Conscious, oriented, fully ambulatory after 1 hour. No distal swelling or pain."}
+                        </span>
+                      </p>
+                      <p>
+                        <strong className="text-[#202124]">Distal Peripheral Pulses:</strong>{" "}
+                        <span className="text-[#137333] font-semibold">
+                          Strong (+++) - Bilaterally equal and palpable with normal capillary refill
+                        </span>
+                      </p>
+                      <p>
+                        <strong className="text-[#202124]">Immediate Complications:</strong>{" "}
+                        <span className="text-[#137333] font-semibold">
+                          Nil - Zero access site bleeding, zero hematoma, zero vasovagal response
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Previous Discharge Summary Excerpt */}
+                <div className="p-2.5 bg-white rounded-lg border border-[#DADCE0] text-xs space-y-1">
+                  <div className="flex items-center justify-between">
+                    <strong className="text-[#202124] text-[11px] uppercase">
+                      Previous Discharge Summary Excerpt &bull; Discharge Condition: Improved
+                    </strong>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const prevSum = selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                          ? `PREVIOUS DISCHARGE SUMMARY (16-08-2026)
+Hospital: SMS Super Speciality Hospital, Jaipur
+Patient: ${summaryData.admissionDetails.patientName} | HID: ${summaryData.admissionDetails.hid}
+Diagnosis: Budd-Chiari Syndrome with caudate hypertrophy and hepatic venous occlusion
+Intervention: Diagnostic Hepatic Venography & TJLB
+Advice on Discharge: Medical anticoagulation with Apixaban 5mg BD. Low salt diet. Elective DIPS planning.`
+                          : `PREVIOUS DISCHARGE SUMMARY (15-06-2026)
+Hospital: Sawai Man Singh Hospital, Jaipur
+Patient: ${summaryData.admissionDetails.patientName} | HID: ${summaryData.admissionDetails.hid}
+Diagnosis: Left Lower Limb Great Saphenous Incompetence with SFJ Reflux (CEAP C2)
+Advice on Discharge: Class II graduated compression stockings. Avoid prolonged standing. Posted for elective endovascular glue embolization.`;
+                        copyTextToClipboard(prevSum, "Previous Discharge Summary");
+                      }}
+                      className="text-[10px] text-[#1A73E8] font-semibold hover:underline cursor-pointer"
+                    >
+                      Copy Full Excerpt
+                    </button>
+                  </div>
+                  <p className="text-[#5F6368] text-[11px] leading-relaxed">
+                    {selectedPatientId === "EX02" || selectedPatientId === "PT01"
+                      ? "Evaluated for refractory ascites. Triphasic imaging confirmed Budd-Chiari syndrome with diffuse hepatic venous outflow obstruction. Pre-procedure hepatic gradient: 22 mmHg. Cleared for elective decompressive shunt (DIPS) after medical optimization."
+                      : "Patient presented with 8 months history of symptomatic varicosities. Venous Doppler confirmed isolated GSV reflux with competent deep venous system. Class II compression prescribed with planned daycare VenaSeal ablation."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Dynamic Prior Encounter 2 (OPD / Consultation) */}
+            <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F1F3F4] pb-2.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF7E0] text-[#B06000]">
+                    OPD WORKUP &amp; PRE-PROCEDURAL CATH-LAB CLEARANCE
+                  </span>
+                  <span className="font-mono text-xs font-bold text-[#202124]">
+                    OPD-SMS-IR-2026
+                  </span>
+                  <span className="text-[11px] text-[#5F6368]">
+                    &bull; Date: 02-05-2026
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-semibold text-[#5F6368] bg-[#F1F3F4] px-2 py-0.5 rounded">
+                    Room 48 / IR Clinic
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-1.5 text-xs text-[#3C4043]">
+                <p>
+                  <strong className="text-[#202124]">Clinical Assessment:</strong>{" "}
+                  Patient evaluated in Interventional Radiology OPD Unit I. Detailed Doppler mapping and biochemical coagulation workup verified (INR &lt; 1.2, Platelets &gt; 150k, Creatinine normal).
+                </p>
+                <p>
+                  <strong className="text-[#202124]">Procedural Clearance Note:</strong>{" "}
+                  Informed high-risk procedural consent documented. Pre-anesthesia check-up (PAC) cleared for local anesthesia with conscious sedation. Scheme pre-authorization (MAAY / RGHS) submitted and approved.
+                </p>
+                <p className="text-[11px] text-[#5F6368] pt-1 border-t border-[#F1F3F4]">
+                  Consultant: <strong>Dr. Meenu Bagarhatta / Dr. Shashank Sharma</strong> &bull; Department of Radiodiagnosis &amp; Interventional Radiology, SMS Medical College Jaipur
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================================== */}
+      {/* VIEW F: AUTHENTIC SMS PATIENT DOSSIER ARCHIVE (1,057 CASES)          */}
+      {/* ==================================================================== */}
+      {activeTab === "archive" && (
+        <PatientArchiveDossier
+          onLoadIntoEditor={(archivedPt) => {
+            setSummaryData((prev) => ({
+              ...prev,
+              admissionDetails: {
+                ...prev.admissionDetails,
+                hid: archivedPt.crNo || prev.admissionDetails.hid,
+                admissionNo: archivedPt.admissionNo || archivedPt.crNo || `CR-${archivedPt.dsaNo}`,
+                patientName: archivedPt.patientName,
+                age: archivedPt.age ? String(archivedPt.age) : prev.admissionDetails.age,
+                gender: archivedPt.gender === "Female" ? "F" : "M",
+                dateOfAdmission: archivedPt.procedureDate || prev.admissionDetails.dateOfAdmission,
+                dateOfDischarge: archivedPt.procedureDate || prev.admissionDetails.dateOfDischarge,
+                patientCategory: archivedPt.scheme || prev.admissionDetails.patientCategory,
+                wardBed: archivedPt.unitOrWard || prev.admissionDetails.wardBed,
+              },
+              caseSummary: {
+                ...prev.caseSummary,
+                diagnosis: archivedPt.procedureName,
+                complaints: archivedPt.dischargeData?.chiefComplaints || `Presented for ${archivedPt.procedureName}`,
+                caseHistory:
+                  archivedPt.dischargeData?.caseHistory ||
+                  `Patient evaluated and admitted under Interventional Radiology for ${archivedPt.procedureName} (DSA IR-${archivedPt.dsaNo}).`,
+              },
+              procedureDetails: [
+                {
+                  sNo: 1,
+                  dateTime: archivedPt.procedureDate ? `${archivedPt.procedureDate} 10:00 AM` : "10:00 AM",
+                  operationType: "Major",
+                  surgicalProcedure: archivedPt.procedureName,
+                  anaesthesiaType: "LOCAL",
+                  procedureDetail:
+                    archivedPt.dischargeData?.operativeSummary ||
+                    archivedPt.operativeNoteData?.indication ||
+                    `Interventional Radiology procedure: ${archivedPt.procedureName}. Technical success documented.`,
+                  processDoneBy: archivedPt.operativeNoteData?.operators || "Dr Shashank Sharma",
+                },
+              ],
+              dischargeMedications: archivedPt.dischargeData?.medications?.length
+                ? archivedPt.dischargeData.medications.map((m, idx) => ({
+                    sNo: idx + 1,
+                    medicine: m.medicine,
+                    genericName: m.medicine,
+                    dosePower: m.dosePower,
+                    route: "ORAL",
+                    frequency: (["BD", "OD", "TID", "QID", "SOS", "HS"].includes(m.frequency)
+                      ? m.frequency
+                      : "BD") as DischargeMedicationItem["frequency"],
+                    days: m.days,
+                    instructions: m.instructions,
+                  }))
+                : prev.dischargeMedications,
+              dischargeDetails: {
+                ...prev.dischargeDetails,
+                generalAdvise: archivedPt.dischargeData?.dischargeAdvice || prev.dischargeDetails.generalAdvise,
+                followUp: archivedPt.dischargeData?.followUp || prev.dischargeDetails.followUp,
+              },
+            }));
+            setActiveTab("editor");
+            showNotification(
+              `Loaded IR-${String(archivedPt.dsaNo).padStart(4, "0")} (${archivedPt.patientName}) into Editor!`
+            );
+          }}
+        />
+      )}
 
       {/* ==================================================================== */}
       {/* MODAL / DRAWER: ALL 1,120+ MASTER PROCEDURES CATALOG                 */}

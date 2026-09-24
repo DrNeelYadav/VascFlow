@@ -15,8 +15,6 @@ import {
   Filter,
   User,
   SlidersHorizontal,
-  Truck,
-  Zap,
 } from "lucide-react";
 import {
   WorklistTable,
@@ -63,7 +61,6 @@ export default function RisWorklistPage() {
   const [activeTab, setActiveTab] = useState<string>("ALL");
   const [scheduledRoomFilter, setScheduledRoomFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [isStatModalOpen, setIsStatModalOpen] = useState<boolean>(false);
 
   // 1. On mount: check cached cases in localStorage, then fetch latest cases from /api/cases
   useEffect(() => {
@@ -114,48 +111,6 @@ export default function RisWorklistPage() {
         console.warn("Could not fetch latest cases from /api/cases:", err);
       });
   }, []);
-
-  const handleActivateStatCase = async (newStatEntry: PatientWorklistEntry) => {
-    setCases((prev) => {
-      const updated = [newStatEntry, ...prev];
-      try {
-        localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(updated));
-      } catch (e) {
-        console.warn("Failed to persist stat case to localStorage:", e);
-      }
-      return updated;
-    });
-
-    try {
-      await fetch("/api/cases", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...newStatEntry,
-          id: newStatEntry.caseId,
-          uhid: newStatEntry.crNumber,
-          procedure: newStatEntry.procedureName,
-          room: newStatEntry.room || "Cath Lab (Philips Azurion)",
-        }),
-      });
-    } catch (err) {
-      console.warn("Failed to POST stat case to /api/cases:", err);
-    }
-
-    if (typeof window !== "undefined" && isFirebaseConfigured()) {
-      try {
-        const caseDocRef = doc(db, "cases", newStatEntry.caseId);
-        setDoc(caseDocRef, {
-          ...newStatEntry,
-          id: newStatEntry.caseId,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }).catch(() => {});
-      } catch (err) {
-        console.warn("Firestore direct setDoc warning:", err);
-      }
-    }
-  };
 
   const [activeModalTarget, setActiveModalTarget] = useState<{
     caseId: string;
@@ -316,24 +271,8 @@ export default function RisWorklistPage() {
           </p>
         </div>
 
-        {/* Date, STAT Fast-Path & Quick Refresh */}
+        {/* Date & Quick Refresh */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => setIsStatModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-linear-to-r from-[#EA4335] to-[#D93025] hover:from-[#D93025] hover:to-[#B31412] text-white px-3.5 py-2 text-xs font-black shadow-xs hover:shadow-md transition active:scale-95"
-            title="Immediate zero-delay STAT emergency case activation (Duodenoileus / Acute Bleed / SMA Ischemia)"
-          >
-            <Zap className="h-4 w-4 fill-white animate-pulse" />
-            <span>STAT EMERGENCY FAST-PATH</span>
-          </button>
-          <Link
-            href="/dashboard/logistics"
-            className="flex items-center gap-2 rounded-xl bg-[#1A73E8] hover:bg-[#1557B0] text-white px-3.5 py-2 text-xs font-bold shadow-xs transition"
-          >
-            <Truck className="h-4 w-4" />
-            <span>Patient Logistics &amp; Status Board</span>
-          </Link>
           <div className="flex items-center gap-2 rounded-xl border border-[#DADCE0] bg-white px-3 py-2 text-xs text-[#3C4043] shadow-xs">
             <Calendar className="h-4 w-4 text-[#5F6368]" />
             <span className="font-semibold">
@@ -655,12 +594,6 @@ export default function RisWorklistPage() {
         />
       )}
 
-      {/* STAT Emergency Fast-Path Modal */}
-      <StatEmergencyModal
-        isOpen={isStatModalOpen}
-        onClose={() => setIsStatModalOpen(false)}
-        onActivateStatCase={handleActivateStatCase}
-      />
 
       {/* Light subtle footer attribution */}
       <div className="text-center py-4 text-xs text-zinc-400 print:hidden select-none">

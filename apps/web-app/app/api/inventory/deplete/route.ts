@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma, logAuditTrail } from "@vascule/db";
 import { auth } from "@/auth";
+import { db, isFirebaseConfigured } from "@/app/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 export interface DepleteItemRequest {
   sku: string;
@@ -199,6 +201,36 @@ export async function POST(request: NextRequest) {
         };
         HOSPITAL_INVENTORY_STORE[newRecord.sku] = newRecord;
         updatedRecords.push(newRecord);
+      }
+    }
+
+    // Sync updated stock records directly to Google Cloud Firestore database
+    if (isFirebaseConfigured() && db && updatedRecords.length > 0) {
+      try {
+        for (const record of updatedRecords) {
+          const itemDocRef = doc(db, "inventory", record.sku);
+          await setDoc(
+            itemDocRef,
+            {
+              sku: record.sku,
+              name: record.name,
+              category: record.category,
+              currentStock: record.currentStock,
+              quantityOnHand: record.currentStock,
+              reorderLevel: record.reorderLevel,
+              unit: record.unit,
+              rmsclMatchingCode: record.rmsclMatchingCode,
+              lastLotDeducted: record.lastLotDeducted,
+              isLowStockWarning: record.isLowStockWarning,
+              status: record.status,
+              updatedAt: new Date().toISOString(),
+              updatedBy: actor,
+            },
+            { merge: true }
+          );
+        }
+      } catch (firestoreErr) {
+        console.warn("[Firestore] Failed to sync depletion records to Firestore:", firestoreErr);
       }
     }
 

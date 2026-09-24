@@ -18,6 +18,7 @@ import {
   FileText,
   ExternalLink,
   Info,
+  Lock,
 } from "lucide-react";
 import { BarcodeScannerModal, ParsedGs1Barcode } from "./BarcodeScannerModal";
 import {
@@ -28,6 +29,60 @@ import {
 import { HardwarePackagingImage } from "./HardwarePackagingImage";
 import { HardwareBrochureModal } from "./HardwareBrochureModal";
 import { usePatientLogisticsStore, PatientLogisticsRecord } from "@/app/lib/logistics/patientLogisticsStore";
+import { useEndoflowStore } from "@/app/dashboard/useEndoflowStore";
+import { INSTITUTIONAL_STAFF_ACCOUNTS } from "@/app/lib/staffAccounts";
+import { db, isFirebaseConfigured } from "@/app/lib/firebase";
+import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
+
+/**
+ * Synchronize single stock item quantity directly to Firestore database collection "inventory"
+ */
+async function syncHardwareStockToFirestore(
+  item: MasterHardwareItem,
+  updatedStock: number,
+  actorName: string
+): Promise<void> {
+  if (!isFirebaseConfigured() || !db) return;
+  try {
+    const inventoryRef = collection(db, "inventory");
+    const docId = item.sku || item.id;
+    const itemDocRef = doc(inventoryRef, docId);
+    const writePromise = setDoc(
+      itemDocRef,
+      {
+        id: item.id,
+        sku: item.sku,
+        name: item.name,
+        category: item.category,
+        specification: item.specification,
+        frenchOrGauge: item.frenchOrGauge,
+        manufacturer: item.manufacturer,
+        brandName: item.brandName,
+        currentStock: updatedStock,
+        quantityOnHand: updatedStock,
+        reorderLevel: item.reorderLevel,
+        unit: item.unit,
+        lastLot: item.lastLot,
+        expiryDate: item.expiryDate,
+        rmsclMatchingCode: item.rmsclMatchingCode,
+        tariffCappedInr: item.tariffCappedInr,
+        updatedAt: new Date().toISOString(),
+        updatedBy: actorName,
+      },
+      { merge: true }
+    );
+
+    // Timeout guard so offline or unconfigured networks do not stall UI
+    await Promise.race([
+      writePromise,
+      new Promise<void>((_, reject) =>
+        setTimeout(() => reject(new Error("Firestore sync timed out")), 2000)
+      ),
+    ]);
+  } catch (err) {
+    console.warn(`[Firestore] Failed to persist hardware stock for ${item.sku}:`, err);
+  }
+}
 
 export type InventoryCategory = "ALL" | HardwareCategory;
 
@@ -65,6 +120,37 @@ const CATEGORY_LIST: { id: InventoryCategory; label: string }[] = [
 export default function InventoryDashboard() {
   const { patients, selectedPatientId, setSelectedPatientId } = usePatientLogisticsStore();
   const currentPatient = patients.find((p) => p.id === selectedPatientId) || patients[0];
+  const { currentStaff, setCurrentStaff } = useEndoflowStore();
+
+  // Strict RBAC: Only Cath Lab Technicians (role: 'TECH' | 'TECHNICIAN') can adjust stock
+  const isTechnician = useMemo(() => {
+    if (!currentStaff) return false;
+    const role = (currentStaff.role || "").toUpperCase().trim();
+    const tier = (currentStaff.tier || "").toUpperCase().trim();
+    const code = (currentStaff.code || "").toUpperCase().trim();
+
+    // Doctors ('DOCTOR', 'CONSULTANT', 'RESIDENT') and Nursing Officers ('NURSE') cannot edit, add, or decrement inventory quantities
+    if (
+      role === "DOCTOR" ||
+      role === "CONSULTANT" ||
+      role === "RESIDENT" ||
+      role === "NURSE" ||
+      tier === "FACULTY" ||
+      tier === "DM_RESIDENT" ||
+      tier === "SENIOR_RESIDENT" ||
+      tier === "NURSING_OFFICER"
+    ) {
+      return false;
+    }
+
+    // Authorize Technicians
+    return (
+      role === "TECH" ||
+      role === "TECHNICIAN" ||
+      tier === "CATHLAB_TECHNICIAN" ||
+      code.startsWith("TC")
+    );
+  }, [currentStaff]);
 
   const [stockItems, setStockItems] = useState<MasterHardwareItem[]>(MASTER_HARDWARE_CATALOG);
   const [depletionLogs, setDepletionLogs] = useState<DepletionLog[]>(INITIAL_DEPLETION_LOGS);
@@ -76,6 +162,48 @@ export default function InventoryDashboard() {
   const [depletionFeedback, setDepletionFeedback] = useState<string | null>(null);
   const [depletionIsError, setDepletionIsError] = useState<boolean>(false);
 
+  // Real-time synchronization of stock items from Cloud Firestore "inventory" collection
+  React.useEffect(() => {
+    if (!isFirebaseConfigured() || !db) return;
+    try {
+      const inventoryRef = collection(db, "inventory");
+      const unsubscribe = onSnapshot(
+        inventoryRef,
+        (snapshot) => {
+          if (!snapshot.empty) {
+            const cloudStockMap = new Map<string, number>();
+            snapshot.forEach((docSnap) => {
+              const data = docSnap.data();
+              const qty = data.currentStock ?? data.quantityOnHand;
+              if (typeof qty === "number") {
+                if (data.id) cloudStockMap.set(data.id, qty);
+                if (data.sku) cloudStockMap.set(data.sku, qty);
+                cloudStockMap.set(docSnap.id, qty);
+              }
+            });
+
+            setStockItems((prev) =>
+              prev.map((item) => {
+                const cloudQty = cloudStockMap.get(item.id) ?? cloudStockMap.get(item.sku);
+                if (cloudQty !== undefined && cloudQty !== item.currentStock) {
+                  return { ...item, currentStock: cloudQty };
+                }
+                return item;
+              })
+            );
+          }
+        },
+        (err) => {
+          console.warn("[Firestore] Inventory live sync snapshot error:", err.message);
+        }
+      );
+
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn("[Firestore] Unable to register inventory listener:", err);
+    }
+  }, []);
+
   // Brochure Modal State
   const [selectedBrochureItem, setSelectedBrochureItem] = useState<MasterHardwareItem | null>(null);
   const [isBrochureOpen, setIsBrochureOpen] = useState<boolean>(false);
@@ -86,21 +214,41 @@ export default function InventoryDashboard() {
     setIsBrochureOpen(true);
   };
 
-  // Instant Quantity Adjustments in Master Table
-  const handleUpdateQuantity = (id: string, delta: number) => {
+  // Instant Quantity Adjustments in Master Table (Strict RBAC: Only Technicians, synced to Firestore)
+  const handleUpdateQuantity = async (id: string, delta: number) => {
+    if (!isTechnician) {
+      setDepletionFeedback(
+        "Access Denied: Only Cath Lab Technicians (role: TECH / TECHNICIAN) are authorized to increment or decrement stock. Doctors and Nurses have read-only visibility."
+      );
+      setDepletionIsError(true);
+      return;
+    }
+
+    const targetItem = stockItems.find((i) => i.id === id);
+    if (!targetItem) return;
+
+    const nextStock = Math.max(0, targetItem.currentStock + delta);
     setStockItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          const nextStock = Math.max(0, item.currentStock + delta);
-          setDepletionFeedback(
-            `${item.name} quantity updated to ${nextStock} ${item.unit} (${delta > 0 ? `+${delta}` : delta})`
-          );
-          setDepletionIsError(false);
-          return { ...item, currentStock: nextStock };
-        }
-        return item;
-      })
+      prev.map((item) => (item.id === id ? { ...item, currentStock: nextStock } : item))
     );
+
+    setDepletionFeedback(
+      `${targetItem.name} quantity updated to ${nextStock} ${targetItem.unit} (${delta > 0 ? `+${delta}` : delta}) • Syncing to Firestore...`
+    );
+    setDepletionIsError(false);
+
+    try {
+      await syncHardwareStockToFirestore(
+        targetItem,
+        nextStock,
+        currentStaff?.name || "Cath Lab Technician"
+      );
+      setDepletionFeedback(
+        `${targetItem.name} stock updated to ${nextStock} ${targetItem.unit} (${delta > 0 ? `+${delta}` : delta}) • Synced to Cloud Firestore`
+      );
+    } catch (err) {
+      console.warn("Firestore stock update error:", err);
+    }
   };
 
   // Quick Stage Single Item for Case Depletion
@@ -212,6 +360,12 @@ export default function InventoryDashboard() {
           );
           if (matchingStaged.length > 0) {
             const newCount = Math.max(0, stock.currentStock - matchingStaged.length);
+            // Sync depleted count directly to Firestore
+            void syncHardwareStockToFirestore(
+              stock,
+              newCount,
+              currentStaff?.name || "Cath Lab Staff"
+            );
             return {
               ...stock,
               currentStock: newCount,
@@ -221,6 +375,10 @@ export default function InventoryDashboard() {
           return stock;
         })
       );
+
+      const signerIdentity = currentStaff
+        ? `${currentStaff.name} (${currentStaff.title})`
+        : "Dr. Neel Yadav (DM Resident)";
 
       const createdLogs: DepletionLog[] = stagedDepletions.map((d, idx) => ({
         id: `DEP-${Date.now()}-${idx}`,
@@ -241,13 +399,13 @@ export default function InventoryDashboard() {
         quantity: 1,
         unit: "Units",
         lotNumber: d.lotNumber || "LOT-VERIFIED",
-        signedBy: "Dr. Neel Yadav (DM Resident)",
+        signedBy: signerIdentity,
         status: "CONFIRMED_DEPLETED",
       }));
       setDepletionLogs((prev) => [...createdLogs, ...prev]);
 
       setDepletionIsError(false);
-      setDepletionFeedback(`Successfully depleted ${stagedDepletions.length} implant(s) from inventory.`);
+      setDepletionFeedback(`Successfully depleted ${stagedDepletions.length} implant(s) from inventory and synced to Firestore.`);
       setStagedDepletions([]);
     } catch (err) {
       console.warn("Inventory depletion error caught gracefully:", err);
@@ -260,7 +418,7 @@ export default function InventoryDashboard() {
 
   return (
     <div className="flex flex-col gap-5 max-w-7xl mx-auto font-sans text-[#202124]">
-      {/* Top Banner Header */}
+      {/* Top Banner Header with RBAC Operator Console */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-[#DADCE0] shadow-xs">
         <div className="flex items-center gap-3.5">
           <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
@@ -281,13 +439,46 @@ export default function InventoryDashboard() {
           </div>
         </div>
 
-        <button
-          onClick={() => setIsScannerOpen(true)}
-          className="px-3.5 py-2 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-xs flex items-center gap-2 transition cursor-pointer shadow-xs"
-        >
-          <Scan className="w-4 h-4" />
-          <span>Scan Barcode / RFID</span>
-        </button>
+        {/* RBAC Operator Identification and Barcode Scanner */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1.5 bg-[#F8F9FA] px-2.5 py-1.5 rounded-lg border border-[#DADCE0] text-xs">
+            <span className="text-[#5F6368] font-medium">Logged In:</span>
+            <select
+              value={currentStaff?.code || "DM01"}
+              onChange={(e) => {
+                const found = INSTITUTIONAL_STAFF_ACCOUNTS.find((s) => s.code === e.target.value);
+                if (found) setCurrentStaff(found);
+              }}
+              className="bg-transparent font-bold text-[#202124] focus:outline-none cursor-pointer"
+            >
+              {INSTITUTIONAL_STAFF_ACCOUNTS.map((staff) => (
+                <option key={staff.code} value={staff.code}>
+                  {staff.name} ({staff.role})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {isTechnician ? (
+            <span className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-[#137333] border border-emerald-200 flex items-center gap-1.5 shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#137333]" />
+              <span>Technician (+/- Stock Adjust Active)</span>
+            </span>
+          ) : (
+            <span className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-[#B06000] border border-amber-200 flex items-center gap-1.5 shadow-xs">
+              <Lock className="w-3.5 h-3.5 text-[#B06000]" />
+              <span>{currentStaff?.role || "CLINICAL"} (Read-Only Inventory)</span>
+            </span>
+          )}
+
+          <button
+            onClick={() => setIsScannerOpen(true)}
+            className="px-3.5 py-2 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-xs flex items-center gap-2 transition cursor-pointer shadow-xs"
+          >
+            <Scan className="w-4 h-4" />
+            <span>Scan Barcode / RFID</span>
+          </button>
+        </div>
       </div>
 
       {/* Metric Cards */}
@@ -657,26 +848,33 @@ export default function InventoryDashboard() {
                     Lot: {item.lastLot} • Exp: {item.expiryDate}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <div className="inline-flex items-center bg-[#F1F3F4] rounded-lg p-0.5 border border-[#DADCE0]">
-                      <button
-                        onClick={() => handleUpdateQuantity(item.id, -1)}
-                        disabled={item.currentStock <= 0}
-                        className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
-                        title="Decrease Quantity by 1"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="w-6 text-center font-mono font-bold text-xs text-[#202124]">
-                        {item.currentStock}
+                    {isTechnician ? (
+                      <div className="inline-flex items-center bg-[#F1F3F4] rounded-lg p-0.5 border border-[#DADCE0]">
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, -1)}
+                          disabled={item.currentStock <= 0}
+                          className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
+                          title="Decrease Quantity by 1"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="w-6 text-center font-mono font-bold text-xs text-[#202124]">
+                          {item.currentStock}
+                        </span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, 1)}
+                          className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#137333] transition cursor-pointer"
+                          title="Increase Quantity by 1"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-[#5F6368] border border-[#DADCE0]">
+                        <Lock className="w-2.5 h-2.5 text-[#5F6368]" />
+                        <span>{item.currentStock} {item.unit} (Read-Only)</span>
                       </span>
-                      <button
-                        onClick={() => handleUpdateQuantity(item.id, 1)}
-                        className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#137333] transition cursor-pointer"
-                        title="Increase Quantity by 1"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    </div>
+                    )}
 
                     <button
                       onClick={() => handleOpenBrochure(item)}
@@ -798,27 +996,38 @@ export default function InventoryDashboard() {
 
                     <td className="px-4 py-3 text-center">
                       <div className="inline-flex items-center gap-1.5">
-                        {/* Interactive Quantity Adjuster */}
-                        <div className="inline-flex items-center bg-[#F1F3F4] rounded-lg p-0.5 border border-[#DADCE0]">
-                          <button
-                            onClick={() => handleUpdateQuantity(item.id, -1)}
-                            disabled={item.currentStock <= 0}
-                            className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
-                            title="Decrease Quantity by 1"
+                        {/* Interactive Quantity Adjuster: Technicians Only */}
+                        {isTechnician ? (
+                          <div className="inline-flex items-center bg-[#F1F3F4] rounded-lg p-0.5 border border-[#DADCE0]">
+                            <button
+                              onClick={() => handleUpdateQuantity(item.id, -1)}
+                              disabled={item.currentStock <= 0}
+                              className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
+                              title="Decrease Quantity by 1"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="w-6 text-center font-mono font-bold text-xs text-[#202124]">
+                              {item.currentStock}
+                            </span>
+                            <button
+                              onClick={() => handleUpdateQuantity(item.id, 1)}
+                              className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#137333] transition cursor-pointer"
+                              title="Increase Quantity by 1 (Restock)"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#5F6368] border border-[#DADCE0]"
+                            title="Read-Only: Only Cath Lab Technicians can adjust stock levels"
                           >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="w-6 text-center font-mono font-bold text-xs text-[#202124]">
-                            {item.currentStock}
+                            <Lock className="w-3 h-3 text-[#5F6368]" />
+                            <span className="font-mono font-bold text-[#202124]">{item.currentStock}</span>
+                            <span className="text-[10px]">Read-Only</span>
                           </span>
-                          <button
-                            onClick={() => handleUpdateQuantity(item.id, 1)}
-                            className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#137333] transition cursor-pointer"
-                            title="Increase Quantity by 1 (Restock)"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
+                        )}
 
                         {/* Quick Action Buttons */}
                         <button
@@ -944,7 +1153,8 @@ export default function InventoryDashboard() {
           setSelectedBrochureItem(null);
         }}
         onStageItem={handleStageItem}
-        onUpdateQuantity={handleUpdateQuantity}
+        onUpdateQuantity={isTechnician ? handleUpdateQuantity : undefined}
+        canAdjustStock={isTechnician}
         currentStock={
           selectedBrochureItem
             ? stockItems.find((s) => s.id === selectedBrochureItem.id)?.currentStock

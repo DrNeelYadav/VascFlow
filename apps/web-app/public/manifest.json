@@ -1,0 +1,26 @@
+{
+  "name": "SMS IR Angiosuite | EndoIR",
+  "short_name": "EndoIR",
+  "description": "Institutional Angiosuite Clinical Workflow System for Interventional Radiology.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#F8F9FA",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

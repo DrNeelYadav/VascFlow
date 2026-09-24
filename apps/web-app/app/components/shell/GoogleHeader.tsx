@@ -5,22 +5,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEndoflowStore } from "../../dashboard/useEndoflowStore";
 import { EndoFlowLogo } from "../EndoFlowLogo";
-import { Search, Plus, X, Lock, LogOut, ShieldCheck, Menu, Settings, Columns2, Moon } from "lucide-react";
+import { Search, Plus, X, Lock, LogOut, ShieldCheck, Menu, Settings, Moon, KeyRound } from "lucide-react";
+import { ChangePasswordModal } from "../ChangePasswordModal";
+import { clearStaffSession } from "../../lib/auth/sessionPersistence";
 
 export function GoogleHeader({
   onOpenDataTools,
   onLockStation,
   onToggleMobileSidebar,
-  isDualPane,
-  onToggleDualPane,
   isCathLabDark,
   onToggleCathLabDark,
 }: {
   onOpenDataTools?: () => void;
   onLockStation?: () => void;
   onToggleMobileSidebar?: () => void;
-  isDualPane?: boolean;
-  onToggleDualPane?: () => void;
   isCathLabDark?: boolean;
   onToggleCathLabDark?: () => void;
 }) {
@@ -29,15 +27,13 @@ export function GoogleHeader({
   const setCurrentStaff = useEndoflowStore((s) => s.setCurrentStaff);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   const handleLogout = () => {
     try {
       setCurrentStaff(null as any);
-      localStorage.removeItem("vascule_staff_session");
+      clearStaffSession();
       localStorage.removeItem("endoflow_staff_session");
-      document.cookie = "vascule_token=; path=/; max-age=0";
-      document.cookie = "endoflow_token=; path=/; max-age=0";
-      document.cookie = "authjs.session-token=; path=/; max-age=0";
     } catch {}
     router.push("/");
   };
@@ -107,21 +103,6 @@ export function GoogleHeader({
 
       {/* Right: Actions, Status Dot, Shift Profile Avatar & Settings */}
       <div className="flex items-center gap-1.5 shrink-0">
-        {/* Dual-Pane Toggle (Desktop Only) */}
-        <button
-          type="button"
-          onClick={onToggleDualPane}
-          title="Toggle Dual-Pane Cockpit (Cmd+\)"
-          className={`hidden md:flex p-1.5 rounded transition cursor-pointer items-center gap-1 text-xs font-medium ${
-            isDualPane
-              ? "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
-              : "text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800"
-          }`}
-        >
-          <Columns2 className="w-3.5 h-3.5" />
-          <span className="hidden xl:inline text-[11px] font-mono">Dual-Pane</span>
-        </button>
-
         {/* Cath-Lab Procedural Dimmed Dark Mode */}
         <button
           type="button"
@@ -157,10 +138,22 @@ export function GoogleHeader({
           <Lock className="w-3.5 h-3.5" />
         </button>
 
+        {/* Change Password Button */}
+        <button
+          type="button"
+          onClick={() => setShowChangePasswordModal(true)}
+          title="Change Resident Password / PIN"
+          className="p-1.5 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+          aria-label="Change Password"
+        >
+          <KeyRound className="w-3.5 h-3.5" />
+        </button>
+
         {/* Active Shift Profile Avatar */}
         <div
-          className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-mono font-semibold text-[11px] select-none cursor-pointer"
-          title={currentStaff ? `${currentStaff.name} (${currentStaff.title})` : "Dr. Neel Yadav (DM Resident)"}
+          onClick={() => setShowChangePasswordModal(true)}
+          className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-mono font-semibold text-[11px] select-none cursor-pointer hover:ring-2 hover:ring-blue-500/50 transition-all"
+          title={currentStaff ? `${currentStaff.name} (${currentStaff.title}) - Click to Change Password` : "Dr. Neel Yadav (DM Resident) - Click to Change Password"}
         >
           {currentStaff ? currentStaff.avatar : "DM"}
         </div>
@@ -175,6 +168,13 @@ export function GoogleHeader({
           <LogOut className="w-3.5 h-3.5" />
         </button>
       </div>
+
+      {/* Change Password Modal for Residents & Staff */}
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        defaultStaffCode={currentStaff?.code || "DM01"}
+      />
     </header>
   );
 }

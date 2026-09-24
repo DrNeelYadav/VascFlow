@@ -24,9 +24,9 @@ export const CATEGORY_07_EMBOLOTHERAPY: MasterProcedure[] = [
     sheathDefault: '5F 11cm Sheath',
     cathetersAndWires: '5F Mikaelson / Cobra / Simmons catheter, 2.7F / 2.0F microcatheter, 0.014" wire',
     microcatheterSystem: '2.0F microcatheter',
-    embolicOrImplants: 'PVA Particles (355-500um) or Embospheres (500-700um) + Microcoils',
+    embolicOrImplants: 'PVA Particles (100-300 µm, 300-500 µm, 500-710 µm, 710-1000 µm) or Embospheres / Microspheres (300-500 µm, 500-700 µm) + Microcoils / Gelfoam slurry',
     proceduralNarrativeTemplate:
-      'Indicated for massive hemoptysis (>300 mL/24h). Right CFA accessed. Thoracic descending aortography localized hypervascular bronchial arteries. Selective catheterization of right intercostobronchial trunk and left bronchial artery. Spinal cord collateral (anterior spinal artery / hairpin artery of Adamkiewicz) strictly searched for and ruled out. 2.0F microcatheter advanced distally into bronchial parenchymal branches beyond any spinal takeoff. Embolization performed using 500-700um calibrated microspheres until complete prune-tree stasis achieved. Completion angiogram showed total devascularization of hemoptysis nidus with preservation of main bronchial trunk.',
+      'Indicated for massive hemoptysis (>300 mL/24h). Right CFA accessed. Thoracic descending aortography localized hypervascular bronchial arteries. Selective catheterization of right intercostobronchial trunk and left bronchial artery. Spinal cord collateral (anterior spinal artery / hairpin artery of Adamkiewicz) strictly searched for and ruled out. 2.0F microcatheter advanced distally into bronchial parenchymal branches beyond any spinal takeoff. Embolization performed using PVA particles (300-500 µm or 500-710 µm) or calibrated microspheres until complete prune-tree stasis achieved. Completion angiogram showed total devascularization of hemoptysis nidus with preservation of main bronchial trunk.',
     postOpCare: {
       immobilizationHours: 6,
       immobilizationInstructions: 'Strict supine flat bedrest x 6 hours; right leg straight.',
@@ -58,7 +58,7 @@ export const CATEGORY_07_EMBOLOTHERAPY: MasterProcedure[] = [
     sheathDefault: '6F Sheath',
     cathetersAndWires: '5F Omni Flush, 5F Cobra, 2.7F microcatheter, 0.035" and 0.018" pushable/detachable coils',
     microcatheterSystem: '2.7F microcatheter',
-    embolicOrImplants: 'Gelfoam sponge slurry + Microcoils',
+    embolicOrImplants: 'Gelfoam sponge slurry / Torpedoes, PVA Particles (300-500 µm, 500-710 µm, 710-1000 µm), and/or Microcoils',
     proceduralNarrativeTemplate:
       'Emergency intervention for hemodynamically unstable pelvic fracture with active arterial contrast extravasation. Right CFA accessed. Pelvic angiogram revealed multifocal contrast extravasation from bilateral internal iliac arterial branches (superior gluteal and obturator). Cross-over catheterization of contralateral internal iliac and ipsilateral selective catheterization. Gelfoam torpedoes and 0.035" coils delivered to trunk and major branches. Completion pelvic angiogram demonstrated complete cessation of active extravasation with hemodynamic stabilization (BP normalized from 80/50 to 118/74). Manual pressure hemostasis.',
     postOpCare: {

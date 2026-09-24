@@ -192,21 +192,28 @@ interface StaffRegistryOverrides {
   customAccounts: StaffAccount[];
 }
 
+let inMemoryOverrides: StaffRegistryOverrides = {
+  passwords: {},
+  activeStatus: {},
+  permissions: {},
+  customAccounts: [],
+};
+
 /**
  * Retrieve current dynamic overrides for staff passwords and permissions
  */
 export function getStaffRegistryOverrides(): StaffRegistryOverrides {
-  if (typeof window === "undefined") {
-    return { passwords: {}, activeStatus: {}, permissions: {}, customAccounts: [] };
+  if (typeof window === "undefined" || typeof localStorage === "undefined") {
+    return inMemoryOverrides;
   }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      return { passwords: {}, activeStatus: {}, permissions: {}, customAccounts: [] };
+      return inMemoryOverrides;
     }
     return JSON.parse(raw);
   } catch {
-    return { passwords: {}, activeStatus: {}, permissions: {}, customAccounts: [] };
+    return inMemoryOverrides;
   }
 }
 
@@ -214,7 +221,8 @@ export function getStaffRegistryOverrides(): StaffRegistryOverrides {
  * Persist dynamic overrides to storage
  */
 export function saveStaffRegistryOverrides(overrides: StaffRegistryOverrides): void {
-  if (typeof window === "undefined") return;
+  inMemoryOverrides = overrides;
+  if (typeof window === "undefined" || typeof localStorage === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
   } catch (err) {
@@ -334,6 +342,47 @@ export function updateStaffPassword(code: string, newPin: string): { success: bo
 }
 
 /**
+ * Self-service / Resident action: Change own password after verifying current credentials
+ */
+export function changeStaffPassword(
+  code: string,
+  currentPin: string,
+  newPin: string
+): { success: boolean; message: string } {
+  const normalizedCode = code.trim().toUpperCase();
+  const trimmedNewPin = newPin.trim();
+
+  if (!normalizedCode) {
+    return { success: false, message: "Staff ID is required." };
+  }
+
+  // 1. Verify current credentials
+  const authenticated = authenticateStaff(normalizedCode, currentPin);
+  if (!authenticated) {
+    return { success: false, message: "Current password or PIN is incorrect." };
+  }
+
+  // 2. Validate new password length
+  if (trimmedNewPin.length < 4) {
+    return { success: false, message: "New PIN / Password must be at least 4 characters long." };
+  }
+
+  if (currentPin.trim() === trimmedNewPin) {
+    return { success: false, message: "New password must be different from current password." };
+  }
+
+  // 3. Save new password override
+  const overrides = getStaffRegistryOverrides();
+  overrides.passwords[normalizedCode] = trimmedNewPin;
+  saveStaffRegistryOverrides(overrides);
+
+  return {
+    success: true,
+    message: `Password for ${authenticated.name} (${normalizedCode}) successfully updated.`,
+  };
+}
+
+/**
  * Admin action: Update granular clinical permissions
  */
 export function updateStaffPermissions(
@@ -435,7 +484,13 @@ export function deleteStaffAccount(code: string): { success: boolean; message: s
  * Reset staff registry overrides back to factory defaults
  */
 export function resetStaffDirectoryToDefaults(): void {
-  if (typeof window === "undefined") return;
+  inMemoryOverrides = {
+    passwords: {},
+    activeStatus: {},
+    permissions: {},
+    customAccounts: [],
+  };
+  if (typeof window === "undefined" || typeof localStorage === "undefined") return;
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch {}

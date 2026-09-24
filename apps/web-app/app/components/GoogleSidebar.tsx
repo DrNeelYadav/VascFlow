@@ -21,7 +21,6 @@ import {
   X,
   GraduationCap,
   BarChart3,
-  Truck,
   PieChart,
 } from "lucide-react";
 import { useEndoflowStore } from "../dashboard/useEndoflowStore";
@@ -121,13 +120,6 @@ export function GoogleSidebar({
       badge: activeCasesCount > 0 ? activeCasesCount : undefined,
     },
     {
-      id: "logistics",
-      name: "Patient Logistics & Status Board",
-      href: "/dashboard/logistics",
-      icon: Truck,
-      badge: "STAT Ready",
-    },
-    {
       id: "calendar",
       name: "OT Schedule & Calendar",
       href: "/dashboard/calendar",
@@ -136,23 +128,10 @@ export function GoogleSidebar({
     },
     {
       id: "logbook",
-      name: "Cath-Lab Master Logbook",
+      name: "Cath-Lab Master Logbook & Registry",
       href: "/dashboard/logbook",
       icon: BookOpen,
       badge: "1,059",
-    },
-    {
-      id: "cath-lab-masters",
-      name: "Cath-Lab Masters & Analytics",
-      href: "/dashboard/cath-lab-masters",
-      icon: BarChart3,
-      badge: "2025-2026",
-    },
-    {
-      id: "census",
-      name: "Departmental Census & Registry",
-      href: "/dashboard/census",
-      icon: PieChart,
     },
     {
       id: "discharge",
@@ -236,10 +215,14 @@ export function GoogleSidebar({
                 onClick={() => onCloseMobile?.()}
                 className="flex items-center gap-2 hover:opacity-85 transition-opacity"
               >
-                <div className="w-2.5 h-2.5 rounded-full bg-[#007AFF] ring-4 ring-[#007AFF]/20 animate-pulse" />
+                <img
+                  src="/sms_hospital_logo.png"
+                  alt="SMS Hospital Logo"
+                  className="w-6 h-6 object-contain shrink-0"
+                />
                 <div className="flex flex-col">
                   <span className="text-[13px] font-semibold text-[#1C1C1E] tracking-tight leading-none">
-                    EndoFlow IR
+                    EndoIR
                   </span>
                   <span className="text-[10px] text-[#8E8E93] font-medium leading-tight mt-0.5">
                     Angiosuite Clinical Suite

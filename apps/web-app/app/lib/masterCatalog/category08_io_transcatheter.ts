@@ -24,9 +24,9 @@ export const CATEGORY_08_IO_TRANSCATHETER: MasterProcedure[] = [
     sheathDefault: '5F 11cm Sheath',
     cathetersAndWires: '5F RH / Cobra / Simmons catheter, 2.0F - 2.7F microcatheter, 0.014" wire',
     microcatheterSystem: '2.0F microcatheter',
-    embolicOrImplants: 'Lipiodol-Doxorubicin Emulsion (10-15 mL) + Gelfoam sponge slurry',
+    embolicOrImplants: 'Lipiodol-Doxorubicin Emulsion (10-15 mL) + Gelfoam sponge slurry / Torpedoes or PVA Particles (100-300 µm, 300-500 µm, 500-710 µm, 710-1000 µm) / Microspheres',
     proceduralNarrativeTemplate:
-      'Right CFA access. Celiac and superior mesenteric arteriography performed. Anatomy and portal vein patency confirmed. Selective right/left hepatic artery cannulation. 2.0F microcatheter advanced superselectively into tumor-feeding segmental branches. Dense tumor blush demonstrated with pathological neo-vascularity. 10 mL emulsion of Lipiodol and Doxorubicin (50mg) infused slowly under fluoroscopy until complete tumor saturation achieved. Embolization completed with gelfoam slurry until near-stasis in feeder. Completion run showed complete tumor devascularization and preserved non-target liver parenchyma.',
+      'Right CFA access. Celiac and superior mesenteric arteriography performed. Anatomy and portal vein patency confirmed. Selective right/left hepatic artery cannulation. 2.0F microcatheter advanced superselectively into tumor-feeding segmental branches. Dense tumor blush demonstrated with pathological neo-vascularity. 10 mL emulsion of Lipiodol and Doxorubicin (50mg) infused slowly under fluoroscopy until complete tumor saturation achieved. Embolization completed with Gelfoam slurry or PVA particles (e.g. 300-500 µm) until near-stasis in feeder. Completion run showed complete tumor devascularization and preserved non-target liver parenchyma.',
     postOpCare: {
       immobilizationHours: 6,
       immobilizationInstructions: 'Strict supine flat bedrest x 6 hours; right leg straight.',
@@ -58,7 +58,7 @@ export const CATEGORY_08_IO_TRANSCATHETER: MasterProcedure[] = [
     sheathDefault: '5F Sheath',
     cathetersAndWires: '5F Cobra, 2.0F microcatheter, 0.014" wire',
     microcatheterSystem: '2.0F microcatheter',
-    embolicOrImplants: '100-300um DC Beads loaded with Doxorubicin (50-75mg)',
+    embolicOrImplants: '100-300 µm or 300-500 µm DC Beads / HepaSpheres / Embospheres loaded with Doxorubicin (50-75mg) or PVA Particles (300-500 µm)',
     proceduralNarrativeTemplate:
       'Celiac and common hepatic angiograms obtained. Superselective cannulation of tumor-feeding artery using 2.0F microcatheter. DC Beads (100-300um) loaded with 75mg doxorubicin injected slowly at 1 mL/min with non-ionic contrast under continuous fluoroscopy until endpoint of 5 beats to clear contrast column. Completion angiography showed total feeder occlusion with no non-target reflux.',
     postOpCare: {

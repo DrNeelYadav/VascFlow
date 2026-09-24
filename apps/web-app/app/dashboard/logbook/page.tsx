@@ -35,7 +35,11 @@ import {
   Package,
   Loader2,
   Check,
+  BarChart3,
+  PieChart,
 } from "lucide-react";
+import CathLabMastersPage from "../cath-lab-masters/page";
+import DepartmentalCensusPage from "../census/page";
 
 export const WARD_FILTER_OPTIONS = [
   { label: "All Wards / Units", value: "ALL" },
@@ -170,6 +174,7 @@ export const STANDARD_HARDWARE_KITS: ProceduralKit[] = [
 ];
 
 export default function CathLabMasterLogbookPage() {
+  const [activeModuleTab, setActiveModuleTab] = useState<"logbook" | "analytics" | "census">("logbook");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [schemeFilter, setSchemeFilter] = useState<string>("ALL");
   const [genderFilter, setGenderFilter] = useState<string>("ALL");
@@ -444,8 +449,47 @@ export default function CathLabMasterLogbookPage() {
             </div>
           </div>
 
-          {/* Smart Filter / Sort Bar beside Title */}
-          <div className="flex flex-wrap items-center gap-3">
+          {/* Module View Navigation Tabs */}
+          <div className="flex items-center bg-[#F1F3F4] border border-[#DADCE0] p-1 rounded-xl gap-1">
+            <button
+              onClick={() => setActiveModuleTab("logbook")}
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                activeModuleTab === "logbook"
+                  ? "bg-white text-[#1A73E8] font-bold shadow-xs border border-[#DADCE0]"
+                  : "text-[#5F6368] hover:text-[#202124]"
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              Master Logbook
+            </button>
+            <button
+              onClick={() => setActiveModuleTab("analytics")}
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                activeModuleTab === "analytics"
+                  ? "bg-white text-[#1A73E8] font-bold shadow-xs border border-[#DADCE0]"
+                  : "text-[#5F6368] hover:text-[#202124]"
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              Master Analytics &amp; Volume Graphs
+            </button>
+            <button
+              onClick={() => setActiveModuleTab("census")}
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                activeModuleTab === "census"
+                  ? "bg-white text-[#1A73E8] font-bold shadow-xs border border-[#DADCE0]"
+                  : "text-[#5F6368] hover:text-[#202124]"
+              }`}
+            >
+              <PieChart className="w-4 h-4" />
+              Departmental Census &amp; Registry
+            </button>
+          </div>
+        </div>
+
+        {/* Logbook Sub-controls (Sort, CSV Export, Protocol link) */}
+        {activeModuleTab === "logbook" && (
+          <div className="flex flex-wrap items-center justify-end gap-3 mt-4 pt-4 border-t border-[#F1F3F4]">
             {/* Sort Order Toggle */}
             <div className="flex items-center bg-[#F8F9FA] border border-[#DADCE0] rounded-lg p-1 shadow-2xs">
               <button
@@ -495,7 +539,7 @@ export default function CathLabMasterLogbookPage() {
               SCAI Puncture Protocols
             </Link>
           </div>
-        </div>
+        )}
 
         {/* Statistical Summary KPIs */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6 pt-6 border-t border-[#F1F3F4]">
@@ -545,8 +589,10 @@ export default function CathLabMasterLogbookPage() {
         </div>
       </div>
 
-      {/* Procedural Hardware Kit Picker Bar (Atomic RMSCL Ledger) */}
-      <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 shadow-xs">
+      {activeModuleTab === "logbook" && (
+        <>
+          {/* Procedural Hardware Kit Picker Bar (Atomic RMSCL Ledger) */}
+          <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-[#F1F3F4]">
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-2">
@@ -1119,6 +1165,22 @@ export default function CathLabMasterLogbookPage() {
           </div>
         </div>
       </div>
+      </>
+      )}
+
+      {/* Cath-Lab Master Analytics & Volume Graphs Tab View */}
+      {activeModuleTab === "analytics" && (
+        <div className="pt-2">
+          <CathLabMastersPage />
+        </div>
+      )}
+
+      {/* Departmental Census & Registry Tab View */}
+      {activeModuleTab === "census" && (
+        <div className="pt-2">
+          <DepartmentalCensusPage />
+        </div>
+      )}
 
       {/* Access Site Surveillance Protocol Modal */}
       {activeProtocolModal && selectedCase && (

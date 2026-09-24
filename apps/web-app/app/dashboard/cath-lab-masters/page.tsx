@@ -868,6 +868,7 @@ export default function CathLabMastersPage() {
                 <th className="py-3 px-4">Procedure Details &amp; Diagnosis</th>
                 <th className="py-3 px-4">Ward / Unit</th>
                 <th className="py-3 px-4">Source Record</th>
+                <th className="py-3 px-4 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
@@ -926,6 +927,16 @@ export default function CathLabMastersPage() {
                       >
                         {c.source === "2026_DISCHARGES" ? "2026 Discharge" : "DSA Logbook"}
                       </span>
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap text-right">
+                      <Link
+                        href={`/dashboard/discharge?tab=archive&q=${encodeURIComponent(c.patientName)}`}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-[#1A73E8] border border-blue-200 dark:border-blue-800 transition-colors"
+                        title={`View ${c.patientName}'s authentic clinical dossier`}
+                      >
+                        <span>Dossier</span>
+                        <ChevronRight className="w-3 h-3" />
+                      </Link>
                     </td>
                   </tr>
                 );

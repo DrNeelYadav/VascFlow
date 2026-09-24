@@ -127,6 +127,7 @@ export interface PatientDischargeDetails {
   generalAdvise: string;
   conditionOnDischarge: "Improved" | "Stable" | "Satisfactory" | "Discharged on Request";
   followUp: string;
+  followUpDate?: string;
   approvedBy: string;
   dischargePreparedBy: string;
 }
@@ -140,6 +141,20 @@ export interface ProceduralImageAttachment {
   caption: string;
 }
 
+export interface PostOperativeNoteData {
+  accessSiteHemostasis: string; // e.g. "Complete Hemostasis Achieved (Manual compression / Closure device deployed; puncture clean & dry)"
+  telemetryVitals: string; // e.g. "BP: 122/78 mmHg, HR: 74 bpm regular, SpO2: 99% on room air, RR: 16/min"
+  sheathRemovalTime: string; // e.g. "31-08-2026 11:30 AM (Immediate post-procedure in holding)"
+  sheathStatus?: string; // e.g. "Removed" | "In Situ"
+  recoveryStatus: string; // e.g. "Conscious, oriented x3, pain VAS 1/10, stable distal pulses (+++), recovery protocol active"
+  recoveryBed?: string; // e.g. "PACU Bay 02 / Cath-Lab Holding"
+  distalPulses?: string; // e.g. "Strong (+++) bilaterally equal"
+  immediateComplications?: string; // e.g. "Nil - zero hematoma, zero pseudoaneurysm, zero distal ischemia"
+  recordedBy?: string; // e.g. "Dr. Neel Yadav (Senior Resident IR)"
+  recordedAt?: string;
+  notes?: string;
+}
+
 export interface IhmsDischargeSummaryData {
   id: string;
   patientId: string;
@@ -149,6 +164,7 @@ export interface IhmsDischargeSummaryData {
   systemicExam: SystemicExam;
   investigations: OtherInvestigations;
   procedureDetails: ProcedureDetailItem[];
+  postOperativeNotes?: PostOperativeNoteData;
   ddcDrugs: DdcDrugItem[];
   dischargeMedications: DischargeMedicationItem[];
   dischargeDetails: PatientDischargeDetails;
@@ -196,7 +212,7 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     pastHistory: "No history of diabetes mellitus, hypertension, tuberculosis, asthma, or previous vascular surgery.",
     familyHistory: "Not significant.",
     personalHistory: "Non-smoker, non-alcoholic. No drug addictions.",
-    riskFactor: "Prolonged standing occupations. Viral markers (HIV, HBsAg, Anti-HCV) non-reactive.",
+    riskFactor: "Prolonged standing, chronic venous insufficiency, familial history. Viral markers (HIV, HBsAg, Anti-HCV) non-reactive.",
   },
   physicalExam: {
     atAdmission: {
@@ -263,35 +279,41 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
       processDoneBy: "Dr Shashank Sharma",
     },
   ],
+  postOperativeNotes: {
+    accessSiteHemostasis: "Manual compression applied to left GSV puncture site below knee; complete hemostasis achieved. Puncture site clean, dry & intact. Zero hematoma or active oozing.",
+    telemetryVitals: "BP: 112/84 mmHg, HR: 66 bpm, SpO2: 100% on ambient air, RR: 18/min, Afebrile (98°F)",
+    sheathRemovalTime: "31-08-2026 10:35 AM (Immediate post-procedure in Cath-Lab angiosuite)",
+    sheathStatus: "Removed",
+    recoveryStatus: "Conscious, oriented, calm and comfortable (Pain VAS 1/10). Class II compression applied. Ambulation initiated after 2 hours with assistance.",
+    recoveryBed: "Cath-Lab Holding Rec-01",
+    distalPulses: "Strong (+++) - Bilateral Dorsalis Pedis and Posterior Tibial arteries palpable",
+    immediateComplications: "Nil - Zero hematoma, zero DVT on completion Doppler, zero distal ischemia",
+    recordedBy: "Dr Shashank Sharma (Professor of IR)",
+    recordedAt: "31-08-2026 11:00 AM",
+    notes: "Patient tolerated endovenous glue ablation well. Completion duplex confirmed non-compressible left GSV cast with patent deep femoral vein. Discharged in stable condition.",
+  },
   ddcDrugs: [
-    { sNo: 1, medicine: "Cholecalciferol granules 60000 IU /gm soft gelatin capsule [623]", qtyIssued: 4, issuedDateTime: "01-09-2026 01:44 PM" },
-    { sNo: 2, medicine: "Venaseal closure system for varicose veins N butyl based adhesive [NRS-515]", qtyIssued: 1, issuedDateTime: "31-08-2026 11:43 AM" },
-    { sNo: 3, medicine: "Calcium with Vitamin D Tablets USP (Elemental Calcium 500mg, Vit D3 250IU) [622]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:44 PM" },
-    { sNo: 4, medicine: "Montelukast (10mg) Levocetirizine Tablet (5mg) [660]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:43 PM" },
-    { sNo: 5, medicine: "Multivitamin Tablets NFI Formula Sugar Coated [394]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:43 PM" },
-    { sNo: 6, medicine: "Paracetamol Tab IP 500mg [28]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:43 PM" },
+    { sNo: 1, medicine: "Cap. Cholecalciferol 60000 IU soft gelatin capsule [RMSCL DDC #623]", qtyIssued: 4, issuedDateTime: "01-09-2026 01:44 PM" },
+    { sNo: 2, medicine: "Venaseal closure system for varicose veins N-butyl cyanoacrylate adhesive [RMSCL DDC #NRS-515]", qtyIssued: 1, issuedDateTime: "31-08-2026 11:43 AM" },
+    { sNo: 3, medicine: "Tab. Calcium 500mg with Vitamin D3 250 IU [RMSCL DDC #622]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:44 PM" },
+    { sNo: 4, medicine: "Tab. Montelukast 10mg + Levocetirizine 5mg [RMSCL DDC #660]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:43 PM" },
+    { sNo: 5, medicine: "Tab. Multivitamin NFI Formula [RMSCL DDC #394]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:43 PM" },
+    { sNo: 6, medicine: "Tab. Paracetamol 500mg [RMSCL DDC #28]", qtyIssued: 10, issuedDateTime: "01-09-2026 01:43 PM" },
   ],
   dischargeMedications: [
-    { sNo: 1, medicine: "Amoxicillin and Potassium Clavulanate IP Tab 625mg [505]", dosePower: "625mg", route: "ORAL", frequency: "TID", days: 5, instructions: "After meals" },
-    { sNo: 2, medicine: "Diclofenac 50mg + Serratiopeptidase 10mg Tab", dosePower: "50mg+10mg", route: "ORAL", frequency: "TID", days: 5, instructions: "With meals SOS for pain" },
-    { sNo: 3, medicine: "Levocetirizine Tablet 5mg [659]", dosePower: "5mg", route: "ORAL", frequency: "BD", days: 5, instructions: "At night" },
+    { sNo: 1, medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]", genericName: "Amoxicillin and Potassium Clavulanate 625mg", dosePower: "625mg", route: "ORAL", frequency: "TID", days: 5, instructions: "After meals" },
+    { sNo: 2, medicine: "Tab. Diclofenac 50mg + Serratiopeptidase 10mg [RMSCL DDC #622]", genericName: "Diclofenac 50mg + Serratiopeptidase 10mg", dosePower: "50mg+10mg", route: "ORAL", frequency: "TID", days: 5, instructions: "With meals SOS for pain" },
+    { sNo: 3, medicine: "Tab. Levocetirizine 5mg [RMSCL DDC #659]", genericName: "Levocetirizine 5mg", dosePower: "5mg", route: "ORAL", frequency: "BD", days: 5, instructions: "At night" },
   ],
   dischargeDetails: {
     generalAdvise: "Wear Class II graduated compression stockings during daytime for 4 weeks. Normal walking permitted. Avoid high-impact exercise or lifting heavy weights for 2 weeks. Elevate limb while sitting/sleeping.",
     conditionOnDischarge: "Improved",
     followUp: "Follow up Doppler after 1 month in IR OPD Room 48 / Old Gastro Ward (Mon/Thu).",
+    followUpDate: "01-10-2026",
     approvedBy: "DR Meenu Bagarhatta",
     dischargePreparedBy: "Dr Shashank Sharma",
   },
   attachments: [
-    {
-      id: "ATT-001",
-      title: "Post-Venaseal Ultrasound Doppler Confirmation",
-      modality: "US",
-      capturedAt: "31-08-2026 10:45 AM",
-      dataUrl: "",
-      caption: "SMS Medical College Angiosuite 1: High-resolution B-mode & Color Doppler demonstrating complete occlusion and non-compressibility of left GSV with echogenic glue cast. Deep venous system (CFV & Popliteal) widely patent.",
-    },
     {
       id: "ATT-002",
       title: "Intra-procedural Left GSV Venogram",
@@ -302,6 +324,8 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     },
   ],
 };
+
+export const VARICOSE_VEINS_DISCHARGE: IhmsDischargeSummaryData = SUNIL_KUMAR_DISCHARGE;
 
 export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
   id: "IHMS-DIS-2026-002",
@@ -417,25 +441,39 @@ export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
       processDoneBy: "Dr Naresh Mangalhara",
     },
   ],
+  postOperativeNotes: {
+    accessSiteHemostasis: "Right Internal Jugular Vein (IJV) puncture site sealed; pressure dressing applied. Zero hematoma, zero local bruit, dressing dry and intact.",
+    telemetryVitals: "BP: 120/76 mmHg, HR: 72 bpm sinus rhythm, SpO2: 99% on ambient air, RR: 16/min, Temp: 98.0°F",
+    sheathRemovalTime: "26-08-2026 12:15 PM (Post-procedure check completed in Angiosuite)",
+    sheathStatus: "Removed",
+    recoveryStatus: "Conscious, oriented, stable hemodynamics. Fluid restriction 1.5 L/day initiated. Shifted safely to 202 Gastro Ward for ongoing observation.",
+    recoveryBed: "202 GASTRO MALE AND FEMALE / GASTROUI-24",
+    distalPulses: "Strong (+++) - Radial and carotid pulses bilaterally palpable and equal",
+    immediateComplications: "Nil - Zero neck hematoma, zero hemothorax/pneumothorax, zero access site hemorrhage",
+    recordedBy: "Dr Naresh Mangalhara (Associate Professor of IR)",
+    recordedAt: "26-08-2026 01:00 PM",
+    notes: "Post-venography recovery uneventful. Anticoagulation protocol with Apixaban bridged according to protocol. No acute distress.",
+  },
   ddcDrugs: [
-    { sNo: 1, medicine: "Tablet Torsemide 40 mg [445]", qtyIssued: 14, issuedDateTime: "31-08-2026 12:30 PM" },
-    { sNo: 2, medicine: "Tablet Spironolactone 100 mg [448]", qtyIssued: 14, issuedDateTime: "31-08-2026 12:30 PM" },
-    { sNo: 3, medicine: "Tablet Ofloxacin 400 mg [112]", qtyIssued: 10, issuedDateTime: "31-08-2026 12:30 PM" },
-    { sNo: 4, medicine: "Syrup Lactulose 30 ml [512]", qtyIssued: 1, issuedDateTime: "31-08-2026 12:30 PM" },
+    { sNo: 1, medicine: "Tab. Torsemide 40mg [RMSCL DDC #445]", qtyIssued: 14, issuedDateTime: "31-08-2026 12:30 PM" },
+    { sNo: 2, medicine: "Tab. Spironolactone 100mg [RMSCL DDC #448]", qtyIssued: 14, issuedDateTime: "31-08-2026 12:30 PM" },
+    { sNo: 3, medicine: "Tab. Ofloxacin 400mg [RMSCL DDC #112]", qtyIssued: 10, issuedDateTime: "31-08-2026 12:30 PM" },
+    { sNo: 4, medicine: "Syp. Lactulose 30ml [RMSCL DDC #512]", qtyIssued: 1, issuedDateTime: "31-08-2026 12:30 PM" },
   ],
   dischargeMedications: [
-    { sNo: 1, medicine: "Tab Apixaban 10 mg", dosePower: "10 mg", route: "ORAL", frequency: "BD", days: 7, instructions: "For 7 days, then 5 mg OD thereafter for 14 days" },
-    { sNo: 2, medicine: "Tab Torsemide 40 mg", dosePower: "40 mg", route: "ORAL", frequency: "BD", days: 14, instructions: "Morning and evening after meals" },
-    { sNo: 3, medicine: "Tab Spironolactone 100 mg", dosePower: "100 mg", route: "ORAL", frequency: "BD", days: 14, instructions: "With food" },
-    { sNo: 4, medicine: "Cap Pantoprazole DSR 40 mg", dosePower: "40 mg", route: "ORAL", frequency: "OD", days: 14, instructions: "Empty stomach in morning" },
-    { sNo: 5, medicine: "Tab Ofloxacin 400 mg", dosePower: "400 mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
-    { sNo: 6, medicine: "Syp Lactulose", dosePower: "30 ml", route: "ORAL", frequency: "HS", days: 14, instructions: "At bedtime to maintain 2-3 soft stools daily" },
-    { sNo: 7, medicine: "Tab Multivitamin", dosePower: "1 Tab", route: "ORAL", frequency: "OD", days: 14, instructions: "Post meals" },
+    { sNo: 1, medicine: "Tab. Apixaban 10mg [RMSCL DDC #820]", genericName: "Apixaban 10mg", dosePower: "10mg", route: "ORAL", frequency: "BD", days: 7, instructions: "For 7 days, then 5 mg OD thereafter for 14 days" },
+    { sNo: 2, medicine: "Tab. Torsemide 40mg [RMSCL DDC #445]", genericName: "Torsemide 40mg", dosePower: "40mg", route: "ORAL", frequency: "BD", days: 14, instructions: "Morning and evening after meals" },
+    { sNo: 3, medicine: "Tab. Spironolactone 100mg [RMSCL DDC #448]", genericName: "Spironolactone 100mg", dosePower: "100mg", route: "ORAL", frequency: "BD", days: 14, instructions: "With food" },
+    { sNo: 4, medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]", genericName: "Pantoprazole 40mg", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 14, instructions: "Empty stomach in morning" },
+    { sNo: 5, medicine: "Tab. Ofloxacin 400mg [RMSCL DDC #112]", genericName: "Ofloxacin 400mg", dosePower: "400mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
+    { sNo: 6, medicine: "Syp. Lactulose 30ml [RMSCL DDC #512]", genericName: "Lactulose 30ml", dosePower: "30ml", route: "ORAL", frequency: "HS", days: 14, instructions: "At bedtime to maintain 2-3 soft stools daily" },
+    { sNo: 7, medicine: "Tab. Multivitamin NFI Formula [RMSCL DDC #394]", genericName: "Multivitamin NFI Formula", dosePower: "1 Tab", route: "ORAL", frequency: "OD", days: 14, instructions: "Post meals" },
   ],
   dischargeDetails: {
     generalAdvise: "Diet explained: High protein, low salt diet (<2g sodium/day). Daily morning weight monitoring. Fluid restriction to 1.5 L/day. Strict compliance with Apixaban anticoagulation.",
     conditionOnDischarge: "Improved",
     followUp: "In Gastro OPD Room No. 3, 4, 5 after 2 weeks; SOS on Monday/Thursday or immediate visit to IR Emergency in case of worsening distension.",
+    followUpDate: "14-09-2026",
     approvedBy: "DR MEENU BAGARHATTA",
     dischargePreparedBy: "Dr Naresh Mangalhara",
   },
@@ -562,7 +600,7 @@ export function generateIhmsDischargeForPatient(patient: {
   if (isBuddChiari) {
     procedureDetail = `Under strict aseptic conditions and real-time fluoroscopic guidance. Right IJV punctured under ultrasound guidance; 10F Ansel guiding sheath placed. Colapinto RUPS-100 needle utilized for transcaval portal vein access under ultrasound guidance. Portogram confirmed portal vein entry. Tract dilated with 8x40mm balloon. 10mm x 7cm covered (+2cm bare) Gore Viatorr TIPS stent-graft deployed across shunt tract. Pre-procedure gradient: 22 mmHg; post-procedure gradient: 6 mmHg. Widely patent shunt with brisk hepatofugal flow. Hemostasis intact.`;
   } else if (isBae) {
-    procedureDetail = `Under strict aseptic conditions. Right CFA punctured; 5F sheath placed. Selective bronchial angiography performed with 5F Mikaelsson catheter revealing hypertrophied right intercostobronchial trunk with hypervascular parenchymal blush. Superselective cannulation achieved with 2.4F Progreat microcatheter. Embolization performed with 355-500 um PVA particles and pushable microcoils. Completion angiogram demonstrated complete devascularization of the bleeding territory. No non-target embolization.`;
+    procedureDetail = `Under strict aseptic conditions. Right CFA punctured; 5F sheath placed. Selective bronchial angiography performed with 5F Mikaelsson catheter revealing hypertrophied right intercostobronchial trunk with hypervascular parenchymal blush. Superselective cannulation achieved with 2.4F Progreat microcatheter. Embolization performed with PVA 300-500 µm particles and pushable microcoils. Completion angiogram demonstrated complete devascularization of the bleeding territory. No non-target embolization.`;
   } else if (isArterial) {
     procedureDetail = `Under strict aseptic conditions. Contralateral left CFA crossover access established with 6F 45cm Destination guiding sheath. Selective right superficial femoral artery (SFA) angiogram revealed long-segment occlusion. Crossed intraluminally with 0.035" Terumo Glidewire and Rubicon support catheter. Pre-dilation with 5x80mm balloon followed by deployment of Eluvia/EverFlex Nitinol self-expanding stent. Post-dilation performed. Brisk 2-vessel distal runoff confirmed into the pedal arch.`;
   } else if (isBiopsy) {
@@ -577,17 +615,17 @@ export function generateIhmsDischargeForPatient(patient: {
 
   // Discharge meds
   const meds: DischargeMedicationItem[] = [
-    { sNo: 1, medicine: "Amoxicillin and Potassium Clavulanate Tab 625mg [505]", dosePower: "625mg", route: "ORAL", frequency: "BD", days: 5, instructions: "After food" },
-    { sNo: 2, medicine: "Paracetamol Tab 500mg [28]", dosePower: "500mg", route: "ORAL", frequency: "TID", days: 3, instructions: "SOS for pain or fever" },
-    { sNo: 3, medicine: "Cap Pantoprazole 40mg [142]", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 7, instructions: "Before breakfast" },
+    { sNo: 1, medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]", genericName: "Amoxicillin and Potassium Clavulanate 625mg", dosePower: "625mg", route: "ORAL", frequency: "BD", days: 5, instructions: "After food" },
+    { sNo: 2, medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]", genericName: "Paracetamol 650mg", dosePower: "650mg", route: "ORAL", frequency: "TID", days: 3, instructions: "SOS for pain or fever" },
+    { sNo: 3, medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]", genericName: "Pantoprazole 40mg", dosePower: "40mg", route: "ORAL", frequency: "OD", days: 7, instructions: "Before breakfast" },
   ];
 
   if (isBuddChiari) {
-    meds.unshift({ sNo: 0, medicine: "Tab Apixaban 5mg", dosePower: "5mg", route: "ORAL", frequency: "BD", days: 30, instructions: "Anticoagulation for stent patency" });
+    meds.unshift({ sNo: 0, medicine: "Tab. Apixaban 5mg [RMSCL DDC #820]", genericName: "Apixaban 5mg", dosePower: "5mg", route: "ORAL", frequency: "BD", days: 30, instructions: "Anticoagulation for stent patency" });
   } else if (isArterial) {
     meds.unshift(
-      { sNo: 0, medicine: "Tab Aspirin 75mg [22]", dosePower: "75mg", route: "ORAL", frequency: "OD", days: 90, instructions: "Post lunch" },
-      { sNo: 0, medicine: "Tab Clopidogrel 75mg [25]", dosePower: "75mg", route: "ORAL", frequency: "OD", days: 90, instructions: "Post lunch" }
+      { sNo: 0, medicine: "Tab. Aspirin 75mg [RMSCL DDC #22]", genericName: "Aspirin 75mg", dosePower: "75mg", route: "ORAL", frequency: "OD", days: 90, instructions: "Post lunch" },
+      { sNo: 0, medicine: "Tab. Clopidogrel 75mg [RMSCL DDC #25]", genericName: "Clopidogrel 75mg", dosePower: "75mg", route: "ORAL", frequency: "OD", days: 90, instructions: "Post lunch" }
     );
   }
 
@@ -652,7 +690,9 @@ export function generateIhmsDischargeForPatient(patient: {
       pastHistory: "No prior history of diabetes, hypertension, tuberculosis, or major surgical intervention.",
       familyHistory: "Not significant.",
       personalHistory: "No addiction. Normal bowel and bladder habits.",
-      riskFactor: "Viral markers (HIV, HBsAg, Anti-HCV) non-reactive. Coagulation screen verified.",
+      riskFactor: isVaricose
+        ? "Prolonged standing, chronic venous insufficiency, familial history. Viral markers (HIV, HBsAg, Anti-HCV) non-reactive."
+        : "Viral markers (HIV, HBsAg, Anti-HCV) non-reactive. Coagulation screen verified.",
     },
     physicalExam: {
       atAdmission: {
@@ -724,10 +764,31 @@ export function generateIhmsDischargeForPatient(patient: {
         processDoneBy: patient.postedBy || "Dr Naresh Mangalhara",
       },
     ],
+    postOperativeNotes: {
+      accessSiteHemostasis: patient.postOp?.punctureSiteSeal
+        ? `Access site (${patient.inRoom?.activeSheathAccess || "Puncture site"}): ${patient.postOp.punctureSiteSeal}. Pressure dressing applied, site clean and dry with zero active hematoma or oozing.`
+        : "Vascular access site dry and intact. Manual compression / closure achieved. Zero hematoma, bruit or active oozing.",
+      telemetryVitals: patient.inRoom?.vitals
+        ? `Monitored Cath-Lab Holding Vitals: ${patient.inRoom.vitals}. Temperature: 98.4°F, Respiratory Rate: 16/min regular.`
+        : "BP: 120/80 mmHg, HR: 72 bpm regular, SpO2: 99% on room air, RR: 16/min, Afebrile",
+      sheathRemovalTime: patient.postOp?.sheathRemoved
+        ? `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Sheath safely removed post-procedure; manual hemostasis confirmed)`
+        : "Sheath in situ under continuous hemodynamic monitoring",
+      sheathStatus: patient.postOp?.sheathRemoved ? "Removed" : "In Situ",
+      recoveryStatus: patient.postOp?.dischargeReady
+        ? "Conscious, fully oriented, ambulating comfortably, discharge criteria fulfilled."
+        : `Conscious, oriented, pain controlled (VAS 1/10). Flat supine bed rest / recovery instructions active: ${patient.postOp?.instructions || "Flat supine bed rest for 4 hours."}`,
+      recoveryBed: patient.postOp?.recoveryBed || `${patient.ipd.ward} / ${patient.ipd.bed}`,
+      distalPulses: patient.postOp?.distalPulses ? `${patient.postOp.distalPulses} - equal bilaterally with prompt capillary refill (<2s)` : "Strong (+++) - Bilateral peripheral pulses palpable and equal",
+      immediateComplications: "Nil documented - Zero access site bleeding, zero pseudoaneurysm, zero acute distal limb ischemia",
+      recordedBy: patient.postedBy || "Dr. Neel Yadav (Senior Resident IR)",
+      recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:00 PM`,
+      notes: `Patient underwent ${patient.procedure}. Immediate post-operative monitoring in recovery completed uneventfully. Vitals and access site stability documented.`,
+    },
     ddcDrugs: [
-      { sNo: 1, medicine: "Paracetamol Tab IP 500 mg [28]", qtyIssued: 10, issuedDateTime: new Date().toLocaleDateString("en-IN") + " 11:00 AM" },
-      { sNo: 2, medicine: "Amoxicillin and Clavulanate Tab 625 mg [505]", qtyIssued: 10, issuedDateTime: new Date().toLocaleDateString("en-IN") + " 11:00 AM" },
-      { sNo: 3, medicine: "Multivitamin Tablets NFI Formula [394]", qtyIssued: 10, issuedDateTime: new Date().toLocaleDateString("en-IN") + " 11:00 AM" },
+      { sNo: 1, medicine: "Tab. Paracetamol 500mg [RMSCL DDC #28]", qtyIssued: 10, issuedDateTime: new Date().toLocaleDateString("en-IN") + " 11:00 AM" },
+      { sNo: 2, medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]", qtyIssued: 10, issuedDateTime: new Date().toLocaleDateString("en-IN") + " 11:00 AM" },
+      { sNo: 3, medicine: "Tab. Multivitamin NFI Formula [RMSCL DDC #394]", qtyIssued: 10, issuedDateTime: new Date().toLocaleDateString("en-IN") + " 11:00 AM" },
     ],
     dischargeMedications: meds,
     dischargeDetails: {
@@ -735,18 +796,25 @@ export function generateIhmsDischargeForPatient(patient: {
         ? `${patient.postOp.instructions} Keep puncture site clean and dry for 48 hours. Push oral fluids for contrast clearance. Normal diet. Avoid heavy lifting (>5 kg) for 1 week. Report immediately to emergency in case of fever, bleeding, or increasing swelling.`
         : "Keep puncture site clean and dry for 48 hours. Push oral fluids for contrast clearance. Normal diet. Avoid heavy lifting (>5 kg) for 1 week. Report immediately to emergency in case of fever, bleeding, or increasing swelling.",
       conditionOnDischarge: "Improved",
-      followUp: "Follow-up in Interventional Radiology OPD Room 48 / Old Gastro Ward after 2-4 weeks with repeat Doppler check.",
+      followUp: isVaricose
+        ? "Follow-up in Interventional Radiology OPD Room 48 / Old Gastro Ward after 4 weeks with repeat Doppler check."
+        : "Follow-up in Interventional Radiology OPD Room 48 / Old Gastro Ward after 2 weeks with repeat Doppler check.",
+      followUpDate: (() => {
+        const d = new Date();
+        d.setDate(d.getDate() + (isVaricose ? 30 : 14));
+        return `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(2, "0")}-${d.getFullYear()}`;
+      })(),
       approvedBy: "DR MEENU BAGARHATTA",
       dischargePreparedBy: patient.postedBy || "Dr Naresh Mangalhara",
     },
     attachments:
       patient.attachments && patient.attachments.length > 0
-        ? patient.attachments
+        ? patient.attachments.filter(att => !isVaricose || att.modality !== "US")
         : [
             {
               id: `ATT-${patient.id}-01`,
               title: `Pre-Procedure Diagnostic Angiogram / Roadmap`,
-              modality: isBuddChiari || isArterial || isBae ? "XA" : "US",
+              modality: "XA",
               capturedAt:
                 new Date(Date.now() - 86400000).toLocaleDateString("en-IN") + " 10:00 AM",
               dataUrl: "",
@@ -755,7 +823,7 @@ export function generateIhmsDischargeForPatient(patient: {
             {
               id: `ATT-${patient.id}-02`,
               title: `Post-Procedure Completion Image & Hemostasis`,
-              modality: isBuddChiari || isArterial || isBae ? "XA" : "US",
+              modality: "XA",
               capturedAt: new Date().toLocaleDateString("en-IN") + " 11:15 AM",
               dataUrl: "",
               caption: `SMS Medical College Angiosuite: Post-procedure check verifying technical success, prompt flow, and complete devascularization/stent expansion.`,

@@ -14,6 +14,7 @@ import {
 import { getConsentForProcedure } from "../../lib/consent/consentData";
 import { getCalculatorById } from "../../lib/procedureCalculators";
 import { INITIAL_RIS_WORKLIST_CASES } from "../worklist/worklistData";
+import Link from "next/link";
 import {
   FileText,
   Search,
@@ -34,6 +35,7 @@ import {
   Layers,
   FileSignature,
   Download,
+  FolderOpen,
 } from "lucide-react";
 
 export default function OperativeNotesPage() {
@@ -191,7 +193,15 @@ export default function OperativeNotesPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <Link
+              href="/dashboard/discharge?tab=archive"
+              className="px-4 py-2 bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3] text-xs font-semibold rounded-xl hover:bg-[#FEEFC3] transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+              title="Search authentic patient folders, discharge cards, and post-op notes"
+            >
+              <FolderOpen className="w-3.5 h-3.5 text-[#E37400]" />
+              <span>Patient Archive (1,057 Dossiers)</span>
+            </Link>
             <button
               onClick={handleCopyNote}
               className="px-4 py-2 bg-[#1A73E8] text-white text-xs font-medium rounded-xl hover:bg-[#1557B0] transition-colors flex items-center gap-2 shadow-xs cursor-pointer"

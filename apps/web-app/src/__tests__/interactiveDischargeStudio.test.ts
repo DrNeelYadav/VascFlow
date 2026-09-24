@@ -201,7 +201,8 @@ describe("Interactive Tick-Box Discharge Studio Auto-Synthesis Engine", () => {
       expect(result.caseSummary.icdDiagnosis).toContain("R04.2");
       expect(result.procedureDetails[0].surgicalProcedure).toBe("BRONCHIAL ARTERY EMBOLIZATION (BAE)");
       expect(result.procedureDetails[0].procedureDetail).toContain("Mikaelsson");
-      expect(result.procedureDetails[0].procedureDetail).toContain("PVA particles");
+      expect(result.procedureDetails[0].procedureDetail).toContain("PVA");
+      expect(result.procedureDetails[0].procedureDetail).toContain("microcoils");
       expect(result.dischargeMedications.some((m: DischargeMedicationItem) => m.medicine.includes("Tranexamic Acid"))).toBe(true);
       expect(result.dischargeDetails.generalAdvise).toContain("Avoid forceful coughing");
     });

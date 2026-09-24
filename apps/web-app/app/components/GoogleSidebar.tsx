@@ -21,6 +21,8 @@ import {
   X,
   GraduationCap,
   BarChart3,
+  Truck,
+  PieChart,
 } from "lucide-react";
 import { useEndoflowStore } from "../dashboard/useEndoflowStore";
 
@@ -119,6 +121,13 @@ export function GoogleSidebar({
       badge: activeCasesCount > 0 ? activeCasesCount : undefined,
     },
     {
+      id: "logistics",
+      name: "Patient Logistics & Status Board",
+      href: "/dashboard/logistics",
+      icon: Truck,
+      badge: "STAT Ready",
+    },
+    {
       id: "calendar",
       name: "OT Schedule & Calendar",
       href: "/dashboard/calendar",
@@ -127,9 +136,10 @@ export function GoogleSidebar({
     },
     {
       id: "logbook",
-      name: "Cath-Lab Master Logbook & Census",
+      name: "Cath-Lab Master Logbook",
       href: "/dashboard/logbook",
       icon: BookOpen,
+      badge: "1,059",
     },
     {
       id: "cath-lab-masters",
@@ -137,6 +147,12 @@ export function GoogleSidebar({
       href: "/dashboard/cath-lab-masters",
       icon: BarChart3,
       badge: "2025-2026",
+    },
+    {
+      id: "census",
+      name: "Departmental Census & Registry",
+      href: "/dashboard/census",
+      icon: PieChart,
     },
     {
       id: "discharge",

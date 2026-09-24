@@ -791,9 +791,126 @@ export default function CathLabMasterLogbookPage() {
         </div>
       </div>
 
-      {/* Main Logbook Table */}
+      {/* Main Logbook Table & Mobile Cards */}
       <div className="bg-white border border-[#DADCE0] rounded-2xl shadow-xs overflow-hidden">
-        <div ref={parentRef} className="overflow-x-auto max-h-[640px] overflow-y-auto">
+        {/* Mobile Card Stack */}
+        <div className="block md:hidden divide-y divide-[#E8EAED] max-h-[640px] overflow-y-auto">
+          {paginatedCases.length === 0 ? (
+            <div className="py-8 text-center text-xs text-slate-400 font-mono">
+              No records found
+            </div>
+          ) : (
+            paginatedCases.map((c, idx) => {
+              const actualIdx = (currentPage - 1) * pageSize + idx + 1;
+              const wardBadge = getWardBadgeStyle(c.unit);
+              const modality = getCathLabModality(c);
+              return (
+                <div
+                  key={`${c.dsaNo}-${actualIdx}-m`}
+                  onClick={() => {
+                    setSelectedIndex(idx);
+                    setSelectedCase(c);
+                    setActiveProtocolModal(true);
+                  }}
+                  className="p-3.5 space-y-2.5 bg-white hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-bold text-[#1A73E8]">
+                        #{c.dsaNo}
+                      </span>
+                      <span className="text-[11px] text-[#5F6368] font-medium">
+                        {c.date}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span
+                        className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded-full border ${
+                          c.schemeType === "MAAY"
+                            ? "bg-[#E8F0FE] text-[#1A73E8] border-[#D2E3FC]"
+                            : c.schemeType === "RGHS"
+                            ? "bg-[#E6F4EA] text-[#137333] border-[#CEEAD6]"
+                            : "bg-[#FEF7E0] text-[#B06000] border-[#FEEFC3]"
+                        }`}
+                      >
+                        {c.schemeType}
+                      </span>
+                      <span
+                        className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded border ${
+                          modality === "XA"
+                            ? "bg-[#E8F0FE] text-[#1A73E8] border-[#D2E3FC]"
+                            : modality === "CT"
+                            ? "bg-purple-50 text-purple-700 border-purple-200"
+                            : "bg-teal-50 text-teal-700 border-teal-200"
+                        }`}
+                      >
+                        {modality}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-semibold text-[#202124]">
+                      {c.patientName}
+                    </div>
+                    <div className="text-xs text-[#5F6368] font-mono">
+                      {c.age}y • {c.gender} • CR: {c.crNumber}
+                    </div>
+                  </div>
+
+                  <div className="bg-[#F8F9FA] p-2.5 rounded-lg border border-[#E8EAED] space-y-1 text-xs">
+                    <div className="font-medium text-[#202124]">
+                      {c.procedureName}
+                    </div>
+                    <div className="text-[11px] text-[#5F6368]">
+                      {c.diagnosis}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 pt-1">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium border truncate max-w-[150px] ${wardBadge.bg} ${wardBadge.text} ${wardBadge.border}`}
+                    >
+                      <Building2 className="w-2.5 h-2.5 shrink-0 opacity-80" />
+                      <span className="truncate">{c.unit}</span>
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[10px] text-[#5F6368]">
+                        {c.radiationDose}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCase(c);
+                          setActiveProtocolModal(true);
+                        }}
+                        className="px-2 py-1 text-xs font-medium rounded bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] transition-colors cursor-pointer"
+                      >
+                        Surveillance
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCase(c);
+                          handleDepleteKit(STANDARD_HARDWARE_KITS[0], c);
+                        }}
+                        title={`Log Diagnostic Kit for DSA #${c.dsaNo}`}
+                        className="px-2 py-1 text-xs font-medium rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <Package className="w-3 h-3" />
+                        <span>+Kit</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop Table View */}
+        <div ref={parentRef} className="hidden md:block overflow-x-auto max-h-[640px] overflow-y-auto">
           <table className="w-full text-left text-[12px] border-collapse">
             <thead className="sticky top-0 z-10 bg-[#F8F9FA] text-[#5F6368] font-semibold border-b border-[#DADCE0]">
               <tr className="h-9">

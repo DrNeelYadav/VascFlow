@@ -1103,7 +1103,7 @@ export default function PatientLogisticsDashboardPage() {
                 DICOM RDSR Radiation Telemetry (Philips Azurion)
               </span>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-3 rounded-lg bg-[#202124] border border-[#3C4043]">
                   <span className="text-[11px] text-[#9AA0A6] block">Fluoro Time</span>
                   <span className="text-lg font-bold font-mono text-white">

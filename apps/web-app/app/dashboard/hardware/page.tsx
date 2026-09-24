@@ -645,7 +645,41 @@ export default function HardwareMonitorPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Event Cards */}
+          <div className="block md:hidden divide-y divide-[#F1F3F4]">
+            {filteredEvents.map((evt, idx) => (
+              <div key={`m-${evt.id || idx}`} className="p-3.5 space-y-2 bg-white">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 font-medium text-xs text-[#202124]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#1E8E3E]" />
+                    {evt.suiteName}
+                  </span>
+                  <span className="font-mono text-[11px] text-[#5F6368]">
+                    {new Date(evt.timestamp).toLocaleTimeString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-blue-50 text-[#1A73E8] border border-blue-100">
+                    {evt.pduType}
+                  </span>
+                  <span className="font-mono text-[10px] text-[#5F6368]">
+                    {evt.bytes} B
+                  </span>
+                </div>
+                <div className="text-xs text-[#202124]">
+                  {evt.summary}
+                </div>
+                {evt.airKermaMGy !== undefined && (
+                  <div className="bg-[#F8F9FA] p-2 rounded border border-[#E8EAED] text-[11px] font-mono text-[#137333]">
+                    Exposure: {evt.airKermaMGy} mGy | DAP: {evt.dapGyCm2} Gy·cm²
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-[#DADCE0] bg-[#FFFFFF] text-[#5F6368] font-medium uppercase tracking-wider text-[10px]">

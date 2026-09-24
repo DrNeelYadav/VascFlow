@@ -463,7 +463,7 @@ export default function CathLabMastersPage() {
 
             {/* Interactive SVG Grouped Bar Chart */}
             <div className="w-full overflow-x-auto">
-              <div className="min-w-[600px] h-64 relative">
+              <div className="min-w-[480px] sm:min-w-full h-56 sm:h-64 relative">
                 <svg viewBox="0 0 720 220" className="w-full h-full overflow-visible">
                   {/* Grid Lines */}
                   {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {

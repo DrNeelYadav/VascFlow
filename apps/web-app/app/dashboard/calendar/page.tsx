@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import {
   useEndoflowStore,
@@ -82,6 +82,13 @@ export default function OtScheduleCalendarPage() {
 
   // Calendar View State: "month" or "week"
   const [viewMode, setViewMode] = useState<"month" | "week">("month");
+
+  // Auto-switch to week view on mobile viewports on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 640) {
+      setViewMode("week");
+    }
+  }, []);
 
   // Current view date anchor (Defaulting to September 2026 as per institutional cohort)
   const [currentDate, setCurrentDate] = useState<Date>(() => {
@@ -614,9 +621,9 @@ export default function OtScheduleCalendarPage() {
                       )}
 
                       {/* Mobile Cases Indicator */}
-                      <div className="sm:hidden flex items-center justify-center mt-0.5">
+                      <div className="sm:hidden flex items-center justify-center mt-1">
                         {cell.cases.length > 0 && (
-                          <span className="min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center">
+                          <span className="min-w-[18px] h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC] flex items-center justify-center shadow-2xs">
                             {cell.cases.length}
                           </span>
                         )}

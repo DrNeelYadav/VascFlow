@@ -1535,8 +1535,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
               </span>
             </div>
 
-            <div className="border border-zinc-200 rounded-lg overflow-hidden">
-              <table className="w-full text-left text-xs">
+            <div className="border border-zinc-200 rounded-lg overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[500px]">
                 <thead className="bg-zinc-100 text-[11px] font-semibold text-zinc-700 border-b border-zinc-200">
                   <tr>
                     <th className="px-3 py-2">Investigation (जांच)</th>

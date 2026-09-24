@@ -265,8 +265,29 @@ function normalize2025Case(c: RealSmsPatientCase, index: number): UnifiedCathCas
 }
 
 // Full parsed authentic datasets
-export const PARSED_2026_CASES: UnifiedCathCase[] = REAL_2026_CLINICAL_CASES.map((c, i) => normalize2026Case(c, i));
 export const PARSED_ALL_DSA_CASES: UnifiedCathCase[] = REAL_SMS_PATIENT_REGISTRY.map((c, i) => normalize2025Case(c, i));
+
+// 2026 cases: combine 2026 DSA sheet cases with 2026 authentic clinical discharge cases
+const rawDsa2026 = PARSED_ALL_DSA_CASES.filter((c) => c.year === 2026);
+const rawDischarge2026 = REAL_2026_CLINICAL_CASES.map((c, i) => normalize2026Case(c, i));
+
+const seenCrNumbers = new Set<string>();
+const combined2026: UnifiedCathCase[] = [];
+
+// Prioritize discharge records with rich operative narrative
+for (const dc of rawDischarge2026) {
+  if (dc.crNo) seenCrNumbers.add(dc.crNo.trim());
+  combined2026.push(dc);
+}
+// Supplement with DSA sheet records not already in discharge summaries
+for (const sc of rawDsa2026) {
+  if (!sc.crNo || !seenCrNumbers.has(sc.crNo.trim())) {
+    if (sc.crNo) seenCrNumbers.add(sc.crNo.trim());
+    combined2026.push(sc);
+  }
+}
+
+export const PARSED_2026_CASES: UnifiedCathCase[] = combined2026;
 
 // Specific 2025 subset
 export const PARSED_2025_CASES: UnifiedCathCase[] = PARSED_ALL_DSA_CASES.filter((c) => c.year === 2025);
@@ -276,3 +297,4 @@ export const UNIFIED_CATH_LAB_DATASET: UnifiedCathCase[] = [
   ...PARSED_2025_CASES,
   ...PARSED_2026_CASES,
 ];
+

@@ -361,7 +361,7 @@ export function SynopticEditor({
       </div>
 
       {/* Radiation & Contrast Dosimetry Strip */}
-      <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-3 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-3 text-xs">
         <div>
           <span className="text-[10px] uppercase font-bold text-slate-400">Fluoro Time</span>
           <div className="font-mono font-bold text-slate-900 mt-0.5">{report.fluoroscopyTime} min</div>

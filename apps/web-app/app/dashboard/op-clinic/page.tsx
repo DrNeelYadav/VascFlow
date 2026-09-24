@@ -50,7 +50,8 @@ import {
   ShieldAlert,
   Zap,
   Pause,
-  Play
+  Play,
+  Truck,
 } from "lucide-react";
 
 export const BLANK_PATIENT_FORM = {
@@ -470,8 +471,8 @@ export default function OpClinicConsultationDeskPage() {
 
       setSuccessBanner({
         message: `🚨 STAT Cath-Lab Activated for ${effectiveName}! Transferred directly to Table without locking Ward beds.`,
-        linkHref: "/dashboard/worklist",
-        linkLabel: "Open Cath Lab Worklist →",
+        linkHref: "/dashboard/logistics",
+        linkLabel: "Open Patient Logistics & Status Board →",
       });
       setTimeout(() => setSuccessBanner(null), 6000);
       return;
@@ -752,30 +753,48 @@ export default function OpClinicConsultationDeskPage() {
           </div>
         </div>
 
-        {/* Segmented Control Mode Switcher */}
-        <div className="flex items-center bg-[#F2F2F7] p-1 rounded-xl shrink-0 self-stretch sm:self-auto">
-          <button
-            onClick={() => setActiveTab("desk")}
-            className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              activeTab === "desk"
-                ? "bg-white text-[#1C1C1E] shadow-xs"
-                : "text-[#8E8E93] hover:text-[#1C1C1E]"
-            }`}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <Link
+            href="/dashboard/logistics"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-linear-to-r from-[#EA4335] to-[#D93025] hover:from-[#D93025] hover:to-[#B31412] text-white text-xs font-black shadow-xs hover:shadow-md transition active:scale-95"
+            title="Immediate zero-delay STAT emergency fast-path direct to table & logistics board"
           >
-            <ClipboardList className="w-3.5 h-3.5" />
-            <span>Consultation Desk</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("queue")}
-            className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              activeTab === "queue"
-                ? "bg-white text-[#1C1C1E] shadow-xs"
-                : "text-[#8E8E93] hover:text-[#1C1C1E]"
-            }`}
+            <Zap className="w-3.5 h-3.5 fill-white animate-pulse" />
+            <span>STAT EMERGENCY FAST-PATH</span>
+          </Link>
+          <Link
+            href="/dashboard/logistics"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] hover:bg-white text-[#1C1C1E] text-xs font-semibold shadow-xs transition"
           >
-            <Eye className="w-3.5 h-3.5" />
-            <span>Review Queue ({ctReviews.length})</span>
-          </button>
+            <Truck className="w-3.5 h-3.5 text-[#007AFF]" />
+            <span className="hidden md:inline">Logistics Board</span>
+          </Link>
+
+          {/* Segmented Control Mode Switcher */}
+          <div className="flex items-center bg-[#F2F2F7] p-1 rounded-xl shrink-0 self-stretch sm:self-auto">
+            <button
+              onClick={() => setActiveTab("desk")}
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === "desk"
+                  ? "bg-white text-[#1C1C1E] shadow-xs"
+                  : "text-[#8E8E93] hover:text-[#1C1C1E]"
+              }`}
+            >
+              <ClipboardList className="w-3.5 h-3.5" />
+              <span>Consultation Desk</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("queue")}
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === "queue"
+                  ? "bg-white text-[#1C1C1E] shadow-xs"
+                  : "text-[#8E8E93] hover:text-[#1C1C1E]"
+              }`}
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>Review Queue ({ctReviews.length})</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -862,8 +881,15 @@ export default function OpClinicConsultationDeskPage() {
         <div className="space-y-5">
           {/* Consultation Desk Intake Card */}
           <form onSubmit={handleSaveConsult} className="bg-white border border-[#E5E5EA] rounded-2xl p-5 sm:p-6 shadow-xs space-y-6">
-            {/* Patient Form Fields */}
+            {/* Section 1: Patient Demographics & Accession */}
             <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5" />
+                  Section 1: Patient Demographics &amp; Accession
+                </h3>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Patient Full Name */}
                 <div className="md:col-span-2">
@@ -882,7 +908,7 @@ export default function OpClinicConsultationDeskPage() {
                 </div>
 
                 {/* Age & Biological Sex */}
-                <div className="md:col-span-2">
+                <div>
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
                     Age &amp; Biological Sex
                   </label>
@@ -894,7 +920,7 @@ export default function OpClinicConsultationDeskPage() {
                       autoComplete="off"
                       data-lpignore="true"
                       placeholder="Age"
-                      className="w-24 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                      className="w-20 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                     />
                     <select
                       value={sex}
@@ -907,6 +933,34 @@ export default function OpClinicConsultationDeskPage() {
                   </div>
                 </div>
 
+                {/* Accession Number / CR Number */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Accession / CR Number
+                  </label>
+                  <input
+                    type="text"
+                    value={accessionNumber}
+                    onChange={(e) => setAccessionNumber(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    placeholder="e.g. 2026-99214"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Contact & Referring Department */}
+            <div>
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5" />
+                  Section 2: Contact &amp; Referring Department
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Patient Contact Number (strictly 10-digit mobile) */}
                 <div>
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
@@ -986,39 +1040,32 @@ export default function OpClinicConsultationDeskPage() {
                     <option value="Emergency / STAT">Emergency / STAT</option>
                   </select>
                 </div>
-
-                {/* Accession Number / CR Number */}
-                <div className="md:col-span-2">
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Accession / CR Number
-                  </label>
-                  <input
-                    type="text"
-                    value={accessionNumber}
-                    onChange={(e) => setAccessionNumber(e.target.value)}
-                    autoComplete="off"
-                    data-lpignore="true"
-                    placeholder="e.g. 2026-99214"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  />
-                </div>
               </div>
             </div>
 
-            {/* Clinical History */}
+            {/* Section 3: Clinical Presentation & History */}
             <div>
-              <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                Clinical History &amp; Chief Complaints
-              </label>
-              <textarea
-                rows={3}
-                value={clinicalHistory}
-                onChange={(e) => setClinicalHistory(e.target.value)}
-                autoComplete="off"
-                data-lpignore="true"
-                placeholder="Presenting symptoms and clinical history..."
-                className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-              />
+              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5" />
+                  Section 3: Clinical Presentation &amp; History
+                </h3>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  Clinical History &amp; Chief Complaints
+                </label>
+                <textarea
+                  rows={3}
+                  value={clinicalHistory}
+                  onChange={(e) => setClinicalHistory(e.target.value)}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  placeholder="Presenting symptoms and clinical history..."
+                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                />
+              </div>
             </div>
 
             {/* Section 4: CT Review & Imaging Findings */}
@@ -1137,12 +1184,12 @@ export default function OpClinicConsultationDeskPage() {
               </div>
             </div>
 
-            {/* Section 5: Clinical Disposition Matrix (6-Track Framework) */}
+            {/* Section 6: Clinical Disposition Matrix (6-Track Framework) */}
             <div>
               <div className="border-b border-[#E5E5EA] pb-2 mb-3 flex items-center justify-between">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
                   <ShieldAlert className="w-3.5 h-3.5" />
-                  Clinical Disposition Matrix (6-Track Framework)
+                  Section 6: Clinical Disposition Matrix (6-Track Framework)
                 </h3>
                 <span className="text-[11px] text-[#8E8E93] hidden sm:inline">
                   Strict 8-Bed Inpatient Guardrail • Non-inpatient tracks never lock beds
@@ -1299,6 +1346,26 @@ export default function OpClinicConsultationDeskPage() {
                   <p className="text-[10px] text-amber-800">
                     Documenting SOS triggers ensures patient has explicit clinical boundary conditions without occupying an inpatient hospital bed.
                   </p>
+                </div>
+              )}
+
+              {/* Conditional STAT Emergency Fast-Path Callout */}
+              {disposition === "STAT_CATH_LAB" && (
+                <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in fade-in">
+                  <div className="flex items-center gap-2.5">
+                    <Zap className="w-4 h-4 text-red-600 fill-red-600 animate-pulse shrink-0" />
+                    <div>
+                      <span className="font-bold text-red-900 block">STAT Emergency Fast-Path Direct To Table</span>
+                      <span className="text-[11px] text-red-700">Zero-delay bypasses regular ward bed queues and assigns straight to Angiosuite Table.</span>
+                    </div>
+                  </div>
+                  <Link
+                    href="/dashboard/logistics"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition shrink-0"
+                  >
+                    <Truck className="w-3.5 h-3.5" />
+                    <span>Open Logistics &amp; Status Board →</span>
+                  </Link>
                 </div>
               )}
             </div>

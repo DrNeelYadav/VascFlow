@@ -170,9 +170,70 @@ export default function DopplerPage() {
         </div>
       </div>
 
-      {/* Surveillance Table */}
+      {/* Surveillance Table & Mobile Cards */}
       <div className="bg-white border border-[#DADCE0] rounded-xl overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile Cards */}
+        <div className="block md:hidden divide-y divide-[#E8EAED]">
+          {filtered.length === 0 ? (
+            <div className="p-6 text-center text-xs text-[#80868B]">
+              No Doppler surveillance cases in this interval.
+            </div>
+          ) : (
+            filtered.map((d) => (
+              <div key={`m-${d.id}`} className="p-3.5 space-y-2 bg-white">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-semibold text-[#1A73E8]">
+                      Due: {d.dueDate}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-[#F1F3F4] text-[#3C4043] text-[10px] font-semibold">
+                      {d.intervalLabel}
+                    </span>
+                  </div>
+                  <StatusBadge status={d.status} />
+                </div>
+
+                <div>
+                  <p className="font-bold text-sm text-[#202124]">{d.name}</p>
+                  <p className="text-xs text-[#5F6368] font-mono">
+                    {d.age}Y/{d.sex} • CR: {d.crNo}
+                  </p>
+                </div>
+
+                <div className="bg-[#F8F9FA] p-2.5 rounded-lg border border-[#E8EAED] space-y-1 text-xs">
+                  <div className="font-semibold text-[#202124]">{d.proc}</div>
+                  <div className="text-[11px] text-[#1A73E8] font-medium">{d.implant}</div>
+                  <div className="text-[11px] text-[#5F6368]">
+                    {d.targetVessel} • {d.targetVelocity}
+                  </div>
+                  {d.lastPsv > 0 && (
+                    <div className="text-[11px] font-mono text-[#1A73E8]">
+                      Last PSV: {d.lastPsv} cm/s {d.lastMpv > 0 && `| MPV: ${d.lastMpv} cm/s`}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end pt-1">
+                  {d.status !== "Completed" ? (
+                    <button
+                      onClick={() => openRecordModal(d)}
+                      className="px-3 py-1 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      Record Finding
+                    </button>
+                  ) : (
+                    <span className="text-xs text-[#137333] font-semibold">
+                      Completed
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="border-b border-[#DADCE0] bg-[#F8F9FA]">

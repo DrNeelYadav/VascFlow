@@ -23,6 +23,7 @@ import {
   ClipboardCheck,
   BedDouble,
 } from "lucide-react";
+import { useEndoflowStore } from "../dashboard/useEndoflowStore";
 import { INITIAL_RIS_WORKLIST_CASES } from "../dashboard/worklist/worklistData";
 
 interface CommandMenuProps {
@@ -33,6 +34,9 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const router = useRouter();
+  const patients = useEndoflowStore((s) => s.patients);
+  const bookedCases = useEndoflowStore((s) => s.bookedCases);
+  const ctReviews = useEndoflowStore((s) => s.ctReviews);
 
   // Keyboard shortcut listener (Cmd+K / Ctrl+K and Cmd+L)
   useEffect(() => {
@@ -148,13 +152,40 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
               heading="Active Inpatient & Cath-Lab Cases"
               className="text-[11px] font-medium text-zinc-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-zinc-400 [&_[cmdk-group-heading]]:mb-1"
             >
-              {INITIAL_RIS_WORKLIST_CASES.map((c) => (
+              {/* Live Admitted Inpatients */}
+              {patients.map((p) => (
                 <Command.Item
-                  key={c.caseId}
-                  value={`patient: ${c.crNumber} ${c.patientName} ${c.procedureName} ${c.caseId}`}
+                  key={`pt-${p.id}`}
+                  value={`patient: ${p.hid || ""} ${p.name} ${p.procedure || ""} ${p.id}`}
                   onSelect={() =>
                     runCommand(() =>
-                      router.push(`/dashboard/cath-lab-flowsheet?caseId=${c.caseId}`)
+                      router.push(`/dashboard/bed-board`)
+                    )
+                  }
+                  className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-zinc-800 hover:bg-zinc-100 aria-selected:bg-zinc-100 aria-selected:text-zinc-900 transition"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <User className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    <div className="truncate">
+                      <span className="font-semibold text-zinc-900">{p.name}</span>
+                      <span className="ml-2 font-mono text-[11px] text-zinc-500">{p.hid}</span>
+                      <span className="ml-2 text-zinc-500">• {p.procedure}</span>
+                    </div>
+                  </div>
+                  <span className="font-mono text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded shrink-0 ml-2">
+                    {p.ipd?.bed || p.status}
+                  </span>
+                </Command.Item>
+              ))}
+
+              {/* Live Booked Cases */}
+              {bookedCases.map((c) => (
+                <Command.Item
+                  key={`bc-${c.id}`}
+                  value={`patient: ${c.ssoNumber || ""} ${c.patientName} ${c.procedureTitle} ${c.id}`}
+                  onSelect={() =>
+                    runCommand(() =>
+                      router.push(`/dashboard/calendar`)
                     )
                   }
                   className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-zinc-800 hover:bg-zinc-100 aria-selected:bg-zinc-100 aria-selected:text-zinc-900 transition"
@@ -163,12 +194,38 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
                     <User className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                     <div className="truncate">
                       <span className="font-semibold text-zinc-900">{c.patientName}</span>
-                      <span className="ml-2 font-mono text-[11px] text-zinc-500">{c.crNumber}</span>
-                      <span className="ml-2 text-zinc-500">• {c.procedureName}</span>
+                      <span className="ml-2 font-mono text-[11px] text-zinc-500">{c.ssoNumber}</span>
+                      <span className="ml-2 text-zinc-500">• {c.procedureTitle}</span>
                     </div>
                   </div>
-                  <span className="font-mono text-[10px] text-zinc-400 shrink-0 ml-2">
-                    {c.status.replace(/_/g, " ")}
+                  <span className="font-mono text-[10px] text-zinc-500 shrink-0 ml-2">
+                    {c.scheduledDate} ({c.status})
+                  </span>
+                </Command.Item>
+              ))}
+
+              {/* Live OPD Consults */}
+              {ctReviews.map((r) => (
+                <Command.Item
+                  key={`ct-${r.id}`}
+                  value={`patient: ${r.smsBillId || ""} ${r.patientName} ${r.procedureTitle || r.primaryDiagnosis} ${r.id}`}
+                  onSelect={() =>
+                    runCommand(() =>
+                      router.push(`/dashboard/op-clinic`)
+                    )
+                  }
+                  className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-zinc-800 hover:bg-zinc-100 aria-selected:bg-zinc-100 aria-selected:text-zinc-900 transition"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <User className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    <div className="truncate">
+                      <span className="font-semibold text-zinc-900">{r.patientName}</span>
+                      <span className="ml-2 font-mono text-[11px] text-zinc-500">{r.smsBillId}</span>
+                      <span className="ml-2 text-zinc-500">• {r.procedureTitle || r.primaryDiagnosis}</span>
+                    </div>
+                  </div>
+                  <span className="font-mono text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded shrink-0 ml-2">
+                    OPD {r.status}
                   </span>
                 </Command.Item>
               ))}

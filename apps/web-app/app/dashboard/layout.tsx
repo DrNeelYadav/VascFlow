@@ -9,6 +9,7 @@ import { CommandMenu } from "../components/command-menu";
 import { DualPaneWorkspace } from "./components/DualPaneWorkspace";
 import { MobileBottomNav } from "../components/shell/MobileBottomNav";
 import { VersionNotification } from "./components/VersionNotification";
+import { UniversalDataSync } from "./components/UniversalDataSync";
 
 export default function DashboardLayout({
   children,
@@ -107,6 +108,9 @@ export default function DashboardLayout({
 
       {/* Auto-detect new Vercel deployments */}
       <VersionNotification />
+
+      {/* Real-time multi-device cloud synchronization listener */}
+      <UniversalDataSync />
     </div>
   );
 }

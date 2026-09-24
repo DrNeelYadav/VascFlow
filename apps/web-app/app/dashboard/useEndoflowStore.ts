@@ -551,6 +551,12 @@ export interface EndoflowState {
   resetToDefaultPatients: () => void;
   loadDemoSeedData: () => void;
 
+  // Real-Time Multi-Device Cloud Sync Setters
+  setPatients: (patients: EndoflowPatient[]) => void;
+  setCtReviews: (reviews: CtReviewRecord[]) => void;
+  setBookedCases: (cases: BookedCaseRecord[]) => void;
+  setBeds: (beds: BedRecord[]) => void;
+
   // Cloud Sync Alert Notification
   syncAlert: string | null;
   setSyncAlert: (alert: string | null) => void;
@@ -625,7 +631,58 @@ async function syncBedsBatchToFirestore(beds: BedRecord[]): Promise<void> {
   }
 }
 
-// ============================================================================
+async function syncCtReviewToFirestore(review: CtReviewRecord): Promise<void> {
+  try {
+    if (!isFirebaseConfigured() || !db) return;
+    const sanitized = JSON.parse(JSON.stringify(review));
+    const writePromise = setDoc(doc(db, "ctReviews", review.id), sanitized, { merge: true });
+    await Promise.race([
+      writePromise,
+      new Promise<void>((_, reject) =>
+        setTimeout(() => reject(new Error("Firestore ctReview sync timed out")), 1500)
+      ),
+    ]);
+  } catch (error) {
+    console.warn(`[Firestore] Failed to persist ctReview ${review?.id}:`, error);
+  }
+}
+
+async function syncBookedCaseToFirestore(bookedCase: BookedCaseRecord): Promise<void> {
+  try {
+    if (!isFirebaseConfigured() || !db) return;
+    const sanitized = JSON.parse(JSON.stringify(bookedCase));
+    const writePromise = setDoc(doc(db, "bookedCases", bookedCase.id), sanitized, { merge: true });
+    await Promise.race([
+      writePromise,
+      new Promise<void>((_, reject) =>
+        setTimeout(() => reject(new Error("Firestore bookedCase sync timed out")), 1500)
+      ),
+    ]);
+  } catch (error) {
+    console.warn(`[Firestore] Failed to persist bookedCase ${bookedCase?.id}:`, error);
+  }
+}
+
+async function syncBookedCasesBatchToFirestore(cases: BookedCaseRecord[]): Promise<void> {
+  try {
+    if (!isFirebaseConfigured() || !db) return;
+    const batch = writeBatch(db);
+    for (const c of cases) {
+      const sanitized = JSON.parse(JSON.stringify(c));
+      batch.set(doc(db, "bookedCases", c.id), sanitized, { merge: true });
+    }
+    const writePromise = batch.commit();
+    await Promise.race([
+      writePromise,
+      new Promise<void>((_, reject) =>
+        setTimeout(() => reject(new Error("Firestore batch bookedCases sync timed out")), 1500)
+      ),
+    ]);
+  } catch (error) {
+    console.warn("[Firestore] Failed to persist bookedCases batch:", error);
+  }
+}
+
 // ZUSTAND STORE IMPLEMENTATION
 // ============================================================================
 
@@ -1012,6 +1069,7 @@ export const useEndoflowStore = create<EndoflowState>()(
     set((state) => ({
       bookedCases: [parsed.data, ...state.bookedCases],
     }));
+    void syncBookedCaseToFirestore(parsed.data);
     return { success: true, id: newId };
   },
 
@@ -1035,18 +1093,23 @@ export const useEndoflowStore = create<EndoflowState>()(
         };
       }),
     }));
+    const target = get().bookedCases.find((c) => c.id === caseId);
+    if (target) {
+      void syncBookedCaseToFirestore(target);
+    }
   },
 
   massRescheduleCases: (fromDate: string, targetDate: string, reason?: string) => {
     let movedCount = 0;
+    const affectedCases: BookedCaseRecord[] = [];
     set((state) => ({
       bookedCases: state.bookedCases.map((c) => {
         if (c.scheduledDate !== fromDate) return c;
         movedCount++;
-        return {
+        const updated = {
           ...c,
           scheduledDate: targetDate,
-          status: "Rescheduled",
+          status: "Rescheduled" as const,
           rescheduleHistory: [
             {
               previousDate: fromDate,
@@ -1057,8 +1120,13 @@ export const useEndoflowStore = create<EndoflowState>()(
             ...c.rescheduleHistory,
           ],
         };
+        affectedCases.push(updated);
+        return updated;
       }),
     }));
+    if (affectedCases.length > 0) {
+      void syncBookedCasesBatchToFirestore(affectedCases);
+    }
     return movedCount;
   },
 
@@ -1081,15 +1149,20 @@ export const useEndoflowStore = create<EndoflowState>()(
         };
       }),
     }));
+    const target = get().bookedCases.find((c) => c.id === caseId);
+    if (target) {
+      void syncBookedCaseToFirestore(target);
+    }
   },
 
   batchRescheduleCases: (caseIds: string[], targetDate: string, reason?: string) => {
     let movedCount = 0;
+    const affectedCases: BookedCaseRecord[] = [];
     set((state) => ({
       bookedCases: state.bookedCases.map((c) => {
         if (!caseIds.includes(c.id)) return c;
         movedCount++;
-        return {
+        const updated = {
           ...c,
           scheduledDate: targetDate,
           status: "Rescheduled" as const,
@@ -1103,8 +1176,13 @@ export const useEndoflowStore = create<EndoflowState>()(
             ...c.rescheduleHistory,
           ],
         };
+        affectedCases.push(updated);
+        return updated;
       }),
     }));
+    if (affectedCases.length > 0) {
+      void syncBookedCasesBatchToFirestore(affectedCases);
+    }
     return movedCount;
   },
 
@@ -1120,6 +1198,10 @@ export const useEndoflowStore = create<EndoflowState>()(
         };
       }),
     }));
+    const target = get().bookedCases.find((c) => c.id === caseId);
+    if (target) {
+      void syncBookedCaseToFirestore(target);
+    }
   },
 
   addCustomHardwareItem: (caseId: string, item: string, spec: string) => {
@@ -1177,6 +1259,10 @@ export const useEndoflowStore = create<EndoflowState>()(
         };
       }),
     }));
+    const target = get().bookedCases.find((c) => c.id === caseId);
+    if (target) {
+      void syncBookedCaseToFirestore(target);
+    }
   },
 
   ctReviews: INITIAL_CT_REVIEWS,
@@ -1191,12 +1277,17 @@ export const useEndoflowStore = create<EndoflowState>()(
     set((state) => ({
       ctReviews: [newRecord, ...state.ctReviews],
     }));
+    void syncCtReviewToFirestore(newRecord);
   },
 
   updateCtReview: (id, updates) => {
     set((state) => ({
       ctReviews: state.ctReviews.map((r) => (r.id === id ? { ...r, ...updates } : r)),
     }));
+    const target = get().ctReviews.find((r) => r.id === id);
+    if (target) {
+      void syncCtReviewToFirestore(target);
+    }
   },
 
   convertCtReviewToBooking: (reviewId, scheduledDate, diseaseKey, procedureTitle, staffName) => {
@@ -1256,6 +1347,10 @@ export const useEndoflowStore = create<EndoflowState>()(
             : r
         ),
       }));
+      const updatedReview = get().ctReviews.find((r) => r.id === reviewId);
+      if (updatedReview) {
+        void syncCtReviewToFirestore(updatedReview);
+      }
     }
 
     return bookingResult;
@@ -1283,6 +1378,10 @@ export const useEndoflowStore = create<EndoflowState>()(
         };
       }),
     }));
+    const target = get().ctReviews.find((r) => r.id === reviewId);
+    if (target) {
+      void syncCtReviewToFirestore(target);
+    }
   },
 
   holdCtReview: (reviewId: string, reason?: string) => {
@@ -1305,6 +1404,10 @@ export const useEndoflowStore = create<EndoflowState>()(
         };
       }),
     }));
+    const target = get().ctReviews.find((r) => r.id === reviewId);
+    if (target) {
+      void syncCtReviewToFirestore(target);
+    }
   },
 
   reactivateCtReview: (reviewId: string) => {
@@ -1327,6 +1430,10 @@ export const useEndoflowStore = create<EndoflowState>()(
         };
       }),
     }));
+    const target = get().ctReviews.find((r) => r.id === reviewId);
+    if (target) {
+      void syncCtReviewToFirestore(target);
+    }
   },
 
   // Doppler Surveillance Records
@@ -1378,6 +1485,12 @@ export const useEndoflowStore = create<EndoflowState>()(
       dopplerRecords: DEMO_DOPPLER_RECORDS,
       activeCaseId: "PT03",
     }),
+
+  // Universal Real-Time Multi-Device Cloud Sync Setters
+  setPatients: (patients) => set({ patients }),
+  setCtReviews: (ctReviews) => set({ ctReviews }),
+  setBookedCases: (bookedCases) => set({ bookedCases }),
+  setBeds: (beds) => set({ beds }),
     }),
     {
       name: "vascflow-clinical-storage-v2",

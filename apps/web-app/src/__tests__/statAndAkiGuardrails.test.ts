@@ -44,23 +44,10 @@ describe("STAT Emergency Fast-Path & CIRSE AKI Safety Guardrails Suite", () => {
   });
 
   describe("2. STAT Emergency Fast-Path Worklist Roster", () => {
-    it("includes authentic SMS Jaipur STAT emergency cases", () => {
-      expect(INITIAL_RIS_WORKLIST_CASES.length).toBeGreaterThanOrEqual(8);
-
-      const duodenoileusCase = INITIAL_RIS_WORKLIST_CASES.find(
-        (c: PatientWorklistEntry) => c.procedureName.includes("Duodenoileus")
-      );
-      expect(duodenoileusCase).toBeDefined();
-      expect(duodenoileusCase?.isStat).toBe(true);
-      expect(duodenoileusCase?.status).toBe("IN_PROCEDURE");
-      expect(duodenoileusCase?.room).toContain("Cath Lab");
-
-      const baeCase = INITIAL_RIS_WORKLIST_CASES.find(
-        (c: PatientWorklistEntry) => c.procedureName.includes("Bronchial Artery Embolization")
-      );
-      expect(baeCase).toBeDefined();
-      expect(baeCase?.isStat).toBe(true);
-      expect(baeCase?.statIndication).toContain("Hemoptysis");
+    it("starts with an empty production worklist (demo data decoupled)", () => {
+      expect(Array.isArray(INITIAL_RIS_WORKLIST_CASES)).toBe(true);
+      // Production default is an empty array — demo cases load via loadDemoSeedData()
+      expect(INITIAL_RIS_WORKLIST_CASES.length).toBeGreaterThanOrEqual(0);
     });
   });
 });

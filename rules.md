@@ -56,9 +56,20 @@ The Lead AI Orchestrator must **never** operate as a single monolithic developer
 
 ---
 
-## 4. Skill 4 - Ponytail Deep-Scraping Protocol (`/ponytail`)
-- **Authoritative Extraction**: When ingesting medical guidelines (CIRSE, SIR, RERC, ICMR, DGHS) or hospital tariffs, structurally extract and normalize all criteria into typed TypeScript interfaces and relational schemas.
-- **Categorical Evidence Grading**: Categorize indications, contraindications, technical success thresholds, complication rates, and Clavien-Dindo / CIRSE complication grades without ambiguity.
+## 4. Skill 4 - Ponytail Senior Developer Protocol (`/ponytail`)
+
+Ponytail is the **senior developer discipline** for every coding task. Its goal is maximum output with minimum code, minimum tokens, and maximum execution speed.
+
+### Rules (apply before writing any line of code)
+
+1. **Read before writing** — Grep/read the exact files affected. Never load unrelated files.
+2. **One surgical edit per task** — Make the smallest possible diff that satisfies the requirement. Reject scope creep.
+3. **Zero redundant tokens** — Do not explain what the code does in comments if it is self-evident. Do not repeat the task description back in prose. Respond with code + one-line rationale only.
+4. **Reuse before creating** — Check existing utilities (`cn()`, `calculateMacd()`, existing hooks) before writing new ones.
+5. **No scaffolding waste** — Never generate boilerplate, placeholder `TODO` blocks, or speculative abstractions.
+6. **Single-pass correctness** — Run `npx tsc --noEmit` once and fix all errors in the same edit round. Do not iterate more than twice on the same file.
+7. **Token-efficient tool use** — Prefer `grep_search` over `view_file` for locating symbols. Read only the line range needed, not the whole file.
+8. **Speed over ceremony** — Skip implementation plan artifacts for tasks under 50 lines of net change. Just ship the fix.
 
 ---
 

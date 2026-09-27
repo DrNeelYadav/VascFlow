@@ -82,6 +82,7 @@ export default function OpClinicConsultationDeskPage() {
     postponeCtReview,
     holdCtReview,
     reactivateCtReview,
+    keepCtReviewOnCall,
     patients,
     admitPatient,
     beds,
@@ -135,6 +136,7 @@ export default function OpClinicConsultationDeskPage() {
   // 2-Step Booking Workflow States
   const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
   const [bookingStep, setBookingStep] = useState<1 | 2>(1);
+  const [isOnCallBooking, setIsOnCallBooking] = useState<boolean>(false);
   const [urgencyLevel, setUrgencyLevel] = useState<"Elective" | "Urgent" | "Emergency">("Elective");
   const [bookingDate, setBookingDate] = useState<string>(
     new Date(Date.now() + 86400000).toISOString().split("T")[0]
@@ -273,7 +275,13 @@ export default function OpClinicConsultationDeskPage() {
   const filteredReviews = useMemo(() => {
     return ctReviews.filter((r) => {
       if (selectedCenter !== "all" && r.hospitalSource !== selectedCenter) return false;
-      if (selectedStatus !== "all" && r.status !== selectedStatus) return false;
+      if (selectedStatus !== "all") {
+        if (selectedStatus === "Keep On Call (Standby)") {
+          if (r.status !== "Keep On Call (Standby)" && !r.isOnCall) return false;
+        } else if (r.status !== selectedStatus) {
+          return false;
+        }
+      }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         return (
@@ -563,16 +571,80 @@ export default function OpClinicConsultationDeskPage() {
   };
 
   // ==========================================================================
-  // ACTION 2: BOOK FOR CATH-LAB
+  // ACTION 2: BOOK FOR CATH-LAB (OR KEEP ON-CALL STANDBY)
   // ==========================================================================
   const handleConfirmCathLabBooking = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
     const effectiveName = patientName.trim() || "OPD Consultation Patient";
-    const effectiveDate = bookingDate || new Date().toISOString().split("T")[0];
+    const effectiveDate = isOnCallBooking ? "ON_CALL" : (bookingDate || new Date().toISOString().split("T")[0]);
     const generatedSeq = Date.now().toString().slice(-4);
     const generatedSso = `SMS-2026-${generatedSeq}`;
     const generatedAcc = accessionNumber.trim() || `SONI-ACC-2026-${generatedSeq}`;
+
+    if (isOnCallBooking) {
+      if (selectedPatientKey.startsWith("CT-REV")) {
+        keepCtReviewOnCall(selectedPatientKey, "Kept on call standby from booking modal");
+      } else {
+        bookCase({
+          patientName: effectiveName,
+          age: Number(age) || 0,
+          sex,
+          contactNumber: contactNumber.trim() || "",
+          residentContact: residentContact.trim() || undefined,
+          referringDepartment: referringDepartment || undefined,
+          urgencyCategory: "On Call",
+          customProcedureTitle: organSystem === "Others" ? (customProcedureTitle.trim() || undefined) : undefined,
+          ssoNumber: generatedSso,
+          accessionNumber: generatedAcc,
+          location: "Jaipur",
+          scheduledDate: "ON_CALL",
+          urgency: "On Call",
+          organSystem,
+          diseaseKey: effectiveDiseaseKey,
+          procedureTitle: effectiveProcedureTitle,
+          disposition,
+          sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
+          bookedBy: `${activeStaff.name} (${activeStaff.code})`,
+          orderedLabs: [
+            "Liver Function Tests (Total & Direct Bilirubin, AST, ALT, Albumin)",
+            "Renal Function Tests (Serum Creatinine, BUN, Electrolytes)",
+            "Coagulation Profile (PT, INR, aPTT)",
+            "Complete Blood Count (Hb, TLC, Platelets)",
+          ],
+          specialInvestigations: [
+            `PACS Accession #${generatedAcc}: ${cectFindings.trim() || "No CT findings recorded"}`,
+            `Clinical History: ${clinicalHistory.trim() || "Clinical course documented."}`,
+          ],
+          preScanAnatomy: {},
+          hardwareChecklist: [
+            { id: "h1", item: "Vascular Access Sheath", spec: "6F 45cm Destination Sheath", checked: true },
+            { id: "h2", item: "Selective Diagnostic Catheter", spec: "5F Cobra C2 / Simmons 1", checked: true },
+            { id: "h3", item: "Hydrophilic Guidewire", spec: "0.035\" 260cm Terumo Glidewire", checked: true },
+          ],
+          postOpPlan: `On-Call Standby Case: ${effectiveProcedureTitle}. Pre-procedure call pending.`,
+          status: "On Call",
+          npoVerified: false,
+          labsVerified: false,
+          bloodProductsVerified: false,
+          hardwareVerified: false,
+          screenedBy: null,
+          screenedAt: null,
+          keptForTomorrow: false,
+          admissionCardUpdated: false,
+          codeAdditionStatus: "Pending",
+        });
+      }
+      setShowBookingModal(false);
+      setBookingStep(1);
+      setSuccessBanner({
+        message: `Patient ${effectiveName} placed in On-Call Standby Roster (To be called in case of cancellation).`,
+        linkHref: "/dashboard/calendar",
+        linkLabel: "View On-Call Roster in Calendar →",
+      });
+      setTimeout(() => setSuccessBanner(null), 6000);
+      return;
+    }
 
     if (selectedPatientKey.startsWith("CT-REV")) {
       // Transition existing CT review record
@@ -891,9 +963,9 @@ export default function OpClinicConsultationDeskPage() {
                 {/* Age & Biological Sex */}
                 <div>
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Age &amp; Biological Sex
+                    Age &amp; Sex
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5">
                     <input
                       type="number"
                       value={age}
@@ -901,16 +973,32 @@ export default function OpClinicConsultationDeskPage() {
                       autoComplete="off"
                       data-lpignore="true"
                       placeholder="Age"
-                      className="w-20 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                      className="w-16 px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                     />
-                    <select
-                      value={sex}
-                      onChange={(e) => setSex(e.target.value as "Male" | "Female")}
-                      className="flex-1 px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                    >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
+                    <div className="flex-1 flex rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setSex("Male")}
+                        className={`flex-1 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                          sex === "Male"
+                            ? "bg-white text-[#007AFF] shadow-2xs"
+                            : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                        }`}
+                      >
+                        Male
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSex("Female")}
+                        className={`flex-1 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                          sex === "Female"
+                            ? "bg-white text-rose-600 shadow-2xs"
+                            : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                        }`}
+                      >
+                        Female
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -926,7 +1014,7 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="e.g. 2026-99214"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -937,7 +1025,7 @@ export default function OpClinicConsultationDeskPage() {
               <div className="border-b border-[#E5E5EA] pb-2 mb-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
                   <Building className="w-3.5 h-3.5" />
-                  Section 2: Contact &amp; Referring Department
+                  Section 2: Contact &amp; Department Triage
                 </h3>
               </div>
 
@@ -956,7 +1044,7 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="10-digit mobile number"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -974,52 +1062,76 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="Resident 10-digit mobile"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
 
-                {/* Referring Department */}
-                <div>
+                {/* Referring Department - Zero Dropdown Quick Chips */}
+                <div className="sm:col-span-2">
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Referring Department
+                    Referring Department ({referringDepartment || "Select"})
                   </label>
-                  <select
+                  <div className="flex flex-wrap gap-1 mb-1.5">
+                    {[
+                      { key: "Gastroenterology & Hepatology", short: "Gastro/Hep" },
+                      { key: "General Surgery", short: "Surgery" },
+                      { key: "Urology & Renal Transplant", short: "Urology" },
+                      { key: "Pulmonary Medicine / Chest TB", short: "Chest TB" },
+                      { key: "Obstetrics & Gynecology", short: "Obs/Gynae" },
+                      { key: "Medical & Surgical Oncology", short: "Oncology" },
+                      { key: "Internal Medicine", short: "Medicine" },
+                      { key: "Emergency Medicine & Trauma", short: "Emergency" },
+                    ].map((d) => (
+                      <button
+                        key={d.key}
+                        type="button"
+                        onClick={() => setReferringDepartment(d.key)}
+                        className={`px-2 py-0.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer ${
+                          referringDepartment === d.key
+                            ? "bg-[#007AFF] text-white shadow-2xs"
+                            : "bg-[#F2F2F7] text-[#3C4043] hover:bg-[#E5E5EA]"
+                        }`}
+                      >
+                        {d.short}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
                     value={referringDepartment}
                     onChange={(e) => setReferringDepartment(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  >
-                    <option value="Gastroenterology & Hepatology">Gastroenterology &amp; Hepatology</option>
-                    <option value="General Surgery">General Surgery</option>
-                    <option value="Urology & Renal Transplant">Urology &amp; Renal Transplant</option>
-                    <option value="Pulmonary Medicine / Chest TB">Pulmonary Medicine / Chest TB</option>
-                    <option value="Obstetrics & Gynecology">Obstetrics &amp; Gynecology</option>
-                    <option value="Medical & Surgical Oncology">Medical &amp; Surgical Oncology</option>
-                    <option value="Internal Medicine">Internal Medicine</option>
-                    <option value="Emergency Medicine & Trauma">Emergency Medicine &amp; Trauma</option>
-                    <option value="Nephrology">Nephrology</option>
-                    <option value="Orthopedics">Orthopedics</option>
-                    <option value="Neurology & Neurosurgery">Neurology &amp; Neurosurgery</option>
-                    <option value="Pediatrics">Pediatrics</option>
-                    <option value="Other Department">Other Department</option>
-                  </select>
+                    placeholder="Or type custom referring unit/doctor..."
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] focus:bg-white focus:border-[#007AFF] focus:outline-none"
+                  />
                 </div>
 
-                {/* Urgency / Priority Category */}
-                <div>
+                {/* Urgency / Priority Category - Zero Dropdown Segmented Buttons */}
+                <div className="sm:col-span-2 md:col-span-4">
                   <label className="block text-[11px] font-semibold text-[#636366] mb-1">
                     Urgency / Priority Category
                   </label>
-                  <select
-                    value={urgencyCategory}
-                    onChange={(e) => setUrgencyCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  >
-                    <option value="Routine / Non-Urgent">Routine / Non-Urgent</option>
-                    <option value="Early Treatment">Early Treatment</option>
-                    <option value="Extensive Disease">Extensive Disease</option>
-                    <option value="VIP Patient">VIP Patient</option>
-                    <option value="Emergency / STAT">Emergency / STAT</option>
-                  </select>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { key: "Routine / Non-Urgent", label: "Routine (Elective)", color: "border-blue-200 text-blue-700 bg-blue-50/60" },
+                      { key: "Early Treatment", label: "Early Treatment (24-48h)", color: "border-amber-200 text-amber-700 bg-amber-50/60" },
+                      { key: "Extensive Disease", label: "Extensive Disease", color: "border-orange-200 text-orange-700 bg-orange-50/60" },
+                      { key: "VIP Patient", label: "VIP Priority", color: "border-purple-200 text-purple-700 bg-purple-50/60" },
+                      { key: "Emergency / STAT", label: "Emergency STAT", color: "border-red-200 text-red-700 bg-red-50/60" },
+                    ].map((u) => (
+                      <button
+                        key={u.key}
+                        type="button"
+                        onClick={() => setUrgencyCategory(u.key)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                          urgencyCategory === u.key
+                            ? "bg-[#1C1C1E] text-white border-[#1C1C1E] shadow-2xs scale-[1.01]"
+                            : `${u.color} hover:opacity-85`
+                        }`}
+                      >
+                        {u.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1083,55 +1195,27 @@ export default function OpClinicConsultationDeskPage() {
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Primary Diagnosis
-                  </label>
-                  <input
-                    type="text"
-                    value={primaryDiagnosis}
-                    onChange={(e) => setPrimaryDiagnosis(e.target.value)}
-                    autoComplete="off"
-                    data-lpignore="true"
-                    placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites (optional)"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  />
-                </div>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                      Primary Clinical Diagnosis
+                    </label>
+                    <input
+                      type="text"
+                      value={primaryDiagnosis}
+                      onChange={(e) => setPrimaryDiagnosis(e.target.value)}
+                      autoComplete="off"
+                      data-lpignore="true"
+                      placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites"
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                    Organ System
-                  </label>
-                  <select
-                    value={organSystem}
-                    onChange={(e) => {
-                      const newSys = e.target.value;
-                      setOrganSystem(newSys);
-                      if (newSys === "Others") {
-                        setDiseaseKey("custom_procedure");
-                      } else {
-                        const first = IR_CLINICAL_PROTOCOLS.find((p) => p.organSystem === newSys);
-                        if (first) setDiseaseKey(first.key);
-                      }
-                    }}
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                  >
-                    <option value="Liver & Hepatobiliary">Liver &amp; Hepatobiliary</option>
-                    <option value="Thoracic & Pulmonary">Thoracic &amp; Pulmonary</option>
-                    <option value="Gastrointestinal & Mesenteric">Gastrointestinal &amp; Mesenteric</option>
-                    <option value="Peripheral Vascular">Peripheral Vascular</option>
-                    <option value="Pelvic & Genitourinary">Pelvic &amp; Genitourinary</option>
-                    <option value="Venous & Dialysis Access">Venous &amp; Dialysis Access</option>
-                    <option value="Others">Others</option>
-                  </select>
-                </div>
-
-                <div>
-                  {organSystem === "Others" ? (
+                  {organSystem === "Others" && (
                     <div>
                       <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                        Suggested IR Protocol (Custom Entry)
+                        Custom Procedure Title
                       </label>
                       <input
                         type="text"
@@ -1140,28 +1224,75 @@ export default function OpClinicConsultationDeskPage() {
                         autoComplete="off"
                         data-lpignore="true"
                         placeholder="e.g. Percutaneous Sclerotherapy / Custom Angio"
-                        className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
                       />
-                    </div>
-                  ) : (
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#636366] mb-1">
-                        Suggested IR Protocol
-                      </label>
-                      <select
-                        value={diseaseKey}
-                        onChange={(e) => setDiseaseKey(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
-                      >
-                        {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
-                          <option key={p.key} value={p.key}>
-                            {p.title}
-                          </option>
-                        ))}
-                      </select>
                     </div>
                   )}
                 </div>
+
+                {/* Organ System - Zero Dropdown Segmented Buttons */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    Organ System ({organSystem})
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { key: "Liver & Hepatobiliary", label: "Liver & HPB" },
+                      { key: "Thoracic & Pulmonary", label: "Thoracic" },
+                      { key: "Gastrointestinal & Mesenteric", label: "GI & Mesenteric" },
+                      { key: "Peripheral Vascular", label: "Peripheral" },
+                      { key: "Pelvic & Genitourinary", label: "Pelvic / GU" },
+                      { key: "Venous & Dialysis Access", label: "Venous / Dialysis" },
+                      { key: "Others", label: "Custom / Others" },
+                    ].map((sys) => (
+                      <button
+                        key={sys.key}
+                        type="button"
+                        onClick={() => {
+                          setOrganSystem(sys.key);
+                          if (sys.key === "Others") {
+                            setDiseaseKey("custom_procedure");
+                          } else {
+                            const first = IR_CLINICAL_PROTOCOLS.find((p) => p.organSystem === sys.key);
+                            if (first) setDiseaseKey(first.key);
+                          }
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                          organSystem === sys.key
+                            ? "bg-[#007AFF] text-white border-[#007AFF] shadow-2xs"
+                            : "bg-[#F2F2F7] text-[#3C4043] border-transparent hover:bg-[#E5E5EA]"
+                        }`}
+                      >
+                        {sys.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Suggested Protocol - Zero Dropdown Protocol Chips */}
+                {organSystem !== "Others" && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                      Suggested IR Protocol ({matchedProtocol?.title || "Select Protocol"})
+                    </label>
+                    <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA]">
+                      {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
+                        <button
+                          key={p.key}
+                          type="button"
+                          onClick={() => setDiseaseKey(p.key)}
+                          className={`px-2 py-1 rounded-md text-[11px] font-semibold border text-left transition-all cursor-pointer ${
+                            diseaseKey === p.key
+                              ? "bg-white text-[#007AFF] border-[#007AFF] shadow-2xs ring-1 ring-[#007AFF]"
+                              : "bg-white text-[#3C4043] border-[#E5E5EA] hover:border-[#007AFF]/40"
+                          }`}
+                        >
+                          {p.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1394,30 +1525,53 @@ export default function OpClinicConsultationDeskPage() {
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-              <select
-                value={selectedCenter}
-                onChange={(e) => setSelectedCenter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] focus:outline-none"
-              >
-                <option value="all">All Imaging Centers</option>
-                <option value="SONI Hospital">SONI Hospital PACS</option>
-                <option value="SMS Hospital">SMS Hospital CT</option>
-                <option value="External PACS">External / Other</option>
-              </select>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
+              {/* Imaging Center Filter Pills - Zero Dropdown */}
+              <div className="flex flex-wrap items-center gap-1 bg-[#F2F2F7] p-1 rounded-xl">
+                {[
+                  { key: "all", label: "All Centers" },
+                  { key: "SONI Hospital", label: "SONI PACS" },
+                  { key: "SMS Hospital", label: "SMS CT" },
+                ].map((c) => (
+                  <button
+                    key={c.key}
+                    type="button"
+                    onClick={() => setSelectedCenter(c.key)}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                      selectedCenter === c.key
+                        ? "bg-white text-[#007AFF] shadow-2xs"
+                        : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
 
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] focus:outline-none"
-              >
-                <option value="all">All Statuses</option>
-                <option value="Pending Review">Pending Review</option>
-                <option value="Reviewed by DM Resident">Reviewed by DM Resident</option>
-                <option value="To be reviewed by consultant">To be reviewed by consultant</option>
-                <option value="Booking Cath-Lab on next available date">Booking Cath-Lab</option>
-                <option value="Booked in Cath-Lab">Booked in Cath-Lab</option>
-              </select>
+              {/* Status Filter Pills including On-Call Standby - Zero Dropdown */}
+              <div className="flex flex-wrap items-center gap-1 bg-[#F2F2F7] p-1 rounded-xl">
+                {[
+                  { key: "all", label: "All" },
+                  { key: "Pending Review", label: "Pending" },
+                  { key: "Keep On Call (Standby)", label: "On-Call" },
+                  { key: "Booked in Cath-Lab", label: "Booked" },
+                ].map((s) => (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={() => setSelectedStatus(s.key)}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                      selectedStatus === s.key
+                        ? s.key === "Keep On Call (Standby)"
+                          ? "bg-teal-600 text-white shadow-2xs"
+                          : "bg-white text-[#1C1C1E] shadow-2xs"
+                        : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -1433,7 +1587,7 @@ export default function OpClinicConsultationDeskPage() {
               filteredReviews.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white border border-[#E5E5EA] rounded-2xl p-5 shadow-xs hover:border-[#C7C7CC] transition-all space-y-3"
+                  className="bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-xs hover:border-[#C7C7CC] transition-all space-y-3"
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#E5E5EA] pb-3">
                     <div className="space-y-1">
@@ -1449,7 +1603,9 @@ export default function OpClinicConsultationDeskPage() {
                         </span>
                         <span
                           className={`px-2.5 py-0.5 text-[10px] font-semibold uppercase rounded-full ${
-                            item.status === "Booked in Cath-Lab"
+                            item.status === "Keep On Call (Standby)" || item.isOnCall
+                              ? "bg-teal-100 text-teal-800 border border-teal-300 font-bold"
+                              : item.status === "Booked in Cath-Lab"
                               ? "bg-[#34C759]/15 text-[#248A3D]"
                               : item.status === "Deferred / Postponed"
                               ? "bg-amber-100 text-amber-800"
@@ -1460,7 +1616,7 @@ export default function OpClinicConsultationDeskPage() {
                               : "bg-[#007AFF]/15 text-[#007AFF]"
                           }`}
                         >
-                          {item.status}
+                          {item.status === "Keep On Call (Standby)" || item.isOnCall ? "On-Call Standby" : item.status}
                         </span>
                         {item.postponedUntilDate && (
                           <span className="text-[10px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
@@ -1598,7 +1754,28 @@ export default function OpClinicConsultationDeskPage() {
                           )}
                         </div>
 
-                        {/* 3. Postpone / Hold Button */}
+                        {/* 3. Keep On Call Button (Standby) */}
+                        <button
+                          onClick={() => {
+                            keepCtReviewOnCall(item.id);
+                            setSuccessBanner({
+                              message: `Patient ${item.patientName} placed on Standby On-Call roster.`,
+                              linkHref: "/dashboard/calendar",
+                              linkLabel: "View in Calendar →",
+                            });
+                            setTimeout(() => setSuccessBanner(null), 5000);
+                          }}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
+                            item.status === "Keep On Call (Standby)" || item.isOnCall
+                              ? "bg-teal-600 text-white border-teal-600 shadow-2xs"
+                              : "bg-teal-50 text-teal-700 hover:bg-teal-100 border-teal-200"
+                          }`}
+                        >
+                          <Phone className="w-3 h-3" />
+                          <span>{item.status === "Keep On Call (Standby)" || item.isOnCall ? "On Standby" : "Keep On Call"}</span>
+                        </button>
+
+                        {/* 4. Postpone / Hold Button */}
                         <div className="relative">
                           <button
                             onClick={() => setActivePopover(activePopover?.id === item.id && activePopover?.type === 'postpone' ? null : { id: item.id, type: 'postpone' })}
@@ -1752,26 +1929,94 @@ export default function OpClinicConsultationDeskPage() {
               {urgencyCategory && <p><strong>Urgency:</strong> {urgencyCategory}</p>}
             </div>
 
-            <form onSubmit={handleConfirmCathLabBooking} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#636366] mb-1">
-                  Scheduled Cath-Lab Date
-                </label>
-                <input
-                  type="date"
-                  value={bookingDate}
-                  onChange={(e) => setBookingDate(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] focus:bg-white focus:border-[#007AFF] focus:outline-none"
-                />
-              </div>
+            {/* Booking Type Switcher: Specific Date vs On-Call Standby */}
+            <div className="flex rounded-xl bg-[#F2F2F7] p-1 mb-4">
+              <button
+                type="button"
+                onClick={() => setIsOnCallBooking(false)}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                  !isOnCallBooking
+                    ? "bg-white text-[#1C1C1E] shadow-2xs"
+                    : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                }`}
+              >
+                Schedule Fixed Date
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOnCallBooking(true)}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                  isOnCallBooking
+                    ? "bg-teal-600 text-white shadow-2xs"
+                    : "text-teal-700 hover:text-teal-800"
+                }`}
+              >
+                Keep On Call (Standby)
+              </button>
+            </div>
 
-              {/* Rajasthan Holiday Detection */}
-              {(bookingDateHoliday.isHoliday || bookingDateHoliday.isSunday) && (
-                <div className="p-2.5 rounded-xl bg-[#FF9500]/10 border border-[#FF9500]/20 text-[#C97100] flex items-center gap-2 text-[11px]">
-                  <AlertTriangle className="w-4 h-4 text-[#FF9500] shrink-0" />
-                  <span>
-                    <strong>Notice:</strong> {bookingDateHoliday.name || "Sunday"} is a Rajasthan {bookingDateHoliday.type || "Gazetted"} Holiday.
-                  </span>
+            <form onSubmit={handleConfirmCathLabBooking} className="space-y-4 text-xs">
+              {!isOnCallBooking ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-semibold text-[#636366]">
+                      Cath-Lab Procedure Date
+                    </label>
+                    {/* Quick Date Presets */}
+                    <div className="flex items-center gap-1">
+                      {[
+                        { label: "Today", days: 0 },
+                        { label: "Tmrw", days: 1 },
+                        { label: "+2d", days: 2 },
+                        { label: "+3d", days: 3 },
+                        { label: "+1w", days: 7 },
+                      ].map((preset) => {
+                        const targetD = new Date(Date.now() + preset.days * 86400000).toISOString().split("T")[0];
+                        return (
+                          <button
+                            key={preset.label}
+                            type="button"
+                            onClick={() => setBookingDate(targetD)}
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-semibold transition-all cursor-pointer ${
+                              bookingDate === targetD
+                                ? "bg-[#007AFF] text-white"
+                                : "bg-[#F2F2F7] text-[#3C4043] hover:bg-[#E5E5EA]"
+                            }`}
+                          >
+                            {preset.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <input
+                    type="date"
+                    value={bookingDate}
+                    onChange={(e) => setBookingDate(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none"
+                  />
+
+                  {/* Rajasthan Holiday Detection */}
+                  {(bookingDateHoliday.isHoliday || bookingDateHoliday.isSunday) && (
+                    <div className="p-2.5 rounded-xl bg-[#FF9500]/10 border border-[#FF9500]/20 text-[#C97100] flex items-center gap-2 text-[11px]">
+                      <AlertTriangle className="w-4 h-4 text-[#FF9500] shrink-0" />
+                      <span>
+                        <strong>Notice:</strong> {bookingDateHoliday.name || "Sunday"} is a Rajasthan {bookingDateHoliday.type || "Gazetted"} Holiday.
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 space-y-1.5 animate-in fade-in">
+                  <div className="flex items-center gap-2 font-bold text-xs">
+                    <Phone className="w-4 h-4 text-teal-600 shrink-0" />
+                    <span>On-Call Standby Mode Activated</span>
+                  </div>
+                  <p className="text-[11px] text-teal-800 leading-relaxed">
+                    Patient will be registered into the institutional Standby Roster without locking a calendar slot.
+                    The team will call <strong>{patientName || "the patient"}</strong> ({contactNumber || "No contact"}) when an elective patient is canceled or postponed.
+                  </p>
                 </div>
               )}
 
@@ -1779,27 +2024,9 @@ export default function OpClinicConsultationDeskPage() {
                 <label className="block font-semibold text-[#636366] mb-1">
                   Procedure Protocol
                 </label>
-                {organSystem === "Others" ? (
-                  <input
-                    type="text"
-                    value={customProcedureTitle}
-                    onChange={(e) => setCustomProcedureTitle(e.target.value)}
-                    placeholder="e.g. Custom IR Procedure"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-semibold focus:bg-white focus:border-[#007AFF] focus:outline-none"
-                  />
-                ) : (
-                  <select
-                    value={diseaseKey}
-                    onChange={(e) => setDiseaseKey(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-semibold focus:bg-white focus:border-[#007AFF] focus:outline-none"
-                  >
-                    {IR_CLINICAL_PROTOCOLS.map((p) => (
-                      <option key={p.key} value={p.key}>
-                        {p.title} ({p.organSystem})
-                      </option>
-                    ))}
-                  </select>
-                )}
+                <div className="px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] font-semibold text-[#1C1C1E]">
+                  {effectiveProcedureTitle}
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E5EA]">
@@ -1812,9 +2039,13 @@ export default function OpClinicConsultationDeskPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#007AFF] hover:bg-[#0062CC] active:scale-[0.98] text-white font-semibold cursor-pointer shadow-xs"
+                  className={`px-5 py-2 rounded-xl text-white font-semibold cursor-pointer shadow-xs active:scale-[0.98] transition-all ${
+                    isOnCallBooking
+                      ? "bg-teal-600 hover:bg-teal-700"
+                      : "bg-[#007AFF] hover:bg-[#0062CC]"
+                  }`}
                 >
-                  Confirm &amp; Book Cath-Lab
+                  {isOnCallBooking ? "Confirm & Place On Call" : "Confirm & Book Cath-Lab"}
                 </button>
               </div>
             </form>

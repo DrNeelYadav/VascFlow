@@ -41,6 +41,7 @@ import {
   Info,
   ChevronDown,
   ChevronUp,
+  Phone,
 } from "lucide-react";
 
 // Urgency badge styling helper
@@ -119,8 +120,9 @@ export default function OtScheduleCalendarPage() {
   const [selectedCaseIds, setSelectedCaseIds] = useState<string[]>([]);
   const [batchTargetDate, setBatchTargetDate] = useState<string>("");
 
-  // Parked Cases Panel State
+  // Parked Cases & On-Call Standby State
   const [isParkedExpanded, setIsParkedExpanded] = useState(false);
+  const [isOnCallExpanded, setIsOnCallExpanded] = useState(true);
   const [reactivateCaseId, setReactivateCaseId] = useState<string | null>(null);
   const [reactivateDate, setReactivateDate] = useState<string>("");
 
@@ -241,9 +243,18 @@ export default function OtScheduleCalendarPage() {
     return map;
   }, []);
 
-  // Combined booked and historical cases
+  // Combined booked and historical cases (excluding parked and on-call cases which do not have a fixed calendar day)
   const allCalendarCases = useMemo(() => {
-    const combined = [...bookedCases.filter((c) => c.status !== "On Hold")];
+    const combined = [
+      ...bookedCases.filter(
+        (c) =>
+          c.status !== "On Hold" &&
+          c.status !== "On Call" &&
+          c.status !== "Standby" &&
+          c.scheduledDate !== "ON_CALL" &&
+          !c.isOnCall
+      ),
+    ];
     historicalCasesMap.forEach((histCases) => {
       combined.push(...histCases);
     });
@@ -252,6 +263,16 @@ export default function OtScheduleCalendarPage() {
 
   const parkedCases = useMemo(() => {
     return bookedCases.filter((c) => c.status === "On Hold");
+  }, [bookedCases]);
+
+  const onCallCases = useMemo(() => {
+    return bookedCases.filter(
+      (c) =>
+        c.status === "On Call" ||
+        c.status === "Standby" ||
+        c.scheduledDate === "ON_CALL" ||
+        c.isOnCall
+    );
   }, [bookedCases]);
 
   // Compute month matrix (Monday-start)
@@ -620,45 +641,13 @@ export default function OtScheduleCalendarPage() {
                         </div>
                       )}
 
-                      {/* Mobile Cases Indicator */}
-                      <div className="sm:hidden flex items-center justify-center mt-1">
+                      {/* Cases Indicator Badge - Clean Minimalist Counter (Zero clutter from procedure names) */}
+                      <div className="flex items-center justify-center sm:justify-start mt-1">
                         {cell.cases.length > 0 && (
-                          <span className="min-w-[18px] h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC] flex items-center justify-center shadow-2xs">
-                            {cell.cases.length}
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC] flex items-center gap-1 shadow-2xs">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#1A73E8] shrink-0" />
+                            <span>{cell.cases.length} {cell.cases.length === 1 ? "Case" : "Cases"}</span>
                           </span>
-                        )}
-                      </div>
-
-                      {/* Desktop Cases List */}
-                      <div className="hidden sm:block mt-1 space-y-1">
-                        {cell.cases.length > 0 ? (
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-1">
-                              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]">
-                                {cell.cases.length} {cell.cases.length === 1 ? "Case" : "Cases"}
-                              </span>
-                            </div>
-
-                            {/* Procedure Names List */}
-                            <div className="space-y-0.5 mt-0.5">
-                              {cell.cases.slice(0, 2).map((cs) => (
-                                <div
-                                  key={cs.id}
-                                  className="text-[9px] text-[#3C4043] font-medium bg-[#F1F3F4] px-1 py-0.5 rounded truncate"
-                                  title={`${cs.procedureTitle} (${cs.patientName})`}
-                                >
-                                  {cs.procedureTitle}
-                                </div>
-                              ))}
-                              {cell.cases.length > 2 && (
-                                <div className="text-[8px] text-[#5F6368] font-bold">
-                                  +{cell.cases.length - 2} more
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="h-4" />
                         )}
                       </div>
                     </div>
@@ -1081,6 +1070,90 @@ export default function OtScheduleCalendarPage() {
                     Confirm Move
                   </button>
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* On-Call Standby Queue (Call in case of cancellation) */}
+          <div className="bg-white rounded-xl border border-teal-300 shadow-xs overflow-hidden">
+            <button
+              onClick={() => setIsOnCallExpanded(!isOnCallExpanded)}
+              className="w-full flex items-center justify-between p-3 bg-teal-50/80 hover:bg-teal-100/70 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-teal-700" />
+                <span className="text-xs font-bold text-teal-950">
+                  On-Call Standby Patients ({onCallCases.length})
+                </span>
+                <span className="text-[10px] text-teal-700 font-medium hidden sm:inline">
+                  • Standby roster to call when a case cancels
+                </span>
+              </div>
+              {isOnCallExpanded ? (
+                <ChevronUp className="w-4 h-4 text-teal-700" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-teal-700" />
+              )}
+            </button>
+
+            {isOnCallExpanded && (
+              <div className="p-3 border-t border-teal-200 space-y-2 max-h-[300px] overflow-y-auto">
+                {onCallCases.length === 0 ? (
+                  <div className="text-center py-4 text-[#5F6368] text-xs">
+                    No patients currently kept on call. Select &ldquo;Keep On Call&rdquo; in OPD Consultation to populate standby list.
+                  </div>
+                ) : (
+                  onCallCases.map((cs) => (
+                    <div
+                      key={cs.id}
+                      className="p-2.5 rounded-lg border border-teal-200 bg-teal-50/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-bold text-[#202124]">
+                            {cs.patientName}
+                          </span>
+                          <span className="text-[11px] text-[#5F6368]">
+                            ({cs.age}y / {cs.sex})
+                          </span>
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-teal-100 text-teal-800 border border-teal-200">
+                            STANDBY ON-CALL
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-[#3C4043] font-medium truncate mt-0.5">
+                          {cs.procedureTitle} • {cs.location || "Jaipur"}
+                        </div>
+                        {cs.contactNumber && (
+                          <div className="text-[11px] text-teal-800 font-semibold flex items-center gap-1 mt-0.5">
+                            <Phone className="w-3 h-3 text-teal-600" />
+                            <span>{cs.contactNumber}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                        {cs.contactNumber && (
+                          <a
+                            href={`tel:${cs.contactNumber}`}
+                            className="px-2.5 py-1 rounded bg-teal-600 hover:bg-teal-700 text-white text-[11px] font-semibold flex items-center gap-1 shadow-2xs"
+                          >
+                            <Phone className="w-3 h-3" />
+                            <span>Call</span>
+                          </a>
+                        )}
+                        <button
+                          onClick={() => {
+                            setRescheduleModalCase(cs);
+                            setSingleNewDate(selectedDateStr);
+                          }}
+                          className="px-2.5 py-1 rounded bg-[#1A73E8] hover:bg-[#1557B0] text-white text-[11px] font-semibold shadow-2xs"
+                        >
+                          Book into {selectedDateStr}
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>

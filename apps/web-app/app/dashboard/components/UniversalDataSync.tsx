@@ -14,6 +14,10 @@ import {
   CtReviewRecord,
   BookedCaseRecord,
   BedRecord,
+  syncCtReviewToFirestore,
+  syncBookedCaseToFirestore,
+  syncPatientToFirestore,
+  syncBedToFirestore,
 } from "../useEndoflowStore";
 
 /**
@@ -22,6 +26,7 @@ import {
  * When any mobile phone, tablet, or workstation creates or updates an OPD consultation,
  * booked case, admitted patient, or bed status, onSnapshot instantly propagates the latest
  * record to every active screen, mobile app, and laptop in real-time.
+ * Also performs seamless offline-to-cloud reconciliation on startup.
  */
 export function UniversalDataSync() {
   const setPatients = useEndoflowStore((s) => s.setPatients);
@@ -31,6 +36,9 @@ export function UniversalDataSync() {
 
   // Guards against race conditions or repetitive initializations
   const isSubscribedRef = useRef(false);
+  const syncedCtReviewIds = useRef(new Set<string>());
+  const syncedBookedCaseIds = useRef(new Set<string>());
+  const syncedPatientIds = useRef(new Set<string>());
 
   useEffect(() => {
     if (isSubscribedRef.current) return;
@@ -47,21 +55,30 @@ export function UniversalDataSync() {
       // 1. Live OPD CT Reviews Collection
       const ctReviewsRef = collection(db, "ctReviews");
       const unSubCtReviews = onSnapshot(
-        query(ctReviewsRef, limit(150)),
+        query(ctReviewsRef, limit(200)),
         (snapshot) => {
-          if (!snapshot.empty) {
-            const liveReviews: CtReviewRecord[] = [];
-            snapshot.forEach((docSnap) => {
-              const data = docSnap.data() as CtReviewRecord;
-              if (data && docSnap.id) {
-                liveReviews.push({ ...data, id: docSnap.id });
-              }
-            });
-            // Update store so all devices show the new consult/review immediately
-            if (liveReviews.length > 0) {
-              setCtReviews(liveReviews);
+          const liveReviews: CtReviewRecord[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data() as CtReviewRecord;
+            if (data && docSnap.id) {
+              liveReviews.push({ ...data, id: docSnap.id });
             }
-          }
+          });
+
+          // Bidirectional Reconciliation: upload any local reviews not yet in cloud
+          const localReviews = useEndoflowStore.getState().ctReviews || [];
+          localReviews.forEach((lr) => {
+            if (!liveReviews.some((gr) => gr.id === lr.id) && !syncedCtReviewIds.current.has(lr.id)) {
+              syncedCtReviewIds.current.add(lr.id);
+              void syncCtReviewToFirestore(lr);
+            }
+          });
+
+          // Merge: Map by ID (live reviews are authoritative for cloud updates)
+          const mergedMap = new Map<string, CtReviewRecord>();
+          localReviews.forEach((lr) => mergedMap.set(lr.id, lr));
+          liveReviews.forEach((gr) => mergedMap.set(gr.id, gr));
+          setCtReviews(Array.from(mergedMap.values()));
         },
         (error) => {
           console.warn("[UniversalDataSync] ctReviews onSnapshot notice:", error.message);
@@ -72,20 +89,28 @@ export function UniversalDataSync() {
       // 2. Live Booked Cases Collection (OT Scheduler & Residents Diary)
       const bookedCasesRef = collection(db, "bookedCases");
       const unSubBookedCases = onSnapshot(
-        query(bookedCasesRef, limit(200)),
+        query(bookedCasesRef, limit(250)),
         (snapshot) => {
-          if (!snapshot.empty) {
-            const liveCases: BookedCaseRecord[] = [];
-            snapshot.forEach((docSnap) => {
-              const data = docSnap.data() as BookedCaseRecord;
-              if (data && docSnap.id) {
-                liveCases.push({ ...data, id: docSnap.id });
-              }
-            });
-            if (liveCases.length > 0) {
-              setBookedCases(liveCases);
+          const liveCases: BookedCaseRecord[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data() as BookedCaseRecord;
+            if (data && docSnap.id) {
+              liveCases.push({ ...data, id: docSnap.id });
             }
-          }
+          });
+
+          const localCases = useEndoflowStore.getState().bookedCases || [];
+          localCases.forEach((lc) => {
+            if (!liveCases.some((gc) => gc.id === lc.id) && !syncedBookedCaseIds.current.has(lc.id)) {
+              syncedBookedCaseIds.current.add(lc.id);
+              void syncBookedCaseToFirestore(lc);
+            }
+          });
+
+          const mergedMap = new Map<string, BookedCaseRecord>();
+          localCases.forEach((lc) => mergedMap.set(lc.id, lc));
+          liveCases.forEach((gc) => mergedMap.set(gc.id, gc));
+          setBookedCases(Array.from(mergedMap.values()));
         },
         (error) => {
           console.warn("[UniversalDataSync] bookedCases onSnapshot notice:", error.message);
@@ -96,20 +121,28 @@ export function UniversalDataSync() {
       // 3. Live Inpatient Cohort (Active Admitted Patients)
       const patientsRef = collection(db, "patients");
       const unSubPatients = onSnapshot(
-        query(patientsRef, limit(100)),
+        query(patientsRef, limit(150)),
         (snapshot) => {
-          if (!snapshot.empty) {
-            const livePatients: EndoflowPatient[] = [];
-            snapshot.forEach((docSnap) => {
-              const data = docSnap.data() as EndoflowPatient;
-              if (data && docSnap.id) {
-                livePatients.push({ ...data, id: docSnap.id });
-              }
-            });
-            if (livePatients.length > 0) {
-              setPatients(livePatients);
+          const livePatients: EndoflowPatient[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data() as EndoflowPatient;
+            if (data && docSnap.id) {
+              livePatients.push({ ...data, id: docSnap.id });
             }
-          }
+          });
+
+          const localPatients = useEndoflowStore.getState().patients || [];
+          localPatients.forEach((lp) => {
+            if (!livePatients.some((gp) => gp.id === lp.id) && !syncedPatientIds.current.has(lp.id)) {
+              syncedPatientIds.current.add(lp.id);
+              void syncPatientToFirestore(lp);
+            }
+          });
+
+          const mergedMap = new Map<string, EndoflowPatient>();
+          localPatients.forEach((lp) => mergedMap.set(lp.id, lp));
+          livePatients.forEach((gp) => mergedMap.set(gp.id, gp));
+          setPatients(Array.from(mergedMap.values()));
         },
         (error) => {
           console.warn("[UniversalDataSync] patients onSnapshot notice:", error.message);

@@ -340,7 +340,8 @@ export const BookedCaseSchema = z.object({
     oneYearSurvival: z.string(),
   }).optional(),
   postOpPlan: z.string().default("Post-procedure monitoring, analgesia, and hydration."),
-  status: z.enum(["Scheduled", "Cath-Lab", "Completed", "Rescheduled", "On Hold", "Deferred"]).default("Scheduled"),
+  status: z.enum(["Scheduled", "Cath-Lab", "Completed", "Rescheduled", "On Hold", "Deferred", "On Call", "Standby"]).default("Scheduled"),
+  isOnCall: z.boolean().optional(),
   npoVerified: z.boolean().default(false),
   labsVerified: z.boolean().default(false),
   bloodProductsVerified: z.boolean().default(false),
@@ -371,8 +372,9 @@ export const BookedCaseSchema = z.object({
 export const BookedCaseInputSchema = BookedCaseSchema.omit({
   id: true,
   bookedAt: true,
-  status: true,
   rescheduleHistory: true,
+}).extend({
+  status: z.enum(["Scheduled", "Cath-Lab", "Completed", "Rescheduled", "On Hold", "Deferred", "On Call", "Standby"]).optional(),
 });
 
 export type BookedCaseRecord = z.infer<typeof BookedCaseSchema>;
@@ -403,8 +405,10 @@ export const CtReviewSchema = z.object({
     "Booking Cath-Lab on next available date",
     "Booked in Cath-Lab",
     "Deferred / Postponed",
-    "On Hold"
+    "On Hold",
+    "Keep On Call (Standby)",
   ]).default("Pending Review"),
+  isOnCall: z.boolean().optional(),
   reviewedBy: z.string().optional(),
   reviewedAt: z.string().optional(),
   bookedCaseId: z.string().optional(),
@@ -424,7 +428,7 @@ export const CtReviewSchema = z.object({
   deferralReason: z.string().optional(),
   postponeHistory: z.array(z.object({
     previousStatus: z.string(),
-    action: z.enum(["postponed", "held", "reactivated"]),
+    action: z.enum(["postponed", "held", "reactivated", "on_call"]),
     targetDate: z.string().optional(),
     reason: z.string().optional(),
     actionAt: z.string(),
@@ -518,6 +522,7 @@ export interface EndoflowState {
   postponeCtReview: (reviewId: string, targetDate?: string, reason?: string) => void;
   holdCtReview: (reviewId: string, reason?: string) => void;
   reactivateCtReview: (reviewId: string) => void;
+  keepCtReviewOnCall: (reviewId: string, reason?: string) => void;
 
   // Booked Case Hold & Batch Actions
   holdCase: (caseId: string, reason?: string) => void;
@@ -576,7 +581,7 @@ const safeStorage = createJSONStorage(() => {
 // ASYNC FIRESTORE PERSISTENCE HELPER (TRY/CATCH WRAPPED)
 // ============================================================================
 
-async function syncPatientToFirestore(patient: EndoflowPatient): Promise<void> {
+export async function syncPatientToFirestore(patient: EndoflowPatient): Promise<void> {
   try {
     if (!isFirebaseConfigured() || !db) return;
     const sanitized = JSON.parse(JSON.stringify(patient));
@@ -595,7 +600,7 @@ async function syncPatientToFirestore(patient: EndoflowPatient): Promise<void> {
   }
 }
 
-async function syncBedToFirestore(bed: BedRecord): Promise<void> {
+export async function syncBedToFirestore(bed: BedRecord): Promise<void> {
   try {
     if (!isFirebaseConfigured() || !db) return;
     const sanitized = JSON.parse(JSON.stringify(bed));
@@ -611,7 +616,7 @@ async function syncBedToFirestore(bed: BedRecord): Promise<void> {
   }
 }
 
-async function syncBedsBatchToFirestore(beds: BedRecord[]): Promise<void> {
+export async function syncBedsBatchToFirestore(beds: BedRecord[]): Promise<void> {
   try {
     if (!isFirebaseConfigured() || !db) return;
     const batch = writeBatch(db);
@@ -631,7 +636,7 @@ async function syncBedsBatchToFirestore(beds: BedRecord[]): Promise<void> {
   }
 }
 
-async function syncCtReviewToFirestore(review: CtReviewRecord): Promise<void> {
+export async function syncCtReviewToFirestore(review: CtReviewRecord): Promise<void> {
   try {
     if (!isFirebaseConfigured() || !db) return;
     const sanitized = JSON.parse(JSON.stringify(review));
@@ -647,7 +652,7 @@ async function syncCtReviewToFirestore(review: CtReviewRecord): Promise<void> {
   }
 }
 
-async function syncBookedCaseToFirestore(bookedCase: BookedCaseRecord): Promise<void> {
+export async function syncBookedCaseToFirestore(bookedCase: BookedCaseRecord): Promise<void> {
   try {
     if (!isFirebaseConfigured() || !db) return;
     const sanitized = JSON.parse(JSON.stringify(bookedCase));
@@ -663,7 +668,7 @@ async function syncBookedCaseToFirestore(bookedCase: BookedCaseRecord): Promise<
   }
 }
 
-async function syncBookedCasesBatchToFirestore(cases: BookedCaseRecord[]): Promise<void> {
+export async function syncBookedCasesBatchToFirestore(cases: BookedCaseRecord[]): Promise<void> {
   try {
     if (!isFirebaseConfigured() || !db) return;
     const batch = writeBatch(db);
@@ -1055,7 +1060,8 @@ export const useEndoflowStore = create<EndoflowState>()(
       diseaseKey: rawRecord.diseaseKey || "custom_procedure",
       id: newId,
       bookedAt: new Date().toISOString(),
-      status: "Scheduled" as const,
+      status: (rawRecord.status as any) || (rawRecord.isOnCall ? ("On Call" as const) : ("Scheduled" as const)),
+      isOnCall: rawRecord.isOnCall ?? (rawRecord.status === "On Call" || rawRecord.status === "Standby"),
       rescheduleHistory: [],
     };
     const parsed = BookedCaseSchema.safeParse(sanitizedRecord);
@@ -1423,6 +1429,33 @@ export const useEndoflowStore = create<EndoflowState>()(
             {
               previousStatus: r.status,
               action: "reactivated" as const,
+              actionAt: new Date().toISOString(),
+            },
+            ...r.postponeHistory,
+          ],
+        };
+      }),
+    }));
+    const target = get().ctReviews.find((r) => r.id === reviewId);
+    if (target) {
+      void syncCtReviewToFirestore(target);
+    }
+  },
+
+  keepCtReviewOnCall: (reviewId: string, reason?: string) => {
+    set((state) => ({
+      ctReviews: state.ctReviews.map((r) => {
+        if (r.id !== reviewId) return r;
+        return {
+          ...r,
+          status: "Keep On Call (Standby)" as const,
+          isOnCall: true,
+          deferralReason: reason || "Patient kept on call; to be scheduled in case of cancellation.",
+          postponeHistory: [
+            {
+              previousStatus: r.status,
+              action: "on_call" as const,
+              reason: reason || "Patient kept on call; to be scheduled in case of cancellation.",
               actionAt: new Date().toISOString(),
             },
             ...r.postponeHistory,

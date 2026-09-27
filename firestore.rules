@@ -16,6 +16,16 @@ service cloud.firestore {
       allow read, write: if true; // Institutional intranet & clinical workstation access
     }
 
+    // OPD CT Review Queue
+    match /ctReviews/{reviewId} {
+      allow read, write: if true; // Institutional intranet & multi-device sync
+    }
+
+    // OT Scheduled & Booked Cases
+    match /bookedCases/{caseId} {
+      allow read, write: if true; // Institutional intranet & multi-device sync
+    }
+
     // Cath Lab Hardware & Inventory Collection
     match /inventory/{sku} {
       allow read, write: if true;

@@ -78,27 +78,34 @@ function shiftDate(dateStr: string, days: number): string {
   return d.toISOString().split('T')[0];
 }
 
+function getTodayIsoString(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 export default function OtScheduleCalendarPage() {
   const { bookedCases, rescheduleCase, massRescheduleCases, holdCase, batchRescheduleCases } = useEndoflowStore();
 
-  // Calendar View State: "month" or "week"
-  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+  // Dynamic system today's date state (updates dynamically with system clock)
+  const [todayDateStr, setTodayDateStr] = useState<string>(() => getTodayIsoString());
 
-  // Auto-switch to week view on mobile viewports on mount
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 640) {
-      setViewMode("week");
-    }
+    const updateToday = () => {
+      const current = getTodayIsoString();
+      setTodayDateStr((prev) => (prev !== current ? current : prev));
+    };
+    const timer = setInterval(updateToday, 60000);
+    return () => clearInterval(timer);
   }, []);
 
-  // Current view date anchor (Defaulting to September 2026 as per institutional cohort)
-  const [currentDate, setCurrentDate] = useState<Date>(() => {
-    // Current date in 2026
-    return new Date("2026-09-21T00:00:00");
-  });
+  // Current view date anchor (defaults to current date and month)
+  const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
 
-  // Selected Day on Calendar (YYYY-MM-DD)
-  const [selectedDateStr, setSelectedDateStr] = useState<string>("2026-09-21");
+  // Selected Day on Calendar (YYYY-MM-DD, defaults to today's date)
+  const [selectedDateStr, setSelectedDateStr] = useState<string>(() => getTodayIsoString());
 
   // Search & Filter within Calendar
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -143,10 +150,19 @@ export default function OtScheduleCalendarPage() {
     setCurrentDate(new Date(year, month + 1, 1));
   };
 
+  const todayFormattedShort = useMemo(() => {
+    const parts = todayDateStr.split("-");
+    if (parts.length === 3) {
+      const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      return d.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+    }
+    return "Today";
+  }, [todayDateStr]);
+
   const handleToday = () => {
-    const today = new Date("2026-09-21T00:00:00");
-    setCurrentDate(today);
-    setSelectedDateStr("2026-09-21");
+    const now = new Date();
+    setCurrentDate(now);
+    setSelectedDateStr(todayDateStr);
   };
 
   // Map real SMS cath lab registry cases (DD.MM.YYYY) to YYYY-MM-DD BookedCaseRecord format
@@ -345,33 +361,6 @@ export default function OtScheduleCalendarPage() {
     return days;
   }, [year, month, allCalendarCases]);
 
-  // Compute Week View Days
-  const weekDays = useMemo(() => {
-    const selected = new Date(selectedDateStr + "T00:00:00");
-    let dayOfWeek = selected.getDay() - 1;
-    if (dayOfWeek === -1) dayOfWeek = 6;
-
-    const monday = new Date(selected);
-    monday.setDate(selected.getDate() - dayOfWeek);
-
-    const list = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      const dStr = d.toISOString().split("T")[0];
-      const hInfo = getHolidayForDate(dStr);
-      const c = allCalendarCases.filter((bc) => bc.scheduledDate === dStr);
-      list.push({
-        dateStr: dStr,
-        dateObj: d,
-        dayNumber: d.getDate(),
-        dayName: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i],
-        holidayInfo: hInfo,
-        cases: c,
-      });
-    }
-    return list;
-  }, [selectedDateStr, allCalendarCases]);
 
   // Cases for selected date with search & urgency filtering
   const selectedDateCases = useMemo(() => {
@@ -429,10 +418,10 @@ export default function OtScheduleCalendarPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-[#202124] dark:text-slate-100 tracking-tight">
-                OT Schedule & Cath-Lab Calendar
+                OT Schedule &amp; Monthly Cath-Lab Timeline
               </h1>
               <p className="text-xs text-[#5F6368] dark:text-slate-400">
-                Master schedule and case management
+                Monthly schedule timeline and procedural case management
               </p>
             </div>
           </div>
@@ -455,30 +444,6 @@ export default function OtScheduleCalendarPage() {
             <Layers className="w-3.5 h-3.5" />
             <span>View Bed Board</span>
           </Link>
-
-          {/* View Mode Toggle */}
-          <div className="inline-flex rounded-lg border border-[#DADCE0] dark:border-slate-700 bg-[#F1F3F4] dark:bg-slate-800 p-0.5 text-xs font-medium">
-            <button
-              onClick={() => setViewMode("month")}
-              className={`px-3 py-1 rounded-md transition-all ${
-                viewMode === "month"
-                  ? "bg-white dark:bg-slate-900 text-[#1A73E8] dark:text-blue-400 font-bold shadow-xs"
-                  : "text-[#5F6368] dark:text-slate-400 hover:text-[#202124] dark:hover:text-slate-200"
-              }`}
-            >
-              Month Grid
-            </button>
-            <button
-              onClick={() => setViewMode("week")}
-              className={`px-3 py-1 rounded-md transition-all ${
-                viewMode === "week"
-                  ? "bg-white dark:bg-slate-900 text-[#1A73E8] dark:text-blue-400 font-bold shadow-xs"
-                  : "text-[#5F6368] dark:text-slate-400 hover:text-[#202124] dark:hover:text-slate-200"
-              }`}
-            >
-              Week Timeline
-            </button>
-          </div>
         </div>
       </div>
 
@@ -529,7 +494,7 @@ export default function OtScheduleCalendarPage() {
                 onClick={handleToday}
                 className="px-2.5 py-1 rounded-lg border border-[#DADCE0] dark:border-slate-700 text-xs font-semibold text-[#1A73E8] dark:text-blue-400 hover:bg-[#E8F0FE] dark:hover:bg-blue-950/50 transition-colors"
               >
-                Today (Sep 21)
+                Today ({todayFormattedShort})
               </button>
               <span className="text-xs text-[#5F6368] dark:text-slate-400 hidden sm:inline">
                 Selected: <strong className="text-[#202124] dark:text-slate-100">{selectedDateStr}</strong>
@@ -537,25 +502,24 @@ export default function OtScheduleCalendarPage() {
             </div>
           </div>
 
-          {/* Month Grid View */}
-          {viewMode === "month" ? (
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#DADCE0] dark:border-slate-800 shadow-xs overflow-hidden">
-              {/* Day Headers (Mon - Sun) */}
-              <div className="grid grid-cols-7 border-b border-[#DADCE0] dark:border-slate-800 bg-[#F8F9FA] dark:bg-slate-800/80 text-center text-[10px] sm:text-[11px] font-bold text-[#5F6368] dark:text-slate-400 py-1.5 sm:py-2">
-                <div>MON</div>
-                <div>TUE</div>
-                <div>WED</div>
-                <div>THU</div>
-                <div>FRI</div>
-                <div>SAT</div>
-                <div className="text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-950/30">SUN</div>
-              </div>
+          {/* Monthly Calendar Timeline View */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#DADCE0] dark:border-slate-800 shadow-xs overflow-hidden">
+            {/* Day Headers (Mon - Sun) */}
+            <div className="grid grid-cols-7 border-b border-[#DADCE0] dark:border-slate-800 bg-[#F8F9FA] dark:bg-slate-800/80 text-center text-[10px] sm:text-[11px] font-bold text-[#5F6368] dark:text-slate-400 py-1.5 sm:py-2">
+              <div>MON</div>
+              <div>TUE</div>
+              <div>WED</div>
+              <div>THU</div>
+              <div>FRI</div>
+              <div>SAT</div>
+              <div className="text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-950/30">SUN</div>
+            </div>
 
-              {/* Day Matrix Grid */}
-              <div className="grid grid-cols-7 divide-x divide-y divide-[#F1F3F4] dark:divide-slate-800">
-                {monthMatrix.map((cell) => {
-                  const isSelected = cell.dateStr === selectedDateStr;
-                  const isToday = cell.dateStr === "2026-09-21";
+            {/* Day Matrix Grid */}
+            <div className="grid grid-cols-7 divide-x divide-y divide-[#F1F3F4] dark:divide-slate-800">
+              {monthMatrix.map((cell) => {
+                const isSelected = cell.dateStr === selectedDateStr;
+                const isToday = cell.dateStr === todayDateStr;
                   const isGazetted = cell.holidayInfo.isHoliday && cell.holidayInfo.type === "Gazetted";
                   const isRestricted = cell.holidayInfo.isHoliday && cell.holidayInfo.type === "Restricted";
                   const isSunday = cell.holidayInfo.isSunday;
@@ -653,117 +617,8 @@ export default function OtScheduleCalendarPage() {
                     </div>
                   );
                 })}
-              </div>
             </div>
-          ) : (
-            /* Week Timeline View */
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-[#DADCE0] dark:border-slate-800 shadow-xs overflow-hidden">
-              <div className="p-3 border-b border-[#DADCE0] dark:border-slate-800 bg-[#F8F9FA] dark:bg-slate-800/80 flex items-center justify-between">
-                <span className="text-xs font-bold text-[#202124] dark:text-slate-100">
-                  Weekly Cath-Lab Workboard
-                </span>
-                <span className="text-xs text-[#5F6368] dark:text-slate-400">
-                  Week of {weekDays[0].dateStr} to {weekDays[6].dateStr}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-7 divide-y md:divide-y-0 md:divide-x divide-[#DADCE0] dark:divide-slate-800">
-                {weekDays.map((col) => {
-                  const isSelected = col.dateStr === selectedDateStr;
-                  const isToday = col.dateStr === "2026-09-21";
-                  const isGazetted = col.holidayInfo.isHoliday && col.holidayInfo.type === "Gazetted";
-                  const isSunday = col.holidayInfo.isSunday;
-
-                  return (
-                    <div
-                      key={col.dateStr}
-                      onClick={() => setSelectedDateStr(col.dateStr)}
-                      className={`min-h-[400px] p-2.5 transition-colors cursor-pointer flex flex-col ${
-                        isSelected
-                          ? isSunday
-                            ? "bg-red-500/15 dark:bg-red-950/40"
-                            : "bg-blue-50/40 dark:bg-blue-950/40"
-                          : isGazetted
-                          ? "bg-rose-50/20 dark:bg-rose-950/20"
-                          : isSunday
-                          ? "bg-red-500/10 dark:bg-red-950/20"
-                          : "bg-white dark:bg-slate-900"
-                      }`}
-                    >
-                      {/* Day Header */}
-                      <div className="border-b border-[#F1F3F4] dark:border-slate-800 pb-2 text-center">
-                        <span className={`text-[10px] font-bold uppercase ${isSunday ? "text-red-600 dark:text-red-400" : "text-[#5F6368] dark:text-slate-400"}`}>
-                          {col.dayName}
-                        </span>
-                        <div
-                          className={`w-7 h-7 mx-auto rounded-full text-xs font-bold flex items-center justify-center mt-0.5 ${
-                            isToday
-                              ? "bg-[#1A73E8] text-white"
-                              : isSelected
-                              ? isSunday
-                                ? "bg-red-600 text-white"
-                                : "bg-blue-200 dark:bg-blue-800 text-blue-900 dark:text-blue-100"
-                              : isSunday
-                              ? "text-red-700 dark:text-red-400 bg-red-100/70 dark:bg-red-950/60"
-                              : "text-[#202124] dark:text-slate-200"
-                          }`}
-                        >
-                          {col.dayNumber}
-                        </div>
-
-                        {col.holidayInfo.isHoliday && (
-                          <div className="mt-1">
-                            <span className="px-1.5 py-0.5 text-[9px] font-semibold bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 rounded border border-rose-200 dark:border-rose-800 block truncate" title={col.holidayInfo.name || ""}>
-                              {col.holidayInfo.name}
-                            </span>
-                          </div>
-                        )}
-                        {isSunday && (
-                          <div className="mt-1 text-[9px] font-semibold text-red-600 dark:text-red-400">
-                            Emergency Only
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Cases in Column */}
-                      <div className="mt-2.5 space-y-2 flex-1">
-                        {col.cases.length === 0 ? (
-                          <div className="text-[11px] text-[#5F6368] dark:text-slate-400 text-center py-6">
-                            No cases scheduled
-                          </div>
-                        ) : (
-                          col.cases.map((cs) => {
-                            const badge = getUrgencyBadge(cs.urgency);
-                            return (
-                              <div
-                                key={cs.id}
-                                className="p-2 rounded-lg border border-[#DADCE0] dark:border-slate-800 bg-white dark:bg-slate-800/90 shadow-2xs hover:shadow-xs transition-shadow text-xs"
-                              >
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${badge.bg}`}>
-                                    {cs.urgency || "Elective"}
-                                  </span>
-                                  <span className="text-[10px] font-mono text-[#5F6368] dark:text-slate-400">
-                                    {cs.ssoNumber}
-                                  </span>
-                                </div>
-                                <div className="font-bold text-[#202124] dark:text-slate-100 truncate">
-                                  {cs.patientName}
-                                </div>
-                                <div className="text-[11px] text-[#5F6368] dark:text-slate-400 line-clamp-2 mt-0.5">
-                                  {cs.procedureTitle}
-                                </div>
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Right Column: Selected Date Inspector & Action Panel (4 Cols) */}

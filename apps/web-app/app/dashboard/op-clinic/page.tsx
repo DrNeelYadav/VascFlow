@@ -768,9 +768,9 @@ export default function OpClinicConsultationDeskPage() {
       });
 
       setSuccessBanner({
-        message: `OPD Consultation & Triage records updated for ${effectiveName}.`,
+        message: `OPD Consultation updated for ${effectiveName}. Record is live in the Review Queue.`,
       });
-      setTimeout(() => setSuccessBanner(null), 4000);
+      setTimeout(() => setSuccessBanner(null), 5000);
     } else {
       addCtReview({
         patientName: effectiveName,
@@ -801,22 +801,31 @@ export default function OpClinicConsultationDeskPage() {
       });
 
       setSuccessBanner({
-        message: `New OPD Consultation saved for ${effectiveName}.`,
+        message: `New OPD Consultation saved for ${effectiveName}. Record added to the Consultation Review Queue.`,
       });
-      setTimeout(() => setSuccessBanner(null), 4000);
+      setTimeout(() => setSuccessBanner(null), 5000);
     }
+
+    // Reset consultation desk to blank form for the next patient
+    loadPatientIntoDesk("new");
+
+    // Immediately display the Consultation Review Queue with filters cleared so patient appears at top
+    setSearchQuery("");
+    setSelectedStatus("all");
+    setSelectedCenter("all");
+    setActiveTab("queue");
   };
 
   return (
     <div className="space-y-5 max-w-7xl mx-auto pb-12">
       {/* 1. Apple-Style Header Banner */}
-      <div className="bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-[#007AFF]/10 text-[#007AFF] flex items-center justify-center font-bold text-sm shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-[#007AFF]/10 dark:bg-blue-950/60 text-[#007AFF] dark:text-blue-400 flex items-center justify-center font-bold text-sm shrink-0">
             <Stethoscope className="w-6 h-6 stroke-[1.8]" />
           </div>
           <div>
-            <h1 className="text-base sm:text-lg font-semibold text-[#1C1C1E] tracking-tight">
+            <h1 className="text-base sm:text-lg font-semibold text-[#1C1C1E] dark:text-slate-100 tracking-tight">
               OPD Consultation &amp; Triage Desk
             </h1>
           </div>
@@ -824,13 +833,13 @@ export default function OpClinicConsultationDeskPage() {
 
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Segmented Control Mode Switcher */}
-          <div className="flex items-center bg-[#F2F2F7] p-1 rounded-xl shrink-0 self-stretch sm:self-auto">
+          <div className="flex items-center bg-[#F2F2F7] dark:bg-slate-800/80 border border-transparent dark:border-slate-700/60 p-1 rounded-xl shrink-0 self-stretch sm:self-auto">
             <button
               onClick={() => setActiveTab("desk")}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === "desk"
-                  ? "bg-white text-[#1C1C1E] shadow-xs"
-                  : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                  ? "bg-white dark:bg-slate-700 text-[#1C1C1E] dark:text-slate-100 shadow-xs"
+                  : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
               }`}
             >
               <ClipboardList className="w-3.5 h-3.5" />
@@ -840,8 +849,8 @@ export default function OpClinicConsultationDeskPage() {
               onClick={() => setActiveTab("queue")}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === "queue"
-                  ? "bg-white text-[#1C1C1E] shadow-xs"
-                  : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                  ? "bg-white dark:bg-slate-700 text-[#1C1C1E] dark:text-slate-100 shadow-xs"
+                  : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
@@ -853,14 +862,14 @@ export default function OpClinicConsultationDeskPage() {
 
       {/* Cloud Sync Failure / Offline Toast */}
       {syncAlert && (
-        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-medium flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-1">
+        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 text-xs font-medium flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-1">
           <div className="flex items-center gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>{syncAlert}</span>
           </div>
           <button
             onClick={clearSyncAlert}
-            className="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 text-[11px] font-bold cursor-pointer transition shrink-0"
+            className="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 hover:bg-amber-200 dark:hover:bg-amber-800 text-amber-900 dark:text-amber-200 text-[11px] font-bold cursor-pointer transition shrink-0"
           >
             Dismiss
           </button>
@@ -887,11 +896,11 @@ export default function OpClinicConsultationDeskPage() {
 
       {/* 3. High-Dose Fluoroscopy Sentinel Surveillance Tasks */}
       {sentinelTasks.length > 0 && (
-        <div className="bg-amber-50/70 border border-amber-300 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center gap-2 mb-2.5 text-amber-900 font-bold text-xs">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+        <div className="bg-amber-50/70 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/60 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center gap-2 mb-2.5 text-amber-900 dark:text-amber-200 font-bold text-xs">
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>High-Dose Radiation Sentinel Tasks ({sentinelTasks.length})</span>
-            <span className="px-2 py-0.5 rounded text-[10px] bg-amber-200 text-amber-900 font-mono font-bold">
+            <span className="px-2 py-0.5 rounded text-[10px] bg-amber-200 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 font-mono font-bold">
               SIR/CIRSE Safety Protocol (≥5.0 Gy / ≥60 min)
             </span>
           </div>
@@ -899,27 +908,27 @@ export default function OpClinicConsultationDeskPage() {
             {sentinelTasks.map((t) => (
               <div
                 key={t.id}
-                className="bg-white border border-amber-200 rounded-xl p-3 flex flex-col justify-between gap-2 text-xs shadow-2xs"
+                className="bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-900/60 rounded-xl p-3 flex flex-col justify-between gap-2 text-xs shadow-2xs"
               >
                 <div>
                   <div className="flex items-center justify-between gap-1">
-                    <span className="font-bold text-[#1C1C1E]">
+                    <span className="font-bold text-[#1C1C1E] dark:text-slate-100">
                       {t.patientName} (CR: {t.patientCrNo})
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold font-mono">
+                    <span className="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-bold font-mono">
                       Due: {t.scheduledForDate}
                     </span>
                   </div>
-                  <div className="text-[11px] text-amber-800 font-mono mt-1">
+                  <div className="text-[11px] text-amber-800 dark:text-amber-300 font-mono mt-1">
                     {t.triggerReason}
                   </div>
-                  <p className="text-[11px] text-[#5F6368] mt-1 leading-relaxed">
+                  <p className="text-[11px] text-[#5F6368] dark:text-slate-400 mt-1 leading-relaxed">
                     {t.instructions}
                   </p>
                 </div>
-                <div className="flex items-center justify-between pt-1 border-t border-amber-100 text-[10px] text-amber-700 font-semibold">
+                <div className="flex items-center justify-between pt-1 border-t border-amber-100 dark:border-amber-900/40 text-[10px] text-amber-700 dark:text-amber-300 font-semibold">
                   <span>Task: {t.taskType}</span>
-                  <span className="text-amber-800 font-mono">Target: {t.targetRoute}</span>
+                  <span className="text-amber-800 dark:text-amber-400 font-mono">Target: {t.targetRoute}</span>
                 </div>
               </div>
             ))}
@@ -933,20 +942,27 @@ export default function OpClinicConsultationDeskPage() {
       {activeTab === "desk" && (
         <div className="space-y-5">
           {/* Consultation Desk Intake Card */}
-          <form onSubmit={handleSaveConsult} className="bg-white border border-[#E5E5EA] rounded-2xl p-5 sm:p-6 shadow-xs space-y-6">
+          <form onSubmit={handleSaveConsult} className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-6">
             {/* Section 1: Patient Demographics & Accession */}
             <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3 flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
                   <UserCheck className="w-3.5 h-3.5" />
                   Section 1: Patient Demographics &amp; Accession
                 </h3>
+                <button
+                  type="button"
+                  onClick={() => loadPatientIntoDesk("new")}
+                  className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800 hover:bg-[#F2F2F7] dark:hover:bg-slate-700 text-[#1C1C1E] dark:text-slate-200 transition-all cursor-pointer"
+                >
+                  Reset to Blank Form
+                </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Patient Full Name */}
                 <div className="md:col-span-2">
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Patient Full Name
                   </label>
                   <input
@@ -956,13 +972,13 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="e.g. Bhanwar Lal Sharma"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
 
                 {/* Age & Biological Sex */}
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Age &amp; Sex
                   </label>
                   <div className="flex gap-1.5">
@@ -973,16 +989,16 @@ export default function OpClinicConsultationDeskPage() {
                       autoComplete="off"
                       data-lpignore="true"
                       placeholder="Age"
-                      className="w-16 px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                      className="w-16 px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                     />
-                    <div className="flex-1 flex rounded-xl border border-[#E5E5EA] bg-[#F2F2F7] p-0.5">
+                    <div className="flex-1 flex rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#F2F2F7] dark:bg-slate-800 p-0.5">
                       <button
                         type="button"
                         onClick={() => setSex("Male")}
                         className={`flex-1 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                           sex === "Male"
-                            ? "bg-white text-[#007AFF] shadow-2xs"
-                            : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                            ? "bg-white dark:bg-slate-700 text-[#007AFF] dark:text-blue-400 shadow-2xs"
+                            : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
                         }`}
                       >
                         Male
@@ -992,8 +1008,8 @@ export default function OpClinicConsultationDeskPage() {
                         onClick={() => setSex("Female")}
                         className={`flex-1 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                           sex === "Female"
-                            ? "bg-white text-rose-600 shadow-2xs"
-                            : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                            ? "bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-2xs"
+                            : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
                         }`}
                       >
                         Female
@@ -1004,7 +1020,7 @@ export default function OpClinicConsultationDeskPage() {
 
                 {/* Accession Number / CR Number */}
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Accession / CR Number
                   </label>
                   <input
@@ -1014,7 +1030,7 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="e.g. 2026-99214"
-                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-mono focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-mono focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -1022,8 +1038,8 @@ export default function OpClinicConsultationDeskPage() {
 
             {/* Section 2: Contact & Referring Department */}
             <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
                   <Building className="w-3.5 h-3.5" />
                   Section 2: Contact &amp; Department Triage
                 </h3>
@@ -1032,7 +1048,7 @@ export default function OpClinicConsultationDeskPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Patient Contact Number (strictly 10-digit mobile) */}
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Patient Contact Number
                   </label>
                   <input
@@ -1044,13 +1060,13 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="10-digit mobile number"
-                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
 
                 {/* Resident Contact Number (10-digit mobile) */}
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Resident Contact Number
                   </label>
                   <input
@@ -1062,13 +1078,13 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="Resident 10-digit mobile"
-                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
 
                 {/* Referring Department - Zero Dropdown Quick Chips */}
                 <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Referring Department ({referringDepartment || "Select"})
                   </label>
                   <div className="flex flex-wrap gap-1 mb-1.5">
@@ -1089,7 +1105,7 @@ export default function OpClinicConsultationDeskPage() {
                         className={`px-2 py-0.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer ${
                           referringDepartment === d.key
                             ? "bg-[#007AFF] text-white shadow-2xs"
-                            : "bg-[#F2F2F7] text-[#3C4043] hover:bg-[#E5E5EA]"
+                            : "bg-[#F2F2F7] dark:bg-slate-800 text-[#3C4043] dark:text-slate-300 hover:bg-[#E5E5EA] dark:hover:bg-slate-700"
                         }`}
                       >
                         {d.short}
@@ -1101,22 +1117,22 @@ export default function OpClinicConsultationDeskPage() {
                     value={referringDepartment}
                     onChange={(e) => setReferringDepartment(e.target.value)}
                     placeholder="Or type custom referring unit/doctor..."
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] focus:bg-white focus:border-[#007AFF] focus:outline-none"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 {/* Urgency / Priority Category - Zero Dropdown Segmented Buttons */}
                 <div className="sm:col-span-2 md:col-span-4">
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Urgency / Priority Category
                   </label>
                   <div className="flex flex-wrap gap-1.5">
                     {[
-                      { key: "Routine / Non-Urgent", label: "Routine (Elective)", color: "border-blue-200 text-blue-700 bg-blue-50/60" },
-                      { key: "Early Treatment", label: "Early Treatment (24-48h)", color: "border-amber-200 text-amber-700 bg-amber-50/60" },
-                      { key: "Extensive Disease", label: "Extensive Disease", color: "border-orange-200 text-orange-700 bg-orange-50/60" },
-                      { key: "VIP Patient", label: "VIP Priority", color: "border-purple-200 text-purple-700 bg-purple-50/60" },
-                      { key: "Emergency / STAT", label: "Emergency STAT", color: "border-red-200 text-red-700 bg-red-50/60" },
+                      { key: "Routine / Non-Urgent", label: "Routine (Elective)", color: "border-blue-200 dark:border-blue-900/60 text-blue-700 dark:text-blue-300 bg-blue-50/60 dark:bg-blue-950/40" },
+                      { key: "Early Treatment", label: "Early Treatment (24-48h)", color: "border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300 bg-amber-50/60 dark:bg-amber-950/40" },
+                      { key: "Extensive Disease", label: "Extensive Disease", color: "border-orange-200 dark:border-orange-900/60 text-orange-700 dark:text-orange-300 bg-orange-50/60 dark:bg-orange-950/40" },
+                      { key: "VIP Patient", label: "VIP Priority", color: "border-purple-200 dark:border-purple-900/60 text-purple-700 dark:text-purple-300 bg-purple-50/60 dark:bg-purple-950/40" },
+                      { key: "Emergency / STAT", label: "Emergency STAT", color: "border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-300 bg-red-50/60 dark:bg-red-950/40" },
                     ].map((u) => (
                       <button
                         key={u.key}
@@ -1124,7 +1140,7 @@ export default function OpClinicConsultationDeskPage() {
                         onClick={() => setUrgencyCategory(u.key)}
                         className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                           urgencyCategory === u.key
-                            ? "bg-[#1C1C1E] text-white border-[#1C1C1E] shadow-2xs scale-[1.01]"
+                            ? "bg-[#1C1C1E] dark:bg-slate-100 text-white dark:text-slate-900 border-[#1C1C1E] dark:border-slate-100 shadow-2xs scale-[1.01]"
                             : `${u.color} hover:opacity-85`
                         }`}
                       >
@@ -1138,15 +1154,15 @@ export default function OpClinicConsultationDeskPage() {
 
             {/* Section 3: Clinical Presentation & History */}
             <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5" />
                   Section 3: Clinical Presentation &amp; History
                 </h3>
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                   Clinical History &amp; Chief Complaints
                 </label>
                 <textarea
@@ -1156,22 +1172,22 @@ export default function OpClinicConsultationDeskPage() {
                   autoComplete="off"
                   data-lpignore="true"
                   placeholder="Presenting symptoms and clinical history..."
-                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 leading-relaxed focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Section 4: CT Review & Imaging Findings */}
             <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
                   <Eye className="w-3.5 h-3.5" />
                   Section 4: CT Review &amp; Imaging Findings
                 </h3>
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                   CT Review / Imaging Findings
                 </label>
                 <textarea
@@ -1181,15 +1197,15 @@ export default function OpClinicConsultationDeskPage() {
                   autoComplete="off"
                   data-lpignore="true"
                   placeholder="e.g. Triple-phase CECT: Cirrhotic liver morphology, attenuated right and left hepatic veins, marked caudate lobe hypertrophy (>3.5 cm), patent main portal vein with hepatopetal flow. Feasible for transcaval DIPS..."
-                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] leading-relaxed focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 leading-relaxed focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Section 5: Diagnosis & Suggested IR Protocol */}
             <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5" />
                   Section 5: Diagnosis &amp; Suggested IR Protocol
                 </h3>
@@ -1198,7 +1214,7 @@ export default function OpClinicConsultationDeskPage() {
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                       Primary Clinical Diagnosis
                     </label>
                     <input
@@ -1208,13 +1224,13 @@ export default function OpClinicConsultationDeskPage() {
                       autoComplete="off"
                       data-lpignore="true"
                       placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites"
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                     />
                   </div>
 
                   {organSystem === "Others" && (
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                      <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                         Custom Procedure Title
                       </label>
                       <input
@@ -1224,7 +1240,7 @@ export default function OpClinicConsultationDeskPage() {
                         autoComplete="off"
                         data-lpignore="true"
                         placeholder="e.g. Percutaneous Sclerotherapy / Custom Angio"
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] bg-[#FAFAFA] text-xs text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none transition-colors"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
                       />
                     </div>
                   )}
@@ -1232,7 +1248,7 @@ export default function OpClinicConsultationDeskPage() {
 
                 {/* Organ System - Zero Dropdown Segmented Buttons */}
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Organ System ({organSystem})
                   </label>
                   <div className="flex flex-wrap gap-1.5">
@@ -1260,7 +1276,7 @@ export default function OpClinicConsultationDeskPage() {
                         className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
                           organSystem === sys.key
                             ? "bg-[#007AFF] text-white border-[#007AFF] shadow-2xs"
-                            : "bg-[#F2F2F7] text-[#3C4043] border-transparent hover:bg-[#E5E5EA]"
+                            : "bg-[#F2F2F7] dark:bg-slate-800 text-[#3C4043] dark:text-slate-300 border-transparent dark:border-slate-700/60 hover:bg-[#E5E5EA] dark:hover:bg-slate-700"
                         }`}
                       >
                         {sys.label}
@@ -1272,10 +1288,10 @@ export default function OpClinicConsultationDeskPage() {
                 {/* Suggested Protocol - Zero Dropdown Protocol Chips */}
                 {organSystem !== "Others" && (
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#636366] mb-1">
+                    <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                       Suggested IR Protocol ({matchedProtocol?.title || "Select Protocol"})
                     </label>
-                    <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA]">
+                    <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 rounded-xl border border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/50">
                       {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
                         <button
                           key={p.key}
@@ -1283,8 +1299,8 @@ export default function OpClinicConsultationDeskPage() {
                           onClick={() => setDiseaseKey(p.key)}
                           className={`px-2 py-1 rounded-md text-[11px] font-semibold border text-left transition-all cursor-pointer ${
                             diseaseKey === p.key
-                              ? "bg-white text-[#007AFF] border-[#007AFF] shadow-2xs ring-1 ring-[#007AFF]"
-                              : "bg-white text-[#3C4043] border-[#E5E5EA] hover:border-[#007AFF]/40"
+                              ? "bg-white dark:bg-slate-700 text-[#007AFF] dark:text-blue-400 border-[#007AFF] dark:border-blue-400 shadow-2xs ring-1 ring-[#007AFF] dark:ring-blue-400"
+                              : "bg-white dark:bg-slate-800 text-[#3C4043] dark:text-slate-300 border-[#E5E5EA] dark:border-slate-700 hover:border-[#007AFF]/40"
                           }`}
                         >
                           {p.title}
@@ -1298,12 +1314,12 @@ export default function OpClinicConsultationDeskPage() {
 
             {/* Section 6: Clinical Disposition Matrix (6-Track Framework) */}
             <div>
-              <div className="border-b border-[#E5E5EA] pb-2 mb-3 flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] flex items-center gap-1.5">
+              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3 flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
                   <ShieldAlert className="w-3.5 h-3.5" />
                   Section 6: Clinical Disposition Matrix (6-Track Framework)
                 </h3>
-                <span className="text-[11px] text-[#8E8E93] hidden sm:inline">
+                <span className="text-[11px] text-[#8E8E93] dark:text-slate-400 hidden sm:inline">
                   Strict 8-Bed Inpatient Guardrail • Non-inpatient tracks never lock beds
                 </span>
               </div>
@@ -1315,8 +1331,8 @@ export default function OpClinicConsultationDeskPage() {
                   onClick={() => setDisposition("STAT_CATH_LAB")}
                   className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     disposition === "STAT_CATH_LAB"
-                      ? "border-[#EA4335] bg-[#EA4335]/10 text-[#C5221F] shadow-xs font-bold ring-1 ring-[#EA4335]"
-                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#EA4335]/40"
+                      ? "border-[#EA4335] bg-[#EA4335]/10 dark:bg-rose-950/40 text-[#C5221F] dark:text-rose-400 shadow-xs font-bold ring-1 ring-[#EA4335]"
+                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#EA4335]/40"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -1325,7 +1341,7 @@ export default function OpClinicConsultationDeskPage() {
                       STAT Cath-Lab
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
                     Emergency fast-path direct to table
                   </span>
                 </button>
@@ -1336,8 +1352,8 @@ export default function OpClinicConsultationDeskPage() {
                   onClick={() => setDisposition("ADMIT_WARD_PREOP")}
                   className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     disposition === "ADMIT_WARD_PREOP"
-                      ? "border-[#5856D6] bg-[#5856D6]/10 text-[#4745B8] shadow-xs font-bold ring-1 ring-[#5856D6]"
-                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#5856D6]/40"
+                      ? "border-[#5856D6] bg-[#5856D6]/10 dark:bg-indigo-950/40 text-[#4745B8] dark:text-indigo-400 shadow-xs font-bold ring-1 ring-[#5856D6]"
+                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#5856D6]/40"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -1345,11 +1361,11 @@ export default function OpClinicConsultationDeskPage() {
                       <BedDouble className="w-3 h-3 text-[#5856D6]" />
                       Admit Ward
                     </span>
-                    <span className="px-1 py-0.2 rounded text-[9px] bg-purple-200 text-purple-900 font-mono">
+                    <span className="px-1 py-0.2 rounded text-[9px] bg-purple-200 dark:bg-purple-900/60 text-purple-900 dark:text-purple-200 font-mono">
                       8-Bed
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
                     Assigns 1 of 8 beds on Ward Board
                   </span>
                 </button>
@@ -1360,8 +1376,8 @@ export default function OpClinicConsultationDeskPage() {
                   onClick={() => setDisposition("ELECTIVE_OUTPATIENT")}
                   className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     disposition === "ELECTIVE_OUTPATIENT"
-                      ? "border-[#007AFF] bg-[#007AFF]/10 text-[#0062CC] shadow-xs font-bold ring-1 ring-[#007AFF]"
-                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#007AFF]/40"
+                      ? "border-[#007AFF] bg-[#007AFF]/10 dark:bg-blue-950/40 text-[#0062CC] dark:text-blue-400 shadow-xs font-bold ring-1 ring-[#007AFF]"
+                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#007AFF]/40"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -1370,7 +1386,7 @@ export default function OpClinicConsultationDeskPage() {
                       Elective Day-Care
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
                     Day procedure, zero ward bed locks
                   </span>
                 </button>
@@ -1381,8 +1397,8 @@ export default function OpClinicConsultationDeskPage() {
                   onClick={() => setDisposition("NO_INTERVENTION_NEEDED")}
                   className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     disposition === "NO_INTERVENTION_NEEDED"
-                      ? "border-[#34C759] bg-[#34C759]/10 text-[#248A3D] shadow-xs font-bold ring-1 ring-[#34C759]"
-                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#34C759]/40"
+                      ? "border-[#34C759] bg-[#34C759]/10 dark:bg-emerald-950/40 text-[#248A3D] dark:text-emerald-400 shadow-xs font-bold ring-1 ring-[#34C759]"
+                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#34C759]/40"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -1391,7 +1407,7 @@ export default function OpClinicConsultationDeskPage() {
                       Conservative
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
                     Primary referral / No intervention
                   </span>
                 </button>
@@ -1402,8 +1418,8 @@ export default function OpClinicConsultationDeskPage() {
                   onClick={() => setDisposition("DEFERRED_REVIEW_SOS")}
                   className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     disposition === "DEFERRED_REVIEW_SOS"
-                      ? "border-[#FF9500] bg-[#FF9500]/10 text-[#C97100] shadow-xs font-bold ring-1 ring-[#FF9500]"
-                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#FF9500]/40"
+                      ? "border-[#FF9500] bg-[#FF9500]/10 dark:bg-amber-950/40 text-[#C97100] dark:text-amber-400 shadow-xs font-bold ring-1 ring-[#FF9500]"
+                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#FF9500]/40"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -1412,7 +1428,7 @@ export default function OpClinicConsultationDeskPage() {
                       Deferred (SOS)
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
                     Wait-and-watch on red flags
                   </span>
                 </button>
@@ -1423,8 +1439,8 @@ export default function OpClinicConsultationDeskPage() {
                   onClick={() => setDisposition("SURVEILLANCE_PROTOCOL")}
                   className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     disposition === "SURVEILLANCE_PROTOCOL"
-                      ? "border-[#32ADE6] bg-[#32ADE6]/10 text-[#0077A6] shadow-xs font-bold ring-1 ring-[#32ADE6]"
-                      : "border-[#E5E5EA] bg-[#FAFAFA] text-[#636366] hover:border-[#32ADE6]/40"
+                      ? "border-[#32ADE6] bg-[#32ADE6]/10 dark:bg-cyan-950/40 text-[#0077A6] dark:text-cyan-400 shadow-xs font-bold ring-1 ring-[#32ADE6]"
+                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#32ADE6]/40"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -1433,7 +1449,7 @@ export default function OpClinicConsultationDeskPage() {
                       Surveillance
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#8E8E93] leading-tight">
+                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
                     Interval imaging follow-up
                   </span>
                 </button>
@@ -1441,9 +1457,9 @@ export default function OpClinicConsultationDeskPage() {
 
               {/* Conditional SOS Trigger Symptoms Input */}
               {disposition === "DEFERRED_REVIEW_SOS" && (
-                <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-300 text-xs space-y-1.5 animate-in fade-in">
-                  <label className="block text-[11px] font-bold text-amber-950 flex items-center gap-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                <div className="p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs space-y-1.5 animate-in fade-in">
+                  <label className="block text-[11px] font-bold text-amber-950 dark:text-amber-200 flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                     SOS Red-Flag Trigger Symptoms for Urgent Hospital Return *
                   </label>
                   <input
@@ -1453,9 +1469,9 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="e.g. Abdominal pain progression, fresh melena/hematemesis, expanding hematoma, sudden Hb drop, high fever..."
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-amber-300 bg-white font-medium text-amber-950 focus:outline-none focus:border-amber-600"
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 font-medium text-amber-950 dark:text-amber-100 focus:outline-none focus:border-amber-600"
                   />
-                  <p className="text-[10px] text-amber-800">
+                  <p className="text-[10px] text-amber-800 dark:text-amber-300">
                     Documenting SOS triggers ensures patient has explicit clinical boundary conditions without occupying an inpatient hospital bed.
                   </p>
                 </div>
@@ -1463,18 +1479,26 @@ export default function OpClinicConsultationDeskPage() {
             </div>
 
             {/* Bottom Action Strip */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E5EA]">
-              <div className="text-[11px] text-[#8E8E93] flex items-center gap-1.5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E5EA] dark:border-slate-800">
+              <div className="text-[11px] text-[#8E8E93] dark:text-slate-400 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
-                <span>Consultant: <strong>{activeStaff.name}</strong> ({activeStaff.code})</span>
+                <span>Consultant: <strong className="text-slate-900 dark:text-slate-200">{activeStaff.name}</strong> ({activeStaff.code})</span>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                 <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl border border-[#E5E5EA] bg-white hover:bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] transition-all cursor-pointer"
+                  type="button"
+                  onClick={() => loadPatientIntoDesk("new")}
+                  className="px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-[#F2F2F7] dark:hover:bg-slate-700 text-xs font-semibold text-[#1C1C1E] dark:text-slate-100 transition-all cursor-pointer"
                 >
-                  Save / Update Consult
+                  Blank Form
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Save Consultation &amp; Go to Queue</span>
                 </button>
                 <button
                   type="button"
@@ -1496,7 +1520,7 @@ export default function OpClinicConsultationDeskPage() {
                     setBookingStep(1);
                     setShowBookingModal(true);
                   }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#007AFF] bg-white text-[#007AFF] hover:bg-[#007AFF]/10 text-xs font-semibold transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#007AFF] dark:border-blue-500 bg-white dark:bg-slate-900 text-[#007AFF] dark:text-blue-400 hover:bg-[#007AFF]/10 dark:hover:bg-blue-950/40 text-xs font-semibold transition-all cursor-pointer"
                 >
                   <CalendarPlus className="w-4 h-4" />
                   <span>Book Cath-Lab</span>
@@ -1512,22 +1536,56 @@ export default function OpClinicConsultationDeskPage() {
       {/* ========================================================================= */}
       {activeTab === "queue" && (
         <div className="space-y-4">
+          {/* Top Return / New Consultation Actions - Self Explanatory Navigation */}
+          <div className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <h2 className="text-sm font-bold text-[#1C1C1E] dark:text-slate-100 flex items-center gap-2">
+                <Eye className="w-4 h-4 text-[#007AFF] dark:text-blue-400" />
+                <span>Consultation Review Queue ({filteredReviews.length} Records)</span>
+              </h2>
+              <p className="text-xs text-[#8E8E93] dark:text-slate-400">
+                To edit a patient, click <strong className="text-blue-600 dark:text-blue-400 font-semibold">"Reopen in Desk (Edit)"</strong> on their card below.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => {
+                  loadPatientIntoDesk("new");
+                  setActiveTab("desk");
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ New Consultation (Blank Desk)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("desk")}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-[#F2F2F7] dark:hover:bg-slate-700 text-xs font-semibold text-[#1C1C1E] dark:text-slate-200 transition-all cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>← Return to Consultation Desk</span>
+              </button>
+            </div>
+          </div>
+
           {/* Search & Filter Controls */}
-          <div className="bg-white border border-[#E5E5EA] rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="relative w-full md:max-w-md">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8E93]" />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8E93] dark:text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search patient, CT number, SMS Bill ID, diagnosis..."
-                className="w-full bg-[#F2F2F7] text-xs rounded-xl pl-9 pr-4 py-2 border border-transparent focus:border-[#007AFF] focus:bg-white focus:outline-none transition-colors"
+                className="w-full bg-[#F2F2F7] dark:bg-slate-800 text-xs text-[#1C1C1E] dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 rounded-xl pl-9 pr-4 py-2 border border-transparent dark:border-slate-700/60 focus:border-[#007AFF] focus:bg-white dark:focus:bg-slate-800 focus:outline-none transition-colors"
               />
             </div>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
               {/* Imaging Center Filter Pills - Zero Dropdown */}
-              <div className="flex flex-wrap items-center gap-1 bg-[#F2F2F7] p-1 rounded-xl">
+              <div className="flex flex-wrap items-center gap-1 bg-[#F2F2F7] dark:bg-slate-800 p-1 rounded-xl border border-transparent dark:border-slate-700/60">
                 {[
                   { key: "all", label: "All Centers" },
                   { key: "SONI Hospital", label: "SONI PACS" },
@@ -1539,8 +1597,8 @@ export default function OpClinicConsultationDeskPage() {
                     onClick={() => setSelectedCenter(c.key)}
                     className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       selectedCenter === c.key
-                        ? "bg-white text-[#007AFF] shadow-2xs"
-                        : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                        ? "bg-white dark:bg-slate-700 text-[#007AFF] dark:text-blue-400 shadow-2xs"
+                        : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
                     }`}
                   >
                     {c.label}
@@ -1549,7 +1607,7 @@ export default function OpClinicConsultationDeskPage() {
               </div>
 
               {/* Status Filter Pills including On-Call Standby - Zero Dropdown */}
-              <div className="flex flex-wrap items-center gap-1 bg-[#F2F2F7] p-1 rounded-xl">
+              <div className="flex flex-wrap items-center gap-1 bg-[#F2F2F7] dark:bg-slate-800 p-1 rounded-xl border border-transparent dark:border-slate-700/60">
                 {[
                   { key: "all", label: "All" },
                   { key: "Pending Review", label: "Pending" },
@@ -1564,8 +1622,8 @@ export default function OpClinicConsultationDeskPage() {
                       selectedStatus === s.key
                         ? s.key === "Keep On Call (Standby)"
                           ? "bg-teal-600 text-white shadow-2xs"
-                          : "bg-white text-[#1C1C1E] shadow-2xs"
-                        : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                          : "bg-white dark:bg-slate-700 text-[#1C1C1E] dark:text-slate-100 shadow-2xs"
+                        : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
                     }`}
                   >
                     {s.label}
@@ -1578,64 +1636,64 @@ export default function OpClinicConsultationDeskPage() {
           {/* Queue List Cards */}
           <div className="space-y-3">
             {filteredReviews.length === 0 ? (
-              <div className="bg-white border border-[#E5E5EA] rounded-2xl p-12 text-center text-[#8E8E93] space-y-2">
-                <Eye className="w-10 h-10 mx-auto text-[#C7C7CC]" />
-                <p className="font-semibold text-sm text-[#1C1C1E]">No CT Review records match current filters</p>
+              <div className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-12 text-center text-[#8E8E93] dark:text-slate-400 space-y-2">
+                <Eye className="w-10 h-10 mx-auto text-[#C7C7CC] dark:text-slate-600" />
+                <p className="font-semibold text-sm text-[#1C1C1E] dark:text-slate-200">No CT Review records match current filters</p>
                 <p className="text-xs">Select or add a new patient to populate the OPD consultation queue.</p>
               </div>
             ) : (
               filteredReviews.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-xs hover:border-[#C7C7CC] transition-all space-y-3"
+                  className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs hover:border-slate-400 dark:hover:border-slate-700 transition-all space-y-3"
                 >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#E5E5EA] pb-3">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#E5E5EA] dark:border-slate-800 pb-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-bold text-base text-[#1C1C1E]">
+                        <h3 className="font-bold text-base text-[#1C1C1E] dark:text-slate-100">
                           {item.patientName}
                         </h3>
-                        <span className="text-xs text-[#8E8E93]">
+                        <span className="text-xs text-[#8E8E93] dark:text-slate-400">
                           ({item.age}y / {item.sex})
                         </span>
-                        <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-[#F2F2F7] text-[#3A3A3C]">
+                        <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-[#F2F2F7] dark:bg-slate-800 text-[#3A3A3C] dark:text-slate-300">
                           HID: {item.smsBillId}
                         </span>
                         <span
                           className={`px-2.5 py-0.5 text-[10px] font-semibold uppercase rounded-full ${
                             item.status === "Keep On Call (Standby)" || item.isOnCall
-                              ? "bg-teal-100 text-teal-800 border border-teal-300 font-bold"
+                              ? "bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-800 font-bold"
                               : item.status === "Booked in Cath-Lab"
-                              ? "bg-[#34C759]/15 text-[#248A3D]"
+                              ? "bg-[#34C759]/15 dark:bg-emerald-950/50 text-[#248A3D] dark:text-emerald-400"
                               : item.status === "Deferred / Postponed"
-                              ? "bg-amber-100 text-amber-800"
+                              ? "bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300"
                               : item.status === "On Hold"
-                              ? "bg-gray-200 text-gray-800"
+                              ? "bg-gray-200 dark:bg-slate-800 text-gray-800 dark:text-slate-200"
                               : item.status === "Pending Review"
-                              ? "bg-[#FF9500]/15 text-[#C97100]"
-                              : "bg-[#007AFF]/15 text-[#007AFF]"
+                              ? "bg-[#FF9500]/15 dark:bg-amber-950/50 text-[#C97100] dark:text-amber-400"
+                              : "bg-[#007AFF]/15 dark:bg-blue-950/50 text-[#007AFF] dark:text-blue-400"
                           }`}
                         >
                           {item.status === "Keep On Call (Standby)" || item.isOnCall ? "On-Call Standby" : item.status}
                         </span>
                         {item.postponedUntilDate && (
-                          <span className="text-[10px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                          <span className="text-[10px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
                             Postponed until {item.postponedUntilDate}
                           </span>
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E93]">
-                        <span className="flex items-center gap-1 font-medium text-[#1C1C1E]">
-                          <Building className="w-3.5 h-3.5 text-[#007AFF]" />
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E93] dark:text-slate-400">
+                        <span className="flex items-center gap-1 font-medium text-[#1C1C1E] dark:text-slate-200">
+                          <Building className="w-3.5 h-3.5 text-[#007AFF] dark:text-blue-400" />
                           {item.hospitalSource}
                         </span>
-                        <span className="flex items-center gap-1 font-mono text-[#1C1C1E]">
-                          <Radio className="w-3.5 h-3.5 text-[#FF9500]" />
+                        <span className="flex items-center gap-1 font-mono text-[#1C1C1E] dark:text-slate-200">
+                          <Radio className="w-3.5 h-3.5 text-[#FF9500] dark:text-amber-400" />
                           CT #{item.ctNumber}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Phone className="w-3.5 h-3.5 text-[#34C759]" />
+                          <Phone className="w-3.5 h-3.5 text-[#34C759] dark:text-emerald-400" />
                           {item.contactNumber}
                         </span>
                         <span className="flex items-center gap-1">
@@ -1647,15 +1705,17 @@ export default function OpClinicConsultationDeskPage() {
 
                     <div className="flex flex-col items-end gap-2 shrink-0">
                       <div className="flex items-center gap-2">
+                        {/* SELF-EXPLANATORY OPEN LINK BACK TO DESK (EDIT) */}
                         <button
                           onClick={() => {
                             loadPatientIntoDesk(item.id);
                             setActiveTab("desk");
                           }}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E5EA] bg-white hover:bg-[#F2F2F7] text-xs font-semibold text-[#1C1C1E] transition-all cursor-pointer"
+                          title="Load this patient's notes and clinical data back into the Consultation Desk to edit or triage"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-300 dark:border-blue-700/60 bg-blue-50/70 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-xs font-semibold text-blue-700 dark:text-blue-300 transition-all cursor-pointer shadow-2xs"
                         >
-                          <ClipboardList className="w-3.5 h-3.5 text-[#8E8E93]" />
-                          <span>Open in Desk</span>
+                          <ArrowLeft className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                          <span>Reopen in Consultation Desk (Edit)</span>
                         </button>
 
                         <button
@@ -1677,7 +1737,7 @@ export default function OpClinicConsultationDeskPage() {
                           {item.contactNumber ? (
                             <a
                               href={`tel:${item.contactNumber}`}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 text-[11px] font-semibold transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800 text-[11px] font-semibold transition-all cursor-pointer"
                             >
                               <Phone className="w-3 h-3" />
                               <span>Call Patient</span>
@@ -1686,19 +1746,19 @@ export default function OpClinicConsultationDeskPage() {
                             <>
                               <button
                                 onClick={() => setActivePopover(activePopover?.id === item.id && activePopover?.type === 'contact' ? null : { id: item.id, type: 'contact' })}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 text-[11px] font-semibold transition-all cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800 text-[11px] font-semibold transition-all cursor-pointer"
                               >
                                 <Phone className="w-3 h-3" />
                                 <span>Add Number</span>
                               </button>
                               {activePopover?.id === item.id && activePopover?.type === 'contact' && (
-                                <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#E5E5EA] rounded-xl shadow-lg p-2 z-10 flex gap-2">
+                                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-800 border border-[#E5E5EA] dark:border-slate-700 rounded-xl shadow-lg p-2 z-10 flex gap-2">
                                   <input 
                                     type="tel"
                                     placeholder="Phone number"
                                     value={popoverInput}
                                     onChange={(e) => setPopoverInput(e.target.value)}
-                                    className="flex-1 px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                    className="flex-1 px-2 py-1 text-xs border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-900 text-[#1C1C1E] dark:text-slate-100 rounded-lg focus:outline-none focus:border-[#007AFF]"
                                   />
                                   <button
                                     onClick={() => {
@@ -1720,21 +1780,21 @@ export default function OpClinicConsultationDeskPage() {
                         <div className="relative">
                           <button
                             onClick={() => setActivePopover(activePopover?.id === item.id && activePopover?.type === 'date' ? null : { id: item.id, type: 'date' })}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-[11px] font-semibold transition-all cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-800 text-[11px] font-semibold transition-all cursor-pointer"
                           >
                             <CalendarPlus className="w-3 h-3" />
                             <span>Give Date</span>
                           </button>
                           {activePopover?.id === item.id && activePopover?.type === 'date' && (
-                            <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-[#E5E5EA] rounded-xl shadow-lg p-2 z-10 space-y-2">
+                            <div className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-slate-800 border border-[#E5E5EA] dark:border-slate-700 rounded-xl shadow-lg p-2 z-10 space-y-2">
                               <input 
                                 type="date"
                                 value={popoverInput}
                                 onChange={(e) => setPopoverInput(e.target.value)}
-                                className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                className="w-full px-2 py-1 text-xs border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-900 text-[#1C1C1E] dark:text-slate-100 rounded-lg focus:outline-none focus:border-[#007AFF]"
                               />
                               {popoverInput && (getHolidayForDate(popoverInput).isHoliday || getHolidayForDate(popoverInput).isSunday) && (
-                                <div className="text-[9px] text-amber-700 bg-amber-50 p-1.5 rounded border border-amber-200 leading-tight">
+                                <div className="text-[9px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 p-1.5 rounded border border-amber-200 dark:border-amber-800 leading-tight">
                                   <AlertTriangle className="w-3 h-3 inline mr-1" />
                                   Holiday/Sunday warning: {getHolidayForDate(popoverInput).name || "Sunday"}
                                 </div>
@@ -1768,7 +1828,7 @@ export default function OpClinicConsultationDeskPage() {
                           className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
                             item.status === "Keep On Call (Standby)" || item.isOnCall
                               ? "bg-teal-600 text-white border-teal-600 shadow-2xs"
-                              : "bg-teal-50 text-teal-700 hover:bg-teal-100 border-teal-200"
+                              : "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/60 border-teal-200 dark:border-teal-800"
                           }`}
                         >
                           <Phone className="w-3 h-3" />
@@ -1779,13 +1839,13 @@ export default function OpClinicConsultationDeskPage() {
                         <div className="relative">
                           <button
                             onClick={() => setActivePopover(activePopover?.id === item.id && activePopover?.type === 'postpone' ? null : { id: item.id, type: 'postpone' })}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 text-[11px] font-semibold transition-all cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/60 border border-amber-200 dark:border-amber-800 text-[11px] font-semibold transition-all cursor-pointer"
                           >
                             <Pause className="w-3 h-3" />
                             <span>{item.status === "Booked in Cath-Lab" && item.bookedCaseId ? "Reschedule Booking" : "Postpone / Hold"}</span>
                           </button>
                           {activePopover?.id === item.id && activePopover?.type === 'postpone' && (
-                            <div className="absolute right-0 top-full mt-1 w-64 bg-white border border-[#E5E5EA] rounded-xl shadow-lg p-3 z-10 space-y-3">
+                            <div className="absolute right-0 top-full mt-1 w-64 bg-white dark:bg-slate-800 border border-[#E5E5EA] dark:border-slate-700 rounded-xl shadow-lg p-3 z-10 space-y-3">
                               {item.status === "Booked in Cath-Lab" && item.bookedCaseId ? (
                                 <Link 
                                   href={`/dashboard/calendar?highlight=${item.bookedCaseId}`}
@@ -1795,20 +1855,20 @@ export default function OpClinicConsultationDeskPage() {
                                 </Link>
                               ) : (
                                 <>
-                                  <div className="space-y-1.5 pb-2 border-b border-[#E5E5EA]">
-                                    <span className="text-[10px] font-bold text-gray-500 block mb-1">POSTPONE TO DATE</span>
+                                  <div className="space-y-1.5 pb-2 border-b border-[#E5E5EA] dark:border-slate-700">
+                                    <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 block mb-1">POSTPONE TO DATE</span>
                                     <input 
                                       type="date"
                                       value={popoverInput}
                                       onChange={(e) => setPopoverInput(e.target.value)}
-                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-900 text-[#1C1C1E] dark:text-slate-100 rounded-lg focus:outline-none focus:border-[#007AFF]"
                                     />
                                     <input 
                                       type="text"
                                       placeholder="Reason (optional)"
                                       value={popoverReason}
                                       onChange={(e) => setPopoverReason(e.target.value)}
-                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-900 text-[#1C1C1E] dark:text-slate-100 rounded-lg focus:outline-none focus:border-[#007AFF]"
                                     />
                                     <button
                                       onClick={() => {
@@ -1824,13 +1884,13 @@ export default function OpClinicConsultationDeskPage() {
                                     </button>
                                   </div>
                                   <div className="space-y-1.5 pt-1">
-                                    <span className="text-[10px] font-bold text-gray-500 block mb-1">ON HOLD (INDEFINITE)</span>
+                                    <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 block mb-1">ON HOLD (INDEFINITE)</span>
                                     <input 
                                       type="text"
                                       placeholder="Reason"
                                       value={popoverReason}
                                       onChange={(e) => setPopoverReason(e.target.value)}
-                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] rounded-lg focus:outline-none focus:border-[#007AFF]"
+                                      className="w-full px-2 py-1 text-xs border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-900 text-[#1C1C1E] dark:text-slate-100 rounded-lg focus:outline-none focus:border-[#007AFF]"
                                     />
                                     <button
                                       onClick={() => {
@@ -1849,11 +1909,11 @@ export default function OpClinicConsultationDeskPage() {
                           )}
                         </div>
 
-                        {/* 4. Reactivate Button */}
+                        {/* 5. Reactivate Button */}
                         {(item.status === 'Deferred / Postponed' || item.status === 'On Hold') && (
                           <button
                             onClick={() => reactivateCtReview(item.id)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 text-[11px] font-semibold transition-all cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-green-50 dark:bg-emerald-950/40 text-green-700 dark:text-emerald-300 hover:bg-green-100 dark:hover:bg-emerald-900/60 border border-green-200 dark:border-emerald-800 text-[11px] font-semibold transition-all cursor-pointer"
                           >
                             <Play className="w-3 h-3" />
                             <span>Reactivate</span>
@@ -1865,25 +1925,25 @@ export default function OpClinicConsultationDeskPage() {
 
                   <div className="space-y-2 text-xs">
                     <div>
-                      <span className="font-semibold text-[#8E8E93]">Primary Diagnosis: </span>
-                      <span className="font-semibold text-[#1C1C1E]">{item.primaryDiagnosis}</span>
+                      <span className="font-semibold text-[#8E8E93] dark:text-slate-400">Primary Diagnosis: </span>
+                      <span className="font-semibold text-[#1C1C1E] dark:text-slate-100">{item.primaryDiagnosis}</span>
                     </div>
 
                     {item.clinicalHistory && (
-                      <div className="p-2.5 rounded-xl bg-[#F2F2F7]/70 text-xs">
-                        <span className="font-bold text-[10px] text-[#636366] uppercase tracking-wider block mb-0.5">
+                      <div className="p-2.5 rounded-xl bg-[#F2F2F7]/70 dark:bg-slate-800/60 text-xs">
+                        <span className="font-bold text-[10px] text-[#636366] dark:text-slate-400 uppercase tracking-wider block mb-0.5">
                           3-Month Clinical Course:
                         </span>
-                        <p className="text-[#1C1C1E] leading-relaxed">{item.clinicalHistory}</p>
+                        <p className="text-[#1C1C1E] dark:text-slate-200 leading-relaxed">{item.clinicalHistory}</p>
                       </div>
                     )}
 
-                    <div className="p-3 rounded-xl bg-[#007AFF]/5 border border-[#007AFF]/10">
-                      <p className="font-bold text-[10px] text-[#007AFF] uppercase tracking-wider mb-1 flex items-center gap-1">
+                    <div className="p-3 rounded-xl bg-[#007AFF]/5 dark:bg-blue-950/30 border border-[#007AFF]/10 dark:border-blue-900/40">
+                      <p className="font-bold text-[10px] text-[#007AFF] dark:text-blue-400 uppercase tracking-wider mb-1 flex items-center gap-1">
                         <Eye className="w-3.5 h-3.5" />
                         CECT Findings:
                       </p>
-                      <p className="text-xs text-[#1C1C1E] leading-relaxed">{item.ctReviewNotes}</p>
+                      <p className="text-xs text-[#1C1C1E] dark:text-slate-200 leading-relaxed">{item.ctReviewNotes}</p>
                     </div>
                   </div>
                 </div>
@@ -1897,30 +1957,30 @@ export default function OpClinicConsultationDeskPage() {
       {/* MODAL: CONFIRM CATH-LAB BOOKING */}
       {/* ========================================================================= */}
       {showBookingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs p-3 sm:p-4">
-          <div className="bg-white border border-[#E5E5EA] rounded-2xl w-full max-w-lg max-h-[90dvh] overflow-y-auto shadow-xl p-4 sm:p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl w-full max-w-lg max-h-[90dvh] overflow-y-auto shadow-xl p-4 sm:p-6 relative text-[#1C1C1E] dark:text-slate-100">
             <button
               onClick={() => setShowBookingModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F2F2F7] text-[#8E8E93] cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F2F2F7] dark:hover:bg-slate-800 text-[#8E8E93] dark:text-slate-400 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-[#007AFF]/10 text-[#007AFF] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-[#007AFF]/10 dark:bg-blue-950/60 text-[#007AFF] dark:text-blue-400 flex items-center justify-center">
                 <CalendarPlus className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-semibold text-[#1C1C1E] tracking-tight">
+                <h3 className="text-base font-semibold text-[#1C1C1E] dark:text-slate-100 tracking-tight">
                   Confirm Cath-Lab Booking
                 </h3>
-                <p className="text-xs text-[#8E8E93]">
+                <p className="text-xs text-[#8E8E93] dark:text-slate-400">
                   Schedule patient directly into Cath-Lab Day-Care &amp; RIS Worklist
                 </p>
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-[#F2F2F7] text-xs space-y-1 mb-4">
+            <div className="p-3 rounded-xl bg-[#F2F2F7] dark:bg-slate-800/80 text-xs space-y-1 mb-4 text-[#1C1C1E] dark:text-slate-200">
               <p><strong>Patient:</strong> {patientName.trim() || "OPD Consultation Patient"} ({age || 0}y / {sex})</p>
               <p><strong>Procedure:</strong> {effectiveProcedureTitle}</p>
               <p><strong>Diagnosis:</strong> {primaryDiagnosis.trim() || effectiveProcedureTitle}</p>
@@ -1930,14 +1990,14 @@ export default function OpClinicConsultationDeskPage() {
             </div>
 
             {/* Booking Type Switcher: Specific Date vs On-Call Standby */}
-            <div className="flex rounded-xl bg-[#F2F2F7] p-1 mb-4">
+            <div className="flex rounded-xl bg-[#F2F2F7] dark:bg-slate-800 p-1 mb-4 border border-transparent dark:border-slate-700/60">
               <button
                 type="button"
                 onClick={() => setIsOnCallBooking(false)}
                 className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                   !isOnCallBooking
-                    ? "bg-white text-[#1C1C1E] shadow-2xs"
-                    : "text-[#8E8E93] hover:text-[#1C1C1E]"
+                    ? "bg-white dark:bg-slate-700 text-[#1C1C1E] dark:text-slate-100 shadow-2xs"
+                    : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
                 }`}
               >
                 Schedule Fixed Date
@@ -1948,7 +2008,7 @@ export default function OpClinicConsultationDeskPage() {
                 className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                   isOnCallBooking
                     ? "bg-teal-600 text-white shadow-2xs"
-                    : "text-teal-700 hover:text-teal-800"
+                    : "text-teal-700 dark:text-teal-400 hover:text-teal-800"
                 }`}
               >
                 Keep On Call (Standby)
@@ -1959,7 +2019,7 @@ export default function OpClinicConsultationDeskPage() {
               {!isOnCallBooking ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="block font-semibold text-[#636366]">
+                    <label className="block font-semibold text-[#636366] dark:text-slate-400">
                       Cath-Lab Procedure Date
                     </label>
                     {/* Quick Date Presets */}
@@ -1980,7 +2040,7 @@ export default function OpClinicConsultationDeskPage() {
                             className={`px-1.5 py-0.5 rounded text-[10px] font-semibold transition-all cursor-pointer ${
                               bookingDate === targetD
                                 ? "bg-[#007AFF] text-white"
-                                : "bg-[#F2F2F7] text-[#3C4043] hover:bg-[#E5E5EA]"
+                                : "bg-[#F2F2F7] dark:bg-slate-800 text-[#3C4043] dark:text-slate-300 hover:bg-[#E5E5EA] dark:hover:bg-slate-700"
                             }`}
                           >
                             {preset.label}
@@ -1994,12 +2054,12 @@ export default function OpClinicConsultationDeskPage() {
                     type="date"
                     value={bookingDate}
                     onChange={(e) => setBookingDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] text-[#1C1C1E] font-medium focus:bg-white focus:border-[#007AFF] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800 text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none"
                   />
 
                   {/* Rajasthan Holiday Detection */}
                   {(bookingDateHoliday.isHoliday || bookingDateHoliday.isSunday) && (
-                    <div className="p-2.5 rounded-xl bg-[#FF9500]/10 border border-[#FF9500]/20 text-[#C97100] flex items-center gap-2 text-[11px]">
+                    <div className="p-2.5 rounded-xl bg-[#FF9500]/10 dark:bg-amber-950/40 border border-[#FF9500]/20 dark:border-amber-800 text-[#C97100] dark:text-amber-300 flex items-center gap-2 text-[11px]">
                       <AlertTriangle className="w-4 h-4 text-[#FF9500] shrink-0" />
                       <span>
                         <strong>Notice:</strong> {bookingDateHoliday.name || "Sunday"} is a Rajasthan {bookingDateHoliday.type || "Gazetted"} Holiday.
@@ -2008,12 +2068,12 @@ export default function OpClinicConsultationDeskPage() {
                   )}
                 </div>
               ) : (
-                <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 space-y-1.5 animate-in fade-in">
+                <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-900 dark:text-teal-200 space-y-1.5 animate-in fade-in">
                   <div className="flex items-center gap-2 font-bold text-xs">
-                    <Phone className="w-4 h-4 text-teal-600 shrink-0" />
+                    <Phone className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                     <span>On-Call Standby Mode Activated</span>
                   </div>
-                  <p className="text-[11px] text-teal-800 leading-relaxed">
+                  <p className="text-[11px] text-teal-800 dark:text-teal-300 leading-relaxed">
                     Patient will be registered into the institutional Standby Roster without locking a calendar slot.
                     The team will call <strong>{patientName || "the patient"}</strong> ({contactNumber || "No contact"}) when an elective patient is canceled or postponed.
                   </p>
@@ -2021,19 +2081,19 @@ export default function OpClinicConsultationDeskPage() {
               )}
 
               <div>
-                <label className="block font-semibold text-[#636366] mb-1">
+                <label className="block font-semibold text-[#636366] dark:text-slate-400 mb-1">
                   Procedure Protocol
                 </label>
-                <div className="px-3 py-2 rounded-xl border border-[#E5E5EA] bg-[#FAFAFA] font-semibold text-[#1C1C1E]">
+                <div className="px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800 font-semibold text-[#1C1C1E] dark:text-slate-100">
                   {effectiveProcedureTitle}
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E5EA]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E5EA] dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowBookingModal(false)}
-                  className="px-4 py-2 rounded-xl border border-[#E5E5EA] bg-white text-[#3A3A3C] hover:bg-[#F2F2F7] font-semibold cursor-pointer"
+                  className="px-4 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-800 text-[#3A3A3C] dark:text-slate-300 hover:bg-[#F2F2F7] dark:hover:bg-slate-700 font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>

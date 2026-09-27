@@ -54,13 +54,13 @@ export function GoogleHeader({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full h-12 bg-white border-b border-slate-200 px-3 sm:px-4 select-none flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 w-full h-12 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-4 select-none flex items-center justify-between gap-3 text-slate-900 dark:text-slate-100">
       {/* Left: VascFlow / EndoFlow Logo Mark + Active Department Dropdown */}
       <div className="flex items-center gap-2.5 shrink-0">
         <button
           type="button"
           onClick={onToggleMobileSidebar}
-          className="p-1 -ml-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition md:hidden cursor-pointer"
+          className="p-1 -ml-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition md:hidden cursor-pointer"
           aria-label="Toggle navigation drawer"
         >
           <Menu className="w-5 h-5" />
@@ -75,7 +75,7 @@ export function GoogleHeader({
       <div className="flex-1 max-w-[360px] mx-auto min-w-0">
         <form
           onSubmit={handleSearchSubmit}
-          className="relative flex items-center w-full h-8 rounded-md bg-slate-100 hover:bg-slate-200/70 focus-within:bg-white focus-within:ring-1 focus-within:ring-slate-400 border border-transparent focus-within:border-slate-300 transition-all px-2.5"
+          className="relative flex items-center w-full h-8 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/70 dark:hover:bg-slate-700/70 focus-within:bg-white dark:focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-slate-400 border border-transparent focus-within:border-slate-300 dark:focus-within:border-slate-700 transition-all px-2.5"
         >
           <Search className="w-3.5 h-3.5 text-slate-400 shrink-0 mr-2" />
           <input
@@ -83,18 +83,18 @@ export function GoogleHeader({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search patients, CR..."
-            className="w-full bg-transparent text-xs text-slate-900 placeholder-slate-400 focus:outline-none min-w-0"
+            className="w-full bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none min-w-0"
           />
           {searchQuery ? (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="p-0.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+              className="p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <kbd className="hidden sm:inline-block px-1 py-0.2 text-[10px] font-mono text-slate-400 bg-white border border-slate-200 rounded shrink-0">
+            <kbd className="hidden sm:inline-block px-1 py-0.2 text-[10px] font-mono text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shrink-0">
               ⌘K
             </kbd>
           )}
@@ -118,9 +118,10 @@ export function GoogleHeader({
         </button>
 
         {/* Admit Shortcut */}
+        {/* Admit Shortcut */}
         <Link
           href="/dashboard/calendar?action=new"
-          className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition cursor-pointer"
+          className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-xs font-medium transition cursor-pointer"
         >
           <Plus className="w-3 h-3" />
           <span>Admit</span>
@@ -133,7 +134,7 @@ export function GoogleHeader({
             if (onLockStation) onLockStation();
           }}
           title="Lock Bedside Station"
-          className="p-1.5 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+          className="p-1.5 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
         >
           <Lock className="w-3.5 h-3.5" />
         </button>
@@ -143,7 +144,7 @@ export function GoogleHeader({
           type="button"
           onClick={() => setShowChangePasswordModal(true)}
           title="Change Resident Password / PIN"
-          className="p-1.5 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+          className="p-1.5 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
           aria-label="Change Password"
         >
           <KeyRound className="w-3.5 h-3.5" />
@@ -152,7 +153,7 @@ export function GoogleHeader({
         {/* Active Shift Profile Avatar */}
         <div
           onClick={() => setShowChangePasswordModal(true)}
-          className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-mono font-semibold text-[11px] select-none cursor-pointer hover:ring-2 hover:ring-blue-500/50 transition-all"
+          className="w-7 h-7 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 flex items-center justify-center font-mono font-semibold text-[11px] select-none cursor-pointer hover:ring-2 hover:ring-blue-500/50 transition-all"
           title={currentStaff ? `${currentStaff.name} (${currentStaff.title}) - Click to Change Password` : "Dr. Neel Yadav (DM Resident) - Click to Change Password"}
         >
           {currentStaff ? currentStaff.avatar : "DM"}
@@ -162,7 +163,7 @@ export function GoogleHeader({
         <button
           onClick={handleLogout}
           title="Sign out"
-          className="p-1.5 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+          className="p-1.5 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
           aria-label="Logout"
         >
           <LogOut className="w-3.5 h-3.5" />

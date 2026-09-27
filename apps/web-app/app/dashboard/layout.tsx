@@ -27,6 +27,30 @@ export default function DashboardLayout({
 
   useEffect(() => {
     try {
+      const savedDark = localStorage.getItem("endoflow_dark_mode");
+      if (savedDark !== null) {
+        setIsCathLabDark(savedDark === "true");
+      } else if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        setIsCathLabDark(true);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("endoflow_dark_mode", String(isCathLabDark));
+      if (typeof document !== "undefined") {
+        if (isCathLabDark) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      }
+    } catch {}
+  }, [isCathLabDark]);
+
+  useEffect(() => {
+    try {
       const persisted = getPersistedStaffSession();
       if (persisted && persisted.code) {
         if (!currentStaff || currentStaff.code !== persisted.code) {
@@ -40,11 +64,11 @@ export default function DashboardLayout({
   }, []);
 
   const containerBg = isCathLabDark
-    ? "bg-[#09090b] text-slate-100"
+    ? "dark bg-[#09090b] text-slate-100"
     : "bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100";
 
   return (
-    <div className={`h-[100dvh] overflow-hidden ${containerBg} flex flex-col font-sans antialiased`}>
+    <div className={`h-[100dvh] overflow-hidden ${isCathLabDark ? "dark " : ""}${containerBg} flex flex-col font-sans antialiased`}>
       {/* Google Workspace Header with Pill Search Bar & Bedside Lock */}
       <div className="print:hidden">
         <GoogleHeader

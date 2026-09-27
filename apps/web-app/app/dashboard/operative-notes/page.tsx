@@ -12,6 +12,11 @@ import {
   OperativeNoteOptions,
   searchMasterProcedures,
 } from "../../lib/masterCatalog";
+import {
+  DAILY_ROUTINE_IR_PROCEDURES,
+  DailyRoutineProcedureItem,
+  SPECIALTY_CATALOG_GROUPS,
+} from "./dailyRoutineProcedures";
 import { getConsentForProcedure } from "../../lib/consent/consentData";
 import { getCalculatorById } from "../../lib/procedureCalculators";
 import { INITIAL_RIS_WORKLIST_CASES } from "../worklist/worklistData";
@@ -42,21 +47,33 @@ import {
   ClipboardList,
   Activity,
   Package,
+  Star,
+  ChevronDown,
+  Edit3,
+  Lock,
+  RotateCcw,
+  Zap,
 } from "lucide-react";
 
 export default function OperativeNotesPage() {
   const storePatients = useEndoflowStore((s) => s.patients);
 
-  // Search & Filter State
+  // Procedure catalog mode: 'ROUTINE' (Daily Common ~16) vs 'OTHERS' (Master Catalog ~1,100+)
+  const [catalogMode, setCatalogMode] = useState<"ROUTINE" | "OTHERS">("ROUTINE");
+  const [selectedSpecialtyId, setSelectedSpecialtyId] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<number>(0); // 0 = all
   const [selectedScheme, setSelectedScheme] = useState<"ALL" | "MAAY" | "RGHS">("ALL");
-  const [activeTab, setActiveTab] = useState<"SUMMARY" | "NOTE" | "CONSENT" | "PROTOCOL" | "CALCULATOR">("SUMMARY");
 
   // Selected Procedure
   const [selectedProcedureId, setSelectedProcedureId] = useState<string>(
-    ALL_MASTER_PROCEDURES[0]?.id || "cat03-tips-viatorr"
+    DAILY_ROUTINE_IR_PROCEDURES[0].id // Default to Varicose Veins VenaSeal/EVLT
   );
+
+  // Primary Active Tab
+  const [activeTab, setActiveTab] = useState<"NOTE" | "SUMMARY" | "CONSENT" | "PROTOCOL" | "CALCULATOR">("NOTE");
+
+  // Edit Mode Toggle for the SMS Official Sheet
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   // Selected Patient State
   const [selectedPatientCaseId, setSelectedPatientCaseId] = useState<string>("CUSTOM");
@@ -68,14 +85,30 @@ export default function OperativeNotesPage() {
   const [dateOfProcedure, setDateOfProcedure] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [procedureTime, setProcedureTime] = useState("10:30 AM");
+  const [admissionNo, setAdmissionNo] = useState("A/SMSH/26/109750");
   const [supervisingConsultant, setSupervisingConsultant] = useState(
     "Dr. Meenu Bagarhatta (Sr. Prof & Head)"
   );
   const [primaryOperator, setPrimaryOperator] = useState(
     "Dr. Naresh Mangalhara (Associate Professor)"
   );
+
+  // Clinical overrides
+  const [customIndication, setCustomIndication] = useState("");
+  const [customPreOpDiagnosis, setCustomPreOpDiagnosis] = useState("");
+  const [customPostOpDiagnosis, setCustomPostOpDiagnosis] = useState("");
   const [customFindings, setCustomFindings] = useState("");
   const [customIntervention, setCustomIntervention] = useState("");
+  const [customSedation, setCustomSedation] = useState("");
+  const [customAccessSite, setCustomAccessSite] = useState("");
+  const [customSheath, setCustomSheath] = useState("");
+  const [customFluoroTime, setCustomFluoroTime] = useState<number | string>("");
+  const [customDap, setCustomDap] = useState<number | string>("");
+  const [customContrast, setCustomContrast] = useState("");
+
+  // Copy Feedback State
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
   // Sync URL query params (?patient=...&cr=...&procedure=...&tab=...)
   useEffect(() => {
@@ -104,40 +137,76 @@ export default function OperativeNotesPage() {
         );
         if (found) {
           setSelectedProcedureId(found.id);
+          const isRoutine = DAILY_ROUTINE_IR_PROCEDURES.some((r) => r.id === found.id);
+          if (!isRoutine) setCatalogMode("OTHERS");
         }
       }
     }
   }, []);
 
-  // Copy Feedback State
-  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
-
-  // Quick Filter categories
-  const quickFilters = [
-    { id: 0, label: "All Categories (22)" },
-    { id: 10, label: "Venous & Varicose (VenaSeal / Coils / Glue)" },
-    { id: 3, label: "Budd-Chiari & HPB (BRTO / TIPS / Stenting)" },
-    { id: 8, label: "Interventional Oncology (TACE / TARE)" },
-    { id: 7, label: "Embolotherapy & Trauma (BAE / UGTI)" },
-    { id: 4, label: "Arterial Revascularization (DCB / Supera)" },
-    { id: 1, label: "Image-Guided Biopsies" },
-    { id: 16, label: "Neurovascular & Stroke" },
-  ];
-
-  // Filtered Procedures
-  const filteredProcedures = useMemo(() => {
-    return searchMasterProcedures(
-      searchQuery,
-      selectedCategory > 0 ? selectedCategory : undefined,
-      selectedScheme
-    );
-  }, [searchQuery, selectedCategory, selectedScheme]);
-
-  // Current Selected Procedure Object
+  // Match current procedure in master catalog
   const selectedProcedure: MasterProcedure = useMemo(() => {
     const found = ALL_MASTER_PROCEDURES.find((p) => p.id === selectedProcedureId);
     return found || ALL_MASTER_PROCEDURES[0];
   }, [selectedProcedureId]);
+
+  // Match daily routine procedure definition if present
+  const routineDef: DailyRoutineProcedureItem | undefined = useMemo(() => {
+    return DAILY_ROUTINE_IR_PROCEDURES.find((r) => r.id === selectedProcedureId);
+  }, [selectedProcedureId]);
+
+  // Reset custom fields when procedure changes
+  const handleSelectProcedure = (procId: string) => {
+    setSelectedProcedureId(procId);
+    setCustomFindings("");
+    setCustomIntervention("");
+    setCustomIndication("");
+    setCustomPreOpDiagnosis("");
+    setCustomPostOpDiagnosis("");
+    setCustomSedation("");
+    setCustomAccessSite("");
+    setCustomSheath("");
+    setCustomFluoroTime("");
+    setCustomDap("");
+    setCustomContrast("");
+  };
+
+  // Filtered "Other" procedures divided by specialty category
+  const filteredOtherProcedures = useMemo(() => {
+    const routineIds = new Set(DAILY_ROUTINE_IR_PROCEDURES.map((r) => r.id));
+    let base = ALL_MASTER_PROCEDURES.filter((p) => !routineIds.has(p.id));
+
+    if (selectedSpecialtyId !== "ALL") {
+      const group = SPECIALTY_CATALOG_GROUPS.find((g) => g.id === selectedSpecialtyId);
+      if (group) {
+        const catSet = new Set(group.categoryNumbers);
+        base = base.filter((p) => catSet.has(p.categoryNumber));
+      }
+    }
+
+    if (selectedScheme !== "ALL") {
+      base = base.filter(
+        (p) =>
+          p.maayRghsCompatibility.schemeName === "BOTH" ||
+          p.maayRghsCompatibility.schemeName === selectedScheme
+      );
+    }
+
+    if (searchQuery.trim().length > 0) {
+      const q = searchQuery.toLowerCase();
+      base = base.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.id.toLowerCase().includes(q) ||
+          p.categoryName.toLowerCase().includes(q) ||
+          p.maayRghsCompatibility.packageName.toLowerCase().includes(q) ||
+          p.maayRghsCompatibility.icd10.toLowerCase().includes(q) ||
+          p.targetAnatomy.some((a) => a.toLowerCase().includes(q))
+      );
+    }
+
+    return base;
+  }, [selectedSpecialtyId, selectedScheme, searchQuery]);
 
   // Linked Consent Template
   const consentTemplate = useMemo(() => {
@@ -151,24 +220,65 @@ export default function OperativeNotesPage() {
     return getCalculatorById(selectedProcedure.calculatorId);
   }, [selectedProcedure]);
 
-  // Handle selecting a patient from the Worklist
-  const handleSelectWorklistPatient = (caseId: string) => {
-    setSelectedPatientCaseId(caseId);
-    if (caseId === "CUSTOM") return;
+  // Clinical parameters resolved
+  const currentIndication =
+    customIndication.trim() ||
+    routineDef?.indicationDefault ||
+    `${selectedProcedure.title} for clinically indicated pathology conforming to SMS Hospital protocols and Rajasthan MAAY/RGHS guidelines.`;
 
-    const patient = INITIAL_RIS_WORKLIST_CASES.find((p) => p.caseId === caseId);
-    if (patient) {
-      setPatientName(patient.patientName);
-      setCrNumber(patient.crNumber);
-      setSupervisingConsultant(patient.supervisingConsultant);
-      setPrimaryOperator(patient.operatorResident);
-      setIpdBed(`IR Recovery Ward / Room ${patient.room || "1"}`);
-    }
-  };
+  const currentPreOpDiagnosis =
+    customPreOpDiagnosis.trim() ||
+    routineDef?.preOpDiagnosis ||
+    `${selectedProcedure.title} (ICD-10: ${selectedProcedure.maayRghsCompatibility.icd10})`;
 
-  // Build Operative Note Text
+  const currentPostOpDiagnosis =
+    customPostOpDiagnosis.trim() ||
+    routineDef?.postOpDiagnosis ||
+    `Status Post Successful ${selectedProcedure.title} (100% Technical Endpoint Verified)`;
+
+  const currentSedation =
+    customSedation.trim() ||
+    routineDef?.modality === "US"
+      ? "Local Anesthesia (2% Lignocaine Infiltration)"
+      : "Local Anesthesia (2% Lignocaine) + Conscious Sedation (IV Fentanyl 50 mcg + Midazolam 1 mg)";
+
+  const currentAccessSite =
+    customAccessSite.trim() ||
+    routineDef?.accessSiteDefault ||
+    selectedProcedure.accessSiteDefault ||
+    "Standard Interventional Access";
+
+  const currentSheath =
+    customSheath.trim() ||
+    routineDef?.sheathDefault ||
+    selectedProcedure.sheathDefault ||
+    "Standard Introducer Sheath";
+
+  const currentFluoroTime =
+    customFluoroTime !== ""
+      ? customFluoroTime
+      : routineDef?.fluoroTimeMinutes ?? (selectedProcedure.modality === "US" ? 0.0 : 12.5);
+
+  const currentDap =
+    customDap !== ""
+      ? customDap
+      : routineDef?.dapGyCm2 ?? (selectedProcedure.modality === "US" ? 0.0 : 22.4);
+
+  const currentContrast =
+    customContrast.trim() ||
+    (routineDef?.contrastVolumeMl
+      ? `${routineDef.contrastMedia} (${routineDef.contrastVolumeMl} mL)`
+      : selectedProcedure.modality === "US"
+      ? "None (Ultrasound Guided)"
+      : "Omnipaque 350 (40 mL)");
+
+  // Procedural Narrative
+  const currentNarrative =
+    customIntervention.trim() ||
+    buildProceduralNarrative(selectedProcedure, customFindings);
+
+  // Build full operative note text (for clipboard copy)
   const operativeNoteText = useMemo(() => {
-    if (!selectedProcedure) return "";
     const options: OperativeNoteOptions = {
       patientName,
       age,
@@ -179,7 +289,8 @@ export default function OperativeNotesPage() {
       supervisingConsultant,
       primaryOperator,
       customFindings: customFindings.trim() ? customFindings : undefined,
-      customIntervention: customIntervention.trim() ? customIntervention : undefined,
+      customIntervention: currentNarrative,
+      indication: currentIndication,
     };
     return buildOperativeNote(selectedProcedure, options);
   }, [
@@ -193,12 +304,12 @@ export default function OperativeNotesPage() {
     supervisingConsultant,
     primaryOperator,
     customFindings,
-    customIntervention,
+    currentNarrative,
+    currentIndication,
   ]);
 
-  // Build Operative Summary Text (Executive Surgical Synopsis)
+  // Build executive operative summary text
   const operativeSummaryText = useMemo(() => {
-    if (!selectedProcedure) return "";
     const options: OperativeNoteOptions = {
       patientName,
       age,
@@ -209,7 +320,8 @@ export default function OperativeNotesPage() {
       supervisingConsultant,
       primaryOperator,
       customFindings: customFindings.trim() ? customFindings : undefined,
-      customIntervention: customIntervention.trim() ? customIntervention : undefined,
+      customIntervention: currentNarrative,
+      indication: currentIndication,
     };
     return buildOperativeSummary(selectedProcedure, options);
   }, [
@@ -223,8 +335,21 @@ export default function OperativeNotesPage() {
     supervisingConsultant,
     primaryOperator,
     customFindings,
-    customIntervention,
+    currentNarrative,
+    currentIndication,
   ]);
+
+  // Copy Note Handler
+  const handleCopyNote = async () => {
+    try {
+      await navigator.clipboard.writeText(operativeNoteText);
+      setCopyFeedback("Copied Official SMS Post-Operative Note to clipboard!");
+      setTimeout(() => setCopyFeedback(null), 3500);
+    } catch {
+      setCopyFeedback("Error copying to clipboard");
+      setTimeout(() => setCopyFeedback(null), 3000);
+    }
+  };
 
   // Copy Summary Handler
   const handleCopySummary = async () => {
@@ -238,28 +363,16 @@ export default function OperativeNotesPage() {
     }
   };
 
-  // Share Summary Handler (Native Share or WhatsApp)
-  const handleShareSummary = () => {
+  // Share Handler (WhatsApp / Native Share)
+  const handleShare = (textToShare: string, title: string) => {
     if (typeof navigator !== "undefined" && navigator.share) {
       navigator.share({
-        title: `Operative Summary - ${patientName}`,
-        text: operativeSummaryText,
+        title,
+        text: textToShare,
       }).catch(() => {});
     } else if (typeof window !== "undefined") {
-      const text = encodeURIComponent(operativeSummaryText);
+      const text = encodeURIComponent(textToShare);
       window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
-    }
-  };
-
-  // Copy Note Handler
-  const handleCopyNote = async () => {
-    try {
-      await navigator.clipboard.writeText(operativeNoteText);
-      setCopyFeedback("Copied Operative Note to clipboard formatted for Rajasthan e-Hospital / IHMS!");
-      setTimeout(() => setCopyFeedback(null), 3500);
-    } catch {
-      setCopyFeedback("Error copying to clipboard");
-      setTimeout(() => setCopyFeedback(null), 3000);
     }
   };
 
@@ -268,341 +381,454 @@ export default function OperativeNotesPage() {
     window.print();
   };
 
+  // Handle selecting a patient from Worklist / Store
+  const handleSelectWorklistPatient = (caseId: string) => {
+    setSelectedPatientCaseId(caseId);
+    if (caseId === "CUSTOM") return;
+
+    // Check store patients first
+    const fromStore = storePatients.find((p) => p.id === caseId || p.hid === caseId);
+    if (fromStore) {
+      setPatientName(fromStore.name);
+      setCrNumber(fromStore.hid);
+      setAge(fromStore.age);
+      setGender(fromStore.sex);
+      setIpdBed(fromStore.ipd?.bed ? `${fromStore.ipd.ward} / ${fromStore.ipd.bed}` : "IR Recovery Ward");
+      return;
+    }
+
+    // Check initial worklist cases
+    const fromWorklist = INITIAL_RIS_WORKLIST_CASES.find((p) => p.caseId === caseId);
+    if (fromWorklist) {
+      setPatientName(fromWorklist.patientName);
+      setCrNumber(fromWorklist.crNumber);
+      setSupervisingConsultant(fromWorklist.supervisingConsultant);
+      setPrimaryOperator(fromWorklist.operatorResident);
+      setIpdBed(`IR Recovery Ward / Room ${fromWorklist.room || "1"}`);
+    }
+  };
+
   return (
-    <div className="space-y-5 print:p-0 print:space-y-0">
-      {/* Header Bar */}
-      <div className="bg-white border border-[#DADCE0] rounded-2xl p-5 shadow-xs print:hidden">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div className="space-y-4 print:p-0 print:space-y-0 text-zinc-900 dark:text-zinc-100">
+      {/* Top Header & Fast Action Bar */}
+      <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-4 sm:p-5 shadow-xs print:hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <FileText className="w-5 h-5 text-[#1A73E8]" />
-              <h1 className="text-lg font-bold text-[#202124]">
-                Clinical Interventional Operative Notes & Master Catalog
-              </h1>
-              <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]">
-                SMS Hospital & MAAY / RGHS Compliant
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                SMS Hospital Jaipur
               </span>
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Post-Operative Notes &amp; Operative Records
+              </h1>
             </div>
-            <p className="text-xs text-[#5F6368]">
-              Department of Interventional Radiology (इंटरवेंशनल रेडियोलॉजी विभाग) • SMS Medical College & Hospital, Jaipur
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+              Department of Interventional Radiology (इंटरवेंशनल रेडियोलॉजी विभाग) • SMS Medical College &amp; Hospital, Jaipur
             </p>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
-            <Link
-              href="/dashboard/discharge?tab=archive"
-              className="px-4 py-2 bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3] text-xs font-semibold rounded-xl hover:bg-[#FEEFC3] transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
-              title="Search authentic patient folders, discharge cards, and post-op notes"
+          {/* Header Action Controls */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setIsEditMode(!isEditMode)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border ${
+                isEditMode
+                  ? "bg-amber-500 text-white border-amber-600 shadow-xs"
+                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+              }`}
+              title="Toggle inline editing for operative findings and technique"
             >
-              <FolderOpen className="w-3.5 h-3.5 text-[#E37400]" />
-              <span>Patient Archive (1,057 Dossiers)</span>
-            </Link>
+              {isEditMode ? <Check className="w-3.5 h-3.5" /> : <Edit3 className="w-3.5 h-3.5" />}
+              <span>{isEditMode ? "Finish Editing" : "Edit Note"}</span>
+            </button>
+
             <button
               onClick={handleCopyNote}
-              className="px-4 py-2 bg-[#1A73E8] text-white text-xs font-medium rounded-xl hover:bg-[#1557B0] transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer active:scale-95"
             >
               <Copy className="w-3.5 h-3.5" />
-              <span>Copy for e-Hospital / IHMS</span>
+              <span>Copy SMS Note</span>
             </button>
+
+            <button
+              onClick={() => handleShare(operativeNoteText, `SMS Post-Op Note - ${patientName}`)}
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer active:scale-95"
+              title="Share formatted note on WhatsApp"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </button>
+
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-[#F8F9FA] text-[#3C4043] border border-[#DADCE0] text-xs font-medium rounded-xl hover:bg-[#F1F3F4] transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+              className="px-3.5 py-1.5 bg-zinc-800 hover:bg-zinc-900 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print Report</span>
+              <span>Print Sheet</span>
             </button>
+
+            <Link
+              href="/dashboard/discharge?tab=archive"
+              className="px-3 py-1.5 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-semibold rounded-xl hover:bg-amber-100 transition-colors flex items-center gap-1.5"
+            >
+              <FolderOpen className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Archive</span>
+            </Link>
           </div>
         </div>
 
-        {/* Copy Toast Feedback */}
+        {/* Copy Feedback Banner */}
         {copyFeedback && (
-          <div className="mt-3 px-4 py-2.5 bg-[#E6F4EA] border border-[#CEEAD6] text-[#137333] text-xs font-medium rounded-xl flex items-center gap-2 animate-in fade-in duration-200">
-            <Check className="w-4 h-4 text-[#137333]" />
+          <div className="mt-3 px-3.5 py-2 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold rounded-xl flex items-center gap-2 animate-in fade-in">
+            <Check className="w-4 h-4 text-emerald-600" />
             <span>{copyFeedback}</span>
           </div>
         )}
-
-        {/* Quick Filter Pills */}
-        <div className="mt-4 pt-4 border-t border-[#F1F3F4] flex flex-wrap items-center gap-1.5 text-xs">
-          {quickFilters.map((qf) => (
-            <button
-              key={qf.id}
-              onClick={() => setSelectedCategory(qf.id)}
-              className={`px-3 py-1.5 rounded-full font-medium transition-all ${
-                selectedCategory === qf.id
-                  ? "bg-[#1A73E8] text-white shadow-xs"
-                  : "bg-[#F8F9FA] text-[#5F6368] hover:bg-[#F1F3F4] border border-[#DADCE0]"
-              }`}
-            >
-              {qf.label}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* Main Grid: Left Controls (Procedure & Patient) + Right Live Preview */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 print:block">
-        {/* Left Column (5 Cols) - Search, Selection, and Patient Dossier */}
+      {/* Main Two-Column Workflow (Left: Procedure & Patient Selection, Right: Official SMS Note Document) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 print:block">
+        {/* Left Column (5 Cols) - Procedure & Patient Selector */}
         <div className="lg:col-span-5 space-y-4 print:hidden">
-          {/* Active Patient Picker */}
-          <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 shadow-xs">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#202124]">
-                <User className="w-4 h-4 text-[#1A73E8]" />
-                <span>Patient Demographics (SMS Hospital Format)</span>
+          {/* Procedure Partitioning Selector: Daily Routine (16) vs Others (1,100+) */}
+          <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-4 shadow-xs">
+            {/* Mode Switcher Tabs */}
+            <div className="flex items-center gap-1.5 p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl mb-3">
+              <button
+                onClick={() => setCatalogMode("ROUTINE")}
+                className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  catalogMode === "ROUTINE"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                }`}
+              >
+                <Star className="w-3.5 h-3.5 fill-current" />
+                <span>Daily Routine IR (16)</span>
+              </button>
+
+              <button
+                onClick={() => setCatalogMode("OTHERS")}
+                className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  catalogMode === "OTHERS"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Other Procedures ({ALL_MASTER_PROCEDURES.length - DAILY_ROUTINE_IR_PROCEDURES.length})</span>
+              </button>
+            </div>
+
+            {/* ROUTINE MODE: Clean, Instant 1-Click Cards of the 16 Routine SMS Procedures */}
+            {catalogMode === "ROUTINE" && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400 px-1 mb-1">
+                  <span>Common Daily Procedures (SMS IR Angiosuite)</span>
+                  <span className="font-semibold text-blue-600 dark:text-blue-400">1-Tap Select</span>
+                </div>
+
+                <div className="max-h-[440px] overflow-y-auto space-y-1.5 pr-1">
+                  {DAILY_ROUTINE_IR_PROCEDURES.map((item) => {
+                    const isSelected = item.id === selectedProcedureId;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleSelectProcedure(item.id)}
+                        className={`w-full text-left p-2.5 rounded-xl border transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-blue-50 dark:bg-blue-950/60 border-blue-500 dark:border-blue-500 shadow-xs ring-1 ring-blue-500"
+                            : "bg-zinc-50/70 dark:bg-zinc-900/60 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                              {item.shortTitle}
+                            </div>
+                            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
+                              {item.fullTitle}
+                            </div>
+                          </div>
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold shrink-0 ${
+                              item.modality === "XA"
+                                ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                                : item.modality === "US"
+                                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                : "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300"
+                            }`}
+                          >
+                            {item.modality}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-1.5 text-[10px] text-zinc-500 dark:text-zinc-400">
+                          <span className="font-semibold text-blue-700 dark:text-blue-300">{item.specialty}</span>
+                          <span>•</span>
+                          <span>Pkg: {item.packageCode}</span>
+                          <span>•</span>
+                          <span className="px-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                            {item.badge}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <span className="text-[11px] text-[#5F6368]">
-                {selectedPatientCaseId !== "CUSTOM" ? "Synced from RIS" : "Manual Input"}
+            )}
+
+            {/* OTHERS MODE: Divided Cleanly into Clinical Specialties with Search */}
+            {catalogMode === "OTHERS" && (
+              <div className="space-y-2.5">
+                {/* Search Input */}
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-zinc-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search ~1,100 other procedures, packages, anatomy..."
+                    className="w-full pl-9 pr-3 py-1.5 text-xs bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:border-blue-500 text-zinc-900 dark:text-zinc-100"
+                  />
+                </div>
+
+                {/* Specialty Dropdown Filter */}
+                <div className="space-y-1">
+                  <label className="text-[10px] text-zinc-500 dark:text-zinc-400 font-semibold block">
+                    Specialty / Clinical System:
+                  </label>
+                  <select
+                    value={selectedSpecialtyId}
+                    onChange={(e) => setSelectedSpecialtyId(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-xl text-xs font-medium text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="ALL">All Other Categories ({filteredOtherProcedures.length} Procedures)</option>
+                    {SPECIALTY_CATALOG_GROUPS.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Scheme Filter */}
+                <div className="flex items-center justify-between text-xs px-1">
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Scheme Filter:</span>
+                  <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                    {(["ALL", "MAAY", "RGHS"] as const).map((sc) => (
+                      <button
+                        key={sc}
+                        onClick={() => setSelectedScheme(sc)}
+                        className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-all ${
+                          selectedScheme === sc
+                            ? "bg-blue-600 text-white shadow-xs"
+                            : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                        }`}
+                      >
+                        {sc}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Filtered Procedures List */}
+                <div className="max-h-[350px] overflow-y-auto space-y-1.5 pr-1 divide-y divide-zinc-100 dark:divide-zinc-800">
+                  {filteredOtherProcedures.map((p) => {
+                    const isSelected = p.id === selectedProcedureId;
+                    return (
+                      <button
+                        key={p.id}
+                        onClick={() => handleSelectProcedure(p.id)}
+                        className={`w-full text-left p-2.5 rounded-xl border transition-all pt-2 cursor-pointer ${
+                          isSelected
+                            ? "bg-blue-50 dark:bg-blue-950/60 border-blue-500 shadow-xs"
+                            : "bg-white dark:bg-zinc-900 border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
+                            {p.title}
+                          </div>
+                          <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 shrink-0">
+                            {p.modality}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-2">
+                          <span>Cat {p.categoryNumber}: {p.categoryName}</span>
+                          <span>•</span>
+                          <span>ICD: {p.maayRghsCompatibility.icd10}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+
+                  {filteredOtherProcedures.length === 0 && (
+                    <div className="py-8 text-center text-xs text-zinc-500 dark:text-zinc-400">
+                      No matching procedures found in this specialty. Clear search filter.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Patient Quick Selector & Demographics Editor */}
+          <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-4 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                <User className="w-4 h-4 text-blue-600" />
+                <span>Patient Demographics &amp; Operators</span>
+              </div>
+              <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
+                CR: {crNumber}
               </span>
             </div>
 
-            {/* Quick Worklist Selector Dropdown */}
-            <div className="mb-3">
-              <label className="block text-[11px] font-medium text-[#5F6368] mb-1">
-                Select Today Scheduled Patient from RIS Worklist:
+            {/* Quick Select from Store/Worklist */}
+            <div>
+              <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 font-medium mb-1">
+                Select Active Patient:
               </label>
               <select
                 value={selectedPatientCaseId}
                 onChange={(e) => handleSelectWorklistPatient(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-[#F8F9FA] border border-[#DADCE0] rounded-xl focus:outline-none focus:border-[#1A73E8] text-[#202124]"
+                className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500 font-medium"
               >
-                <option value="CUSTOM">— Custom / Enter New Patient —</option>
-                {INITIAL_RIS_WORKLIST_CASES.map((pt) => (
-                  <option key={pt.caseId} value={pt.caseId}>
-                    {pt.patientName} ({pt.crNumber}) — {pt.procedureName}
+                <option value="CUSTOM">Custom Patient Entry / Manual</option>
+                {storePatients.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} ({p.age} Y / {p.sex}) • CR: {p.hid}
+                  </option>
+                ))}
+                {INITIAL_RIS_WORKLIST_CASES.map((c) => (
+                  <option key={c.caseId} value={c.caseId}>
+                    {c.patientName} ({c.crNumber}) - {c.procedureName}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Demographic Fields */}
-            <div className="grid grid-cols-2 gap-2.5 text-xs">
+            {/* Patient Inputs Grid */}
+            <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <label className="block text-[10px] text-[#5F6368] font-medium mb-0.5">
-                  Patient Name
-                </label>
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">Name</label>
                 <input
                   type="text"
                   value={patientName}
                   onChange={(e) => setPatientName(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-xs font-medium text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                  className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] text-[#5F6368] font-medium mb-0.5">
-                  CR No. / UHID
-                </label>
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">CR / UHID No.</label>
                 <input
                   type="text"
                   value={crNumber}
                   onChange={(e) => setCrNumber(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-xs font-mono text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                  className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs font-mono font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] text-[#5F6368] font-medium mb-0.5">
-                    Age (Years)
-                  </label>
+              <div>
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">Age (Years) / Sex</label>
+                <div className="flex items-center gap-1">
                   <input
                     type="number"
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-xs text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                    className="w-14 px-2 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
                   />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-[#5F6368] font-medium mb-0.5">
-                    Gender
-                  </label>
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-xs text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                    className="flex-1 px-1.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
                   >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="Male">M</option>
+                    <option value="Female">F</option>
+                    <option value="Other">O</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] text-[#5F6368] font-medium mb-0.5">
-                  IPD Ward / Bed
-                </label>
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">IPD Ward / Bed</label>
                 <input
                   type="text"
                   value={ipdBed}
                   onChange={(e) => setIpdBed(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-xs text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                  className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] text-[#5F6368] font-medium mb-0.5">
-                  Supervising Consultant
-                </label>
-                <select
-                  value={supervisingConsultant}
-                  onChange={(e) => setSupervisingConsultant(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-xs text-[#202124] focus:outline-none focus:border-[#1A73E8]"
-                >
-                  <option value="Dr. Meenu Bagarhatta (Sr. Prof & Head)">
-                    Dr. Meenu Bagarhatta (Sr. Prof & Head)
-                  </option>
-                  <option value="Dr. Naresh Mangalhara (Associate Professor)">
-                    Dr. Naresh Mangalhara (Associate Professor)
-                  </option>
-                  <option value="Dr. Shashank Sharma (Professor)">
-                    Dr. Shashank Sharma (Professor)
-                  </option>
-                  <option value="Dr. Alok Verma (Assistant Professor)">
-                    Dr. Alok Verma (Assistant Professor)
-                  </option>
-                </select>
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">Date of Procedure</label>
+                <input
+                  type="date"
+                  value={dateOfProcedure}
+                  onChange={(e) => setDateOfProcedure(e.target.value)}
+                  className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
+                />
               </div>
 
               <div>
-                <label className="block text-[10px] text-[#5F6368] font-medium mb-0.5">
-                  Operating Surgeon / Faculty
-                </label>
-                <select
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">Time of Procedure</label>
+                <input
+                  type="text"
+                  value={procedureTime}
+                  onChange={(e) => setProcedureTime(e.target.value)}
+                  placeholder="e.g. 10:30 AM"
+                  className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">Primary Operating Faculty</label>
+                <input
+                  type="text"
                   value={primaryOperator}
                   onChange={(e) => setPrimaryOperator(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-xs text-[#202124] focus:outline-none focus:border-[#1A73E8]"
-                >
-                  <option value="Dr. Naresh Mangalhara (Associate Professor)">
-                    Dr. Naresh Mangalhara (Associate Professor)
-                  </option>
-                  <option value="Dr. Alok Verma (Assistant Professor)">
-                    Dr. Alok Verma (Assistant Professor)
-                  </option>
-                  <option value="Dr. Meenu Bagarhatta (Sr. Prof & Head)">
-                    Dr. Meenu Bagarhatta (Sr. Prof & Head)
-                  </option>
-                  <option value="Dr. Shashank Sharma (Professor)">
-                    Dr. Shashank Sharma (Professor)
-                  </option>
-                </select>
+                  className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
+                />
               </div>
-            </div>
-          </div>
 
-          {/* Master Procedure Search & Selector */}
-          <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 shadow-xs">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#202124]">
-                <Search className="w-4 h-4 text-[#1A73E8]" />
-                <span>Interventional Procedure Catalog</span>
+              <div className="col-span-2">
+                <label className="block text-[10px] text-zinc-500 dark:text-zinc-400 mb-0.5">Supervising Consultant</label>
+                <input
+                  type="text"
+                  value={supervisingConsultant}
+                  onChange={(e) => setSupervisingConsultant(e.target.value)}
+                  className="w-full px-2.5 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
+                />
               </div>
-              <span className="text-[11px] font-semibold text-[#1A73E8] bg-[#E8F0FE] px-2 py-0.5 rounded-full">
-                {filteredProcedures.length} Procedures
-              </span>
-            </div>
-
-            {/* Search Input */}
-            <div className="relative mb-3">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#5F6368]" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search 1,120 procedures, MAAY/RGHS packages, anatomy..."
-                className="w-full pl-9 pr-3 py-2 text-xs bg-[#F8F9FA] border border-[#DADCE0] rounded-xl focus:outline-none focus:border-[#1A73E8] text-[#202124]"
-              />
-            </div>
-
-            {/* Scheme Filter Toggle */}
-            <div className="flex items-center justify-between text-xs mb-3 px-1">
-              <span className="text-[11px] text-[#5F6368]">Scheme Filter:</span>
-              <div className="flex items-center gap-1 bg-[#F8F9FA] p-0.5 border border-[#DADCE0] rounded-lg">
-                {(["ALL", "MAAY", "RGHS"] as const).map((sc) => (
-                  <button
-                    key={sc}
-                    onClick={() => setSelectedScheme(sc)}
-                    className={`px-2.5 py-1 rounded text-[10px] font-semibold transition-all ${
-                      selectedScheme === sc
-                        ? "bg-[#1A73E8] text-white shadow-xs"
-                        : "text-[#5F6368] hover:text-[#202124]"
-                    }`}
-                  >
-                    {sc}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Procedures List */}
-            <div className="max-h-[380px] overflow-y-auto space-y-2 pr-1 divide-y divide-[#F1F3F4]">
-              {filteredProcedures.map((p) => {
-                const isSelected = p.id === selectedProcedureId;
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => {
-                      setSelectedProcedureId(p.id);
-                      setCustomIntervention("");
-                    }}
-                    className={`w-full text-left p-3 rounded-xl transition-all pt-2.5 ${
-                      isSelected
-                        ? "bg-[#E8F0FE] border border-[#1A73E8]"
-                        : "hover:bg-[#F8F9FA] border border-transparent"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <div className="text-xs font-bold text-[#202124] leading-snug">
-                          {p.title}
-                        </div>
-                        <div className="text-[11px] text-[#1A73E8] font-medium mt-0.5">
-                          [MAAY / RGHS Compatible: {p.maayRghsCompatibility.packageName}]
-                        </div>
-                      </div>
-                      <span className="px-1.5 py-0.5 text-[10px] font-bold rounded bg-white text-[#3C4043] border border-[#DADCE0] shrink-0">
-                        {p.modality}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-2 text-[10px] text-[#5F6368]">
-                      <span>Cat {p.categoryNumber}: {p.categoryName}</span>
-                      <span>•</span>
-                      <span>ICD: {p.maayRghsCompatibility.icd10}</span>
-                      {p.maayRghsCompatibility.tariffInr && (
-                        <>
-                          <span>•</span>
-                          <span className="font-semibold text-[#137333]">
-                            ₹{p.maayRghsCompatibility.tariffInr.toLocaleString()}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-
-              {filteredProcedures.length === 0 && (
-                <div className="py-8 text-center text-xs text-[#5F6368]">
-                  No matching procedures found. Clear search filter.
-                </div>
-              )}
             </div>
           </div>
         </div>
 
-        {/* Right Column (7 Cols) - Multi-Tab Clinical Console & Note Viewer */}
+        {/* Right Column (7 Cols) - The Authentic SMS Hospital Operative Sheet */}
         <div className="lg:col-span-7 space-y-4 print:w-full print:block">
-          {/* Navigation Tabs */}
-          <div className="bg-white border border-[#DADCE0] rounded-2xl p-1.5 flex items-center justify-between shadow-xs print:hidden">
-            <div className="flex items-center gap-1">
+          {/* View Tabs Bar */}
+          <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-1.5 flex items-center justify-between shadow-xs print:hidden overflow-x-auto">
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                onClick={() => setActiveTab("NOTE")}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeTab === "NOTE"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>SMS Post-Op Note</span>
+              </button>
+
               <button
                 onClick={() => setActiveTab("SUMMARY")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === "SUMMARY"
-                    ? "bg-[#1A73E8] text-white shadow-xs"
-                    : "text-[#5F6368] hover:bg-[#F8F9FA]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 }`}
               >
                 <ClipboardList className="w-3.5 h-3.5" />
@@ -610,268 +836,78 @@ export default function OperativeNotesPage() {
               </button>
 
               <button
-                onClick={() => setActiveTab("NOTE")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  activeTab === "NOTE"
-                    ? "bg-[#1A73E8] text-white shadow-xs"
-                    : "text-[#5F6368] hover:bg-[#F8F9FA]"
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Operative Note</span>
-              </button>
-
-              <button
                 onClick={() => setActiveTab("CONSENT")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === "CONSENT"
-                    ? "bg-[#1A73E8] text-white shadow-xs"
-                    : "text-[#5F6368] hover:bg-[#F8F9FA]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 }`}
               >
                 <FileSignature className="w-3.5 h-3.5" />
-                <span>Bilingual Consent (द्विभाषी)</span>
+                <span>Bilingual Consent</span>
               </button>
 
               <button
                 onClick={() => setActiveTab("PROTOCOL")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === "PROTOCOL"
-                    ? "bg-[#1A73E8] text-white shadow-xs"
-                    : "text-[#5F6368] hover:bg-[#F8F9FA]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 }`}
               >
                 <Pill className="w-3.5 h-3.5" />
-                <span>Hardware & Orders</span>
+                <span>Hardware &amp; Orders</span>
               </button>
 
               {linkedCalculator && (
                 <button
                   onClick={() => setActiveTab("CALCULATOR")}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                     activeTab === "CALCULATOR"
-                      ? "bg-[#1A73E8] text-white shadow-xs"
-                      : "text-[#5F6368] hover:bg-[#F8F9FA]"
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   }`}
                 >
                   <Calculator className="w-3.5 h-3.5" />
-                  <span>Linked Risk Score</span>
+                  <span>Risk Score</span>
                 </button>
               )}
             </div>
 
-            <div className="text-[11px] font-medium text-[#5F6368] pr-2">
-              {selectedProcedure.modality} Suite
+            <div className="hidden sm:flex items-center gap-2 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 pr-2">
+              <span>{selectedProcedure.modality} Suite</span>
             </div>
           </div>
 
-          {/* TAB 0: OPERATIVE SUMMARY PREVIEW (Executive Surgical Synopsis & Clinical Handoff) */}
-          {activeTab === "SUMMARY" && (
-            <div className="bg-white border border-[#DADCE0] rounded-2xl p-6 sm:p-8 shadow-xs relative print:border-none print:shadow-none print:p-0 print:m-0 flex flex-col gap-5 text-zinc-900">
-              {/* Header Badge & Action Controls */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-200 print:hidden">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
-                  <span className="text-xs font-bold text-zinc-900">
-                    Executive Operative Summary (Surgical Synopsis &amp; Clinical Handoff)
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleCopySummary}
-                    className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg hover:bg-blue-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-blue-200"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>{copyFeedback || "Copy Summary"}</span>
-                  </button>
-                  <button
-                    onClick={handleShareSummary}
-                    className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-emerald-200"
-                  >
-                    <Share2 className="w-3.5 h-3.5" />
-                    <span>Share / WhatsApp</span>
-                  </button>
-                  <button
-                    onClick={handlePrint}
-                    className="px-3 py-1 bg-[#F8F9FA] text-[#3C4043] border border-[#DADCE0] text-xs font-semibold rounded-lg hover:bg-[#F1F3F4] transition-colors flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Printer className="w-3.5 h-3.5" />
-                    <span>Print</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Institutional Summary Banner */}
-              <div className="border border-blue-200 bg-blue-50/50 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800 block">
-                    SMS Hospital Jaipur • Dept of Interventional Radiology
-                  </span>
-                  <h2 className="text-base font-bold text-zinc-950 mt-0.5">
-                    {selectedProcedure.title}
-                  </h2>
-                  <p className="text-xs text-zinc-600 mt-0.5">
-                    Package: {selectedProcedure.maayRghsCompatibility.packageName} ({selectedProcedure.maayRghsCompatibility.packageCode}) • ICD-10: {selectedProcedure.maayRghsCompatibility.icd10}
-                  </p>
-                </div>
-                <div className="text-right sm:text-right shrink-0">
-                  <span className="inline-block px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                    100% Technical Success
-                  </span>
-                  <div className="text-[11px] text-zinc-500 mt-1">
-                    Date: <strong>{dateOfProcedure}</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Patient & Surgical Team Matrix */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-zinc-50 border border-zinc-200 rounded-xl text-xs">
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">Patient Name:</span>
-                  <strong className="text-zinc-900 text-sm">{patientName}</strong>
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">Age / Sex:</span>
-                  <strong className="text-zinc-900">{age} Y / {gender}</strong>
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">CR / UHID No.:</span>
-                  <strong className="font-mono text-zinc-900">{crNumber}</strong>
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">Assigned Bed:</span>
-                  <strong className="text-zinc-900">{ipdBed}</strong>
-                </div>
-                <div className="sm:col-span-2 pt-2 border-t border-zinc-200">
-                  <span className="text-zinc-500 text-[10px] block">Operating Faculty:</span>
-                  <strong className="text-zinc-900">{primaryOperator}</strong>
-                </div>
-                <div className="sm:col-span-2 pt-2 border-t border-zinc-200">
-                  <span className="text-zinc-500 text-[10px] block">Supervising Consultant:</span>
-                  <strong className="text-zinc-900">{supervisingConsultant}</strong>
-                </div>
-              </div>
-
-              {/* Key Surgical & Technical Parameters Grid */}
-              <div className="space-y-1.5">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-800 flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-blue-600" />
-                  Key Surgical &amp; Procedural Parameters
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 block">Guidance &amp; Modality:</span>
-                    <strong className="text-zinc-900">{selectedProcedure.modality} Suite Guided</strong>
-                  </div>
-                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 block">Vascular / Percutaneous Access:</span>
-                    <strong className="text-zinc-900">{selectedProcedure.accessSiteDefault || "Common Femoral"}</strong>
-                  </div>
-                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 block">Sheath Introduced:</span>
-                    <strong className="text-zinc-900">{selectedProcedure.sheathDefault || "5F / 6F Sheath"}</strong>
-                  </div>
-                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 block">Sedation / Anesthesia:</span>
-                    <strong className="text-zinc-900">{selectedProcedure.sedation || "Local Anesthesia"}</strong>
-                  </div>
-                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 block">Closure &amp; Hemostasis:</span>
-                    <strong className="text-emerald-700">Hemostasis Intact (Sterile Dressing)</strong>
-                  </div>
-                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 block">Estimated Blood Loss (EBL):</span>
-                    <strong className="text-zinc-900">&lt; 10 mL (Minimal)</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Hardware & Implants Deployed */}
-              <div className="space-y-1.5">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-800 flex items-center gap-1.5">
-                  <Package className="w-3.5 h-3.5 text-indigo-600" />
-                  Hardware, Implants &amp; Embolics Deployed
-                </h3>
-                <div className="p-3 bg-indigo-50/40 border border-indigo-200 rounded-xl text-xs space-y-1 text-indigo-950">
-                  <p>• <strong>Primary Kit:</strong> {selectedProcedure.sheathDefault || "Introducer Sheath"} + {selectedProcedure.cathetersAndWires || "Standard Guidewires & Catheters"}</p>
-                  {selectedProcedure.microcatheterSystem && (
-                    <p>• <strong>Microcatheter System:</strong> {selectedProcedure.microcatheterSystem}</p>
-                  )}
-                  {selectedProcedure.embolicOrImplants && (
-                    <p>• <strong>Implants / Embolics:</strong> {selectedProcedure.embolicOrImplants}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Immediate Post-Operative Ward Handoff & Red Flags */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl space-y-1.5">
-                  <div className="font-bold text-zinc-900 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-blue-600" />
-                    Immediate Post-Op Orders
-                  </div>
-                  <ul className="list-disc list-inside space-y-1 text-zinc-700 text-[11px]">
-                    <li>{selectedProcedure.postOpCare.immobilizationInstructions} ({selectedProcedure.postOpCare.immobilizationHours}h)</li>
-                    <li>{selectedProcedure.postOpCare.hematomaChecks}</li>
-                    <li>{selectedProcedure.postOpCare.hydrationProtocol}</li>
-                  </ul>
-                </div>
-
-                <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl space-y-1.5">
-                  <div className="font-bold text-amber-950 flex items-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-                    Critical Red Flags (SOS Notification)
-                  </div>
-                  <ul className="list-disc list-inside space-y-1 text-amber-900 text-[11px]">
-                    {selectedProcedure.postOpCare.redFlags.slice(0, 3).map((rf, i) => (
-                      <li key={i}>{rf}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Raw Formatted Text Area for Quick Inspection */}
-              <div className="pt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-bold uppercase text-zinc-500 tracking-wider">
-                    Formatted Text View (e-Hospital / WhatsApp Ready)
-                  </span>
-                  <button
-                    onClick={handleCopySummary}
-                    className="text-[10px] font-semibold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <Copy className="w-3 h-3" /> Copy Text
-                  </button>
-                </div>
-                <pre className="p-3 bg-zinc-900 text-zinc-100 rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto select-all">
-                  {operativeSummaryText}
-                </pre>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 1: OPERATIVE NOTE PREVIEW (Institutional SMS Jaipur Letterhead Layout) */}
+          {/* TAB 1: OFFICIAL SMS HOSPITAL POST-OPERATIVE NOTE */}
           {activeTab === "NOTE" && (
-            <div className="bg-white border border-[#DADCE0] rounded-2xl p-6 sm:p-8 shadow-xs relative print:border-none print:shadow-none print:p-0 print:m-0 flex flex-col gap-6 text-zinc-900">
-              {/* Header Badge & Action Controls (Hidden on Print) */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-200 print:hidden">
+            <div className="bg-white dark:bg-[#1E1E1E] print:bg-white border border-[#DADCE0] dark:border-[#3C4043] print:border-none rounded-2xl p-5 sm:p-8 shadow-xs relative print:shadow-none print:p-0 print:m-0 flex flex-col gap-5 text-zinc-900 dark:text-zinc-100 print:text-black">
+              {/* Document Banner / Header (Hidden on Print) */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800 print:hidden">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse" />
-                  <span className="text-xs font-bold text-zinc-900">
-                    Official SMS Hospital Operative Report (e-Hospital &amp; MAAY / RGHS Compliant)
+                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                    Official SMS Hospital Operation Record (ऑपरेशन एवं पोस्ट-ऑपरेटिव नोट)
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleCopyNote}
-                    className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg hover:bg-blue-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-blue-200"
+                    className="px-3 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded-lg hover:bg-blue-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-blue-200 dark:border-blue-800"
                   >
                     <Copy className="w-3.5 h-3.5" />
-                    <span>{copyFeedback || "Copy Text"}</span>
+                    <span>Copy Text</span>
+                  </button>
+                  <button
+                    onClick={() => handleShare(operativeNoteText, `SMS Post-Op Note - ${patientName}`)}
+                    className="px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold rounded-lg hover:bg-emerald-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-emerald-200 dark:border-emerald-800"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span>WhatsApp</span>
                   </button>
                   <button
                     onClick={handlePrint}
-                    className="px-3.5 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                    className="px-3 py-1 bg-zinc-800 text-white dark:bg-zinc-700 text-xs font-semibold rounded-lg hover:bg-zinc-900 flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <Printer className="w-3.5 h-3.5" />
                     <span>Print Report</span>
@@ -879,413 +915,316 @@ export default function OperativeNotesPage() {
                 </div>
               </div>
 
-              {/* Official SMS Hospital Letterhead */}
-              <div className="border-b-2 border-zinc-900 pb-3 text-center flex flex-col items-center">
-                <div className="flex items-center justify-center gap-4 mb-2">
+              {/* Official SMS Hospital Letterhead Header */}
+              <div className="border-b-2 border-zinc-900 dark:border-zinc-100 print:border-black pb-3 text-center flex flex-col items-center">
+                <div className="flex items-center justify-center gap-3 sm:gap-5 mb-2">
                   <img
                     src="/sms_hospital_logo.png"
                     alt="SMS Hospital Logo"
-                    className="w-20 h-20 sm:w-24 sm:h-24 object-contain shrink-0"
+                    className="w-16 h-16 sm:w-20 sm:h-20 object-contain shrink-0"
                   />
                   <div className="text-left">
-                    <h1 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 font-serif leading-tight">
+                    <div className="text-[10px] sm:text-xs font-bold tracking-widest text-zinc-600 dark:text-zinc-400 print:text-zinc-700 uppercase">
+                      GOVERNMENT OF RAJASTHAN
+                    </div>
+                    <h1 className="text-base sm:text-xl font-black tracking-tight text-zinc-950 dark:text-zinc-50 print:text-black font-serif leading-tight">
                       SMS HOSPITAL &amp; MEDICAL COLLEGE, JAIPUR
                     </h1>
-                    <p className="text-xs sm:text-sm font-bold text-zinc-800 tracking-tight mt-0.5">
-                      DEPARTMENT OF INTERVENTIONAL RADIOLOGY
+                    <p className="text-[11px] sm:text-xs font-bold text-zinc-800 dark:text-zinc-300 print:text-zinc-800 tracking-tight mt-0.5">
+                      DEPARTMENT OF RADIODIAGNOSIS &amp; INTERVENTIONAL RADIOLOGY
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-1 px-3.5 py-0.5 rounded bg-zinc-100 print:bg-zinc-100 border border-zinc-300 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-zinc-800">
-                  POST-OPERATIVE NOTES
+                <div className="mt-1 px-4 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 print:bg-zinc-100 border border-zinc-300 dark:border-zinc-700 print:border-black text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100 print:text-black">
+                  OPERATION RECORD / POST-OPERATIVE NOTE (ऑपरेशन एवं पोस्ट-ऑपरेटिव नोट)
                 </div>
               </div>
 
-              {/* Patient Identification & Case Header Grid */}
-              <div className="border border-zinc-300 rounded-lg p-3.5 bg-zinc-50/50 print:bg-transparent text-xs grid grid-cols-2 sm:grid-cols-4 gap-y-2.5 gap-x-4">
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">Patient Name:</span>
-                  <input
-                    type="text"
-                    value={patientName}
-                    onChange={(e) => setPatientName(e.target.value)}
-                    placeholder="Patient Name"
-                    className="w-full bg-transparent font-bold text-zinc-950 text-sm border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                  />
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">Age / Sex:</span>
-                  <div className="flex items-center gap-1">
-                    <input
-                      type="text"
-                      value={age}
-                      onChange={(e) => setAge(e.target.value)}
-                      placeholder="Age"
-                      className="w-12 bg-transparent font-bold text-zinc-950 border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                    />
-                    <span className="text-zinc-500 font-semibold">Y /</span>
-                    <input
-                      type="text"
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      placeholder="Gender"
-                      className="w-16 bg-transparent font-bold text-zinc-950 border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">CR / UHID No.:</span>
-                  <input
-                    type="text"
-                    value={crNumber}
-                    onChange={(e) => setCrNumber(e.target.value)}
-                    placeholder="CR / UHID"
-                    className="w-full bg-transparent font-mono font-bold text-zinc-950 border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                  />
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">Ward / Bed:</span>
-                  <input
-                    type="text"
-                    value={ipdBed}
-                    onChange={(e) => setIpdBed(e.target.value)}
-                    placeholder="Ward / Bed"
-                    className="w-full bg-transparent font-bold text-zinc-950 border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                  />
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">Procedure Date:</span>
-                  <input
-                    type="date"
-                    value={dateOfProcedure}
-                    onChange={(e) => setDateOfProcedure(e.target.value)}
-                    className="w-full bg-transparent font-bold text-zinc-950 border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                  />
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">Interventional Suite:</span>
-                  <strong className="text-zinc-950">{selectedProcedure.modality} Cath-Lab Suite</strong>
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">Primary Operator:</span>
-                  <input
-                    type="text"
-                    value={primaryOperator}
-                    onChange={(e) => setPrimaryOperator(e.target.value)}
-                    className="w-full bg-transparent font-bold text-zinc-950 border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                  />
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[11px] font-medium block">Supervising Consultant:</span>
-                  <input
-                    type="text"
-                    value={supervisingConsultant}
-                    onChange={(e) => setSupervisingConsultant(e.target.value)}
-                    className="w-full bg-transparent font-bold text-zinc-950 border-b border-transparent hover:border-zinc-300 focus:border-blue-500 focus:outline-none print:border-none p-0"
-                  />
-                </div>
+              {/* Patient Identification & Case Header Table (Clean SMS Grid) */}
+              <div className="border border-zinc-300 dark:border-zinc-700 print:border-black rounded-lg overflow-hidden text-xs">
+                <table className="w-full border-collapse">
+                  <tbody>
+                    <tr className="border-b border-zinc-200 dark:border-zinc-800 print:border-zinc-300 bg-zinc-50/70 dark:bg-zinc-900/50 print:bg-transparent">
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700 w-1/4">
+                        CR No. / UHID:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-mono font-bold text-zinc-950 dark:text-zinc-50 print:text-black w-1/4">
+                        {crNumber}
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700 w-1/4">
+                        Patient Name:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-bold text-zinc-950 dark:text-zinc-50 print:text-black w-1/4">
+                        {patientName}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-zinc-200 dark:border-zinc-800 print:border-zinc-300">
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Age / Gender:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-bold text-zinc-950 dark:text-zinc-50 print:text-black">
+                        {age} Y / {gender}
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Ward / Bed:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-bold text-zinc-950 dark:text-zinc-50 print:text-black">
+                        {ipdBed}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-zinc-200 dark:border-zinc-800 print:border-zinc-300 bg-zinc-50/70 dark:bg-zinc-900/50 print:bg-transparent">
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Date of Procedure:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-bold text-zinc-950 dark:text-zinc-50 print:text-black">
+                        {dateOfProcedure} ({procedureTime})
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Suite / Room:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-bold text-zinc-950 dark:text-zinc-50 print:text-black">
+                        {selectedProcedure.modality} Cath-Lab Suite
+                      </td>
+                    </tr>
+                    <tr className="border-b border-zinc-200 dark:border-zinc-800 print:border-zinc-300">
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Primary Operator:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-bold text-zinc-950 dark:text-zinc-50 print:text-black">
+                        {primaryOperator}
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Supervising Consultant:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-bold text-zinc-950 dark:text-zinc-50 print:text-black">
+                        {supervisingConsultant}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Scheme / Billing:
+                      </td>
+                      <td className="p-2 sm:p-2.5 text-zinc-900 dark:text-zinc-100 print:text-black">
+                        MAAY / RGHS Compatible
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-semibold text-zinc-500 dark:text-zinc-400 print:text-zinc-700">
+                        Package Code:
+                      </td>
+                      <td className="p-2 sm:p-2.5 font-mono font-bold text-blue-700 dark:text-blue-300 print:text-black">
+                        {selectedProcedure.maayRghsCompatibility.packageCode}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
 
-              {/* Procedure Title Banner - Center Aligned */}
-              <div className="text-center py-2.5 px-4 bg-zinc-50 border border-zinc-200 rounded-lg print:border-zinc-300 print:bg-transparent">
-                <h3 className="text-lg sm:text-xl font-extrabold text-zinc-950 tracking-tight leading-snug">
+              {/* Procedure Title Banner */}
+              <div className="text-center py-2.5 px-4 bg-zinc-50 dark:bg-zinc-900 print:bg-transparent border border-zinc-200 dark:border-zinc-700 print:border-zinc-400 rounded-lg">
+                <div className="text-[10px] font-bold text-blue-800 dark:text-blue-400 uppercase tracking-widest">
+                  PROCEDURE PERFORMED (की गई प्रक्रिया)
+                </div>
+                <h2 className="text-base sm:text-lg font-black text-zinc-950 dark:text-zinc-50 print:text-black mt-0.5">
                   {selectedProcedure.title}
-                </h3>
-                <div className="flex flex-wrap items-center justify-center gap-2 mt-1.5 text-xs font-semibold text-blue-800">
-                  <span className="px-2 py-0.5 bg-blue-50 rounded text-blue-900 border border-blue-200">
-                    Package Code: {selectedProcedure.maayRghsCompatibility.packageCode}
-                  </span>
-                  <span className="px-2 py-0.5 bg-zinc-100 rounded text-zinc-800 border border-zinc-200">
-                    ICD-10: {selectedProcedure.maayRghsCompatibility.icd10}
-                  </span>
+                </h2>
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+                  <span>Package: {selectedProcedure.maayRghsCompatibility.packageName}</span>
+                  <span>•</span>
+                  <span>ICD-10: <strong>{selectedProcedure.maayRghsCompatibility.icd10}</strong></span>
                   {selectedProcedure.maayRghsCompatibility.tariffInr && (
-                    <span className="px-2 py-0.5 bg-emerald-50 rounded text-emerald-900 border border-emerald-200">
-                      Tariff: ₹{selectedProcedure.maayRghsCompatibility.tariffInr.toLocaleString()}
-                    </span>
+                    <>
+                      <span>•</span>
+                      <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+                        Tariff: ₹{selectedProcedure.maayRghsCompatibility.tariffInr.toLocaleString()}
+                      </span>
+                    </>
                   )}
                 </div>
               </div>
 
-              {/* Comprehensive Operative Report (Fluid Single Paragraph Without Subheadings) */}
-              <div className="space-y-4 text-xs">
-                {/* Single Continuous Paragraph Post-Operative Notes */}
-                <div className="flex flex-col gap-1.5">
-                  <textarea
-                    rows={6}
-                    value={
-                      customIntervention ||
-                      buildProceduralNarrative(selectedProcedure, customFindings)
-                    }
-                    onChange={(e) => setCustomIntervention(e.target.value)}
-                    className="w-full p-3.5 bg-zinc-50 border border-zinc-200 rounded-lg text-xs sm:text-[13px] text-zinc-900 leading-relaxed font-normal focus:bg-white focus:border-blue-500 focus:outline-none print:border-none print:p-0 print:bg-transparent resize-y text-justify"
-                  />
-                </div>
-
-                {/* Advice Section with Clean Point-Wise Bullet Points */}
-                <div className="flex flex-col gap-1.5 pt-1">
-                  <h4 className="font-bold text-zinc-950 uppercase text-xs tracking-wider border-b border-zinc-300 pb-1">
-                    Advice:
-                  </h4>
-                  <div className="p-3.5 bg-zinc-50 rounded-lg border border-zinc-200 space-y-2 text-zinc-800 text-xs sm:text-[12.5px] print:bg-transparent print:border-none print:p-0">
-                    {buildAdviceBullets(selectedProcedure).map((bullet, idx) => {
-                      const isRedFlag = bullet.startsWith("Red Flags:");
-                      return (
-                        <div key={idx} className="flex items-start gap-2.5">
-                          <span className={isRedFlag ? "text-red-600 font-bold" : "text-zinc-600 font-bold"}>•</span>
-                          <div className={isRedFlag ? "text-red-700 font-medium" : ""}>
-                            {bullet}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Operator Sign-Off & Official Certification */}
-              <div className="border border-zinc-400 rounded-lg p-4 bg-white mt-2 print:mt-4 break-inside-avoid print-break-inside-avoid">
-                <h5 className="font-bold text-center text-xs uppercase tracking-wider text-zinc-950 mb-4 border-b border-zinc-300 pb-1">
-                  OPERATOR &amp; SUPERVISING FACULTY CERTIFICATION
-                </h5>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-2 text-xs">
-                  <div className="flex flex-col justify-between border-t border-zinc-900 pt-2 min-h-[90px]">
-                    <div>
-                      <span className="font-bold text-zinc-950 block">Primary Operator:</span>
-                      <span className="text-[11px] text-zinc-600 block">(Signature &amp; Timestamp)</span>
-                    </div>
-                    <div className="text-[11px] text-zinc-700 mt-4">
-                      <div><strong>{primaryOperator}</strong></div>
-                      <div>Date &amp; Time: {dateOfProcedure || "_____________"}</div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col justify-between border-t border-zinc-900 pt-2 min-h-[90px]">
-                    <div>
-                      <span className="font-bold text-zinc-950 block">Supervising Consultant:</span>
-                      <span className="text-[11px] text-zinc-600 block">(Signature &amp; Official Stamp)</span>
-                    </div>
-                    <div className="text-[11px] text-zinc-700 mt-4">
-                      <div><strong>{supervisingConsultant}</strong></div>
-                      <div>Department of Interventional Radiology, SMS Hospital, Jaipur</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: BILINGUAL STATUTORY CONSENT */}
-          {activeTab === "CONSENT" && consentTemplate && (
-            <div className="bg-white border border-[#DADCE0] rounded-2xl p-6 shadow-xs space-y-6">
-              <div className="flex items-center justify-between pb-3 border-b border-[#F1F3F4]">
+              {/* Clinical Indication & Diagnosis Box */}
+              <div className="border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 bg-zinc-50/50 dark:bg-zinc-900/30 print:bg-transparent text-xs space-y-2">
                 <div>
-                  <h3 className="text-sm font-bold text-[#202124]">
-                    {consentTemplate.nameEn}
-                  </h3>
-                  <p className="text-xs text-[#1A73E8] font-medium mt-0.5">
-                    {consentTemplate.nameHi}
-                  </p>
+                  <span className="font-bold text-zinc-950 dark:text-zinc-100 print:text-black uppercase text-[11px] block">
+                    Pre-Operative Diagnosis &amp; Clinical Indication:
+                  </span>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={currentIndication}
+                      onChange={(e) => setCustomIndication(e.target.value)}
+                      className="w-full mt-1 p-1.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 rounded text-xs text-zinc-900 dark:text-zinc-100"
+                    />
+                  ) : (
+                    <p className="text-zinc-800 dark:text-zinc-200 print:text-black mt-0.5 leading-relaxed">
+                      {currentIndication}
+                    </p>
+                  )}
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-[11px] font-bold">
-                  NMC & SC Informed Consent Standard
-                </span>
-              </div>
 
-              {/* Clinical Indication */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="p-3 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
-                  <div className="font-bold text-[#202124] mb-1">Clinical Indication (English):</div>
-                  <p className="text-[#3C4043]">{consentTemplate.indicationEn}</p>
-                </div>
-                <div className="p-3 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
-                  <div className="font-bold text-[#202124] mb-1">रोग व कारण (हिंदी):</div>
-                  <p className="text-[#3C4043]">{consentTemplate.indicationHi}</p>
-                </div>
-              </div>
-
-              {/* Procedure Description */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="p-3.5 bg-white rounded-xl border border-[#DADCE0]">
-                  <div className="font-bold text-[#202124] mb-1">Procedural Steps (English):</div>
-                  <p className="text-[#5F6368] leading-relaxed">{consentTemplate.descriptionEn}</p>
-                </div>
-                <div className="p-3.5 bg-white rounded-xl border border-[#DADCE0]">
-                  <div className="font-bold text-[#202124] mb-1">प्रक्रिया का विवरण (हिंदी):</div>
-                  <p className="text-[#5F6368] leading-relaxed">{consentTemplate.descriptionHi}</p>
-                </div>
-              </div>
-
-              {/* Expected Benefits */}
-              <div className="p-4 bg-[#E6F4EA] border border-[#CEEAD6] rounded-xl">
-                <div className="text-xs font-bold text-[#137333] mb-2">
-                  Expected Clinical Benefits (प्रत्याशित लाभ):
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  <ul className="space-y-1 list-disc pl-4 text-[#137333]">
-                    {consentTemplate.benefitsEn.map((b, idx) => (
-                      <li key={idx}>{b}</li>
-                    ))}
-                  </ul>
-                  <ul className="space-y-1 list-disc pl-4 text-[#137333]">
-                    {consentTemplate.benefitsHi.map((b, idx) => (
-                      <li key={idx}>{b}</li>
-                    ))}
-                  </ul>
+                <div className="pt-1.5 border-t border-zinc-200 dark:border-zinc-800">
+                  <span className="font-bold text-zinc-950 dark:text-zinc-100 print:text-black uppercase text-[11px] block">
+                    Post-Operative Diagnosis:
+                  </span>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={currentPostOpDiagnosis}
+                      onChange={(e) => setCustomPostOpDiagnosis(e.target.value)}
+                      className="w-full mt-1 p-1.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 rounded text-xs text-zinc-900 dark:text-zinc-100"
+                    />
+                  ) : (
+                    <p className="text-zinc-800 dark:text-zinc-200 print:text-black mt-0.5 font-medium">
+                      {currentPostOpDiagnosis}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* Specific Procedure Risks */}
-              <div className="p-4 bg-[#FCE8E6] border border-[#FAD2CF] rounded-xl">
-                <div className="text-xs font-bold text-[#C5221F] mb-2">
-                  Specific Procedure Risks & Complications (प्रक्रिया संबंधी विशिष्ट जोखिम):
+              {/* Surgical & Technical Parameters Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                <div className="p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 print:bg-transparent">
+                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-semibold">Anaesthesia / Sedation:</span>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={currentSedation}
+                      onChange={(e) => setCustomSedation(e.target.value)}
+                      className="w-full text-xs p-1 mt-0.5 bg-zinc-50 dark:bg-zinc-800 border rounded"
+                    />
+                  ) : (
+                    <strong className="text-zinc-900 dark:text-zinc-100 print:text-black">{currentSedation}</strong>
+                  )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  <ul className="space-y-1 list-disc pl-4 text-[#C5221F]">
-                    {consentTemplate.specificRisksEn.map((r, idx) => (
-                      <li key={idx}>{r}</li>
-                    ))}
-                  </ul>
-                  <ul className="space-y-1 list-disc pl-4 text-[#C5221F]">
-                    {consentTemplate.specificRisksHi.map((r, idx) => (
-                      <li key={idx}>{r}</li>
-                    ))}
-                  </ul>
+
+                <div className="p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 print:bg-transparent">
+                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-semibold">Access Site &amp; Approach:</span>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={currentAccessSite}
+                      onChange={(e) => setCustomAccessSite(e.target.value)}
+                      className="w-full text-xs p-1 mt-0.5 bg-zinc-50 dark:bg-zinc-800 border rounded"
+                    />
+                  ) : (
+                    <strong className="text-zinc-900 dark:text-zinc-100 print:text-black">{currentAccessSite}</strong>
+                  )}
+                </div>
+
+                <div className="p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 print:bg-transparent">
+                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-semibold">Sheath Calibre / System:</span>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={currentSheath}
+                      onChange={(e) => setCustomSheath(e.target.value)}
+                      className="w-full text-xs p-1 mt-0.5 bg-zinc-50 dark:bg-zinc-800 border rounded"
+                    />
+                  ) : (
+                    <strong className="text-zinc-900 dark:text-zinc-100 print:text-black">{currentSheath}</strong>
+                  )}
                 </div>
               </div>
 
-              {/* Anesthesia & Sedation */}
-              <div className="p-3.5 bg-[#FEF7E0] border border-[#FEEFC3] rounded-xl text-xs">
-                <div className="font-bold text-[#B06000] mb-1">
-                  Anesthesia / Sedation Type (बेहोशी का प्रकार):
-                </div>
-                <div className="text-[#B06000]">
-                  <strong>English:</strong> {consentTemplate.sedationTypeEn}
-                </div>
-                <div className="text-[#B06000] mt-0.5">
-                  <strong>हिंदी:</strong> {consentTemplate.sedationTypeHi}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: CLINICAL PROTOCOL, HARDWARE & POST-OP ORDERS */}
-          {activeTab === "PROTOCOL" && (
-            <div className="bg-white border border-[#DADCE0] rounded-2xl p-6 shadow-xs space-y-5">
-              <div className="pb-3 border-b border-[#F1F3F4]">
-                <h3 className="text-sm font-bold text-[#202124]">
-                  Clinical Hardware Requisition & Nursing Post-Op Plan
+              {/* Operative Technique & Detailed Procedural Description */}
+              <div className="space-y-1.5 text-xs">
+                <h3 className="font-bold text-zinc-950 dark:text-zinc-100 print:text-black uppercase text-xs tracking-wider border-b border-zinc-300 dark:border-zinc-700 pb-1">
+                  Operative Technique &amp; Procedural Steps (प्रक्रिया का विवरण):
                 </h3>
-                <p className="text-xs text-[#5F6368]">
-                  Standardized technical equipment and surveillance parameters for {selectedProcedure.title}
-                </p>
+
+                {isEditMode ? (
+                  <textarea
+                    rows={7}
+                    value={currentNarrative}
+                    onChange={(e) => setCustomIntervention(e.target.value)}
+                    className="w-full p-3 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 rounded-lg text-xs leading-relaxed font-normal text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
+                  />
+                ) : (
+                  <div className="p-3.5 bg-zinc-50 dark:bg-zinc-900/60 print:bg-transparent border border-zinc-200 dark:border-zinc-750 print:border-none rounded-lg text-zinc-850 dark:text-zinc-200 print:text-black leading-relaxed text-justify text-xs sm:text-[12.5px]">
+                    {currentNarrative}
+                  </div>
+                )}
               </div>
 
-              {/* Technical Hardware Stack */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-2">
-                  <div className="font-bold text-[#202124]">Vascular Access & Sheaths</div>
-                  <div>
-                    <span className="text-[#5F6368]">Access Site: </span>
-                    <span className="font-medium text-[#202124]">{selectedProcedure.accessSiteDefault}</span>
-                  </div>
-                  <div>
-                    <span className="text-[#5F6368]">Sheath: </span>
-                    <span className="font-medium text-[#202124]">{selectedProcedure.sheathDefault}</span>
-                  </div>
-                  <div>
-                    <span className="text-[#5F6368]">Sedation: </span>
-                    <span className="font-medium text-[#202124]">{selectedProcedure.sedation}</span>
-                  </div>
-                </div>
-
-                <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-2">
-                  <div className="font-bold text-[#202124]">Catheters & Embolic Hardware</div>
-                  <div>
-                    <span className="text-[#5F6368]">Catheters & Wires: </span>
-                    <span className="font-medium text-[#202124]">{selectedProcedure.cathetersAndWires}</span>
-                  </div>
+              {/* Hardware, Implants & Consumables Log */}
+              <div className="space-y-1.5 text-xs">
+                <h3 className="font-bold text-zinc-950 dark:text-zinc-100 print:text-black uppercase text-xs tracking-wider border-b border-zinc-300 dark:border-zinc-700 pb-1">
+                  Hardware, Implants &amp; Embolics Deployed (उपयुक्त हार्डवेयर एवं उपकरण):
+                </h3>
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-900/60 print:bg-transparent border border-zinc-200 dark:border-zinc-750 rounded-lg text-xs space-y-1 text-zinc-800 dark:text-zinc-200 print:text-black">
+                  <p>• <strong>Primary Vascular Access Kit:</strong> {currentSheath} + {selectedProcedure.cathetersAndWires || "Standard Guide Wires & Diagnostic Catheters"}</p>
                   {selectedProcedure.microcatheterSystem && (
-                    <div>
-                      <span className="text-[#5F6368]">Microcatheter: </span>
-                      <span className="font-medium text-[#1A73E8]">{selectedProcedure.microcatheterSystem}</span>
-                    </div>
+                    <p>• <strong>Microcatheter System:</strong> {selectedProcedure.microcatheterSystem}</p>
                   )}
                   {selectedProcedure.embolicOrImplants && (
-                    <div>
-                      <span className="text-[#5F6368]">Embolic / Implants: </span>
-                      <span className="font-medium text-[#137333]">{selectedProcedure.embolicOrImplants}</span>
-                    </div>
+                    <p>• <strong>Implants / Embolics / Stents:</strong> {selectedProcedure.embolicOrImplants}</p>
                   )}
+                  <p>• <strong>Hemostasis &amp; Closure:</strong> Sterile compression dressing / manual pressure hemostasis confirmed intact.</p>
                 </div>
               </div>
 
-              {/* Nursing Post-Op Orders */}
-              <div className="p-4 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-3 text-xs">
-                <div className="font-bold text-[#202124] flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-[#1A73E8]" />
-                  <span>Mandatory Post-Operative Nursing Protocol</span>
+              {/* Radiation Metrics & Contrast Agent Box */}
+              <div className="grid grid-cols-3 gap-2 text-xs border border-zinc-200 dark:border-zinc-700 rounded-lg p-2.5 bg-zinc-50/70 dark:bg-zinc-900/50 print:bg-transparent">
+                <div>
+                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-semibold">Fluoroscopy Time:</span>
+                  <strong className="text-zinc-950 dark:text-zinc-100 print:text-black">{currentFluoroTime} minutes</strong>
                 </div>
+                <div>
+                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-semibold">Radiation DAP:</span>
+                  <strong className="text-zinc-950 dark:text-zinc-100 print:text-black">{currentDap} Gy·cm²</strong>
+                </div>
+                <div>
+                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-semibold">Contrast Media &amp; Vol:</span>
+                  <strong className="text-zinc-950 dark:text-zinc-100 print:text-black">{currentContrast}</strong>
+                </div>
+              </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-[#1A73E8]">1.</span>
-                    <div>
-                      <strong>Puncture Site & Limb Immobilization: </strong>
-                      Strict flat bedrest; do not move or flex limb for {selectedProcedure.postOpCare.immobilizationHours} hours. {selectedProcedure.postOpCare.immobilizationInstructions}
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-[#1A73E8]">2.</span>
-                    <div>
-                      <strong>Hematoma & Pulse Surveillance: </strong>
-                      {selectedProcedure.postOpCare.hematomaChecks}
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-[#1A73E8]">3.</span>
-                    <div>
-                      <strong>Required Post-Op Imaging: </strong>
-                      <span className="text-[#B06000] font-medium">
-                        {selectedProcedure.postOpCare.requiredImaging || "Routine ward review; bedside imaging on clinical indication."}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-[#1A73E8]">4.</span>
-                    <div>
-                      <strong>Hydration Protocol: </strong>
-                      {selectedProcedure.postOpCare.hydrationProtocol}
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-[#1A73E8]">5.</span>
-                    <div>
-                      <strong>Medications Kit: </strong>
-                      <div className="mt-1 flex flex-wrap gap-1.5">
-                        {selectedProcedure.postOpCare.medications.map((m, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-0.5 bg-white border border-[#DADCE0] rounded text-[11px] font-medium text-[#202124]"
-                          >
-                            {m}
-                          </span>
-                        ))}
+              {/* Immediate Post-Operative Ward Handoff & Orders */}
+              <div className="space-y-1.5 text-xs">
+                <h3 className="font-bold text-zinc-950 dark:text-zinc-100 print:text-black uppercase text-xs tracking-wider border-b border-zinc-300 dark:border-zinc-700 pb-1">
+                  Post-Operative Ward Handoff &amp; Nursing Orders (पोस्ट-ऑपरेटिव निर्देश):
+                </h3>
+                <div className="p-3.5 bg-zinc-50 dark:bg-zinc-900/60 print:bg-transparent rounded-lg border border-zinc-200 dark:border-zinc-750 space-y-1.5 text-zinc-800 dark:text-zinc-200 print:text-black text-xs sm:text-[12.5px]">
+                  {buildAdviceBullets(selectedProcedure).map((bullet, idx) => {
+                    const isRedFlag = bullet.startsWith("Red Flags:");
+                    return (
+                      <div key={idx} className="flex items-start gap-2">
+                        <span className={isRedFlag ? "text-red-600 font-bold" : "text-zinc-600 dark:text-zinc-400 font-bold"}>•</span>
+                        <div className={isRedFlag ? "text-red-700 dark:text-red-400 font-semibold" : ""}>
+                          {bullet}
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Institutional Operator & Supervising Faculty Sign-Off Block */}
+              <div className="border border-zinc-400 dark:border-zinc-600 print:border-black rounded-lg p-4 bg-white dark:bg-zinc-900 print:bg-transparent mt-3 break-inside-avoid print-break-inside-avoid">
+                <h4 className="font-bold text-center text-xs uppercase tracking-wider text-zinc-950 dark:text-zinc-100 print:text-black mb-6 border-b border-zinc-200 dark:border-zinc-700 pb-1">
+                  OPERATING SURGEON &amp; SUPERVISING FACULTY CERTIFICATION
+                </h4>
+
+                <div className="grid grid-cols-2 gap-6 sm:gap-12 text-xs">
+                  <div className="border-t border-zinc-800 dark:border-zinc-200 print:border-black pt-2 min-h-[85px] flex flex-col justify-between">
+                    <div>
+                      <span className="font-bold text-zinc-950 dark:text-zinc-100 print:text-black block">Primary Operating Surgeon:</span>
+                      <span className="text-[11px] text-zinc-600 dark:text-zinc-400 print:text-zinc-700">(Signature &amp; Timestamp)</span>
+                    </div>
+                    <div className="text-[11px] text-zinc-800 dark:text-zinc-200 print:text-black mt-4">
+                      <div><strong>{primaryOperator}</strong></div>
+                      <div>Date &amp; Time: {dateOfProcedure} {procedureTime}</div>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-[#C5221F]">6.</span>
+                  <div className="border-t border-zinc-800 dark:border-zinc-200 print:border-black pt-2 min-h-[85px] flex flex-col justify-between">
                     <div>
-                      <strong className="text-[#C5221F]">Emergency Red Flags: </strong>
-                      <span className="text-[#C5221F]">
-                        {selectedProcedure.postOpCare.redFlags.join("; ")}
-                      </span>
+                      <span className="font-bold text-zinc-950 dark:text-zinc-100 print:text-black block">Supervising Consultant:</span>
+                      <span className="text-[11px] text-zinc-600 dark:text-zinc-400 print:text-zinc-700">(Signature &amp; Official Seal)</span>
+                    </div>
+                    <div className="text-[11px] text-zinc-800 dark:text-zinc-200 print:text-black mt-4">
+                      <div><strong>{supervisingConsultant}</strong></div>
+                      <div>Dept of Interventional Radiology, SMS Hospital, Jaipur</div>
                     </div>
                   </div>
                 </div>
@@ -1293,57 +1232,175 @@ export default function OperativeNotesPage() {
             </div>
           )}
 
-          {/* TAB 4: LINKED RISK CALCULATOR */}
-          {activeTab === "CALCULATOR" && linkedCalculator && (
-            <div className="bg-white border border-[#DADCE0] rounded-2xl p-6 shadow-xs space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#F1F3F4]">
+          {/* TAB 2: OPERATIVE SUMMARY (Executive Synopsis for Rounds & WhatsApp) */}
+          {activeTab === "SUMMARY" && (
+            <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-5 sm:p-7 shadow-xs space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <Calculator className="w-5 h-5 text-[#1A73E8]" />
-                  <div>
-                    <h3 className="text-sm font-bold text-[#202124]">
-                      {linkedCalculator.name}
-                    </h3>
-                    <p className="text-xs text-[#5F6368]">{linkedCalculator.system} • {linkedCalculator.guidelineAuthority}</p>
-                  </div>
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
+                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                    Executive Operative Summary (Clinical Handoff &amp; Rounds)
+                  </span>
                 </div>
-                <span className="px-2.5 py-1 bg-[#E8F0FE] text-[#1A73E8] rounded-full text-xs font-semibold">
-                  {linkedCalculator.shortName}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCopySummary}
+                    className="px-3 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded-lg hover:bg-blue-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-blue-200 dark:border-blue-800"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy Summary</span>
+                  </button>
+                  <button
+                    onClick={() => handleShare(operativeSummaryText, `Operative Summary - ${patientName}`)}
+                    className="px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold rounded-lg hover:bg-emerald-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-emerald-200 dark:border-emerald-800"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span>WhatsApp</span>
+                  </button>
+                  <button
+                    onClick={handlePrint}
+                    className="px-3 py-1 bg-zinc-800 text-white text-xs font-semibold rounded-lg hover:bg-zinc-900 flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Print</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="p-4 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-2 text-xs">
-                <div className="font-bold text-[#202124]">Formula & Mathematical Model:</div>
-                <code className="block p-2.5 bg-white rounded border border-[#DADCE0] font-mono text-[11px] text-[#1A73E8]">
-                  {linkedCalculator.formulaDescription}
-                </code>
-                <p className="text-[#5F6368] text-xs leading-relaxed pt-1">
-                  {linkedCalculator.summary}
+              {/* Summary Card */}
+              <div className="p-4 bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-50">{selectedProcedure.title}</h3>
+                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 text-[10px] font-bold rounded-full">
+                    100% Technical Success
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 dark:text-zinc-300">
+                  Patient: <strong>{patientName}</strong> ({age} Y / {gender}) • CR: <strong>{crNumber}</strong> • Bed: {ipdBed}
+                </p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-300">
+                  Operators: {primaryOperator} | Consultant: {supervisingConsultant}
                 </p>
               </div>
 
-              <div className="p-4 bg-[#E8F0FE] border border-[#D2E3FC] rounded-xl text-xs flex items-center justify-between">
-                <div>
-                  <div className="font-bold text-[#1A73E8]">Interactive Runner Available</div>
-                  <div className="text-[11px] text-[#5F6368]">
-                    Launch the dedicated calculator suite to run real-time patient lab values and calculate procedural risk scores.
-                  </div>
-                </div>
-                <a
-                  href={`/dashboard/calculators?calc=${linkedCalculator.id}`}
-                  className="px-3 py-1.5 bg-[#1A73E8] text-white rounded-lg font-medium hover:bg-[#1557B0] transition-colors flex items-center gap-1"
-                >
-                  <span>Open Calculator</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+              {/* Raw Formatted Text Area for Quick Inspection & Copy */}
+              <div>
+                <span className="text-[10px] font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider block mb-1">
+                  Formatted Text Preview (WhatsApp &amp; Rounds Ready):
+                </span>
+                <pre className="p-3 bg-zinc-900 text-zinc-100 rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-56 overflow-y-auto select-all">
+                  {operativeSummaryText}
+                </pre>
               </div>
+            </div>
+          )}
+
+          {/* TAB 3: BILINGUAL CONSENT */}
+          {activeTab === "CONSENT" && consentTemplate && (
+            <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-5 sm:p-7 shadow-xs space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-100">{consentTemplate.nameEn}</h3>
+                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-0.5">{consentTemplate.nameHi}</p>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-[10px] font-bold border border-blue-200 dark:border-blue-800">
+                  NMC &amp; Supreme Court Standard
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                  <div className="font-bold text-zinc-900 dark:text-zinc-100 mb-1">Clinical Indication (English):</div>
+                  <p className="text-zinc-700 dark:text-zinc-300">{consentTemplate.indicationEn}</p>
+                </div>
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                  <div className="font-bold text-zinc-900 dark:text-zinc-100 mb-1">रोग व कारण (हिंदी):</div>
+                  <p className="text-zinc-700 dark:text-zinc-300">{consentTemplate.indicationHi}</p>
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs space-y-1">
+                <div className="font-bold text-emerald-800 dark:text-emerald-300">Expected Clinical Benefits (प्रत्याशित लाभ):</div>
+                <ul className="list-disc pl-4 space-y-0.5 text-emerald-850 dark:text-emerald-200">
+                  {consentTemplate.benefitsEn.map((b, i) => (
+                    <li key={i}>{b}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-3.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-xs space-y-1">
+                <div className="font-bold text-red-800 dark:text-red-300">Specific Risks &amp; Complications (जोखिम):</div>
+                <ul className="list-disc pl-4 space-y-0.5 text-red-850 dark:text-red-200">
+                  {consentTemplate.specificRisksEn.map((r, i) => (
+                    <li key={i}>{r}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: CLINICAL PROTOCOL, HARDWARE & POST-OP ORDERS */}
+          {activeTab === "PROTOCOL" && (
+            <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-5 sm:p-7 shadow-xs space-y-4">
+              <div className="pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-100">
+                  Clinical Hardware Requisition &amp; Nursing Post-Op Plan
+                </h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Standardized equipment list and monitoring protocol for {selectedProcedure.title}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-1.5">
+                  <div className="font-bold text-zinc-950 dark:text-zinc-100">Vascular Access &amp; Sheath</div>
+                  <div><span className="text-zinc-500">Access Site: </span><span className="font-medium">{selectedProcedure.accessSiteDefault}</span></div>
+                  <div><span className="text-zinc-500">Sheath: </span><span className="font-medium">{selectedProcedure.sheathDefault}</span></div>
+                  <div><span className="text-zinc-500">Sedation: </span><span className="font-medium">{selectedProcedure.sedation}</span></div>
+                </div>
+
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-1.5">
+                  <div className="font-bold text-zinc-950 dark:text-zinc-100">Catheters &amp; Embolic Hardware</div>
+                  <div><span className="text-zinc-500">Catheters/Wires: </span><span className="font-medium">{selectedProcedure.cathetersAndWires}</span></div>
+                  {selectedProcedure.microcatheterSystem && (
+                    <div><span className="text-zinc-500">Microcatheter: </span><span className="font-medium text-blue-600">{selectedProcedure.microcatheterSystem}</span></div>
+                  )}
+                  {selectedProcedure.embolicOrImplants && (
+                    <div><span className="text-zinc-500">Implants/Embolics: </span><span className="font-medium text-emerald-600">{selectedProcedure.embolicOrImplants}</span></div>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs space-y-2">
+                <div className="font-bold text-zinc-950 dark:text-zinc-100 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Mandatory Ward Post-Operative Orders</span>
+                </div>
+                <ul className="list-disc pl-4 space-y-1 text-zinc-700 dark:text-zinc-300">
+                  <li><strong>Immobilization:</strong> Strict flat bed rest for {selectedProcedure.postOpCare.immobilizationHours} hours. {selectedProcedure.postOpCare.immobilizationInstructions}</li>
+                  <li><strong>Hematoma Surveillance:</strong> {selectedProcedure.postOpCare.hematomaChecks}</li>
+                  <li><strong>Hydration:</strong> {selectedProcedure.postOpCare.hydrationProtocol}</li>
+                  <li><strong>Medications Kit:</strong> {selectedProcedure.postOpCare.medications.join(", ")}</li>
+                  <li className="text-red-700 dark:text-red-400 font-semibold"><strong>Emergency Red Flags:</strong> {selectedProcedure.postOpCare.redFlags.join("; ")}</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: LINKED RISK SCORE CALCULATOR */}
+          {activeTab === "CALCULATOR" && linkedCalculator && (
+            <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-5 sm:p-7 shadow-xs space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <Calculator className="w-4 h-4 text-blue-600" />
+                  <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-100">{linkedCalculator.name}</h3>
+                </div>
+                <span className="text-[11px] font-semibold text-blue-600">{linkedCalculator.guidelineAuthority}</span>
+              </div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">{linkedCalculator.summary}</p>
             </div>
           )}
         </div>
-      </div>
-
-      {/* Light subtle footer attribution */}
-      <div className="text-center py-4 text-xs text-zinc-400 print:hidden select-none">
-        Made by Dr. Neel Yadav
       </div>
     </div>
   );

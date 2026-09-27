@@ -258,3 +258,63 @@ Attending Primary Operator: ${operator}
 Supervising Consultant   : ${supervising}
 ${divider}`;
 }
+
+export function buildOperativeSummary(
+  procedure: MasterProcedure,
+  options: OperativeNoteOptions
+): string {
+  const supervising =
+    options.supervisingConsultant ||
+    'Dr. Meenu Bagarhatta (Sr. Prof & Head) / Dr. Shashank Sharma (Prof)';
+  const operator = options.primaryOperator || 'Dr. Naresh Mangalhara (Associate Professor)';
+  const suite =
+    options.suite ||
+    (procedure.modality === 'CT'
+      ? 'CT Suite'
+      : procedure.modality === 'US'
+      ? 'Ultrasound Review Room'
+      : procedure.modality === 'MRI'
+      ? 'Interventional MRI Suite'
+      : 'Cath Lab (Philips Azurion)');
+
+  const hardware = [
+    procedure.sheathDefault ? `Sheath: ${procedure.sheathDefault}` : '',
+    procedure.cathetersAndWires ? `Catheters/Wires: ${procedure.cathetersAndWires}` : '',
+    procedure.microcatheterSystem ? `Microcatheter: ${procedure.microcatheterSystem}` : '',
+    procedure.embolicOrImplants ? `Implants/Embolics: ${procedure.embolicOrImplants}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n• ');
+
+  const postOpBrief = [
+    `Immobilization: ${procedure.postOpCare.immobilizationHours}h (${procedure.postOpCare.immobilizationInstructions})`,
+    `Access Site Checks: ${procedure.postOpCare.hematomaChecks}`,
+    `Hydration: ${procedure.postOpCare.hydrationProtocol}`,
+    `Critical Red Flags: ${procedure.postOpCare.redFlags.slice(0, 3).join(', ')}`,
+  ].join('\n• ');
+
+  return `══════════════════════════════════════════════════════════════════════
+SMS HOSPITAL JAIPUR • INTERVENTIONAL RADIOLOGY EXECUTIVE OPERATIVE SUMMARY
+══════════════════════════════════════════════════════════════════════
+PATIENT: ${options.patientName} | ${options.age} Y / ${options.gender} | CR: ${options.crNumber} | Bed: ${options.ipdBed}
+DATE: ${options.dateOfProcedure} | SUITE: ${suite}
+OPERATORS: ${operator} (Operator) | ${supervising} (Consultant)
+
+PROCEDURE PERFORMED:
+${procedure.title}
+Package: ${procedure.maayRghsCompatibility.packageName} (${procedure.maayRghsCompatibility.packageCode}) | ICD-10: ${procedure.maayRghsCompatibility.icd10}
+
+TECHNICAL SUMMARY & FINDINGS:
+• Modality / Guidance: ${procedure.modality}-Guided Intervention
+• Access Site: ${procedure.accessSiteDefault || 'Percutaneous / Endovascular'}
+• Anesthesia: ${procedure.sedation || 'Local Anesthesia + Monitored Care'}
+• Technical Outcome: Complete Technical Success (Target Vessel Occlusion / Decompression / Cannulation)
+• Complications: Nil immediate intraprocedural complications
+${options.customFindings ? `• Key Findings: ${options.customFindings}\n` : ''}
+HARDWARE & IMPLANTS UTILIZED:
+• ${hardware || 'Standard diagnostic & therapeutic hardware kit deployed.'}
+
+POST-PROCEDURAL WARD HANDOFF & ORDERS:
+• ${postOpBrief}
+══════════════════════════════════════════════════════════════════════`;
+}

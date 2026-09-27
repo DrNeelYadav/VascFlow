@@ -37,9 +37,21 @@ import {
   Check,
   BarChart3,
   PieChart,
+  FileSignature,
+  Share2,
+  Copy,
+  Printer,
+  ClipboardList,
 } from "lucide-react";
 import CathLabMastersPage from "../cath-lab-masters/page";
 import DepartmentalCensusPage from "../census/page";
+import { useEndoflowStore } from "../useEndoflowStore";
+import {
+  generateCaseOperativeSummary,
+  generateCaseOperativeNote,
+  generateCaseDischargeSummary,
+  shareClinicalText,
+} from "./logbookDossierHelpers";
 
 export const WARD_FILTER_OPTIONS = [
   { label: "All Wards / Units", value: "ALL" },
@@ -174,6 +186,7 @@ export const STANDARD_HARDWARE_KITS: ProceduralKit[] = [
 ];
 
 export default function CathLabMasterLogbookPage() {
+  const storePatients = useEndoflowStore((s) => s.patients);
   const [activeModuleTab, setActiveModuleTab] = useState<"logbook" | "analytics" | "census">("logbook");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [schemeFilter, setSchemeFilter] = useState<string>("ALL");
@@ -183,6 +196,9 @@ export default function CathLabMasterLogbookPage() {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [selectedCase, setSelectedCase] = useState<RealSmsPatientCase | null>(null);
   const [activeProtocolModal, setActiveProtocolModal] = useState<boolean>(false);
+  const [dossierTab, setDossierTab] = useState<"SUMMARY" | "NOTE" | "DISCHARGE" | "SURVEILLANCE" | "KIT">("SUMMARY");
+  const [batchShareModalOpen, setBatchShareModalOpen] = useState<boolean>(false);
+  const [dossierFeedback, setDossierFeedback] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(25);
 
@@ -191,9 +207,28 @@ export default function CathLabMasterLogbookPage() {
   const [kitDisposition, setKitDisposition] = useState<"IMPLANTED_BILLED" | "WASTED_CONTAMINATED">("IMPLANTED_BILLED");
   const [kitFeedback, setKitFeedback] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
+  // Combined Registry: Real Cath-Lab Registry + Live Registered Store Patients
+  const combinedRegistry = useMemo(() => {
+    const storeCases: RealSmsPatientCase[] = storePatients.map((p) => ({
+      dsaNo: `ST-${p.id}`,
+      patientName: p.name,
+      date: p.time ? new Date().toLocaleDateString("en-IN").replace(/\//g, ".") : "Today",
+      age: p.age,
+      gender: p.sex === "Female" ? "Female" : "Male",
+      unit: p.unit || p.ipd.ward,
+      crNumber: p.hid,
+      schemeType: (p.scheme === "RGHS" ? "RGHS" : "MAAY") as any,
+      procedureName: p.procedure,
+      diagnosis: p.summary || p.chiefComplaints || "Under Evaluation",
+      radiationDose: "Low-dose",
+    }));
+
+    return [...storeCases, ...REAL_SMS_PATIENT_REGISTRY];
+  }, [storePatients]);
+
   // Filtered Registry
   const filteredData = useMemo(() => {
-    return REAL_SMS_PATIENT_REGISTRY.filter((c) => {
+    return combinedRegistry.filter((c) => {
       if (schemeFilter !== "ALL" && c.schemeType !== schemeFilter) return false;
       if (genderFilter !== "ALL" && c.gender !== genderFilter) return false;
       if (!matchWardFilter(c.unit, wardFilter)) return false;
@@ -211,7 +246,7 @@ export default function CathLabMasterLogbookPage() {
         c.unit.toLowerCase().includes(q)
       );
     });
-  }, [searchQuery, schemeFilter, genderFilter, wardFilter, modalityFilter]);
+  }, [combinedRegistry, searchQuery, schemeFilter, genderFilter, wardFilter, modalityFilter]);
 
   // Chronologically Sorted Registry
   const sortedData = useMemo(() => {
@@ -423,6 +458,78 @@ export default function CathLabMasterLogbookPage() {
     }
   };
 
+  // Dossier & Batch Sharing Handlers
+  const handleCopyDossierText = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setDossierFeedback(`Copied ${label} to clipboard!`);
+      setTimeout(() => setDossierFeedback(null), 3500);
+    } catch {
+      setDossierFeedback("Error copying to clipboard");
+      setTimeout(() => setDossierFeedback(null), 3000);
+    }
+  };
+
+  const handleShareDossier = async (c: RealSmsPatientCase, tab: string) => {
+    let title = "";
+    let content = "";
+    if (tab === "SUMMARY") {
+      title = `Operative Summary - ${c.patientName}`;
+      content = generateCaseOperativeSummary(c);
+    } else if (tab === "NOTE") {
+      title = `Operative Note - ${c.patientName}`;
+      content = generateCaseOperativeNote(c);
+    } else {
+      title = `Discharge Summary - ${c.patientName}`;
+      content = generateCaseDischargeSummary(c);
+    }
+
+    const shared = await shareClinicalText(title, content);
+    if (shared) {
+      setDossierFeedback("Opened Clinical Share!");
+      setTimeout(() => setDossierFeedback(null), 3000);
+    }
+  };
+
+  const handleCopyAllSummaries = async () => {
+    const divider = "═".repeat(60);
+    const count = Math.min(sortedData.length, 50);
+    const batchText = sortedData.slice(0, count).map((c, i) => {
+      return `CASE #${i + 1} • DSA #${c.dsaNo} • ${c.patientName} (${c.crNumber})\n${generateCaseOperativeSummary(c)}`;
+    }).join(`\n\n${divider}\n\n`);
+
+    await navigator.clipboard.writeText(batchText);
+    setDossierFeedback(`Copied ${count} Operative Summaries to clipboard!`);
+    setTimeout(() => setDossierFeedback(null), 3500);
+  };
+
+  const handleCopyAllDischarges = async () => {
+    const divider = "═".repeat(60);
+    const count = Math.min(sortedData.length, 50);
+    const batchText = sortedData.slice(0, count).map((c, i) => {
+      return `CASE #${i + 1} • DSA #${c.dsaNo} • ${c.patientName} (${c.crNumber})\n${generateCaseDischargeSummary(c)}`;
+    }).join(`\n\n${divider}\n\n`);
+
+    await navigator.clipboard.writeText(batchText);
+    setDossierFeedback(`Copied ${count} Discharge Summaries to clipboard!`);
+    setTimeout(() => setDossierFeedback(null), 3500);
+  };
+
+  const handleDownloadDossierFile = () => {
+    const divider = "═".repeat(70);
+    const textContent = sortedData.map((c, i) => {
+      return `CASE RECORD #${i + 1}\n${divider}\n[1] OPERATIVE SUMMARY:\n${generateCaseOperativeSummary(c)}\n\n[2] DISCHARGE SUMMARY:\n${generateCaseDischargeSummary(c)}\n\n${divider}\n`;
+    }).join("\n\n");
+
+    const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `SMS_IR_CathLab_Dossier_${new Date().toISOString().split("T")[0]}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6 max-w-[1700px] mx-auto pb-16">
       {/* Header Banner */}
@@ -523,6 +630,15 @@ export default function CathLabMasterLogbookPage() {
                 Oldest First
               </button>
             </div>
+
+            <button
+              onClick={() => setBatchShareModalOpen(true)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer shadow-xs"
+              title="Pull & share operative notes and discharge summaries for all filtered cases"
+            >
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <span>Pull &amp; Share All Notes ({sortedData.length})</span>
+            </button>
 
             <button
               onClick={handleExportCsv}
@@ -921,17 +1037,42 @@ export default function CathLabMasterLogbookPage() {
                       <span className="truncate">{c.unit}</span>
                     </span>
 
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[10px] text-[#5F6368]">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-[10px] text-[#5F6368] hidden xs:inline">
                         {c.radiationDose}
                       </span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedCase(c);
+                          setDossierTab("SUMMARY");
                           setActiveProtocolModal(true);
                         }}
-                        className="px-2 py-1 text-xs font-medium rounded bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] transition-colors cursor-pointer"
+                        className="px-2 py-0.5 text-xs font-semibold rounded bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <FileSignature className="w-3 h-3" />
+                        <span>Notes</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCase(c);
+                          setDossierTab("DISCHARGE");
+                          setActiveProtocolModal(true);
+                        }}
+                        className="px-2 py-0.5 text-xs font-semibold rounded bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 transition-colors cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <FileText className="w-3 h-3" />
+                        <span>Discharge</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCase(c);
+                          setDossierTab("SURVEILLANCE");
+                          setActiveProtocolModal(true);
+                        }}
+                        className="px-1.5 py-0.5 text-xs font-medium rounded bg-[#F1F3F4] text-[#3C4043] hover:bg-[#E8EAED] transition-colors cursor-pointer"
                       >
                         Surveillance
                       </button>
@@ -942,7 +1083,7 @@ export default function CathLabMasterLogbookPage() {
                           handleDepleteKit(STANDARD_HARDWARE_KITS[0], c);
                         }}
                         title={`Log Diagnostic Kit for DSA #${c.dsaNo}`}
-                        className="px-2 py-1 text-xs font-medium rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors cursor-pointer inline-flex items-center gap-1"
+                        className="px-1.5 py-0.5 text-xs font-medium rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors cursor-pointer inline-flex items-center gap-1"
                       >
                         <Package className="w-3 h-3" />
                         <span>+Kit</span>
@@ -1075,14 +1216,42 @@ export default function CathLabMasterLogbookPage() {
                           {c.radiationDose}
                         </td>
                         <td className="py-1.5 px-3 text-center whitespace-nowrap">
-                          <div className="inline-flex items-center gap-1.5">
+                          <div className="inline-flex items-center gap-1">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setSelectedCase(c);
+                                setDossierTab("SUMMARY");
                                 setActiveProtocolModal(true);
                               }}
-                              className="px-2 py-0.5 text-[11px] font-medium rounded bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] transition-colors cursor-pointer"
+                              title="View & Share Operative Note & Summary"
+                              className="px-2 py-0.5 text-[11px] font-semibold rounded bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer inline-flex items-center gap-1 shadow-2xs"
+                            >
+                              <FileSignature className="w-3 h-3" />
+                              <span>Notes</span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedCase(c);
+                                setDossierTab("DISCHARGE");
+                                setActiveProtocolModal(true);
+                              }}
+                              title="View & Share Discharge Summary"
+                              className="px-2 py-0.5 text-[11px] font-semibold rounded bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 transition-colors cursor-pointer inline-flex items-center gap-1 shadow-2xs"
+                            >
+                              <FileText className="w-3 h-3" />
+                              <span>Discharge</span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedCase(c);
+                                setDossierTab("SURVEILLANCE");
+                                setActiveProtocolModal(true);
+                              }}
+                              className="px-1.5 py-0.5 text-[11px] font-medium rounded bg-[#F1F3F4] text-[#3C4043] hover:bg-[#E8EAED] transition-colors cursor-pointer"
+                              title="SCAI Access Site Surveillance"
                             >
                               Surveillance
                             </button>
@@ -1182,91 +1351,483 @@ export default function CathLabMasterLogbookPage() {
         </div>
       )}
 
-      {/* Access Site Surveillance Protocol Modal */}
+      {/* Comprehensive Clinical Case Dossier & Sharing Modal */}
       {activeProtocolModal && selectedCase && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white border border-[#DADCE0] rounded-2xl w-full max-w-2xl shadow-xl p-6 relative max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-[#DADCE0]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white border border-[#DADCE0] rounded-2xl w-full max-w-4xl shadow-2xl p-5 sm:p-6 relative max-h-[92vh] overflow-y-auto flex flex-col gap-4">
+            {/* Header: Patient Identification & Quick Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#DADCE0]">
               <div>
-                <h3 className="text-base font-bold text-[#202124] flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-[#1A73E8]" />
-                  SCAI / CIRSE Access Site Surveillance &amp; Protocol
-                </h3>
-                <p className="text-xs text-[#5F6368] mt-0.5">
-                  Case: {selectedCase.patientName} (CR: {selectedCase.crNumber}) • DSA #{selectedCase.dsaNo}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-base sm:text-lg font-bold text-[#202124] flex items-center gap-2">
+                    <FileSignature className="w-5 h-5 text-[#1A73E8]" />
+                    <span>{selectedCase.patientName}</span>
+                  </h3>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-mono">
+                    CR: {selectedCase.crNumber}
+                  </span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono border border-blue-200">
+                    DSA #{selectedCase.dsaNo}
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      selectedCase.schemeType === "MAAY"
+                        ? "bg-[#E8F0FE] text-[#1A73E8] border-[#D2E3FC]"
+                        : selectedCase.schemeType === "RGHS"
+                        ? "bg-[#E6F4EA] text-[#137333] border-[#CEEAD6]"
+                        : "bg-[#FEF7E0] text-[#B06000] border-[#FEEFC3]"
+                    }`}
+                  >
+                    {selectedCase.schemeType}
+                  </span>
+                </div>
+                <p className="text-xs text-[#5F6368] mt-1 flex items-center gap-2 flex-wrap">
+                  <span>{selectedCase.age}y / {selectedCase.gender}</span>
+                  <span>•</span>
+                  <span>{selectedCase.unit}</span>
+                  <span>•</span>
+                  <span>Date: {selectedCase.date}</span>
                 </p>
               </div>
+
+              {/* Action Buttons: Share, Copy, Open in Studio, Close */}
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                <button
+                  type="button"
+                  onClick={() => handleShareDossier(selectedCase, dossierTab)}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                  title="Share formatted clinical report via WhatsApp or System"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span>Share / WhatsApp</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const text =
+                      dossierTab === "SUMMARY"
+                        ? generateCaseOperativeSummary(selectedCase)
+                        : dossierTab === "NOTE"
+                        ? generateCaseOperativeNote(selectedCase)
+                        : dossierTab === "DISCHARGE"
+                        ? generateCaseDischargeSummary(selectedCase)
+                        : `${selectedCase.patientName} (${selectedCase.crNumber}) - ${selectedCase.procedureName}`;
+                    handleCopyDossierText(text, dossierTab === "SUMMARY" ? "Operative Summary" : dossierTab === "NOTE" ? "Operative Note" : "Discharge Summary");
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copy</span>
+                </button>
+
+                {dossierTab === "DISCHARGE" ? (
+                  <Link
+                    href={`/dashboard/discharge`}
+                    className="px-3 py-1.5 rounded-xl bg-[#F8F9FA] hover:bg-[#F1F3F4] border border-[#DADCE0] text-[#3C4043] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+                    title="Open in Discharge Summary Studio"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Discharge Studio</span>
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/dashboard/operative-notes?patient=${encodeURIComponent(selectedCase.patientName)}&cr=${encodeURIComponent(selectedCase.crNumber)}&procedure=${encodeURIComponent(selectedCase.procedureName)}&age=${selectedCase.age}&gender=${selectedCase.gender}&bed=${encodeURIComponent(selectedCase.unit)}&tab=${dossierTab === "NOTE" ? "note" : "summary"}`}
+                    className="px-3 py-1.5 rounded-xl bg-[#F8F9FA] hover:bg-[#F1F3F4] border border-[#DADCE0] text-[#3C4043] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+                    title="Edit in Operative Notes Studio"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Notes Studio</span>
+                  </Link>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setActiveProtocolModal(false)}
+                  className="p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] hover:text-[#202124] transition-colors cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Toast Feedback */}
+            {dossierFeedback && (
+              <div className="px-3 py-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium rounded-xl flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{dossierFeedback}</span>
+              </div>
+            )}
+
+            {/* Dossier Navigation Tabs */}
+            <div className="flex items-center gap-1 bg-[#F1F3F4] p-1 rounded-xl overflow-x-auto text-xs font-semibold">
               <button
+                type="button"
+                onClick={() => setDossierTab("SUMMARY")}
+                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
+                  dossierTab === "SUMMARY"
+                    ? "bg-white text-[#1A73E8] shadow-xs"
+                    : "text-[#5F6368] hover:text-[#202124]"
+                }`}
+              >
+                <ClipboardList className="w-3.5 h-3.5" />
+                <span>Operative Summary</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDossierTab("NOTE")}
+                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
+                  dossierTab === "NOTE"
+                    ? "bg-white text-[#1A73E8] shadow-xs"
+                    : "text-[#5F6368] hover:text-[#202124]"
+                }`}
+              >
+                <FileSignature className="w-3.5 h-3.5" />
+                <span>Full Operative Note</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDossierTab("DISCHARGE")}
+                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
+                  dossierTab === "DISCHARGE"
+                    ? "bg-white text-[#1A73E8] shadow-xs"
+                    : "text-[#5F6368] hover:text-[#202124]"
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Discharge Summary (IHMS)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDossierTab("SURVEILLANCE")}
+                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
+                  dossierTab === "SURVEILLANCE"
+                    ? "bg-white text-[#1A73E8] shadow-xs"
+                    : "text-[#5F6368] hover:text-[#202124]"
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Access Site Protocol</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDossierTab("KIT")}
+                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
+                  dossierTab === "KIT"
+                    ? "bg-white text-[#1A73E8] shadow-xs"
+                    : "text-[#5F6368] hover:text-[#202124]"
+                }`}
+              >
+                <Package className="w-3.5 h-3.5" />
+                <span>Hardware Kit</span>
+              </button>
+            </div>
+
+            {/* TAB CONTENT: OPERATIVE SUMMARY */}
+            {dossierTab === "SUMMARY" && (
+              <div className="space-y-3">
+                <div className="bg-blue-50/60 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 block">
+                      Executive Surgical Synopsis
+                    </span>
+                    <strong className="text-sm text-zinc-950">{selectedCase.procedureName}</strong>
+                    <p className="text-[11px] text-zinc-600 mt-0.5">Indication / Diagnosis: {selectedCase.diagnosis}</p>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shrink-0">
+                    100% Technical Success
+                  </span>
+                </div>
+
+                <pre className="p-3.5 bg-zinc-900 text-zinc-100 rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-[380px] overflow-y-auto select-all">
+                  {generateCaseOperativeSummary(selectedCase)}
+                </pre>
+              </div>
+            )}
+
+            {/* TAB CONTENT: FULL OPERATIVE NOTE */}
+            {dossierTab === "NOTE" && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-zinc-700">
+                    Institutional Operative Report (SMS Hospital Letterhead)
+                  </span>
+                  <button
+                    onClick={() => handleCopyDossierText(generateCaseOperativeNote(selectedCase), "Full Operative Note")}
+                    className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Copy className="w-3 h-3" /> Copy Note
+                  </button>
+                </div>
+                <pre className="p-4 bg-zinc-900 text-zinc-100 rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-[400px] overflow-y-auto select-all">
+                  {generateCaseOperativeNote(selectedCase)}
+                </pre>
+              </div>
+            )}
+
+            {/* TAB CONTENT: DISCHARGE SUMMARY */}
+            {dossierTab === "DISCHARGE" && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-purple-900 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Rajasthan IHMS Inpatient Discharge Card (RMSCL EDL Medications Included)</span>
+                  </span>
+                  <button
+                    onClick={() => handleCopyDossierText(generateCaseDischargeSummary(selectedCase), "Discharge Summary")}
+                    className="text-xs font-semibold text-purple-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Copy className="w-3 h-3" /> Copy Discharge Summary
+                  </button>
+                </div>
+                <pre className="p-4 bg-zinc-900 text-zinc-100 rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-[400px] overflow-y-auto select-all">
+                  {generateCaseDischargeSummary(selectedCase)}
+                </pre>
+              </div>
+            )}
+
+            {/* TAB CONTENT: SCAI SURVEILLANCE */}
+            {dossierTab === "SURVEILLANCE" && (
+              <div className="space-y-4 text-xs text-[#3C4043]">
+                <div className="bg-[#F8F9FA] p-3.5 rounded-xl border border-[#DADCE0]/80 space-y-2">
+                  <div className="font-bold text-[#202124] flex items-center gap-1.5">
+                    <Stethoscope className="w-4 h-4 text-[#1A73E8]" />
+                    Procedure Performed
+                  </div>
+                  <div className="text-sm font-semibold text-[#1A73E8]">{selectedCase.procedureName}</div>
+                  <div className="text-[#5F6368]">Diagnosis: {selectedCase.diagnosis}</div>
+                </div>
+
+                <div className="border border-[#DADCE0] rounded-xl p-4 space-y-3">
+                  <div className="font-bold text-[#202124] flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#137333]" />
+                    SCAI Recommended Vascular Access Management
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3 bg-[#E8F0FE]/40 rounded-lg border border-[#D2E3FC]">
+                      <div className="font-semibold text-[#1A73E8]">Arterial Femoral Access</div>
+                      <ul className="list-disc list-inside mt-1.5 space-y-1 text-[#3C4043]">
+                        <li>Manual pressure: 6h flat supine bedrest</li>
+                        <li>Vascular Closure (Angio-Seal/Perclose): 2h bedrest</li>
+                        <li>Pulse check: Dorsalis pedis &amp; posterior tibial q15m x 4</li>
+                      </ul>
+                    </div>
+
+                    <div className="p-3 bg-[#E6F4EA]/40 rounded-lg border border-[#CEEAD6]">
+                      <div className="font-semibold text-[#137333]">Venous Femoral Access</div>
+                      <ul className="list-disc list-inside mt-1.5 space-y-1 text-[#3C4043]">
+                        <li>Figure-of-8 suture or manual compression: 2-4h bedrest</li>
+                        <li>Observe for retroperitoneal / groin hematoma</li>
+                        <li>Keep puncture limb straight</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-[#FEF7E0]/50 rounded-lg border border-[#FEEFC3] space-y-1">
+                    <div className="font-semibold text-[#B06000] flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-[#B06000]" />
+                      Critical Nursing Red Flags
+                    </div>
+                    <p className="text-[#5F6368]">
+                      Immediate surgical/IR notification required for: sudden severe groin or flank pain, pulsatile expanding mass, loss of pedal pulses, or drop in systolic BP &gt; 20 mmHg.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-[#DADCE0] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#5F6368]">
+                  <div>
+                    <span className="font-semibold text-[#202124]">Supervising Faculty:</span> Dr. Meenu Bagarhatta (Sr. Prof &amp; Head) / Dr. Naresh Mangalhara
+                  </div>
+                  <div>
+                    <span className="font-semibold text-[#202124]">Operating Faculty:</span> Dr. Shashank Sharma (Professor) / Dr. Alok Verma
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: HARDWARE KIT DEPLETION */}
+            {dossierTab === "KIT" && (
+              <div className="space-y-3">
+                <div className="text-xs text-[#5F6368]">
+                  Select a standardized hardware kit to log consumption against <strong>DSA #{selectedCase.dsaNo}</strong>:
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {STANDARD_HARDWARE_KITS.map((kit) => (
+                    <div key={kit.id} className="p-3 bg-[#F8F9FA] border border-[#DADCE0] rounded-xl flex flex-col justify-between gap-2 text-xs">
+                      <div>
+                        <div className="flex items-center justify-between font-bold text-zinc-900">
+                          <span>{kit.name}</span>
+                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-50 text-blue-700">{kit.badge}</span>
+                        </div>
+                        <p className="text-[11px] text-zinc-600 mt-1">{kit.description}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDepleteKit(kit, selectedCase)}
+                        disabled={isDepletingKit === kit.id}
+                        className="w-full py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        <Package className="w-3.5 h-3.5" />
+                        <span>Log as Implanted</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Modal Footer */}
+            <div className="pt-3 border-t border-[#DADCE0] flex items-center justify-between">
+              <div className="text-[11px] text-[#5F6368]">
+                SMS Angiosuite IR Registry • e-Hospital &amp; RGHS/MAAY Compliant
+              </div>
+              <button
+                type="button"
                 onClick={() => setActiveProtocolModal(false)}
+                className="px-4 py-2 bg-[#1A73E8] text-white rounded-xl text-xs font-semibold hover:bg-[#1557B0] transition-colors cursor-pointer"
+              >
+                Close Dossier
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Batch Pull & Share All Operative Notes Modal */}
+      {batchShareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white border border-[#DADCE0] rounded-2xl w-full max-w-3xl shadow-2xl p-5 sm:p-6 relative max-h-[92vh] overflow-y-auto flex flex-col gap-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#DADCE0]">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-blue-600" />
+                <div>
+                  <h3 className="text-base font-bold text-zinc-950">
+                    Pull &amp; Share All Operative Notes &amp; Summaries
+                  </h3>
+                  <p className="text-xs text-zinc-500">
+                    Compiled dossier for {sortedData.length} records matching current filter
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBatchShareModalOpen(false)}
                 className="p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] hover:text-[#202124] transition-colors cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="mt-4 space-y-4 text-xs text-[#3C4043]">
-              <div className="bg-[#F8F9FA] p-3.5 rounded-xl border border-[#DADCE0]/80 space-y-2">
-                <div className="font-bold text-[#202124] flex items-center gap-1.5">
-                  <Stethoscope className="w-4 h-4 text-[#1A73E8]" />
-                  Procedure Performed
+            {/* Quick Batch Actions */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <button
+                type="button"
+                onClick={handleCopyAllSummaries}
+                className="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl text-left transition-colors cursor-pointer flex flex-col justify-between"
+              >
+                <div className="flex items-center gap-1.5 font-bold text-xs text-blue-800">
+                  <ClipboardList className="w-4 h-4" />
+                  <span>Copy All Summaries</span>
                 </div>
-                <div className="text-sm font-semibold text-[#1A73E8]">{selectedCase.procedureName}</div>
-                <div className="text-[#5F6368]">Diagnosis: {selectedCase.diagnosis}</div>
+                <p className="text-[11px] text-blue-700 mt-1">
+                  Concatenates top 50 operative summaries for WhatsApp &amp; morning rounds
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleCopyAllDischarges}
+                className="p-3 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl text-left transition-colors cursor-pointer flex flex-col justify-between"
+              >
+                <div className="flex items-center gap-1.5 font-bold text-xs text-purple-800">
+                  <FileText className="w-4 h-4" />
+                  <span>Copy All Discharges</span>
+                </div>
+                <p className="text-[11px] text-purple-700 mt-1">
+                  Concatenates official IHMS discharge summaries
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDownloadDossierFile}
+                className="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-left transition-colors cursor-pointer flex flex-col justify-between"
+              >
+                <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-800">
+                  <Download className="w-4 h-4" />
+                  <span>Download Text Dossier</span>
+                </div>
+                <p className="text-[11px] text-emerald-700 mt-1">
+                  Exports all {sortedData.length} operative reports as a consolidated file
+                </p>
+              </button>
+            </div>
+
+            {/* Feedback notification */}
+            {dossierFeedback && (
+              <div className="px-3 py-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium rounded-xl flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{dossierFeedback}</span>
               </div>
+            )}
 
-              {/* Standard SCAI Protocol Card */}
-              <div className="border border-[#DADCE0] rounded-xl p-4 space-y-3">
-                <div className="font-bold text-[#202124] flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#137333]" />
-                  SCAI Recommended Vascular Access Management
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 bg-[#E8F0FE]/40 rounded-lg border border-[#D2E3FC]">
-                    <div className="font-semibold text-[#1A73E8]">Arterial Femoral Access</div>
-                    <ul className="list-disc list-inside mt-1.5 space-y-1 text-[#3C4043]">
-                      <li>Manual pressure: 6h flat supine bedrest</li>
-                      <li>Vascular Closure (Angio-Seal/Perclose): 2h bedrest</li>
-                      <li>Pulse check: Dorsalis pedis &amp; posterior tibial q15m x 4</li>
-                    </ul>
+            {/* Preview of pulled cases */}
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-zinc-700 block">
+                Preview of Pulled Cases ({Math.min(sortedData.length, 10)} of {sortedData.length})
+              </span>
+              <div className="divide-y divide-zinc-200 border border-zinc-200 rounded-xl max-h-[320px] overflow-y-auto">
+                {sortedData.slice(0, 10).map((c, i) => (
+                  <div key={i} className="p-3 hover:bg-zinc-50 flex items-center justify-between text-xs gap-3">
+                    <div>
+                      <div className="font-semibold text-zinc-900">
+                        #{c.dsaNo} • {c.patientName} ({c.age}y/{c.gender})
+                      </div>
+                      <div className="text-[11px] text-zinc-500">
+                        {c.procedureName} • {c.unit} ({c.date})
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCase(c);
+                          setDossierTab("SUMMARY");
+                          setActiveProtocolModal(true);
+                          setBatchShareModalOpen(false);
+                        }}
+                        className="px-2 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-semibold transition-colors cursor-pointer"
+                      >
+                        Summary
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCase(c);
+                          setDossierTab("DISCHARGE");
+                          setActiveProtocolModal(true);
+                          setBatchShareModalOpen(false);
+                        }}
+                        className="px-2 py-1 rounded bg-purple-50 text-purple-700 hover:bg-purple-100 text-[11px] font-semibold transition-colors cursor-pointer"
+                      >
+                        Discharge
+                      </button>
+                    </div>
                   </div>
-
-                  <div className="p-3 bg-[#E6F4EA]/40 rounded-lg border border-[#CEEAD6]">
-                    <div className="font-semibold text-[#137333]">Venous Femoral Access</div>
-                    <ul className="list-disc list-inside mt-1.5 space-y-1 text-[#3C4043]">
-                      <li>Figure-of-8 suture or manual compression: 2-4h bedrest</li>
-                      <li>Observe for retroperitoneal / groin hematoma</li>
-                      <li>Keep puncture limb straight</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-[#FEF7E0]/50 rounded-lg border border-[#FEEFC3] space-y-1">
-                  <div className="font-semibold text-[#B06000] flex items-center gap-1.5">
-                    <AlertCircle className="w-4 h-4 text-[#B06000]" />
-                    Critical Nursing Red Flags
-                  </div>
-                  <p className="text-[#5F6368]">
-                    Immediate surgical/IR notification required for: sudden severe groin or flank pain, pulsatile expanding mass, loss of pedal pulses, or drop in systolic BP &gt; 20 mmHg.
-                  </p>
-                </div>
-              </div>
-
-              {/* Institutional Sign-off Block */}
-              <div className="pt-3 border-t border-[#DADCE0] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#5F6368]">
-                <div>
-                  <span className="font-semibold text-[#202124]">Supervising Faculty:</span> Dr. Meenu Bagarhatta (Sr. Prof &amp; Head) / Dr. Naresh Mangalhara
-                </div>
-                <div>
-                  <span className="font-semibold text-[#202124]">Operating Faculty:</span> Dr. Shashank Sharma (Professor) / Dr. Alok Verma
-                </div>
+                ))}
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end">
+            <div className="pt-3 border-t border-[#DADCE0] flex justify-end">
               <button
-                onClick={() => setActiveProtocolModal(false)}
-                className="px-4 py-2 bg-[#1A73E8] text-white rounded-lg text-xs font-medium hover:bg-[#1557B0] transition-colors cursor-pointer"
+                type="button"
+                onClick={() => setBatchShareModalOpen(false)}
+                className="px-4 py-2 bg-zinc-800 text-white rounded-xl text-xs font-semibold hover:bg-zinc-900 transition-colors cursor-pointer"
               >
                 Done
               </button>

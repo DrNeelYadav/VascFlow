@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   ALL_MASTER_PROCEDURES,
   MASTER_CATEGORIES_METADATA,
   buildOperativeNote,
+  buildOperativeSummary,
   buildProceduralNarrative,
   buildAdviceBullets,
   MasterProcedure,
@@ -14,6 +15,7 @@ import {
 import { getConsentForProcedure } from "../../lib/consent/consentData";
 import { getCalculatorById } from "../../lib/procedureCalculators";
 import { INITIAL_RIS_WORKLIST_CASES } from "../worklist/worklistData";
+import { useEndoflowStore } from "../useEndoflowStore";
 import Link from "next/link";
 import {
   FileText,
@@ -36,14 +38,20 @@ import {
   FileSignature,
   Download,
   FolderOpen,
+  Share2,
+  ClipboardList,
+  Activity,
+  Package,
 } from "lucide-react";
 
 export default function OperativeNotesPage() {
+  const storePatients = useEndoflowStore((s) => s.patients);
+
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number>(0); // 0 = all
   const [selectedScheme, setSelectedScheme] = useState<"ALL" | "MAAY" | "RGHS">("ALL");
-  const [activeTab, setActiveTab] = useState<"NOTE" | "CONSENT" | "PROTOCOL" | "CALCULATOR">("NOTE");
+  const [activeTab, setActiveTab] = useState<"SUMMARY" | "NOTE" | "CONSENT" | "PROTOCOL" | "CALCULATOR">("SUMMARY");
 
   // Selected Procedure
   const [selectedProcedureId, setSelectedProcedureId] = useState<string>(
@@ -68,6 +76,38 @@ export default function OperativeNotesPage() {
   );
   const [customFindings, setCustomFindings] = useState("");
   const [customIntervention, setCustomIntervention] = useState("");
+
+  // Sync URL query params (?patient=...&cr=...&procedure=...&tab=...)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const qPatient = params.get("patient");
+      const qCr = params.get("cr");
+      const qAge = params.get("age");
+      const qGender = params.get("gender");
+      const qBed = params.get("bed");
+      const qProcedure = params.get("procedure");
+      const qTab = params.get("tab");
+
+      if (qPatient) setPatientName(qPatient);
+      if (qCr) setCrNumber(qCr);
+      if (qAge) setAge(qAge);
+      if (qGender) setGender(qGender);
+      if (qBed) setIpdBed(qBed);
+      if (qTab === "note") setActiveTab("NOTE");
+      if (qTab === "summary") setActiveTab("SUMMARY");
+
+      if (qProcedure) {
+        const found = ALL_MASTER_PROCEDURES.find((p) =>
+          p.title.toLowerCase().includes(qProcedure.toLowerCase()) ||
+          p.id.toLowerCase().includes(qProcedure.toLowerCase())
+        );
+        if (found) {
+          setSelectedProcedureId(found.id);
+        }
+      }
+    }
+  }, []);
 
   // Copy Feedback State
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
@@ -156,11 +196,66 @@ export default function OperativeNotesPage() {
     customIntervention,
   ]);
 
-  // Copy Handler
+  // Build Operative Summary Text (Executive Surgical Synopsis)
+  const operativeSummaryText = useMemo(() => {
+    if (!selectedProcedure) return "";
+    const options: OperativeNoteOptions = {
+      patientName,
+      age,
+      gender,
+      crNumber,
+      ipdBed,
+      dateOfProcedure,
+      supervisingConsultant,
+      primaryOperator,
+      customFindings: customFindings.trim() ? customFindings : undefined,
+      customIntervention: customIntervention.trim() ? customIntervention : undefined,
+    };
+    return buildOperativeSummary(selectedProcedure, options);
+  }, [
+    selectedProcedure,
+    patientName,
+    age,
+    gender,
+    crNumber,
+    ipdBed,
+    dateOfProcedure,
+    supervisingConsultant,
+    primaryOperator,
+    customFindings,
+    customIntervention,
+  ]);
+
+  // Copy Summary Handler
+  const handleCopySummary = async () => {
+    try {
+      await navigator.clipboard.writeText(operativeSummaryText);
+      setCopyFeedback("Copied Operative Summary to clipboard!");
+      setTimeout(() => setCopyFeedback(null), 3500);
+    } catch {
+      setCopyFeedback("Error copying to clipboard");
+      setTimeout(() => setCopyFeedback(null), 3000);
+    }
+  };
+
+  // Share Summary Handler (Native Share or WhatsApp)
+  const handleShareSummary = () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({
+        title: `Operative Summary - ${patientName}`,
+        text: operativeSummaryText,
+      }).catch(() => {});
+    } else if (typeof window !== "undefined") {
+      const text = encodeURIComponent(operativeSummaryText);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+    }
+  };
+
+  // Copy Note Handler
   const handleCopyNote = async () => {
     try {
       await navigator.clipboard.writeText(operativeNoteText);
-      setCopyFeedback("Copied to clipboard formatted for Rajasthan e-Hospital / IHMS!");
+      setCopyFeedback("Copied Operative Note to clipboard formatted for Rajasthan e-Hospital / IHMS!");
       setTimeout(() => setCopyFeedback(null), 3500);
     } catch {
       setCopyFeedback("Error copying to clipboard");
@@ -503,6 +598,18 @@ export default function OperativeNotesPage() {
           <div className="bg-white border border-[#DADCE0] rounded-2xl p-1.5 flex items-center justify-between shadow-xs print:hidden">
             <div className="flex items-center gap-1">
               <button
+                onClick={() => setActiveTab("SUMMARY")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeTab === "SUMMARY"
+                    ? "bg-[#1A73E8] text-white shadow-xs"
+                    : "text-[#5F6368] hover:bg-[#F8F9FA]"
+                }`}
+              >
+                <ClipboardList className="w-3.5 h-3.5" />
+                <span>Operative Summary</span>
+              </button>
+
+              <button
                 onClick={() => setActiveTab("NOTE")}
                 className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === "NOTE"
@@ -557,6 +664,191 @@ export default function OperativeNotesPage() {
               {selectedProcedure.modality} Suite
             </div>
           </div>
+
+          {/* TAB 0: OPERATIVE SUMMARY PREVIEW (Executive Surgical Synopsis & Clinical Handoff) */}
+          {activeTab === "SUMMARY" && (
+            <div className="bg-white border border-[#DADCE0] rounded-2xl p-6 sm:p-8 shadow-xs relative print:border-none print:shadow-none print:p-0 print:m-0 flex flex-col gap-5 text-zinc-900">
+              {/* Header Badge & Action Controls */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-200 print:hidden">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
+                  <span className="text-xs font-bold text-zinc-900">
+                    Executive Operative Summary (Surgical Synopsis &amp; Clinical Handoff)
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCopySummary}
+                    className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg hover:bg-blue-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-blue-200"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>{copyFeedback || "Copy Summary"}</span>
+                  </button>
+                  <button
+                    onClick={handleShareSummary}
+                    className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 flex items-center gap-1.5 transition-colors cursor-pointer border border-emerald-200"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span>Share / WhatsApp</span>
+                  </button>
+                  <button
+                    onClick={handlePrint}
+                    className="px-3 py-1 bg-[#F8F9FA] text-[#3C4043] border border-[#DADCE0] text-xs font-semibold rounded-lg hover:bg-[#F1F3F4] transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Print</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Institutional Summary Banner */}
+              <div className="border border-blue-200 bg-blue-50/50 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800 block">
+                    SMS Hospital Jaipur • Dept of Interventional Radiology
+                  </span>
+                  <h2 className="text-base font-bold text-zinc-950 mt-0.5">
+                    {selectedProcedure.title}
+                  </h2>
+                  <p className="text-xs text-zinc-600 mt-0.5">
+                    Package: {selectedProcedure.maayRghsCompatibility.packageName} ({selectedProcedure.maayRghsCompatibility.packageCode}) • ICD-10: {selectedProcedure.maayRghsCompatibility.icd10}
+                  </p>
+                </div>
+                <div className="text-right sm:text-right shrink-0">
+                  <span className="inline-block px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    100% Technical Success
+                  </span>
+                  <div className="text-[11px] text-zinc-500 mt-1">
+                    Date: <strong>{dateOfProcedure}</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Patient & Surgical Team Matrix */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-zinc-50 border border-zinc-200 rounded-xl text-xs">
+                <div>
+                  <span className="text-zinc-500 text-[10px] block">Patient Name:</span>
+                  <strong className="text-zinc-900 text-sm">{patientName}</strong>
+                </div>
+                <div>
+                  <span className="text-zinc-500 text-[10px] block">Age / Sex:</span>
+                  <strong className="text-zinc-900">{age} Y / {gender}</strong>
+                </div>
+                <div>
+                  <span className="text-zinc-500 text-[10px] block">CR / UHID No.:</span>
+                  <strong className="font-mono text-zinc-900">{crNumber}</strong>
+                </div>
+                <div>
+                  <span className="text-zinc-500 text-[10px] block">Assigned Bed:</span>
+                  <strong className="text-zinc-900">{ipdBed}</strong>
+                </div>
+                <div className="sm:col-span-2 pt-2 border-t border-zinc-200">
+                  <span className="text-zinc-500 text-[10px] block">Operating Faculty:</span>
+                  <strong className="text-zinc-900">{primaryOperator}</strong>
+                </div>
+                <div className="sm:col-span-2 pt-2 border-t border-zinc-200">
+                  <span className="text-zinc-500 text-[10px] block">Supervising Consultant:</span>
+                  <strong className="text-zinc-900">{supervisingConsultant}</strong>
+                </div>
+              </div>
+
+              {/* Key Surgical & Technical Parameters Grid */}
+              <div className="space-y-1.5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-800 flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-blue-600" />
+                  Key Surgical &amp; Procedural Parameters
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
+                    <span className="text-[10px] text-zinc-500 block">Guidance &amp; Modality:</span>
+                    <strong className="text-zinc-900">{selectedProcedure.modality} Suite Guided</strong>
+                  </div>
+                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
+                    <span className="text-[10px] text-zinc-500 block">Vascular / Percutaneous Access:</span>
+                    <strong className="text-zinc-900">{selectedProcedure.accessSiteDefault || "Common Femoral"}</strong>
+                  </div>
+                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
+                    <span className="text-[10px] text-zinc-500 block">Sheath Introduced:</span>
+                    <strong className="text-zinc-900">{selectedProcedure.sheathDefault || "5F / 6F Sheath"}</strong>
+                  </div>
+                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
+                    <span className="text-[10px] text-zinc-500 block">Sedation / Anesthesia:</span>
+                    <strong className="text-zinc-900">{selectedProcedure.sedation || "Local Anesthesia"}</strong>
+                  </div>
+                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
+                    <span className="text-[10px] text-zinc-500 block">Closure &amp; Hemostasis:</span>
+                    <strong className="text-emerald-700">Hemostasis Intact (Sterile Dressing)</strong>
+                  </div>
+                  <div className="p-2.5 bg-white border border-zinc-200 rounded-lg">
+                    <span className="text-[10px] text-zinc-500 block">Estimated Blood Loss (EBL):</span>
+                    <strong className="text-zinc-900">&lt; 10 mL (Minimal)</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hardware & Implants Deployed */}
+              <div className="space-y-1.5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-800 flex items-center gap-1.5">
+                  <Package className="w-3.5 h-3.5 text-indigo-600" />
+                  Hardware, Implants &amp; Embolics Deployed
+                </h3>
+                <div className="p-3 bg-indigo-50/40 border border-indigo-200 rounded-xl text-xs space-y-1 text-indigo-950">
+                  <p>• <strong>Primary Kit:</strong> {selectedProcedure.sheathDefault || "Introducer Sheath"} + {selectedProcedure.cathetersAndWires || "Standard Guidewires & Catheters"}</p>
+                  {selectedProcedure.microcatheterSystem && (
+                    <p>• <strong>Microcatheter System:</strong> {selectedProcedure.microcatheterSystem}</p>
+                  )}
+                  {selectedProcedure.embolicOrImplants && (
+                    <p>• <strong>Implants / Embolics:</strong> {selectedProcedure.embolicOrImplants}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Immediate Post-Operative Ward Handoff & Red Flags */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl space-y-1.5">
+                  <div className="font-bold text-zinc-900 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-blue-600" />
+                    Immediate Post-Op Orders
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 text-zinc-700 text-[11px]">
+                    <li>{selectedProcedure.postOpCare.immobilizationInstructions} ({selectedProcedure.postOpCare.immobilizationHours}h)</li>
+                    <li>{selectedProcedure.postOpCare.hematomaChecks}</li>
+                    <li>{selectedProcedure.postOpCare.hydrationProtocol}</li>
+                  </ul>
+                </div>
+
+                <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl space-y-1.5">
+                  <div className="font-bold text-amber-950 flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                    Critical Red Flags (SOS Notification)
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 text-amber-900 text-[11px]">
+                    {selectedProcedure.postOpCare.redFlags.slice(0, 3).map((rf, i) => (
+                      <li key={i}>{rf}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Raw Formatted Text Area for Quick Inspection */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-bold uppercase text-zinc-500 tracking-wider">
+                    Formatted Text View (e-Hospital / WhatsApp Ready)
+                  </span>
+                  <button
+                    onClick={handleCopySummary}
+                    className="text-[10px] font-semibold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Copy className="w-3 h-3" /> Copy Text
+                  </button>
+                </div>
+                <pre className="p-3 bg-zinc-900 text-zinc-100 rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto select-all">
+                  {operativeSummaryText}
+                </pre>
+              </div>
+            </div>
+          )}
 
           {/* TAB 1: OPERATIVE NOTE PREVIEW (Institutional SMS Jaipur Letterhead Layout) */}
           {activeTab === "NOTE" && (

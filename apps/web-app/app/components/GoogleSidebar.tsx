@@ -10,6 +10,7 @@ import {
   Calendar,
   BookOpen,
   FileText,
+  FileSignature,
   Activity,
   ShieldCheck,
   Package,
@@ -134,8 +135,14 @@ export function GoogleSidebar({
       badge: "1,059",
     },
     {
+      id: "operative-notes",
+      name: "Operative Notes & Summary",
+      href: "/dashboard/operative-notes",
+      icon: FileSignature,
+    },
+    {
       id: "discharge",
-      name: "Discharge Summaries & Operative Notes",
+      name: "Discharge Summaries (IHMS)",
       href: "/dashboard/discharge",
       icon: FileText,
     },

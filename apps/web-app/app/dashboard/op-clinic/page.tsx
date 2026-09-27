@@ -51,7 +51,42 @@ import {
   Zap,
   Pause,
   Play,
+  RotateCcw,
 } from "lucide-react";
+
+export const REFERRING_DEPARTMENTS = [
+  "Gastroenterology & Hepatology",
+  "General Surgery & GI Surgery",
+  "Urology & Renal Transplant",
+  "Pulmonary Medicine / Chest TB",
+  "Obstetrics & Gynecology",
+  "Medical & Surgical Oncology",
+  "Internal Medicine",
+  "Emergency Medicine & Trauma",
+  "Cardiology & Vascular Surgery",
+  "Neurology & Neurosurgery",
+  "Orthopedics",
+  "Pediatrics",
+  "Other / Custom Unit",
+];
+
+export const URGENCY_OPTIONS = [
+  { value: "Routine / Non-Urgent", label: "Routine (Elective Slot)" },
+  { value: "Early Treatment", label: "Early Treatment (Within 24-48 Hours)" },
+  { value: "Extensive Disease", label: "Extensive Disease / Priority Case" },
+  { value: "VIP Patient", label: "VIP Priority" },
+  { value: "Emergency / STAT", label: "Emergency / STAT Table" },
+];
+
+export const ORGAN_SYSTEM_OPTIONS = [
+  "Liver & Hepatobiliary",
+  "Thoracic & Pulmonary",
+  "Gastrointestinal & Mesenteric",
+  "Peripheral Vascular",
+  "Pelvic & Genitourinary",
+  "Venous & Dialysis Access",
+  "Others",
+];
 
 export const BLANK_PATIENT_FORM = {
   patientName: "",
@@ -69,8 +104,9 @@ export const BLANK_PATIENT_FORM = {
   primaryDiagnosis: "",
   clinicalHistory: "",
   cectFindings: "",
-  disposition: "ADMIT_WARD_PREOP" as ClinicalDisposition,
+  disposition: "ELECTIVE_OUTPATIENT" as ClinicalDisposition,
   sosTriggerSymptoms: "",
+  selectedBedId: "none",
 };
 
 export default function OpClinicConsultationDeskPage() {
@@ -127,6 +163,7 @@ export default function OpClinicConsultationDeskPage() {
   // Multi-Track Clinical Disposition Matrix State
   const [disposition, setDisposition] = useState<ClinicalDisposition>(BLANK_PATIENT_FORM.disposition);
   const [sosTriggerSymptoms, setSosTriggerSymptoms] = useState<string>(BLANK_PATIENT_FORM.sosTriggerSymptoms);
+  const [selectedBedId, setSelectedBedId] = useState<string>("none");
 
   // Filtering & Search for Queue
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -212,6 +249,8 @@ export default function OpClinicConsultationDeskPage() {
       setCectFindings(BLANK_PATIENT_FORM.cectFindings);
       setDisposition(BLANK_PATIENT_FORM.disposition);
       setSosTriggerSymptoms(BLANK_PATIENT_FORM.sosTriggerSymptoms);
+      setSelectedBedId("none");
+      setIsOnCallBooking(false);
       return;
     }
 
@@ -233,8 +272,20 @@ export default function OpClinicConsultationDeskPage() {
       setPrimaryDiagnosis(review.primaryDiagnosis || "");
       setClinicalHistory(review.clinicalHistory || review.clinicalHistory3Months || review.presentingComplaints || "");
       setCectFindings(review.cectFindings || review.ctReviewNotes || "");
-      setDisposition(review.disposition || "ADMIT_WARD_PREOP");
+      setDisposition(review.disposition || "ELECTIVE_OUTPATIENT");
       setSosTriggerSymptoms(review.sosTriggerSymptoms || "");
+      if (review.disposition === "STAT_CATH_LAB") {
+        setSelectedBedId("stat");
+      } else if (review.disposition === "DEFERRED_REVIEW_SOS" || review.isOnCall) {
+        setSelectedBedId("on_call");
+        setIsOnCallBooking(true);
+      } else if (review.disposition === "ADMIT_WARD_PREOP") {
+        const matchBed = beds.find((b) => b.ptName === review.patientName);
+        setSelectedBedId(matchBed ? matchBed.id : "Ward-01");
+      } else {
+        setSelectedBedId("none");
+        setIsOnCallBooking(false);
+      }
       return;
     }
 
@@ -263,6 +314,14 @@ export default function OpClinicConsultationDeskPage() {
       setCectFindings(patient.cectFindings || "");
       setDisposition(patient.disposition || "ADMIT_WARD_PREOP");
       setSosTriggerSymptoms(patient.sosTriggerSymptoms || "");
+      if (patient.ipd?.bed) {
+        const matchBed = beds.find((b) => b.title === patient.ipd.bed || b.id === patient.ipd.bed);
+        setSelectedBedId(matchBed ? matchBed.id : "Ward-01");
+      } else if (patient.disposition === "STAT_CATH_LAB") {
+        setSelectedBedId("stat");
+      } else {
+        setSelectedBedId("none");
+      }
     }
   };
 
@@ -816,6 +875,221 @@ export default function OpClinicConsultationDeskPage() {
     setActiveTab("queue");
   };
 
+  // ==========================================================================
+  // ACTION 4: SAVE & EXECUTE / BOOK FOR CATH-LAB
+  // ==========================================================================
+  const handleSaveAndExecute = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const effectiveName = patientName.trim() || "OPD Consultation Patient";
+    const newSeq = Date.now().toString().slice(-4);
+    const generatedAcc = accessionNumber.trim() || `SONI-ACC-2026-${newSeq}`;
+    const generatedHid = `SMS-2026-${newSeq}`;
+    const effectiveDate = isOnCallBooking || selectedBedId === "on_call" ? "ON_CALL" : (bookingDate || new Date().toISOString().split("T")[0]);
+
+    // 1. Save or Update in CT Reviews
+    if (selectedPatientKey.startsWith("CT-REV")) {
+      updateCtReview(selectedPatientKey, {
+        patientName: effectiveName,
+        age: Number(age) || 0,
+        sex,
+        contactNumber: contactNumber.trim(),
+        residentContact: residentContact.trim() || undefined,
+        referringDepartment: referringDepartment || undefined,
+        urgencyCategory: urgencyCategory || undefined,
+        customProcedureTitle: organSystem === "Others" ? customProcedureTitle.trim() : undefined,
+        smsBillId: `SMS-OPD-2026-${newSeq}`,
+        ctNumber: generatedAcc,
+        accessionNumber: generatedAcc,
+        hospitalSource: "SONI Hospital",
+        organSystem,
+        diseaseKey: effectiveDiseaseKey,
+        procedureTitle: effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        presentingComplaints: clinicalHistory.trim(),
+        clinicalHistory: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        ctReviewNotes: cectFindings.trim(),
+        cectFindings: cectFindings.trim(),
+        status: isOnCallBooking || selectedBedId === "on_call" ? "Keep On Call (Standby)" : "Booked in Cath-Lab",
+        disposition,
+        isOnCall: isOnCallBooking || selectedBedId === "on_call",
+        sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
+        reviewedBy: activeStaff.name,
+        reviewedAt: new Date().toLocaleDateString("en-IN"),
+      });
+    } else {
+      addCtReview({
+        patientName: effectiveName,
+        age: Number(age) || 0,
+        sex,
+        date: new Date().toISOString().split("T")[0],
+        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        clinicalHistory: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        presentingComplaints: clinicalHistory.trim(),
+        ctNumber: generatedAcc,
+        accessionNumber: generatedAcc,
+        ctReviewNotes: cectFindings.trim(),
+        cectFindings: cectFindings.trim(),
+        status: isOnCallBooking || selectedBedId === "on_call" ? "Keep On Call (Standby)" : "Booked in Cath-Lab",
+        smsBillId: `SMS-OPD-2026-${newSeq}`,
+        hospitalSource: "SONI Hospital",
+        contactNumber: contactNumber.trim(),
+        residentContact: residentContact.trim() || undefined,
+        referringDepartment: referringDepartment || undefined,
+        urgencyCategory: urgencyCategory || undefined,
+        customProcedureTitle: organSystem === "Others" ? customProcedureTitle.trim() : undefined,
+        organSystem,
+        diseaseKey: effectiveDiseaseKey,
+        procedureTitle: effectiveProcedureTitle,
+        disposition,
+        isOnCall: isOnCallBooking || selectedBedId === "on_call",
+        sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
+      });
+    }
+
+    // 2. Bed Allocation if Ward/ICU or STAT table selected
+    if (selectedBedId === "stat") {
+      const newPatientRecord: EndoflowPatient = {
+        id: `PT-STAT-${newSeq}`,
+        name: effectiveName,
+        age: Number(age) || 0,
+        sex,
+        hid: generatedHid,
+        scanId: generatedAcc,
+        phone: contactNumber.trim() || "",
+        unit: "Cath Lab STAT Table",
+        postedBy: `${activeStaff.name} (${activeStaff.code})`,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        summary: `STAT Emergency: ${primaryDiagnosis.trim() || effectiveProcedureTitle}. History: ${clinicalHistory.trim()}`,
+        history3Months: clinicalHistory.trim(),
+        clinicalHistory3Months: clinicalHistory.trim(),
+        chiefComplaints: clinicalHistory.trim(),
+        cectFindings: cectFindings.trim(),
+        procedureKey: effectiveDiseaseKey,
+        procedure: effectiveProcedureTitle,
+        modality: "XA",
+        status: "In Cath-Lab",
+        scheme: "MAAY",
+        schemeTid: "TID-STAT",
+        beneficiaryId: "Emergency Fast-Path",
+        preAuthStatus: "Emergency Pre-Auth",
+        disposition: "STAT_CATH_LAB",
+        ipd: { admissionType: "STAT_CATH_LAB", ward: "Cath Lab", bed: "Angio Table 01", podDay: "Emergent" },
+        labs: { ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9, inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none" },
+        preOp: { bedLocation: "Cath-Lab Direct Table", npoHours: 0, inrChecked: true, creatinineChecked: true, consentSigned: true, ivCannulaGauge: "16G Grey", calledToLab: true, labCleared: true },
+      };
+      admitPatient(newPatientRecord);
+    } else if (selectedBedId !== "none" && selectedBedId !== "on_call") {
+      const targetBed = beds.find((b) => b.id === selectedBedId) || beds.find((b) => b.status === "vacant");
+      if (targetBed) {
+        const newPatientRecord: EndoflowPatient = {
+          id: `PT-IPD-${newSeq}`,
+          name: effectiveName,
+          age: Number(age) || 0,
+          sex,
+          hid: generatedHid,
+          scanId: generatedAcc,
+          phone: contactNumber.trim() || "",
+          unit: `Interventional Radiology (${targetBed.title})`,
+          postedBy: `${activeStaff.name} (${activeStaff.code})`,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          summary: `${primaryDiagnosis.trim() || effectiveProcedureTitle}. History: ${clinicalHistory.trim()}`,
+          history3Months: clinicalHistory.trim(),
+          clinicalHistory3Months: clinicalHistory.trim(),
+          chiefComplaints: clinicalHistory.trim(),
+          cectFindings: cectFindings.trim(),
+          procedureKey: effectiveDiseaseKey,
+          procedure: effectiveProcedureTitle,
+          modality: "CT",
+          status: "Pre-Op Pending",
+          scheme: "MAAY",
+          schemeTid: "TID-9482103",
+          beneficiaryId: "Jan Aadhaar 7821-9482-10",
+          preAuthStatus: "Approved",
+          disposition: "ADMIT_WARD_PREOP",
+          ipd: { admissionType: "IPD", ward: targetBed.type === "ICU" ? "Liver ICU" : "IR Ward D-Block", bed: targetBed.title, podDay: "Pre-Op" },
+          labs: { ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9, inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none" },
+          preOp: { bedLocation: targetBed.title, npoHours: 6, inrChecked: true, creatinineChecked: true, consentSigned: true, ivCannulaGauge: "18G Green", calledToLab: false, labCleared: true },
+        };
+        admitPatient(newPatientRecord);
+        updateBed(targetBed.id, {
+          status: "occupied",
+          ptName: effectiveName,
+          crNo: generatedHid,
+          diag: effectiveProcedureTitle,
+          doctor: activeStaff.name,
+          ptId: newPatientRecord.id,
+        });
+      }
+    }
+
+    // 3. Book Cath-Lab Case
+    bookCase({
+      patientName: effectiveName,
+      age: Number(age) || 0,
+      sex,
+      contactNumber: contactNumber.trim() || "",
+      residentContact: residentContact.trim() || undefined,
+      referringDepartment: referringDepartment || undefined,
+      urgencyCategory: urgencyCategory || "Routine / Non-Urgent",
+      customProcedureTitle: organSystem === "Others" ? (customProcedureTitle.trim() || undefined) : undefined,
+      ssoNumber: `SMS-2026-${newSeq}`,
+      accessionNumber: generatedAcc,
+      location: "Jaipur",
+      scheduledDate: effectiveDate,
+      urgency: urgencyCategory?.includes("Emergency") ? "Emergency" : urgencyCategory?.includes("Early") ? "Urgent" : "Elective",
+      organSystem,
+      diseaseKey: effectiveDiseaseKey,
+      procedureTitle: effectiveProcedureTitle,
+      disposition,
+      isOnCall: isOnCallBooking || selectedBedId === "on_call",
+      sosTriggerSymptoms: disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
+      bookedBy: `${activeStaff.name} (${activeStaff.code})`,
+      orderedLabs: [
+        "Liver Function Tests (Total & Direct Bilirubin, AST, ALT, Albumin)",
+        "Renal Function Tests (Serum Creatinine, BUN, Electrolytes)",
+        "Coagulation Profile (PT, INR, aPTT)",
+        "Complete Blood Count (Hb, TLC, Platelets)",
+      ],
+      specialInvestigations: [
+        `PACS Accession #${generatedAcc}: ${cectFindings.trim() || "No CT findings recorded"}`,
+        `Clinical History: ${clinicalHistory.trim() || "Clinical course documented."}`,
+      ],
+      preScanAnatomy: {},
+      hardwareChecklist: [
+        { id: "h1", item: "Vascular Access Sheath", spec: "6F 45cm Destination Sheath", checked: true },
+        { id: "h2", item: "Selective Diagnostic Catheter", spec: "5F Cobra C2 / Simmons 1", checked: true },
+        { id: "h3", item: "Hydrophilic Guidewire", spec: "0.035\" 260cm Terumo Glidewire", checked: true },
+      ],
+      postOpPlan: `Cath-Lab intervention: ${effectiveProcedureTitle}. Clinical History: ${clinicalHistory.trim() || "Standard"}.`,
+      npoVerified: false,
+      labsVerified: false,
+      bloodProductsVerified: false,
+      hardwareVerified: false,
+      screenedBy: null,
+      screenedAt: null,
+      keptForTomorrow: false,
+      admissionCardUpdated: false,
+      codeAdditionStatus: "Pending",
+    });
+
+    setSuccessBanner({
+      message: `Cath-Lab Case Executed & Scheduled! ${effectiveName} booked for ${effectiveDate} (${effectiveProcedureTitle}).`,
+      linkHref: "/dashboard/calendar",
+      linkLabel: "View in OT Calendar →",
+    });
+    setTimeout(() => setSuccessBanner(null), 6000);
+
+    // Reset to blank form and switch to review queue
+    loadPatientIntoDesk("new");
+    setSelectedBedId("none");
+    setSearchQuery("");
+    setSelectedStatus("all");
+    setSelectedCenter("all");
+    setActiveTab("queue");
+  };
+
   return (
     <div className="space-y-5 max-w-7xl mx-auto pb-12">
       {/* 1. Apple-Style Header Banner */}
@@ -942,28 +1216,41 @@ export default function OpClinicConsultationDeskPage() {
       {activeTab === "desk" && (
         <div className="space-y-5">
           {/* Consultation Desk Intake Card */}
-          <form onSubmit={handleSaveConsult} className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-6">
-            {/* Section 1: Patient Demographics & Accession */}
-            <div>
-              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3 flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  Section 1: Patient Demographics &amp; Accession
-                </h3>
+          <form onSubmit={handleSaveConsult} className="bg-white dark:bg-slate-900 border border-[#E5E5EA] dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+            {/* Form Header Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E5E5EA] dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold shrink-0">
+                  <Stethoscope className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-[#1C1C1E] dark:text-slate-100">
+                    OPD Consultation &amp; Cath-Lab Booking Desk
+                  </h2>
+                  <p className="text-[11px] text-[#8E8E93] dark:text-slate-400">
+                    Single-sheet clinical registration and procedural scheduling
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => loadPatientIntoDesk("new")}
-                  className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800 hover:bg-[#F2F2F7] dark:hover:bg-slate-700 text-[#1C1C1E] dark:text-slate-200 transition-all cursor-pointer"
+                  className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800 hover:bg-[#F2F2F7] dark:hover:bg-slate-700 text-[#1C1C1E] dark:text-slate-200 transition-all cursor-pointer flex items-center gap-1.5"
                 >
-                  Reset to Blank Form
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Blank Form</span>
                 </button>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                {/* Patient Full Name */}
-                <div className="md:col-span-2">
+            {/* Unified Table-Style Form Grid */}
+            <div className="border border-[#E5E5EA] dark:border-slate-800 rounded-xl overflow-hidden divide-y divide-[#E5E5EA] dark:divide-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+              {/* ROW 1: Demographics */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 divide-y sm:divide-y-0 sm:divide-x divide-[#E5E5EA] dark:divide-slate-800">
+                <div className="md:col-span-5 p-3">
                   <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                    Patient Full Name
+                    Patient Full Name *
                   </label>
                   <input
                     type="text"
@@ -972,16 +1259,15 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="e.g. Bhanwar Lal Sharma"
-                    className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full px-3 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
 
-                {/* Age & Biological Sex */}
-                <div>
+                <div className="md:col-span-3 p-3">
                   <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                    Age &amp; Sex
+                    Age &amp; Sex *
                   </label>
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-2">
                     <input
                       type="number"
                       value={age}
@@ -989,67 +1275,22 @@ export default function OpClinicConsultationDeskPage() {
                       autoComplete="off"
                       data-lpignore="true"
                       placeholder="Age"
-                      className="w-16 px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
+                      className="w-16 px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
                     />
-                    <div className="flex-1 flex rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#F2F2F7] dark:bg-slate-800 p-0.5">
-                      <button
-                        type="button"
-                        onClick={() => setSex("Male")}
-                        className={`flex-1 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                          sex === "Male"
-                            ? "bg-white dark:bg-slate-700 text-[#007AFF] dark:text-blue-400 shadow-2xs"
-                            : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
-                        }`}
-                      >
-                        Male
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSex("Female")}
-                        className={`flex-1 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                          sex === "Female"
-                            ? "bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-2xs"
-                            : "text-[#8E8E93] dark:text-slate-400 hover:text-[#1C1C1E] dark:hover:text-slate-100"
-                        }`}
-                      >
-                        Female
-                      </button>
-                    </div>
+                    <select
+                      value={sex}
+                      onChange={(e) => setSex(e.target.value as "Male" | "Female")}
+                      className="flex-1 px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
                   </div>
                 </div>
 
-                {/* Accession Number / CR Number */}
-                <div>
+                <div className="md:col-span-2 p-3">
                   <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                    Accession / CR Number
-                  </label>
-                  <input
-                    type="text"
-                    value={accessionNumber}
-                    onChange={(e) => setAccessionNumber(e.target.value)}
-                    autoComplete="off"
-                    data-lpignore="true"
-                    placeholder="e.g. 2026-99214"
-                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-mono focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Section 2: Contact & Referring Department */}
-            <div>
-              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
-                  <Building className="w-3.5 h-3.5" />
-                  Section 2: Contact &amp; Department Triage
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                {/* Patient Contact Number (strictly 10-digit mobile) */}
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                    Patient Contact Number
+                    Contact (10-Digit)
                   </label>
                   <input
                     type="tel"
@@ -1059,15 +1300,64 @@ export default function OpClinicConsultationDeskPage() {
                     onChange={(e) => setContactNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
                     autoComplete="off"
                     data-lpignore="true"
-                    placeholder="10-digit mobile number"
-                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
+                    placeholder="e.g. 9829012345"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
 
-                {/* Resident Contact Number (10-digit mobile) */}
-                <div>
+                <div className="md:col-span-2 p-3">
                   <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                    Resident Contact Number
+                    Accession / CR No.
+                  </label>
+                  <input
+                    type="text"
+                    value={accessionNumber}
+                    onChange={(e) => setAccessionNumber(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    placeholder="e.g. 2026-99214"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-mono focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* ROW 2: Referring Department & Priority Triage */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 divide-y sm:divide-y-0 sm:divide-x divide-[#E5E5EA] dark:divide-slate-800">
+                <div className="md:col-span-5 p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
+                    Referring Department
+                  </label>
+                  <select
+                    value={REFERRING_DEPARTMENTS.includes(referringDepartment) ? referringDepartment : "Other / Custom Unit"}
+                    onChange={(e) => {
+                      if (e.target.value !== "Other / Custom Unit") {
+                        setReferringDepartment(e.target.value);
+                      } else {
+                        setReferringDepartment("");
+                      }
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  >
+                    {REFERRING_DEPARTMENTS.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                  {(!REFERRING_DEPARTMENTS.includes(referringDepartment) || referringDepartment === "Other / Custom Unit") && (
+                    <input
+                      type="text"
+                      value={referringDepartment === "Other / Custom Unit" ? "" : referringDepartment}
+                      onChange={(e) => setReferringDepartment(e.target.value)}
+                      placeholder="Type referring department or unit name..."
+                      className="w-full mt-2 px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 focus:outline-none focus:border-[#007AFF]"
+                    />
+                  )}
+                </div>
+
+                <div className="md:col-span-3 p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
+                    Resident Contact
                   </label>
                   <input
                     type="tel"
@@ -1078,389 +1368,221 @@ export default function OpClinicConsultationDeskPage() {
                     autoComplete="off"
                     data-lpignore="true"
                     placeholder="Resident 10-digit mobile"
-                    className="w-full px-2.5 py-1.5 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
                   />
                 </div>
 
-                {/* Referring Department - Zero Dropdown Quick Chips */}
-                <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                    Referring Department ({referringDepartment || "Select"})
-                  </label>
-                  <div className="flex flex-wrap gap-1 mb-1.5">
-                    {[
-                      { key: "Gastroenterology & Hepatology", short: "Gastro/Hep" },
-                      { key: "General Surgery", short: "Surgery" },
-                      { key: "Urology & Renal Transplant", short: "Urology" },
-                      { key: "Pulmonary Medicine / Chest TB", short: "Chest TB" },
-                      { key: "Obstetrics & Gynecology", short: "Obs/Gynae" },
-                      { key: "Medical & Surgical Oncology", short: "Oncology" },
-                      { key: "Internal Medicine", short: "Medicine" },
-                      { key: "Emergency Medicine & Trauma", short: "Emergency" },
-                    ].map((d) => (
-                      <button
-                        key={d.key}
-                        type="button"
-                        onClick={() => setReferringDepartment(d.key)}
-                        className={`px-2 py-0.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer ${
-                          referringDepartment === d.key
-                            ? "bg-[#007AFF] text-white shadow-2xs"
-                            : "bg-[#F2F2F7] dark:bg-slate-800 text-[#3C4043] dark:text-slate-300 hover:bg-[#E5E5EA] dark:hover:bg-slate-700"
-                        }`}
-                      >
-                        {d.short}
-                      </button>
-                    ))}
-                  </div>
-                  <input
-                    type="text"
-                    value={referringDepartment}
-                    onChange={(e) => setReferringDepartment(e.target.value)}
-                    placeholder="Or type custom referring unit/doctor..."
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none"
-                  />
-                </div>
-
-                {/* Urgency / Priority Category - Zero Dropdown Segmented Buttons */}
-                <div className="sm:col-span-2 md:col-span-4">
+                <div className="md:col-span-4 p-3">
                   <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
                     Urgency / Priority Category
                   </label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      { key: "Routine / Non-Urgent", label: "Routine (Elective)", color: "border-blue-200 dark:border-blue-900/60 text-blue-700 dark:text-blue-300 bg-blue-50/60 dark:bg-blue-950/40" },
-                      { key: "Early Treatment", label: "Early Treatment (24-48h)", color: "border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300 bg-amber-50/60 dark:bg-amber-950/40" },
-                      { key: "Extensive Disease", label: "Extensive Disease", color: "border-orange-200 dark:border-orange-900/60 text-orange-700 dark:text-orange-300 bg-orange-50/60 dark:bg-orange-950/40" },
-                      { key: "VIP Patient", label: "VIP Priority", color: "border-purple-200 dark:border-purple-900/60 text-purple-700 dark:text-purple-300 bg-purple-50/60 dark:bg-purple-950/40" },
-                      { key: "Emergency / STAT", label: "Emergency STAT", color: "border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-300 bg-red-50/60 dark:bg-red-950/40" },
-                    ].map((u) => (
-                      <button
-                        key={u.key}
-                        type="button"
-                        onClick={() => setUrgencyCategory(u.key)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
-                          urgencyCategory === u.key
-                            ? "bg-[#1C1C1E] dark:bg-slate-100 text-white dark:text-slate-900 border-[#1C1C1E] dark:border-slate-100 shadow-2xs scale-[1.01]"
-                            : `${u.color} hover:opacity-85`
-                        }`}
-                      >
+                  <select
+                    value={urgencyCategory}
+                    onChange={(e) => setUrgencyCategory(e.target.value)}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-semibold focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  >
+                    {URGENCY_OPTIONS.map((u) => (
+                      <option key={u.value} value={u.value}>
                         {u.label}
-                      </button>
+                      </option>
                     ))}
-                  </div>
+                  </select>
                 </div>
               </div>
-            </div>
 
-            {/* Section 3: Clinical Presentation & History */}
-            <div>
-              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5" />
-                  Section 3: Clinical Presentation &amp; History
-                </h3>
-              </div>
+              {/* ROW 3: Anatomy, Protocol & Diagnosis */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 divide-y sm:divide-y-0 sm:divide-x divide-[#E5E5EA] dark:divide-slate-800">
+                <div className="md:col-span-4 p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
+                    Organ System
+                  </label>
+                  <select
+                    value={organSystem}
+                    onChange={(e) => {
+                      const sys = e.target.value;
+                      setOrganSystem(sys);
+                      if (sys === "Others") {
+                        setDiseaseKey("custom_procedure");
+                      } else {
+                        const first = IR_CLINICAL_PROTOCOLS.find((p) => p.organSystem === sys);
+                        if (first) setDiseaseKey(first.key);
+                      }
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  >
+                    {ORGAN_SYSTEM_OPTIONS.map((sys) => (
+                      <option key={sys} value={sys}>
+                        {sys}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                  Clinical History &amp; Chief Complaints
-                </label>
-                <textarea
-                  rows={3}
-                  value={clinicalHistory}
-                  onChange={(e) => setClinicalHistory(e.target.value)}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  placeholder="Presenting symptoms and clinical history..."
-                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 leading-relaxed focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Section 4: CT Review & Imaging Findings */}
-            <div>
-              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
-                  <Eye className="w-3.5 h-3.5" />
-                  Section 4: CT Review &amp; Imaging Findings
-                </h3>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                  CT Review / Imaging Findings
-                </label>
-                <textarea
-                  rows={3}
-                  value={cectFindings}
-                  onChange={(e) => setCectFindings(e.target.value)}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  placeholder="e.g. Triple-phase CECT: Cirrhotic liver morphology, attenuated right and left hepatic veins, marked caudate lobe hypertrophy (>3.5 cm), patent main portal vein with hepatopetal flow. Feasible for transcaval DIPS..."
-                  className="w-full px-3 py-2 rounded-xl border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 leading-relaxed focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Section 5: Diagnosis & Suggested IR Protocol */}
-            <div>
-              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5" />
-                  Section 5: Diagnosis &amp; Suggested IR Protocol
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                      Primary Clinical Diagnosis
-                    </label>
+                <div className="md:col-span-4 p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
+                    Suggested IR Protocol / Procedure
+                  </label>
+                  {organSystem !== "Others" ? (
+                    <select
+                      value={diseaseKey}
+                      onChange={(e) => setDiseaseKey(e.target.value)}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                    >
+                      {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
+                        <option key={p.key} value={p.key}>
+                          {p.title}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
                     <input
                       type="text"
-                      value={primaryDiagnosis}
-                      onChange={(e) => setPrimaryDiagnosis(e.target.value)}
+                      value={customProcedureTitle}
+                      onChange={(e) => setCustomProcedureTitle(e.target.value)}
                       autoComplete="off"
                       data-lpignore="true"
-                      placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites"
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
+                      placeholder="Type custom procedure..."
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
                     />
-                  </div>
-
-                  {organSystem === "Others" && (
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                        Custom Procedure Title
-                      </label>
-                      <input
-                        type="text"
-                        value={customProcedureTitle}
-                        onChange={(e) => setCustomProcedureTitle(e.target.value)}
-                        autoComplete="off"
-                        data-lpignore="true"
-                        placeholder="e.g. Percutaneous Sclerotherapy / Custom Angio"
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] dark:focus:border-blue-500 focus:outline-none transition-colors"
-                      />
-                    </div>
                   )}
                 </div>
 
-                {/* Organ System - Zero Dropdown Segmented Buttons */}
-                <div>
+                <div className="md:col-span-4 p-3">
                   <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                    Organ System ({organSystem})
+                    Primary Clinical Diagnosis *
                   </label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      { key: "Liver & Hepatobiliary", label: "Liver & HPB" },
-                      { key: "Thoracic & Pulmonary", label: "Thoracic" },
-                      { key: "Gastrointestinal & Mesenteric", label: "GI & Mesenteric" },
-                      { key: "Peripheral Vascular", label: "Peripheral" },
-                      { key: "Pelvic & Genitourinary", label: "Pelvic / GU" },
-                      { key: "Venous & Dialysis Access", label: "Venous / Dialysis" },
-                      { key: "Others", label: "Custom / Others" },
-                    ].map((sys) => (
-                      <button
-                        key={sys.key}
-                        type="button"
-                        onClick={() => {
-                          setOrganSystem(sys.key);
-                          if (sys.key === "Others") {
-                            setDiseaseKey("custom_procedure");
-                          } else {
-                            const first = IR_CLINICAL_PROTOCOLS.find((p) => p.organSystem === sys.key);
-                            if (first) setDiseaseKey(first.key);
-                          }
-                        }}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
-                          organSystem === sys.key
-                            ? "bg-[#007AFF] text-white border-[#007AFF] shadow-2xs"
-                            : "bg-[#F2F2F7] dark:bg-slate-800 text-[#3C4043] dark:text-slate-300 border-transparent dark:border-slate-700/60 hover:bg-[#E5E5EA] dark:hover:bg-slate-700"
-                        }`}
-                      >
-                        {sys.label}
-                      </button>
-                    ))}
-                  </div>
+                  <input
+                    type="text"
+                    value={primaryDiagnosis}
+                    onChange={(e) => setPrimaryDiagnosis(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    placeholder="e.g. Budd-Chiari Syndrome with Refractory Ascites"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* ROW 4: Bed Booking & Cath-Lab Scheduling */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 divide-y sm:divide-y-0 sm:divide-x divide-[#E5E5EA] dark:divide-slate-800">
+                <div className="md:col-span-6 p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1 flex items-center justify-between">
+                    <span>Bed Booking / Inpatient Allocation</span>
+                    <span className="text-[10px] text-teal-700 dark:text-teal-400 font-normal">
+                      {beds.filter((b) => b.status === "vacant").length} Beds Vacant
+                    </span>
+                  </label>
+                  <select
+                    value={selectedBedId}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedBedId(val);
+                      if (val === "stat") {
+                        setDisposition("STAT_CATH_LAB");
+                        setIsOnCallBooking(false);
+                        setUrgencyCategory("Emergency / STAT");
+                      } else if (val === "on_call") {
+                        setDisposition("DEFERRED_REVIEW_SOS");
+                        setIsOnCallBooking(true);
+                      } else if (val === "none") {
+                        setDisposition("ELECTIVE_OUTPATIENT");
+                        setIsOnCallBooking(false);
+                      } else {
+                        setDisposition("ADMIT_WARD_PREOP");
+                        setIsOnCallBooking(false);
+                      }
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 font-semibold focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  >
+                    <option value="none">No Inpatient Bed (Outpatient Day-Care / Conservative)</option>
+                    <option value="stat">🚨 STAT Cath-Lab Direct Table (Emergency Table 01)</option>
+                    <option value="on_call">📞 Keep On-Call Standby (No Bed / Standby Roster)</option>
+                    <optgroup label="SMS IR Inpatient Beds (D-Block &amp; Liver ICU)">
+                      {beds.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          🛏️ {b.title} ({b.type}) — {b.status === "vacant" ? "Vacant / Available" : `Occupied: ${b.ptName}`}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
                 </div>
 
-                {/* Suggested Protocol - Zero Dropdown Protocol Chips */}
-                {organSystem !== "Others" && (
-                  <div>
-                    <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
-                      Suggested IR Protocol ({matchedProtocol?.title || "Select Protocol"})
+                <div className="md:col-span-6 p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
+                    Cath-Lab Scheduling &amp; Standby
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="date"
+                      value={bookingDate}
+                      disabled={isOnCallBooking || selectedBedId === "on_call"}
+                      onChange={(e) => setBookingDate(e.target.value)}
+                      min="2026-01-01"
+                      max="2026-12-31"
+                      className="flex-1 px-2.5 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-[#1C1C1E] dark:text-slate-100 disabled:opacity-40 focus:border-[#007AFF] focus:outline-none transition-colors"
+                    />
+                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800 text-xs font-medium text-[#1C1C1E] dark:text-slate-300 cursor-pointer select-none shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={isOnCallBooking || selectedBedId === "on_call"}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setIsOnCallBooking(checked);
+                          if (checked) {
+                            setSelectedBedId("on_call");
+                            setDisposition("DEFERRED_REVIEW_SOS");
+                          } else if (selectedBedId === "on_call") {
+                            setSelectedBedId("none");
+                            setDisposition("ELECTIVE_OUTPATIENT");
+                          }
+                        }}
+                        className="w-3.5 h-3.5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span>Keep On Call</span>
                     </label>
-                    <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 rounded-xl border border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/50">
-                      {IR_CLINICAL_PROTOCOLS.filter((p) => p.organSystem === organSystem).map((p) => (
-                        <button
-                          key={p.key}
-                          type="button"
-                          onClick={() => setDiseaseKey(p.key)}
-                          className={`px-2 py-1 rounded-md text-[11px] font-semibold border text-left transition-all cursor-pointer ${
-                            diseaseKey === p.key
-                              ? "bg-white dark:bg-slate-700 text-[#007AFF] dark:text-blue-400 border-[#007AFF] dark:border-blue-400 shadow-2xs ring-1 ring-[#007AFF] dark:ring-blue-400"
-                              : "bg-white dark:bg-slate-800 text-[#3C4043] dark:text-slate-300 border-[#E5E5EA] dark:border-slate-700 hover:border-[#007AFF]/40"
-                          }`}
-                        >
-                          {p.title}
-                        </button>
-                      ))}
-                    </div>
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* Section 6: Clinical Disposition Matrix (6-Track Framework) */}
-            <div>
-              <div className="border-b border-[#E5E5EA] dark:border-slate-800 pb-2 mb-3 flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#007AFF] dark:text-blue-400 flex items-center gap-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  Section 6: Clinical Disposition Matrix (6-Track Framework)
-                </h3>
-                <span className="text-[11px] text-[#8E8E93] dark:text-slate-400 hidden sm:inline">
-                  Strict 8-Bed Inpatient Guardrail • Non-inpatient tracks never lock beds
-                </span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
-                {/* 1. STAT Cath-Lab */}
-                <button
-                  type="button"
-                  onClick={() => setDisposition("STAT_CATH_LAB")}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    disposition === "STAT_CATH_LAB"
-                      ? "border-[#EA4335] bg-[#EA4335]/10 dark:bg-rose-950/40 text-[#C5221F] dark:text-rose-400 shadow-xs font-bold ring-1 ring-[#EA4335]"
-                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#EA4335]/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-xs font-bold flex items-center gap-1">
-                      <Zap className="w-3 h-3 text-[#EA4335]" />
-                      STAT Cath-Lab
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
-                    Emergency fast-path direct to table
-                  </span>
-                </button>
+              {/* ROW 5: Clinical History & CT Review Notes */}
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#E5E5EA] dark:divide-slate-800">
+                <div className="p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
+                    Clinical History &amp; Chief Complaints
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={clinicalHistory}
+                    onChange={(e) => setClinicalHistory(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    placeholder="Presenting symptoms, duration, prior interventions..."
+                    className="w-full px-3 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 leading-relaxed focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
 
-                {/* 2. Admit Ward Pre-Op */}
-                <button
-                  type="button"
-                  onClick={() => setDisposition("ADMIT_WARD_PREOP")}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    disposition === "ADMIT_WARD_PREOP"
-                      ? "border-[#5856D6] bg-[#5856D6]/10 dark:bg-indigo-950/40 text-[#4745B8] dark:text-indigo-400 shadow-xs font-bold ring-1 ring-[#5856D6]"
-                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#5856D6]/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-xs font-bold flex items-center gap-1">
-                      <BedDouble className="w-3 h-3 text-[#5856D6]" />
-                      Admit Ward
-                    </span>
-                    <span className="px-1 py-0.2 rounded text-[9px] bg-purple-200 dark:bg-purple-900/60 text-purple-900 dark:text-purple-200 font-mono">
-                      8-Bed
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
-                    Assigns 1 of 8 beds on Ward Board
-                  </span>
-                </button>
-
-                {/* 3. Elective Outpatient */}
-                <button
-                  type="button"
-                  onClick={() => setDisposition("ELECTIVE_OUTPATIENT")}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    disposition === "ELECTIVE_OUTPATIENT"
-                      ? "border-[#007AFF] bg-[#007AFF]/10 dark:bg-blue-950/40 text-[#0062CC] dark:text-blue-400 shadow-xs font-bold ring-1 ring-[#007AFF]"
-                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#007AFF]/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-xs font-bold flex items-center gap-1">
-                      <CalendarPlus className="w-3 h-3 text-[#007AFF]" />
-                      Elective Day-Care
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
-                    Day procedure, zero ward bed locks
-                  </span>
-                </button>
-
-                {/* 4. No Intervention Needed */}
-                <button
-                  type="button"
-                  onClick={() => setDisposition("NO_INTERVENTION_NEEDED")}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    disposition === "NO_INTERVENTION_NEEDED"
-                      ? "border-[#34C759] bg-[#34C759]/10 dark:bg-emerald-950/40 text-[#248A3D] dark:text-emerald-400 shadow-xs font-bold ring-1 ring-[#34C759]"
-                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#34C759]/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-xs font-bold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3 text-[#34C759]" />
-                      Conservative
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
-                    Primary referral / No intervention
-                  </span>
-                </button>
-
-                {/* 5. Deferred Review SOS */}
-                <button
-                  type="button"
-                  onClick={() => setDisposition("DEFERRED_REVIEW_SOS")}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    disposition === "DEFERRED_REVIEW_SOS"
-                      ? "border-[#FF9500] bg-[#FF9500]/10 dark:bg-amber-950/40 text-[#C97100] dark:text-amber-400 shadow-xs font-bold ring-1 ring-[#FF9500]"
-                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#FF9500]/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-xs font-bold flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3 text-[#FF9500]" />
-                      Deferred (SOS)
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
-                    Wait-and-watch on red flags
-                  </span>
-                </button>
-
-                {/* 6. Surveillance Protocol */}
-                <button
-                  type="button"
-                  onClick={() => setDisposition("SURVEILLANCE_PROTOCOL")}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                    disposition === "SURVEILLANCE_PROTOCOL"
-                      ? "border-[#32ADE6] bg-[#32ADE6]/10 dark:bg-cyan-950/40 text-[#0077A6] dark:text-cyan-400 shadow-xs font-bold ring-1 ring-[#32ADE6]"
-                      : "border-[#E5E5EA] dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-800/60 text-[#636366] dark:text-slate-400 hover:border-[#32ADE6]/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-xs font-bold flex items-center gap-1">
-                      <Eye className="w-3 h-3 text-[#32ADE6]" />
-                      Surveillance
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-[#8E8E93] dark:text-slate-400 leading-tight">
-                    Interval imaging follow-up
-                  </span>
-                </button>
+                <div className="p-3">
+                  <label className="block text-[11px] font-semibold text-[#636366] dark:text-slate-400 mb-1">
+                    CT Review / Imaging Findings
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={cectFindings}
+                    onChange={(e) => setCectFindings(e.target.value)}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    placeholder="Triple-phase CT/MRI findings, vascular anatomy, access feasibility..."
+                    className="w-full px-3 py-1.5 rounded-lg border border-[#E5E5EA] dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800/80 text-xs text-[#1C1C1E] dark:text-slate-100 leading-relaxed focus:bg-white dark:focus:bg-slate-800 focus:border-[#007AFF] focus:outline-none transition-colors"
+                  />
+                </div>
               </div>
 
-              {/* Conditional SOS Trigger Symptoms Input */}
-              {disposition === "DEFERRED_REVIEW_SOS" && (
-                <div className="p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs space-y-1.5 animate-in fade-in">
-                  <label className="block text-[11px] font-bold text-amber-950 dark:text-amber-200 flex items-center gap-1.5">
+              {/* ROW 6 (Conditional): SOS Triggers */}
+              {(disposition === "DEFERRED_REVIEW_SOS" || selectedBedId === "on_call") && (
+                <div className="p-3 bg-amber-50/60 dark:bg-amber-950/30">
+                  <label className="block text-[11px] font-bold text-amber-950 dark:text-amber-200 mb-1 flex items-center gap-1.5">
                     <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    SOS Red-Flag Trigger Symptoms for Urgent Hospital Return *
+                    <span>SOS Red-Flag Triggers for Urgent Hospital Return</span>
                   </label>
                   <input
                     type="text"
@@ -1468,18 +1590,15 @@ export default function OpClinicConsultationDeskPage() {
                     onChange={(e) => setSosTriggerSymptoms(e.target.value)}
                     autoComplete="off"
                     data-lpignore="true"
-                    placeholder="e.g. Abdominal pain progression, fresh melena/hematemesis, expanding hematoma, sudden Hb drop, high fever..."
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 font-medium text-amber-950 dark:text-amber-100 focus:outline-none focus:border-amber-600"
+                    placeholder="e.g. Abdominal pain progression, fresh melena/hematemesis, expanding hematoma, fever..."
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 font-medium text-amber-950 dark:text-amber-100 focus:outline-none focus:border-amber-600"
                   />
-                  <p className="text-[10px] text-amber-800 dark:text-amber-300">
-                    Documenting SOS triggers ensures patient has explicit clinical boundary conditions without occupying an inpatient hospital bed.
-                  </p>
                 </div>
               )}
             </div>
 
             {/* Bottom Action Strip */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E5EA] dark:border-slate-800">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2 border-t border-[#E5E5EA] dark:border-slate-800">
               <div className="text-[11px] text-[#8E8E93] dark:text-slate-400 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
                 <span>Consultant: <strong className="text-slate-900 dark:text-slate-200">{activeStaff.name}</strong> ({activeStaff.code})</span>
@@ -1498,32 +1617,15 @@ export default function OpClinicConsultationDeskPage() {
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Save Consultation &amp; Go to Queue</span>
+                  <span>Save Consultation</span>
                 </button>
                 <button
                   type="button"
-                  onClick={handleApplyDisposition}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-xs font-semibold shadow-xs transition-all cursor-pointer ${
-                    disposition === "STAT_CATH_LAB"
-                      ? "bg-[#EA4335] hover:bg-[#D93025]"
-                      : disposition === "ADMIT_WARD_PREOP"
-                      ? "bg-[#5856D6] hover:bg-[#4745B8]"
-                      : "bg-[#007AFF] hover:bg-[#0062CC]"
-                  }`}
+                  onClick={handleSaveAndExecute}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
                 >
-                  <ShieldAlert className="w-4 h-4" />
-                  <span>Execute Disposition ({disposition === "ADMIT_WARD_PREOP" ? "Ward Bed" : disposition === "STAT_CATH_LAB" ? "STAT" : "Non-Bed"})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBookingStep(1);
-                    setShowBookingModal(true);
-                  }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#007AFF] dark:border-blue-500 bg-white dark:bg-slate-900 text-[#007AFF] dark:text-blue-400 hover:bg-[#007AFF]/10 dark:hover:bg-blue-950/40 text-xs font-semibold transition-all cursor-pointer"
-                >
-                  <CalendarPlus className="w-4 h-4" />
-                  <span>Book Cath-Lab</span>
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>Save &amp; Book Cath-Lab (Execute)</span>
                 </button>
               </div>
             </div>

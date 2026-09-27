@@ -50,6 +50,38 @@ import { SsoIhmsPrefill } from "./SsoIhmsPrefill";
 import { PatientArchiveDossier } from "./PatientArchiveDossier";
 import { MasterProcedure } from "../../lib/masterCatalog";
 import { getAllProcedureFamilies, getDischargeTemplate, CriteriaField } from './procedureDischargeTemplates';
+import {
+  VaricoseClinicalModel,
+  VaricoceleClinicalModel,
+  PerforatorMappingItem,
+  TruncalIncompetence,
+  SclerotherapyDistribution,
+  CeapClinicalClass,
+  VcssBreakdown,
+  createDefaultPerforators,
+  createDefaultTruncal,
+  createDefaultSclerotherapy,
+  createDefaultVcss,
+  calculateVcssTotal,
+  synthesizeVenousDiagnosis,
+  synthesizeVenousComplaints,
+  synthesizeVenousHistory,
+  synthesizeVenousLocalExam,
+  synthesizeVenousOperativeNote,
+  synthesizeVenousPostOpNote,
+  synthesizeVenousMedications,
+  synthesizeVenousDischargeAdvice,
+  synthesizeVenousRedFlags,
+  synthesizeVenousSonographyReport,
+  synthesizeVaricoceleDiagnosis,
+  synthesizeVaricoceleComplaints,
+  synthesizeVaricoceleHistory,
+  synthesizeVaricoceleLocalExam,
+  synthesizeVaricoceleOperativeNote,
+  synthesizeVaricocelePostOpNote,
+  synthesizeVaricoceleMedications,
+  synthesizeVaricoceleDischargeAdvice,
+} from "./venousClinicalEngine";
 
 // ============================================================================
 // CLINICAL PROCEDURE DEFINITIONS & TYPES
@@ -59,7 +91,7 @@ export type ProcedureCategory = "varicose_veins" | "varicocele" | "other_ir";
 
 export interface VaricoseCriteria {
   laterality: "Left lower limb" | "Right lower limb" | "Bilateral lower limbs";
-  modality: "VenaSeal" | "EVLT";
+  modality: "VenaSeal" | "EVLT" | "VenaSeal_UGFS" | "EVLT_UGFS" | "UGFS_Only";
   findings: {
     varicoseVeins: boolean;
     venousUlcer: boolean;
@@ -100,6 +132,16 @@ export interface VaricoseCriteria {
     | "Present (Father)"
     | "Present (Both Parents)"
     | "Absent";
+  truncal?: TruncalIncompetence;
+  perforators?: PerforatorMappingItem[];
+  sclerotherapy?: SclerotherapyDistribution;
+  ceapClass?: CeapClinicalClass;
+  vcss?: VcssBreakdown;
+  compressionStockingsApplied?: boolean;
+  immediateAmbulationMinutes?: number;
+  vasPainScore?: number;
+  egitStatus?: 'Grade 0 (Absent - Complete occlusion to 5cm SFJ/SPJ)' | 'Grade I (Thrombus flush with junction)' | 'Grade II (<50% CFV protrusion)' | 'Grade III (>50% CFV protrusion)' | 'Grade IV (CFV Occlusion)';
+  chairScreening?: 'Negative (No erythema, urticaria or hypersensitivity)' | 'Mild self-limiting perivenous erythema (Grade 1)' | 'Moderate allergic phlebitis along tract (Grade 2)';
 }
 
 export interface VaricoceleCriteria {
@@ -174,52 +216,56 @@ export function synthesizeDischargeRecord({
   );
 
   if (category === "varicose_veins") {
-    // Determine CEAP Classification
-    let ceapGrade = "C2";
-    if (
-      varicose.ulcerSizeAndSite !== "None" &&
-      !varicose.ulcerSizeAndSite.includes("Healed")
-    ) {
-      ceapGrade = "C6";
-    } else if (
-      varicose.ulcerSizeAndSite.includes("Healed") ||
-      varicose.findings.venousUlcer
-    ) {
-      ceapGrade = "C5";
-    } else if (varicose.findings.lipodermatosclerosis) {
-      ceapGrade = "C4b";
-    } else if (varicose.findings.hyperpigmentation) {
-      ceapGrade = "C4a";
-    } else if (varicose.findings.edema) {
-      ceapGrade = "C3";
-    } else if (varicose.findings.varicoseVeins) {
-      ceapGrade = "C2";
-    } else if (varicose.findings.coronaPhlebectatica) {
-      ceapGrade = "C1";
+    const truncal = varicose.truncal || createDefaultTruncal();
+    const perforators = varicose.perforators || createDefaultPerforators();
+    const sclerotherapy = varicose.sclerotherapy || createDefaultSclerotherapy();
+    const vcss = varicose.vcss || createDefaultVcss();
+
+    let ceapGrade: CeapClinicalClass = varicose.ceapClass || "C2";
+    if (!varicose.ceapClass) {
+      if (
+        varicose.ulcerSizeAndSite !== "None" &&
+        !varicose.ulcerSizeAndSite.includes("Healed")
+      ) {
+        ceapGrade = "C6";
+      } else if (
+        varicose.ulcerSizeAndSite.includes("Healed") ||
+        varicose.findings.venousUlcer
+      ) {
+        ceapGrade = "C5";
+      } else if (varicose.findings.lipodermatosclerosis) {
+        ceapGrade = "C4b";
+      } else if (varicose.findings.hyperpigmentation) {
+        ceapGrade = "C4a";
+      } else if (varicose.findings.edema) {
+        ceapGrade = "C3";
+      } else if (varicose.findings.varicoseVeins) {
+        ceapGrade = "C2";
+      } else if (varicose.findings.coronaPhlebectatica) {
+        ceapGrade = "C1";
+      }
     }
 
-    // List of active clinical findings
-    const activeSigns: string[] = [];
-    if (varicose.findings.varicoseVeins) activeSigns.push("dilated varicose veins");
-    if (varicose.findings.achingPain) activeSigns.push("aching pain and heaviness");
-    if (varicose.findings.edema) activeSigns.push("lower extremity swelling/edema");
-    if (varicose.findings.hyperpigmentation)
-      activeSigns.push("hyperpigmentation / stasis dermatitis");
-    if (varicose.findings.coronaPhlebectatica)
-      activeSigns.push("corona phlebectatica");
-    if (varicose.findings.lipodermatosclerosis)
-      activeSigns.push("lipodermatosclerosis");
-    if (varicose.findings.nightCramps) activeSigns.push("nocturnal muscle cramps");
-    if (varicose.findings.restlessLegs) activeSigns.push("restless legs sensation");
-    if (varicose.findings.venousUlcer || varicose.ulcerSizeAndSite !== "None")
-      activeSigns.push(`venous ulceration (${varicose.ulcerSizeAndSite})`);
-    if (varicose.findings.thrombophlebitis)
-      activeSigns.push("superficial thrombophlebitis");
+    const clinicalModel: VaricoseClinicalModel = {
+      laterality: varicose.laterality,
+      modality: (varicose.modality === "VenaSeal" ? "VenaSeal_UGFS" : (varicose.modality === "EVLT" ? "EVLT_UGFS" : varicose.modality)) as any,
+      symptomDuration: varicose.symptomDuration,
+      itchingDuration: varicose.itchingDuration,
+      ulcerSizeAndSite: varicose.ulcerSizeAndSite,
+      familyHistory: varicose.familyHistory,
+      truncal,
+      perforators,
+      sclerotherapy,
+      ceapClass: ceapGrade,
+      vcss,
+      findings: varicose.findings,
+      compressionStockingsApplied: varicose.compressionStockingsApplied !== false,
+      immediateAmbulationMinutes: varicose.immediateAmbulationMinutes || 25,
+      vasPainScore: varicose.vasPainScore || 1,
+      egitStatus: varicose.egitStatus || "Grade 0 (Absent - Complete occlusion to 5cm SFJ/SPJ)",
+      chairScreening: varicose.chairScreening || "Negative (No erythema, urticaria or hypersensitivity)",
+    };
 
-    const signsList =
-      activeSigns.length > 0 ? activeSigns.join(", ") : "visible varicose veins";
-
-    // Diagnosis & ICD
     if (ceapGrade === "C6") {
       updated.caseSummary.icdDiagnosis =
         "(S) Varicose veins of lower extremities with ulcer (I83.0)\n(S) Chronic venous insufficiency (peripheral) (I87.2)";
@@ -231,69 +277,18 @@ export function synthesizeDischargeRecord({
         "(S) Varicose veins of lower extremities without ulcer or inflammation (I83.9)\n(S) Chronic venous insufficiency (peripheral) (I87.2)";
     }
 
-    updated.caseSummary.diagnosis = `Varicose veins of ${varicose.laterality} with saphenofemoral junction (SFJ) reflux and chronic venous insufficiency (CEAP ${ceapGrade}, I83)`;
-
-    // Complaints
-    updated.caseSummary.complaints = `Prominent tortuous veins in ${varicose.laterality} with ${
-      varicose.findings.achingPain ? "aching pain and heaviness, " : ""
-    }${varicose.findings.edema ? "leg swelling, " : ""}for ${
-      varicose.symptomDuration
-    }.${
-      varicose.itchingDuration !== "None"
-        ? ` Itching present for ${varicose.itchingDuration}.`
-        : ""
-    }${
-      varicose.ulcerSizeAndSite !== "None"
-        ? ` Ulcer noted: ${varicose.ulcerSizeAndSite}.`
-        : ""
-    }`;
-
-    // Detailed Case History
-    updated.caseSummary.caseHistory = `Patient presented to the Department of Interventional Radiology with a ${
-      varicose.symptomDuration
-    } history of symptomatic varicose veins involving the ${
-      varicose.laterality
-    }. Documented clinical findings: ${signsList}. Associated itching duration: ${
-      varicose.itchingDuration
-    }. Ulcer status: ${
-      varicose.ulcerSizeAndSite
-    }. Family history of chronic venous disease: ${
-      varicose.familyHistory
-    }. High-resolution venous color duplex Doppler ultrasound revealed saphenofemoral junction (SFJ) incompetence with pathological retrograde reflux (> 0.5 sec) and great saphenous vein (GSV) dilatation (caliber 6.8–8.5 mm). Deep venous system (CFV, femoral, and popliteal veins) was widely patent with competent valves and no evidence of deep vein thrombosis (DVT). Evaluated as CEAP clinical class ${ceapGrade} and successfully treated with endovascular ${
-      varicose.modality === "VenaSeal"
-        ? "VenaSeal cyanoacrylate glue embolization"
-        : "Endovenous Laser Ablation (EVLT)"
-    }.`;
-
-    updated.caseSummary.familyHistory = `Chronic venous insufficiency: ${varicose.familyHistory}.`;
-    // Clinical risk factors - ensure patient name is NEVER injected into risk factors or etiology
+    updated.caseSummary.diagnosis = synthesizeVenousDiagnosis(clinicalModel);
+    updated.caseSummary.complaints = synthesizeVenousComplaints(clinicalModel);
+    updated.caseSummary.caseHistory = synthesizeVenousHistory(clinicalModel);
+    updated.caseSummary.familyHistory = `Chronic venous disease: ${varicose.familyHistory}.`;
     updated.caseSummary.riskFactor = "Prolonged standing, chronic venous insufficiency, familial history. Viral markers (HIV, HBsAg, Anti-HCV) non-reactive.";
 
-    // Remove GSV ultrasound confirmation picture from varicose vein discharge summary
     updated.attachments = (updated.attachments || []).filter(
       (att) => att.modality !== "US"
     );
 
-    // Local Examination
-    updated.systemicExam.localExamination = `${varicose.laterality}: Dilated, tortuous superficial varicosities along great saphenous distribution. ${
-      varicose.findings.hyperpigmentation
-        ? "Stasis hyperpigmentation and dermatitis noted around medial gaiter zone. "
-        : ""
-    }${
-      varicose.findings.lipodermatosclerosis
-        ? "Subcutaneous fibrosis / lipodermatosclerosis (inverted champagne bottle appearance) noted. "
-        : ""
-    }${
-      varicose.findings.coronaPhlebectatica
-        ? "Corona phlebectatica around ankle. "
-        : ""
-    }${varicose.findings.edema ? "Pitting pedal edema present. " : ""}${
-      varicose.ulcerSizeAndSite !== "None"
-        ? `Venous ulcer: ${varicose.ulcerSizeAndSite}; base clean with healthy granulation. `
-        : ""
-    }Trendelenburg test positive for SFJ incompetence; Perthes test negative (deep venous system patent). Peripheral arterial pulses (dorsalis pedis, posterior tibial) bilaterally palpable (Grade 2+). Puncture site clean and dry; Class II graduated compression applied.`;
+    updated.systemicExam.localExamination = synthesizeVenousLocalExam(clinicalModel);
 
-    // Procedure Details
     const proc = updated.procedureDetails[0] || {
       sNo: 1,
       dateTime: new Date().toLocaleDateString("en-IN") + " 10:00 AM",
@@ -305,109 +300,65 @@ export function synthesizeDischargeRecord({
     };
 
     proc.surgicalProcedure =
-      varicose.modality === "VenaSeal"
+      clinicalModel.modality.includes("VenaSeal")
         ? "GLUE EMBOLISATION BY VENASEAL (CYANOACRYLATE)"
-        : "ENDOVENOUS LASER ABLATION (EVLT)";
+        : clinicalModel.modality.includes("EVLT")
+        ? "ENDOVENOUS LASER ABLATION (EVLT)"
+        : "ULTRASOUND-GUIDED FOAM SCLEROTHERAPY (UGFS)";
     proc.operationType = "Minor";
     proc.anaesthesiaType = "LOCAL";
-
-    if (varicose.modality === "VenaSeal") {
-      proc.procedureDetail = `Under strict aseptic precautions and real-time ultrasound guidance. Patient positioned supine on cath-lab table. ${varicose.laterality} GSV cannulated at mid-calf level using 18G micro-puncture needle under sonographic vision. A 0.035" J-tip guidewire advanced to SFJ. 5F delivery sheath and catheter introduced; catheter tip locked exactly 5.0 cm caudal to the saphenofemoral junction (SFJ), verified on duplex ultrasound by direct visualization of superficial epigastric vein and common femoral vein (CFV). VenaSeal cyanoacrylate glue dispensed via precision dispensing gun: initial bolus of 0.10 mL followed by 3 minutes of firm manual compression over SFJ, followed by sequential injections of 0.09 mL every 3 cm along the GSV down to mid-calf with 30 seconds of compression per segment. Total 1.3 mL glue delivered. Sheath removed, hemostasis secured with manual pressure. Completion Doppler demonstrated complete occlusion of treated GSV segment with hyperechoic glue cast, zero flow/reflux, and widely patent common femoral vein (CFV). Sterile compression dressing applied.`;
-    } else {
-      proc.procedureDetail = `Under strict aseptic precautions and ultrasound guidance. Percutaneous access into ${varicose.laterality} great saphenous vein (GSV) obtained at mid-calf using 18G needle; 6F introducer sheath placed. 1470 nm radial laser fiber advanced through the sheath and tip positioned 2.0 cm distal to SFJ, verified on duplex ultrasound. Ultrasound-guided perivenous tumescent anesthesia (saline + lidocaine + bicarbonate) administered into perivenous fascial sheath along entire GSV segment, creating adequate thermal heat sink. Continuous laser firing performed at 7 W with controlled pull-back speed 1 mm/s (linear energy density ~60 J/cm). Post-ablation duplex confirmed non-compressible, occluded GSV with no residual flow and patent CFV. Puncture site dressed with Class II graduated compression.`;
-    }
-
+    proc.procedureDetail = synthesizeVenousOperativeNote(clinicalModel);
     updated.procedureDetails = [proc];
 
-    // Medications - Full Generic Names + Official RMSCL DDC Codes
-    const meds: DischargeMedicationItem[] = [
-      {
-        sNo: 1,
-        medicine:
-          "Tab. Micronized Purified Flavonoid Fraction (Daflon) 500mg [RMSCL DDC #622]",
-        genericName: "Micronized Purified Flavonoid Fraction (Daflon)",
-        dosePower: "500mg",
-        route: "ORAL",
-        frequency: "BD",
-        days: 30,
-        instructions: "After meals (Venoactive tonic)",
-      },
-      {
-        sNo: 2,
-        medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]",
-        genericName: "Paracetamol",
-        dosePower: "650mg",
-        route: "ORAL",
-        frequency: "BD",
-        days: 5,
-        instructions: "Post meals SOS for discomfort",
-      },
-      {
-        sNo: 3,
-        medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
-        genericName: "Pantoprazole",
-        dosePower: "40mg",
-        route: "ORAL",
-        frequency: "OD",
-        days: 7,
-        instructions: "Empty stomach in morning",
-      },
-    ];
+    updated.dischargeMedications = synthesizeVenousMedications(clinicalModel);
 
-    if (
-      varicose.ulcerSizeAndSite !== "None" ||
-      varicose.findings.thrombophlebitis
-    ) {
-      meds.push({
-        sNo: 4,
-        medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]",
-        genericName: "Amoxicillin and Potassium Clavulanate",
-        dosePower: "625mg",
-        route: "ORAL",
-        frequency: "BD",
-        days: 5,
-        instructions: "Post meals (Ulcer / wound prophylaxis)",
-      });
+    // Enhanced Post-Operative Notes
+    updated.postOperativeNotes = synthesizeVenousPostOpNote(clinicalModel);
+
+    // Sonography investigations report (authentic, NO fake blood tests)
+    updated.investigations.sonography = synthesizeVenousSonographyReport(clinicalModel);
+    if (updated.investigations.labResults && updated.investigations.labResults.length > 0) {
+      updated.investigations.labResults = [];
     }
 
-    if (varicose.itchingDuration !== "None") {
-      meds.push({
-        sNo: meds.length + 1,
-        medicine: "Tab. Levocetirizine 5mg [RMSCL DDC #659]",
-        genericName: "Levocetirizine",
-        dosePower: "5mg",
-        route: "ORAL",
-        frequency: "HS",
-        days: 10,
-        instructions: "At bedtime for itching",
-      });
-    }
-
-    meds.forEach((m, i) => (m.sNo = i + 1));
-    updated.dischargeMedications = meds;
-
-    // Discharge Advice & Follow-Up
     const fuDateVaricose = new Date();
     fuDateVaricose.setDate(fuDateVaricose.getDate() + 10);
     const fuDateVaricoseStr = `${String(fuDateVaricose.getDate()).padStart(2, "0")}-${String(fuDateVaricose.getMonth() + 1).padStart(2, "0")}-${fuDateVaricose.getFullYear()}`;
 
-    updated.dischargeDetails.generalAdvise =
-      "1. Wear Class II graduated compression stockings (23-32 mmHg) during daytime for 3-4 weeks.\n2. Normal walking and early ambulation encouraged immediately; avoid continuous motionless standing or sitting > 1 hour.\n3. Elevate legs above heart level on 2 pillows while resting or sleeping.\n4. Keep puncture site dry and clean for 48 hours. Remove outer dressing after 48 hours.\n5. Avoid strenuous gym workouts, heavy weightlifting (> 15 kg), or hot tub baths for 2 weeks.\n6. Red Flag Emergency Warnings: Sudden onset severe calf pain or calf swelling, chest pain, shortness of breath, or active bleeding (report immediately to SMS Hospital Emergency / IR Dept).";
+    updated.dischargeDetails.generalAdvise = synthesizeVenousDischargeAdvice(clinicalModel).join('\n');
     updated.dischargeDetails.conditionOnDischarge = "Improved";
     updated.dischargeDetails.followUp =
       "Follow up in IR OPD Room 48 / Old Gastro Ward (SMS Hospital, Jaipur) after 7-10 days with duplex color Doppler ultrasound scan.";
     updated.dischargeDetails.followUpDate = fuDateVaricoseStr;
   } else if (category === "varicocele") {
-    // Varicocele Synthesis
+    let mappedIndication: VaricoceleClinicalModel['indication'] = 'Scrotal pain & heaviness';
+    if (varicocele.indication.includes('Infertility')) {
+      mappedIndication = 'Infertility & abnormal semen parameters (OAT)';
+    } else if (varicocele.indication.includes('Cosmetic') || varicocele.indication.includes('hypotrophy')) {
+      mappedIndication = 'Testicular hypotrophy & cosmetic discomfort';
+    }
+
+    const varicoceleModel: VaricoceleClinicalModel = {
+      laterality: varicocele.side as any,
+      clinicalGrade: varicocele.clinicalGrade,
+      indication: mappedIndication,
+      symptomDuration: varicocele.duration,
+      pampiniformDiameterRestMm: 3.8,
+      pampiniformDiameterValsalvaMm: 4.8,
+      refluxDurationSec: 3.2,
+      embolicTechnique: 'Sandwich Technique (Distal & Proximal Microcoils + 3% STS Foam)',
+      coilsCount: 6,
+      collateralsOccluded: true,
+      semenParametersAbnormal: varicocele.indication.includes('Infertility'),
+      vasPainScore: 1,
+    };
+
     updated.caseSummary.icdDiagnosis =
       "(S) Varicocele of spermatic cord (I86.1)\n(S) Male pelvic congestion / scrotal varices";
-    updated.caseSummary.diagnosis = `${varicocele.side} Varicocele (${varicocele.clinicalGrade}) with ${varicocele.indication.toLowerCase()} (I86.1)`;
-
-    updated.caseSummary.complaints = `Dull dragging scrotal aching pain and heaviness on ${varicocele.side} side for ${varicocele.duration}, exacerbated on prolonged standing. Primary indication: ${varicocele.indication}.`;
-
-    updated.caseSummary.caseHistory = `Patient presented to the Department of Interventional Radiology with a ${varicocele.duration} history of ${varicocele.side.toLowerCase()}-sided scrotal dragging sensation, discomfort, and swelling. Physical examination confirmed ${varicocele.clinicalGrade}. Primary clinical indication for intervention: ${varicocele.indication}. Scrotal color duplex Doppler ultrasound revealed dilated, tortuous pampiniform plexus veins measuring > 3.8 mm at rest, with marked continuous retrograde venous reflux lasting > 3.5 seconds on Valsalva maneuver. Bilateral testicular volume preserved with no testicular mass. The patient chose catheter-directed transvenous embolization over surgical ligation for faster recovery and reduced recurrence.`;
-
-    updated.systemicExam.localExamination = `Local Examination: ${varicocele.side} hemiscrotum reveals ${varicocele.clinicalGrade.toLowerCase()}; soft, non-tender, characteristic 'bag-of-worms' feel. Venous distension accentuates during upright posture and Valsalva maneuver. Bilateral testes descended, normal in volume and texture. Right common femoral/basilic access site clean and dry; peripheral pulses palpable; zero hematoma.`;
+    updated.caseSummary.diagnosis = synthesizeVaricoceleDiagnosis(varicoceleModel);
+    updated.caseSummary.complaints = synthesizeVaricoceleComplaints(varicoceleModel);
+    updated.caseSummary.caseHistory = synthesizeVaricoceleHistory(varicoceleModel);
+    updated.systemicExam.localExamination = synthesizeVaricoceleLocalExam(varicoceleModel);
 
     const proc = updated.procedureDetails[0] || {
       sNo: 1,
@@ -419,53 +370,24 @@ export function synthesizeDischargeRecord({
       processDoneBy: "Dr Shashank Sharma",
     };
 
-    proc.surgicalProcedure =
-      "PERCUTANEOUS TRANSVENOUS VARICOCELE EMBOLIZATION";
+    proc.surgicalProcedure = "PERCUTANEOUS TRANSVENOUS VARICOCELE EMBOLIZATION";
     proc.operationType = "Minor";
     proc.anaesthesiaType = "LOCAL";
-    proc.procedureDetail = `Under local anesthesia (2% Lignocaine) and fluoroscopic guidance with full aseptic precautions. Right common femoral vein (RCFV) cannulated using 18G needle; 6F vascular sheath placed. A 5F Cobra (C2) catheter and 0.035" hydrophilic Terumo Glidewire advanced selectively into the ${varicocele.side.toLowerCase()} renal vein. Selective retrograde venogram demonstrated competent renal vein with massive retrograde reflux into the internal spermatic vein (ISV) with multiple parallel collateral branches. Microcatheter advanced coaxially into the distal ISV near the level of the deep inguinal ring. Transvenous embolization carried out using sandwich technique: deployment of pushable/detachable platinum-tungsten microcoils (0.035" and 0.018") combined with 3% Sodium Tetradecyl Sulfate (STS) foam sclerosant, extending proximally to just below the renal vein confluence to occlude all collateral bypass channels. Post-embolization completion venogram during Valsalva confirmed total occlusion of internal spermatic vein and all collaterals with zero retrograde flow. Sheath removed, manual compression applied for 10 minutes; clean puncture site hemostasis confirmed.`;
-
+    proc.procedureDetail = synthesizeVaricoceleOperativeNote(varicoceleModel);
     updated.procedureDetails = [proc];
 
-    updated.dischargeMedications = [
-      {
-        sNo: 1,
-        medicine: "Tab. Cefixime 200mg [RMSCL DDC #112]",
-        genericName: "Cefixime",
-        dosePower: "200mg",
-        route: "ORAL",
-        frequency: "BD",
-        days: 5,
-        instructions: "Post meals",
-      },
-      {
-        sNo: 2,
-        medicine: "Tab. Aceclofenac 100mg + Paracetamol 325mg [RMSCL DDC #622]",
-        genericName: "Aceclofenac + Paracetamol",
-        dosePower: "1 Tab",
-        route: "ORAL",
-        frequency: "BD",
-        days: 3,
-        instructions: "Post meals SOS for groin/scrotal discomfort",
-      },
-      {
-        sNo: 3,
-        medicine: "Tab. Pantoprazole 40mg [RMSCL DDC #142]",
-        genericName: "Pantoprazole",
-        dosePower: "40mg",
-        route: "ORAL",
-        frequency: "OD",
-        days: 5,
-        instructions: "Empty stomach in morning",
-      },
-    ];
+    updated.postOperativeNotes = synthesizeVaricocelePostOpNote(varicoceleModel);
+    updated.dischargeMedications = synthesizeVaricoceleMedications();
+
+    if (updated.investigations.labResults && updated.investigations.labResults.length > 0) {
+      updated.investigations.labResults = [];
+    }
 
     const fuDateVaricocele = new Date();
     fuDateVaricocele.setDate(fuDateVaricocele.getDate() + 14);
     const fuDateVaricoceleStr = `${String(fuDateVaricocele.getDate()).padStart(2, "0")}-${String(fuDateVaricocele.getMonth() + 1).padStart(2, "0")}-${fuDateVaricocele.getFullYear()}`;
 
-    updated.dischargeDetails.generalAdvise =
-      "1. Wear firm scrotal support (athletic supporter / tight briefs) continuously for 7-10 days.\n2. Avoid heavy weight lifting (> 10 kg), strenuous gym workouts, running, and bicycling for 2 weeks.\n3. Keep groin puncture site clean and dry for 48 hours.\n4. Mild dull scrotal ache or slight cord induration is normal post-embolization and responds to prescribed analgesics.\n5. Abstain from sexual intercourse or ejaculation for 5-7 days.\n6. Report immediately to IR emergency if severe acute scrotal swelling, high fever (> 100.4°F), or active groin bleeding develops.";
+    updated.dischargeDetails.generalAdvise = synthesizeVaricoceleDischargeAdvice().join('\n');
     updated.dischargeDetails.conditionOnDischarge = "Improved";
     updated.dischargeDetails.followUp =
       "Follow up in IR OPD Room 48 after 2 weeks for puncture site check. Repeat semen analysis and scrotal Doppler after 3 months.";
@@ -1060,7 +982,7 @@ export default function DischargeSummaryPage() {
   // Varicose Veins Criteria State
   const [varicoseCriteria, setVaricoseCriteria] = useState<VaricoseCriteria>({
     laterality: "Left lower limb",
-    modality: "VenaSeal",
+    modality: "VenaSeal_UGFS",
     findings: {
       varicoseVeins: true,
       venousUlcer: false,
@@ -1077,6 +999,16 @@ export default function DischargeSummaryPage() {
     itchingDuration: "3 months",
     ulcerSizeAndSite: "None",
     familyHistory: "Present (Mother)",
+    truncal: createDefaultTruncal(),
+    perforators: createDefaultPerforators(),
+    sclerotherapy: createDefaultSclerotherapy(),
+    ceapClass: "C4a",
+    vcss: createDefaultVcss(),
+    compressionStockingsApplied: true,
+    immediateAmbulationMinutes: 25,
+    vasPainScore: 1,
+    egitStatus: "Grade 0 (Absent - Complete occlusion to 5cm SFJ/SPJ)",
+    chairScreening: "Negative (No erythema, urticaria or hypersensitivity)",
   });
 
   // Varicocele Criteria State
@@ -1143,14 +1075,24 @@ export default function DischargeSummaryPage() {
       const localExam = template.synthesizeLocalExam(dynamicCriteria);
       const operativeNote = template.synthesizeOperativeNote(dynamicCriteria);
       const diagnosis = template.synthesizeDiagnosis(dynamicCriteria);
+      const postOpRec = template.synthesizePostOpRecoveryNote
+        ? template.synthesizePostOpRecoveryNote(dynamicCriteria)
+        : null;
       
-      setSummaryData(prev => ({
-        ...prev,
-        caseSummary: {
+      setSummaryData(prev => {
+        const familyRisk = template.synthesizeFamilyAndRiskHistory
+          ? template.synthesizeFamilyAndRiskHistory(dynamicCriteria)
+          : (prev.caseSummary?.familyHistory || "Nil significant family history");
+
+        return {
+          ...prev,
+          caseSummary: {
           ...prev.caseSummary,
           complaints,
           caseHistory: history,
           diagnosis,
+          familyHistory: familyRisk,
+          riskFactor: familyRisk,
           icdDiagnosis: `(S) ${template.icdPrimary.description} (${template.icdPrimary.code})`,
         },
         systemicExam: {
@@ -1178,20 +1120,21 @@ export default function DischargeSummaryPage() {
           generalAdvise: template.dischargeAdvice.join('\n'),
         },
         postOperativeNotes: {
-          accessSiteHemostasis: `Access site hemostasis: Pressure dressing intact. Site clean, dry, zero active oozing or hematoma.`,
+          accessSiteHemostasis: postOpRec?.accessSiteHemostasis || `Access site hemostasis: Pressure dressing intact. Site clean, dry, zero active oozing or hematoma.`,
           telemetryVitals: prev.postOperativeNotes?.telemetryVitals || "BP: 120/78 mmHg, HR: 72 bpm regular, SpO2: 99% on room air, RR: 16/min",
           sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Vascular closure confirmed)`,
           sheathStatus: "Removed",
-          recoveryStatus: `Conscious, oriented x3, hemodynamically stable. Post-op orders: ${template.dischargeAdvice[0] || "Rest quietly in bed."}`,
-          recoveryBed: prev.postOperativeNotes?.recoveryBed || "Cath-Lab Holding Rec-01",
-          distalPulses: "Strong (+++) - Bilateral distal peripheral pulses intact",
-          immediateComplications: "Nil documented - Zero immediate procedural complications",
+          recoveryStatus: postOpRec?.recoveryStatus || `Conscious, oriented x3, hemodynamically stable. Post-op orders: ${template.dischargeAdvice[0] || "Rest quietly in bed."}`,
+          recoveryBed: postOpRec?.recoveryBedMonitoring || prev.postOperativeNotes?.recoveryBed || "Cath-Lab Holding Rec-01",
+          distalPulses: postOpRec?.distalPulses || "Strong (+++) - Bilateral distal peripheral pulses intact",
+          immediateComplications: postOpRec?.immediateComplications || "Nil documented - Zero immediate procedural complications",
           recordedBy: "Dr Shashank Sharma",
           recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:00 PM`,
-          notes: `Post-procedural recovery for ${template.procedureFamily} completed uneventfully. Vitals and access site hemostasis verified.`,
+          notes: postOpRec?.notes || `Post-procedural recovery for ${template.procedureFamily} completed uneventfully. Vitals and access site hemostasis verified.`,
         },
-      }));
-    }
+      };
+    });
+  }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [procedureCategory, varicoseCriteria, varicoceleCriteria, otherIrCriteria, selectedProcedureKey, dynamicCriteria]);
 
@@ -1458,9 +1401,9 @@ POST-OPERATIVE NOTES:
 Access Site Hemostasis: ${summaryData.postOperativeNotes?.accessSiteHemostasis || "Hemostasis Intact. Site clean, dry, pressure dressing applied."}
 Telemetry Vitals: ${summaryData.postOperativeNotes?.telemetryVitals || "Stable"}
 Sheath Removal Time / Status: ${summaryData.postOperativeNotes?.sheathRemovalTime || "Immediate post-op"} (${summaryData.postOperativeNotes?.sheathStatus || "Removed"})
-Recovery Status: ${summaryData.postOperativeNotes?.recoveryStatus || "Conscious, oriented, pain controlled"}
-Recovery Bed / Ward: ${summaryData.postOperativeNotes?.recoveryBed || summaryData.admissionDetails.wardBed}
 Distal Peripheral Pulses: ${summaryData.postOperativeNotes?.distalPulses || "Strong (+++) bilaterally equal"}
+${summaryData.postOperativeNotes?.completionDuplex ? `Completion Duplex: ${summaryData.postOperativeNotes.completionDuplex}\n` : ""}${summaryData.postOperativeNotes?.egitStatus ? `EGIT Status: ${summaryData.postOperativeNotes.egitStatus}\n` : ""}${summaryData.postOperativeNotes?.compressionStockings ? `Compression Stockings: ${summaryData.postOperativeNotes.compressionStockings}\n` : ""}${summaryData.postOperativeNotes?.ambulationProtocol ? `Ambulation: ${summaryData.postOperativeNotes.ambulationProtocol}\n` : ""}${summaryData.postOperativeNotes?.chairScreening ? `CHAIR Screening: ${summaryData.postOperativeNotes.chairScreening}\n` : ""}Recovery Status: ${summaryData.postOperativeNotes?.recoveryStatus || "Conscious, oriented, pain controlled"}
+Recovery Bed / Ward: ${summaryData.postOperativeNotes?.recoveryBed || summaryData.admissionDetails.wardBed}
 Immediate Complications: ${summaryData.postOperativeNotes?.immediateComplications || "Nil"}
 Recorded By: ${summaryData.postOperativeNotes?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy}
 
@@ -2013,38 +1956,54 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                 <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
                   Procedure Modality
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() =>
                       setVaricoseCriteria({
                         ...varicoseCriteria,
-                        modality: "VenaSeal",
+                        modality: "VenaSeal_UGFS",
                       })
                     }
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
-                      varicoseCriteria.modality === "VenaSeal"
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer text-center ${
+                      varicoseCriteria.modality.includes("VenaSeal")
                         ? "bg-[#1A73E8] text-white border-[#1A73E8]"
                         : "bg-white text-[#3C4043] border-[#DADCE0] hover:bg-[#F1F3F4]"
                     }`}
                   >
-                    VenaSeal Glue
+                    VenaSeal + UGFS
                   </button>
                   <button
                     type="button"
                     onClick={() =>
                       setVaricoseCriteria({
                         ...varicoseCriteria,
-                        modality: "EVLT",
+                        modality: "EVLT_UGFS",
                       })
                     }
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
-                      varicoseCriteria.modality === "EVLT"
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer text-center ${
+                      varicoseCriteria.modality.includes("EVLT")
                         ? "bg-[#1A73E8] text-white border-[#1A73E8]"
                         : "bg-white text-[#3C4043] border-[#DADCE0] hover:bg-[#F1F3F4]"
                     }`}
                   >
-                    EVLT (Laser)
+                    EVLT + UGFS
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        modality: "UGFS_Only",
+                      })
+                    }
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer text-center ${
+                      varicoseCriteria.modality === "UGFS_Only"
+                        ? "bg-[#1A73E8] text-white border-[#1A73E8]"
+                        : "bg-white text-[#3C4043] border-[#DADCE0] hover:bg-[#F1F3F4]"
+                    }`}
+                  >
+                    UGFS Alone
                   </button>
                 </div>
               </div>
@@ -2297,6 +2256,527 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            {/* Truncal Incompetence & Reflux Anatomy (SVS/AVF 2023 Guidelines) */}
+            <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#DADCE0] pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#202124] uppercase tracking-wider">
+                    Truncal Incompetence &amp; Reflux Hemodynamics
+                  </span>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#E8F0FE] text-[#1A73E8]">
+                    SVS/AVF 2023 Guideline Cutoff: &ge; 0.5s
+                  </span>
+                </div>
+                <div className="text-[11px] text-[#5F6368]">
+                  SFJ Reflux:{" "}
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    value={varicoseCriteria.truncal?.sfjRefluxDurationSec ?? 3.2}
+                    onChange={(e) => {
+                      const t = varicoseCriteria.truncal || createDefaultTruncal();
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        truncal: { ...t, sfjRefluxDurationSec: parseFloat(e.target.value) || 0 },
+                      });
+                    }}
+                    className="w-14 px-1.5 py-0.5 rounded border border-[#DADCE0] font-mono text-xs font-bold text-[#1A73E8] bg-white text-center"
+                  />{" "}
+                  sec &bull; SPJ:{" "}
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    value={varicoseCriteria.truncal?.spjRefluxDurationSec ?? 0.3}
+                    onChange={(e) => {
+                      const t = varicoseCriteria.truncal || createDefaultTruncal();
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        truncal: { ...t, spjRefluxDurationSec: parseFloat(e.target.value) || 0 },
+                      });
+                    }}
+                    className="w-14 px-1.5 py-0.5 rounded border border-[#DADCE0] font-mono text-xs font-bold text-[#1A73E8] bg-white text-center"
+                  />{" "}
+                  sec
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                {[
+                  {
+                    key: "gsvAboveKnee",
+                    label: "GSV Above-Knee",
+                    diamKey: "gsvAboveKneeDiameterMm",
+                    defaultDiam: 7.5,
+                  },
+                  {
+                    key: "gsvBelowKnee",
+                    label: "GSV Below-Knee",
+                    diamKey: "gsvBelowKneeDiameterMm",
+                    defaultDiam: 4.2,
+                  },
+                  {
+                    key: "ssv",
+                    label: "SSV (Saphenopopliteal)",
+                    diamKey: "ssvDiameterMm",
+                    defaultDiam: 5.1,
+                  },
+                  {
+                    key: "aasv",
+                    label: "AASV (Ant. Accessory)",
+                    diamKey: "aasvDiameterMm",
+                    defaultDiam: 4.8,
+                  },
+                ].map((trunk) => {
+                  const t = varicoseCriteria.truncal || createDefaultTruncal();
+                  const isChecked = !!(t as any)[trunk.key];
+                  const diam = (t as any)[trunk.diamKey] ?? trunk.defaultDiam;
+                  return (
+                    <div
+                      key={trunk.key}
+                      className={`p-2 rounded-lg border text-xs transition-all ${
+                        isChecked
+                          ? "bg-white border-[#1A73E8] shadow-2xs"
+                          : "bg-white border-[#DADCE0] opacity-80"
+                      }`}
+                    >
+                      <label className="flex items-center gap-2 cursor-pointer font-bold select-none text-[#202124]">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            setVaricoseCriteria({
+                              ...varicoseCriteria,
+                              truncal: { ...t, [trunk.key]: e.target.checked },
+                            });
+                          }}
+                          className="rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8] cursor-pointer"
+                        />
+                        <span>{trunk.label}</span>
+                      </label>
+                      <div className="mt-1.5 flex items-center justify-between text-[11px] text-[#5F6368]">
+                        <span>Caliber:</span>
+                        <div className="flex items-center gap-1 font-mono">
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="1"
+                            max="25"
+                            value={diam}
+                            onChange={(e) => {
+                              setVaricoseCriteria({
+                                ...varicoseCriteria,
+                                truncal: {
+                                  ...t,
+                                  [trunk.diamKey]: parseFloat(e.target.value) || 0,
+                                },
+                              });
+                            }}
+                            className="w-14 px-1 py-0.5 rounded border border-[#DADCE0] bg-white text-right text-xs font-semibold text-[#202124]"
+                          />
+                          <span>mm</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Deep Ultrasound Perforator Mapping */}
+            <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#DADCE0] pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#202124] uppercase tracking-wider">
+                    Deep Ultrasound Perforator Mapping
+                  </span>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FEF7E0] text-[#B06000]">
+                    Pathological: Caliber &ge; 3.5mm &bull; Reflux &ge; 0.5s
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#5F6368]">
+                  {(varicoseCriteria.perforators || createDefaultPerforators()).filter((p) => p.status === "Treated with UGFS").length} Treated with UGFS
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {(varicoseCriteria.perforators || createDefaultPerforators()).map((perf, pIdx) => {
+                  const isPathological = perf.pathologicalDiameterMm >= 3.5 && perf.refluxDurationSec >= 0.5;
+                  return (
+                    <div
+                      key={perf.name}
+                      className={`p-2 rounded-lg border text-xs bg-white space-y-1.5 transition-all ${
+                        perf.status === "Treated with UGFS"
+                          ? "border-[#137333] shadow-2xs"
+                          : "border-[#DADCE0]"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-1">
+                        <span className="font-bold text-[#202124] text-[11px] leading-tight">
+                          {perf.name}
+                        </span>
+                        {isPathological && (
+                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-red-100 text-red-700 whitespace-nowrap">
+                            &ge;3.5mm
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-[#5F6368] leading-tight line-clamp-1">
+                        {perf.location}
+                      </p>
+
+                      <div className="grid grid-cols-2 gap-1 text-[11px]">
+                        <div className="flex items-center gap-1 font-mono">
+                          <span className="text-[10px] text-[#5F6368]">Cal:</span>
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="1"
+                            max="15"
+                            value={perf.pathologicalDiameterMm}
+                            onChange={(e) => {
+                              const perfs = [...(varicoseCriteria.perforators || createDefaultPerforators())];
+                              const val = parseFloat(e.target.value) || 0;
+                              perfs[pIdx] = { ...perfs[pIdx], pathologicalDiameterMm: val, incompetent: val >= 3.5 };
+                              setVaricoseCriteria({ ...varicoseCriteria, perforators: perfs });
+                            }}
+                            className="w-12 px-1 py-0.5 rounded border border-[#DADCE0] bg-white text-xs text-right font-semibold"
+                          />
+                          <span className="text-[10px]">mm</span>
+                        </div>
+                        <div className="flex items-center gap-1 font-mono">
+                          <span className="text-[10px] text-[#5F6368]">Reflux:</span>
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="10"
+                            value={perf.refluxDurationSec}
+                            onChange={(e) => {
+                              const perfs = [...(varicoseCriteria.perforators || createDefaultPerforators())];
+                              const val = parseFloat(e.target.value) || 0;
+                              perfs[pIdx] = { ...perfs[pIdx], refluxDurationSec: val };
+                              setVaricoseCriteria({ ...varicoseCriteria, perforators: perfs });
+                            }}
+                            className="w-12 px-1 py-0.5 rounded border border-[#DADCE0] bg-white text-xs text-right font-semibold"
+                          />
+                          <span className="text-[10px]">s</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-1 flex items-center justify-between border-t border-[#F1F3F4]">
+                        <span className="text-[10px] font-bold text-[#3C4043]">Status:</span>
+                        <select
+                          value={perf.status}
+                          onChange={(e) => {
+                            const perfs = [...(varicoseCriteria.perforators || createDefaultPerforators())];
+                            perfs[pIdx] = {
+                              ...perfs[pIdx],
+                              status: e.target.value as PerforatorMappingItem["status"],
+                            };
+                            setVaricoseCriteria({ ...varicoseCriteria, perforators: perfs });
+                          }}
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                            perf.status === "Treated with UGFS"
+                              ? "bg-[#E6F4EA] text-[#137333] border-[#137333]"
+                              : "bg-white text-[#5F6368] border-[#DADCE0]"
+                          }`}
+                        >
+                          <option value="Treated with UGFS">Treated with UGFS</option>
+                          <option value="Observed (Sub-critical)">Observed</option>
+                          <option value="Ablated">Ablated</option>
+                        </select>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Concomitant Foam Sclerotherapy (UGFS - Tessari Technique) */}
+            <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#DADCE0] pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#202124] uppercase tracking-wider">
+                    Concomitant Foam Sclerotherapy (UGFS - Tessari 1:4)
+                  </span>
+                  {(varicoseCriteria.sclerotherapy?.totalVolumeMl ?? 6) <= 10 ? (
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#E6F4EA] text-[#137333]">
+                      &le; 10 mL UIP Limit Verified
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 animate-pulse">
+                      Exceeds 10 mL UIP Safety Limit
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#1A73E8]">
+                  <span>Total Volume:</span>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="1"
+                    max="20"
+                    value={varicoseCriteria.sclerotherapy?.totalVolumeMl ?? 6}
+                    onChange={(e) => {
+                      const sc = varicoseCriteria.sclerotherapy || createDefaultSclerotherapy();
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        sclerotherapy: {
+                          ...sc,
+                          totalVolumeMl: parseFloat(e.target.value) || 0,
+                        },
+                      });
+                    }}
+                    className="w-16 px-1.5 py-0.5 rounded border border-[#DADCE0] bg-white text-center font-mono font-bold"
+                  />
+                  <span>mL</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
+                <div>
+                  <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
+                    Sclerosant Agent
+                  </label>
+                  <select
+                    value={varicoseCriteria.sclerotherapy?.sclerosantAgent ?? "1% Polidocanol foam"}
+                    onChange={(e) => {
+                      const sc = varicoseCriteria.sclerotherapy || createDefaultSclerotherapy();
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        sclerotherapy: {
+                          ...sc,
+                          sclerosantAgent: e.target.value as SclerotherapyDistribution["sclerosantAgent"],
+                        },
+                      });
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
+                  >
+                    <option value="1% Polidocanol foam">1% Polidocanol Foam</option>
+                    <option value="2% Polidocanol foam">2% Polidocanol Foam</option>
+                    <option value="3% Polidocanol foam">3% Polidocanol Foam</option>
+                    <option value="1% STS foam">1% STS (Sodium Tetradecyl) Foam</option>
+                    <option value="3% STS foam">3% STS Foam</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
+                    Liquid-to-Gas Ratio
+                  </label>
+                  <select
+                    value={varicoseCriteria.sclerotherapy?.liquidToGasRatio ?? "1:4 Tessari (Air)"}
+                    onChange={(e) => {
+                      const sc = varicoseCriteria.sclerotherapy || createDefaultSclerotherapy();
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        sclerotherapy: {
+                          ...sc,
+                          liquidToGasRatio: e.target.value as SclerotherapyDistribution["liquidToGasRatio"],
+                        },
+                      });
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
+                  >
+                    <option value="1:4 Tessari (Air)">1:4 Tessari (Room Air)</option>
+                    <option value="1:4 Tessari (CO2/O2)">1:4 Tessari (CO2 / Physiological)</option>
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2 flex flex-col justify-end">
+                  <span className="block text-[11px] font-bold text-[#3C4043] mb-1">
+                    Target Distribution Beds
+                  </span>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={varicoseCriteria.sclerotherapy?.aboveKneeThighVarices ?? true}
+                        onChange={(e) => {
+                          const sc = varicoseCriteria.sclerotherapy || createDefaultSclerotherapy();
+                          setVaricoseCriteria({
+                            ...varicoseCriteria,
+                            sclerotherapy: { ...sc, aboveKneeThighVarices: e.target.checked },
+                          });
+                        }}
+                        className="rounded border-[#DADCE0] text-[#1A73E8]"
+                      />
+                      <span>Thigh Varices</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={varicoseCriteria.sclerotherapy?.belowKneeCalfVarices ?? true}
+                        onChange={(e) => {
+                          const sc = varicoseCriteria.sclerotherapy || createDefaultSclerotherapy();
+                          setVaricoseCriteria({
+                            ...varicoseCriteria,
+                            sclerotherapy: { ...sc, belowKneeCalfVarices: e.target.checked },
+                          });
+                        }}
+                        className="rounded border-[#DADCE0] text-[#1A73E8]"
+                      />
+                      <span>Calf Tributaries</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={varicoseCriteria.sclerotherapy?.perforatorTributaries ?? true}
+                        onChange={(e) => {
+                          const sc = varicoseCriteria.sclerotherapy || createDefaultSclerotherapy();
+                          setVaricoseCriteria({
+                            ...varicoseCriteria,
+                            sclerotherapy: { ...sc, perforatorTributaries: e.target.checked },
+                          });
+                        }}
+                        className="rounded border-[#DADCE0] text-[#1A73E8]"
+                      />
+                      <span>Perforator Outflow</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CEAP & VCSS Clinical Classification Status Bar */}
+            <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#DADCE0] pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#202124] uppercase tracking-wider">
+                    CEAP &amp; VCSS Clinical Classification Engine
+                  </span>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#E8F0FE] text-[#1A73E8]">
+                    Score: {calculateVcssTotal(varicoseCriteria.vcss || createDefaultVcss()).score} / 30 ({calculateVcssTotal(varicoseCriteria.vcss || createDefaultVcss()).severity})
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#3C4043]">CEAP Class:</span>
+                  <select
+                    value={varicoseCriteria.ceapClass || "C4a"}
+                    onChange={(e) =>
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        ceapClass: e.target.value as CeapClinicalClass,
+                      })
+                    }
+                    className="px-2 py-0.5 rounded border border-[#1A73E8] bg-white text-xs font-bold text-[#1A73E8]"
+                  >
+                    <option value="C0">C0 - No visible venous disease</option>
+                    <option value="C1">C1 - Telangiectasias / Spider veins</option>
+                    <option value="C2">C2 - Varicose veins</option>
+                    <option value="C3">C3 - Venous edema</option>
+                    <option value="C4a">C4a - Pigmentation / Stasis eczema</option>
+                    <option value="C4b">C4b - Lipodermatosclerosis</option>
+                    <option value="C5">C5 - Healed venous ulcer</option>
+                    <option value="C6">C6 - Active venous ulcer</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Enhanced Post-Operative Safety Controls */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1 text-xs">
+                <div>
+                  <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
+                    EGIT Surveillance Status
+                  </label>
+                  <select
+                    value={varicoseCriteria.egitStatus || "Grade 0 (Absent - Complete occlusion to 5cm SFJ/SPJ)"}
+                    onChange={(e) =>
+                      setVaricoseCriteria({
+                        ...varicoseCriteria,
+                        egitStatus: e.target.value as VaricoseCriteria["egitStatus"],
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
+                  >
+                    <option value="Grade 0 (Absent - Complete occlusion to 5cm SFJ/SPJ)">
+                      Grade 0 (Absent - Complete occlusion)
+                    </option>
+                    <option value="Grade I (Thrombus flush with junction)">
+                      Grade I (Flush with SFJ/SPJ)
+                    </option>
+                    <option value="Grade II (<50% CFV protrusion)">
+                      Grade II (&lt;50% CFV protrusion)
+                    </option>
+                    <option value="Grade III (>50% CFV protrusion)">
+                      Grade III (&gt;50% CFV protrusion)
+                    </option>
+                    <option value="Grade IV (CFV Occlusion)">
+                      Grade IV (CFV Occlusion)
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
+                    Supervised Ambulation
+                  </label>
+                  <div className="flex items-center gap-1.5 font-mono">
+                    <input
+                      type="number"
+                      min="10"
+                      max="60"
+                      step="5"
+                      value={varicoseCriteria.immediateAmbulationMinutes || 25}
+                      onChange={(e) =>
+                        setVaricoseCriteria({
+                          ...varicoseCriteria,
+                          immediateAmbulationMinutes: parseInt(e.target.value) || 25,
+                        })
+                      }
+                      className="w-16 px-2 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-center"
+                    />
+                    <span className="text-[11px] font-sans text-[#5F6368]">min immediate walk</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#3C4043] mb-1">
+                    Pain VAS Score (0-10)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      value={varicoseCriteria.vasPainScore ?? 1}
+                      onChange={(e) =>
+                        setVaricoseCriteria({
+                          ...varicoseCriteria,
+                          vasPainScore: parseInt(e.target.value) || 0,
+                        })
+                      }
+                      className="flex-1 accent-[#1A73E8] cursor-pointer"
+                    />
+                    <span className="font-mono font-bold text-xs text-[#1A73E8] w-6 text-center">
+                      {varicoseCriteria.vasPainScore ?? 1}/10
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-end">
+                  <label className="flex items-center gap-2 p-2 rounded-lg border border-[#DADCE0] bg-white cursor-pointer select-none text-xs font-semibold">
+                    <input
+                      type="checkbox"
+                      checked={varicoseCriteria.compressionStockingsApplied !== false}
+                      onChange={(e) =>
+                        setVaricoseCriteria({
+                          ...varicoseCriteria,
+                          compressionStockingsApplied: e.target.checked,
+                        })
+                      }
+                      className="rounded border-[#DADCE0] text-[#1A73E8]"
+                    />
+                    <span>Class II (23–32 mmHg) Stockings</span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -2753,9 +3233,9 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
 Access Site Hemostasis: ${p?.accessSiteHemostasis || "Hemostasis Intact. Site clean, dry, pressure dressing applied."}
 Telemetry Vitals: ${p?.telemetryVitals || "Stable"}
 Sheath Removal Time / Status: ${p?.sheathRemovalTime || "Immediate post-op"} (${p?.sheathStatus || "Removed"})
-Recovery Status: ${p?.recoveryStatus || "Conscious, oriented"}
-Recovery Bed / Ward: ${p?.recoveryBed || summaryData.admissionDetails.wardBed}
 Distal Peripheral Pulses: ${p?.distalPulses || "Strong (+++)"}
+${p?.completionDuplex ? `Completion Duplex: ${p.completionDuplex}\n` : ""}${p?.egitStatus ? `EGIT Status: ${p.egitStatus}\n` : ""}${p?.compressionStockings ? `Compression Stockings: ${p.compressionStockings}\n` : ""}${p?.ambulationProtocol ? `Ambulation: ${p.ambulationProtocol}\n` : ""}${p?.chairScreening ? `CHAIR Screening: ${p.chairScreening}\n` : ""}Recovery Status: ${p?.recoveryStatus || "Conscious, oriented"}
+Recovery Bed / Ward: ${p?.recoveryBed || summaryData.admissionDetails.wardBed}
 Immediate Complications: ${p?.immediateComplications || "Nil"}
 Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy}`;
                   copyTextToClipboard(text, "Post-Operative Notes");
@@ -2834,6 +3314,22 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                       {summaryData.postOperativeNotes?.distalPulses || "Strong (+++) - Bilateral peripheral pulses equal with rapid capillary refill"}
                     </span>
                   </p>
+                  {summaryData.postOperativeNotes?.completionDuplex && (
+                    <p>
+                      <strong className="text-[#202124]">Completion Duplex:</strong>{" "}
+                      <span className="text-[#137333] font-semibold leading-relaxed">
+                        {summaryData.postOperativeNotes.completionDuplex}
+                      </span>
+                    </p>
+                  )}
+                  {summaryData.postOperativeNotes?.egitStatus && (
+                    <p>
+                      <strong className="text-[#202124]">EGIT Surveillance:</strong>{" "}
+                      <span className="font-semibold text-[#1A73E8]">
+                        {summaryData.postOperativeNotes.egitStatus}
+                      </span>
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5 pl-0 md:pl-1">
@@ -2843,6 +3339,38 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                       {summaryData.postOperativeNotes?.recoveryStatus || "Conscious, oriented to time, place, and person. Pain score VAS 1/10. Supine flat bed rest protocol active."}
                     </span>
                   </p>
+                  {summaryData.postOperativeNotes?.compressionStockings && (
+                    <p>
+                      <strong className="text-[#202124]">Compression Therapy:</strong>{" "}
+                      <span className="text-[#3C4043]">
+                        {summaryData.postOperativeNotes.compressionStockings}
+                      </span>
+                    </p>
+                  )}
+                  {summaryData.postOperativeNotes?.ambulationProtocol && (
+                    <p>
+                      <strong className="text-[#202124]">Ambulation Protocol:</strong>{" "}
+                      <span className="text-[#3C4043]">
+                        {summaryData.postOperativeNotes.ambulationProtocol}
+                      </span>
+                    </p>
+                  )}
+                  {summaryData.postOperativeNotes?.chairScreening && (
+                    <p>
+                      <strong className="text-[#202124]">CHAIR Screening:</strong>{" "}
+                      <span className="text-[#3C4043]">
+                        {summaryData.postOperativeNotes.chairScreening}
+                      </span>
+                    </p>
+                  )}
+                  {summaryData.postOperativeNotes?.painVasScore !== undefined && (
+                    <p>
+                      <strong className="text-[#202124]">Pain VAS Score:</strong>{" "}
+                      <span className="font-mono text-[#1A73E8] font-bold">
+                        {summaryData.postOperativeNotes.painVasScore} / 10
+                      </span>
+                    </p>
+                  )}
                   <p>
                     <strong className="text-[#202124]">Recovery Location / Bed:</strong>{" "}
                     <span className="font-semibold text-[#1A73E8]">

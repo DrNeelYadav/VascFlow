@@ -153,6 +153,12 @@ export interface PostOperativeNoteData {
   recordedBy?: string; // e.g. "Dr. Neel Yadav (Senior Resident IR)"
   recordedAt?: string;
   notes?: string;
+  completionDuplex?: string;
+  egitStatus?: string;
+  compressionStockings?: string;
+  ambulationProtocol?: string;
+  painVasScore?: string;
+  chairScreening?: string;
 }
 
 export interface IhmsDischargeSummaryData {

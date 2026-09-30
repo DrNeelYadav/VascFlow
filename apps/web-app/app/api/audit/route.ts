@@ -24,11 +24,22 @@ interface NormalizedAuditLog {
   status: string;
 }
 
+// Memory ledger of cryptographically verified audit records for local/offline environments
+const localAuditLedger: NormalizedAuditLog[] = [];
+
 /**
  * GET /api/audit
  * Retrieves immutable audit records with tamper verification status.
  */
 export async function GET(request: NextRequest) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json(
+      { error: "Unauthorized: Active authenticated session required." },
+      { status: 401 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const actionFilter = searchParams.get("action") || "ALL";
   const limitParam = parseInt(searchParams.get("limit") || "50", 10);
@@ -52,6 +63,25 @@ export async function GET(request: NextRequest) {
       for (const doc of snap.docs) {
         const d = doc.data();
         if (actionFilter === "ALL" || (d.action && d.action.toUpperCase() === actionFilter.toUpperCase())) {
+          let isVerified = false;
+          if (d.detailsJson) {
+            try {
+              isVerified = verifyAuditIntegrity({
+                id: doc.id,
+                action: d.action,
+                entityType: d.entityType,
+                entityId: d.entityId,
+                staffId: d.staffId,
+                ipAddress: d.ipAddress || "127.0.0.1",
+                userAgent: d.userAgent || "VascFlow-Client",
+                detailsJson: d.detailsJson,
+                timestamp: new Date(d.timestamp || Date.now()),
+              });
+            } catch {
+              isVerified = false;
+            }
+          }
+
           normalizedLogs.push({
             id: doc.id,
             action: d.action,
@@ -61,8 +91,8 @@ export async function GET(request: NextRequest) {
             ipAddress: d.ipAddress || "127.0.0.1",
             userAgent: d.userAgent || "VascFlow-Client",
             timestamp: d.timestamp || new Date().toISOString(),
-            tamperVerified: true,
-            status: "VERIFIED_TAMPER_PROOF",
+            tamperVerified: isVerified,
+            status: isVerified ? "VERIFIED_TAMPER_PROOF" : "UNVERIFIED",
           });
         }
       }
@@ -122,6 +152,7 @@ export async function GET(request: NextRequest) {
         for (const log of data.logs) {
           // Prevent duplicates if already present from DB
           if (!normalizedLogs.some((l) => l.id === log.id)) {
+            const isTamperVerified = Boolean(log.tamperHash);
             normalizedLogs.push({
               id: log.id,
               action: log.action,
@@ -131,8 +162,8 @@ export async function GET(request: NextRequest) {
               ipAddress: log.ipAddress || "127.0.0.1",
               userAgent: log.userAgent || "Go-Microservice-Mesh",
               timestamp: log.timestamp || new Date().toISOString(),
-              tamperVerified: !!log.tamperHash,
-              status: "VERIFIED_TAMPER_PROOF",
+              tamperVerified: isTamperVerified,
+              status: isTamperVerified ? "VERIFIED_TAMPER_PROOF" : "UNVERIFIED",
             });
           }
         }
@@ -142,80 +173,12 @@ export async function GET(request: NextRequest) {
     // Upstream Go service might be offline in mock/edge SSR mode
   }
 
-  // 3. Fallback institutional seed records to ensure the audit UI displays live regulatory controls
-  if (normalizedLogs.length === 0) {
-    const now = Date.now();
-    const seedRecords: NormalizedAuditLog[] = [
-      {
-        id: "aud_seed_001",
-        action: "WRITE",
-        entityType: "ProcedureBooking",
-        entityId: "case_tace_401",
-        staffId: "dr.roy@hospital.lan",
-        ipAddress: "10.0.4.12",
-        userAgent: "CathLab-Station-1",
-        timestamp: new Date(now - 120000).toISOString(),
-        tamperVerified: true,
-        status: "VERIFIED_TAMPER_PROOF",
-      },
-      {
-        id: "aud_seed_002",
-        action: "READ",
-        entityType: "PatientVitals",
-        entityId: "pat_val_01",
-        staffId: "fellow@hospital.lan",
-        ipAddress: "10.0.4.28",
-        userAgent: "CathLab-Station-2",
-        timestamp: new Date(now - 340000).toISOString(),
-        tamperVerified: true,
-        status: "VERIFIED_TAMPER_PROOF",
-      },
-      {
-        id: "aud_seed_003",
-        action: "LOGIN",
-        entityType: "Authentication",
-        entityId: "/api/v1/auth/login",
-        staffId: "admin@hospital.lan",
-        ipAddress: "10.0.1.5",
-        userAgent: "Admin-Terminal",
-        timestamp: new Date(now - 900000).toISOString(),
-        tamperVerified: true,
-        status: "VERIFIED_TAMPER_PROOF",
-      },
-      {
-        id: "aud_seed_004",
-        action: "VIEW_VITALS",
-        entityType: "Patient",
-        entityId: "pat_sharma_02",
-        staffId: "dr.roy@hospital.lan",
-        ipAddress: "10.0.4.12",
-        userAgent: "CathLab-Station-1",
-        timestamp: new Date(now - 1800000).toISOString(),
-        tamperVerified: true,
-        status: "VERIFIED_TAMPER_PROOF",
-      },
-      {
-        id: "aud_seed_005",
-        action: "EXPORT_DATA",
-        entityType: "AuditLedger",
-        entityId: "bundle_soc2_q3",
-        staffId: "admin@hospital.lan",
-        ipAddress: "10.0.1.5",
-        userAgent: "Admin-Terminal",
-        timestamp: new Date(now - 3600000).toISOString(),
-        tamperVerified: true,
-        status: "VERIFIED_TAMPER_PROOF",
-      },
-    ];
-
-    return NextResponse.json({
-      total: seedRecords.length,
-      logs:
-        actionFilter !== "ALL"
-          ? seedRecords.filter((s) => s.action === actionFilter.toUpperCase())
-          : seedRecords,
-      status: "synchronized_fallback",
-    });
+  // 3. Fallback to local verified ledger if external stores are offline
+  if (normalizedLogs.length === 0 && localAuditLedger.length > 0) {
+    const matching = actionFilter === "ALL"
+      ? localAuditLedger
+      : localAuditLedger.filter((l) => l.action.toUpperCase() === actionFilter.toUpperCase());
+    normalizedLogs.push(...matching);
   }
 
   // Sort newest first
@@ -236,8 +199,16 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized: Active authenticated session required." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
-    const { action, entityType, entityId, staffId, details, ipAddress, userAgent } =
+    const { action, entityType, entityId, details, ipAddress, userAgent } =
       body;
 
     if (!action || !entityType || !entityId) {
@@ -247,11 +218,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const session = await auth();
     const serverVerifiedStaff =
-      session?.user?.email ||
-      session?.user?.id ||
-      (staffId ? `${staffId} [client-tagged]` : "authenticated-staff");
+      session.user.email ||
+      session.user.id ||
+      "authenticated-staff";
 
     const clientIp =
       ipAddress ||
@@ -259,31 +229,7 @@ export async function POST(request: NextRequest) {
       "127.0.0.1";
     const clientAgent = userAgent || request.headers.get("user-agent") || "Vascule-Client";
 
-    // 1. Append structured audit record to Google Cloud Firestore "audit_logs" collection
-    const isTest = process.env.NODE_ENV === "test";
-    try {
-      const auditRef = collection(db, "audit_logs");
-      await Promise.race([
-        addDoc(auditRef, {
-          action: action.toUpperCase(),
-          entityType,
-          entityId,
-          staffId: serverVerifiedStaff,
-          ipAddress: clientIp,
-          userAgent: clientAgent,
-          details: details || null,
-          timestamp: new Date().toISOString(),
-          status: "VERIFIED_TAMPER_PROOF",
-        }),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("Firestore timeout")), isTest ? 300 : 3000)
-        ),
-      ]);
-    } catch {
-      // Fallback to local cryptographic ledger if Firestore is offline
-    }
-
-    // 2. Log Cryptographic Merkle DAG / Audit Trail
+    // 1. Log Cryptographic Merkle DAG / Audit Trail
     const record = await logAuditTrail({
       actorStaffId: serverVerifiedStaff,
       action: action.toUpperCase(),
@@ -294,6 +240,54 @@ export async function POST(request: NextRequest) {
       details,
       encryptPayload: true,
     });
+
+    const isVerified = verifyAuditIntegrity(record);
+
+    // Keep verified ledger synchronized for offline/local resilience
+    if (isVerified) {
+      localAuditLedger.unshift({
+        id: record.id,
+        action: record.action,
+        entityType: record.entityType,
+        entityId: record.entityId,
+        staffId: record.staffId,
+        ipAddress: clientIp,
+        userAgent: clientAgent,
+        timestamp: record.timestamp.toISOString(),
+        tamperVerified: true,
+        status: "VERIFIED_TAMPER_PROOF",
+      });
+      if (localAuditLedger.length > 200) {
+        localAuditLedger.pop();
+      }
+    }
+
+    // 2. Append structured audit record to Google Cloud Firestore "audit_logs" collection with verified signature details
+    const isTest = process.env.NODE_ENV === "test";
+    try {
+      const auditRef = collection(db, "audit_logs");
+      await Promise.race([
+        addDoc(auditRef, {
+          action: record.action,
+          entityType: record.entityType,
+          entityId: record.entityId,
+          staffId: record.staffId,
+          ipAddress: clientIp,
+          userAgent: clientAgent,
+          detailsJson: record.detailsJson,
+          previousHash: record.previousHash || null,
+          currentHash: record.currentHash || null,
+          timestamp: record.timestamp.toISOString(),
+          tamperVerified: isVerified,
+          status: isVerified ? "VERIFIED_TAMPER_PROOF" : "UNVERIFIED",
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Firestore timeout")), isTest ? 300 : 3000)
+        ),
+      ]);
+    } catch {
+      // Fallback to local cryptographic ledger if Firestore is offline
+    }
 
     return NextResponse.json(
       {
@@ -306,7 +300,7 @@ export async function POST(request: NextRequest) {
           entityId: record.entityId,
           staffId: record.staffId,
           timestamp: record.timestamp.toISOString(),
-          status: "VERIFIED_TAMPER_PROOF",
+          status: isVerified ? "VERIFIED_TAMPER_PROOF" : "UNVERIFIED",
         },
       },
       { status: 201 }

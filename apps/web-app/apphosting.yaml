@@ -23,6 +23,6 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     value: "G-TXWGZN2M5M"
   - variable: NEXTAUTH_SECRET
-    value: "vascflow-production-secret-hospital-key-2026"
+    secret: NEXTAUTH_SECRET
   - variable: NEXTAUTH_URL
     value: "https://endoflow-54b71.web.app"

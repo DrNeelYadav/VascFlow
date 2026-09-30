@@ -15,11 +15,18 @@
  * Strict Requirement: English-only clinical nomenclature, zero placeholders, high-precision mathematical guardrails.
  */
 
+import { z } from "zod";
+
 export interface MacdResult {
   valid: boolean;
   macdMl: number;
+  rawMacdMl: number;
   contrastGivenMl: number;
   isExceeded: boolean;
+  isCappedAt300: boolean;
+  validationNotice: string;
+  acrNkfGuidance: string;
+  clinicalNotes: string;
   contrastToEgfrRatio: number | null;
   highAkiRisk: boolean;
   alertLevel: 'safe' | 'warning' | 'critical';
@@ -29,9 +36,10 @@ export interface MacdResult {
 /**
  * Cigarroa's Maximum Allowable Contrast Dose (MACD)
  * Formula: MACD (mL) = (5 * Weight in kg) / Serum Creatinine (mg/dL)
- * Safety Guardrails:
- * - Prevents contrast-induced acute kidney injury (CI-AKI).
- * - Flags ratio > 3.7 as high-risk nephrotoxic exposure.
+ * Mandatory Clinical Guardrails:
+ * - Hard-capped at 300 mL (Absolute volume ceiling regardless of calculated ratio; exposures >300 mL dramatically increase renal tubular necrosis).
+ * - Label: Validated originally for diagnostic/interventional coronary angiography.
+ * - Sits alongside ACR-NKF 2020 Consensus eGFR guidance (CI-AKI risk clinically negligible if eGFR >= 30 mL/min/1.73m2 without acute kidney injury).
  */
 export function calculateMacd(
   weightKg: number,
@@ -39,23 +47,44 @@ export function calculateMacd(
   contrastGivenMl: number = 0,
   egfr?: number
 ): MacdResult {
+  const validationNotice = 'Validated for diagnostic/interventional coronary angiography; serves as an empirical contrast threshold estimate in peripheral/visceral IR.';
+  const acrNkfGuidance = 'ACR-NKF 2020 Consensus (Davenport et al., Radiology 2020) [Intravenous Contrast Specific]: Prophylactic IV hydration is indicated in patients with eGFR < 30 mL/min/1.73m2 (not on dialysis) or AKI. In patients with eGFR 30–44 mL/min/1.73m2, prophylaxis is an individualized clinical decision. Prophylaxis is not indicated for stable patients with eGFR >= 45 mL/min/1.73m2. Note: This consensus evaluates IV contrast; intra-arterial first-pass renal exposure (e.g. suprarenal aortic injection) carries higher nephrotoxic risk and is outside this consensus.';
+  const clinicalNotes = 'Cigarroa MACD formula was originally validated for diagnostic and interventional coronary angiography (Cigarroa et al., Am J Med 1989;86(6 Pt 1):649-652). A mandatory 300 mL maximum hard ceiling cap is enforced (Math.min(calculatedDose, 300)) to prevent severe acute tubular necrosis. In visceral and peripheral interventional radiology, contrast volume must be evaluated alongside ACR-NKF 2020 consensus eGFR guidance (Davenport et al., Radiology 2020;294(3):660-668), which indicates prophylactic volume expansion for patients with eGFR < 30 mL/min/1.73m2 or acute kidney injury.';
+
   if (!weightKg || weightKg <= 0 || !serumCreatinineMgDl || serumCreatinineMgDl <= 0) {
     return {
       valid: false,
       macdMl: 0,
+      rawMacdMl: 0,
       contrastGivenMl: 0,
       isExceeded: false,
+      isCappedAt300: false,
+      validationNotice,
+      acrNkfGuidance,
+      clinicalNotes,
       contrastToEgfrRatio: null,
       highAkiRisk: false,
       alertLevel: 'safe',
-      recommendation: 'Enter valid patient weight and serum creatinine.'
+      recommendation: 'Enter valid patient weight (> 0 kg) and serum creatinine (> 0 mg/dL).'
     };
   }
 
-  // CIRSE / ESUR Safety Guardrail: Absolute volume ceiling for severe renal failure (eGFR < 30 or Scr >= 3.0)
+  // Calculate raw Cigarroa MACD: (5 * weightKg) / serumCreatinineMgDl
+  const calculatedDose = Math.round((5 * weightKg) / serumCreatinineMgDl);
+  const rawMacd = calculatedDose;
+  
+  // Mandatory Hard Cap: Absolute ceiling is 300 mL (Math.min(calculatedDose, 300))
+  // Severe renal impairment (eGFR < 30 or Scr >= 3.0): Conservative default cap of 40 mL (pending faculty approval).
   const isSevereRenalImpairment = (egfr !== undefined && egfr > 0 && egfr < 30) || serumCreatinineMgDl >= 3.0;
-  const rawMacdMl = Math.round((5 * weightKg) / serumCreatinineMgDl);
-  const macdMl = isSevereRenalImpairment ? Math.min(rawMacdMl, 40) : rawMacdMl;
+  let macdMl = Math.min(calculatedDose, 300);
+  const isCappedAt300 = calculatedDose > 300;
+
+  if (isSevereRenalImpairment) {
+    macdMl = Math.min(macdMl, 40);
+  }
+  // Enforce mandatory 300 mL maximum hard ceiling cap
+  macdMl = Math.min(macdMl, 300);
+
   const isExceeded = contrastGivenMl >= macdMl;
 
   let ratio: number | null = null;
@@ -67,27 +96,32 @@ export function calculateMacd(
   }
 
   let alertLevel: 'safe' | 'warning' | 'critical' = 'safe';
-  let recommendation = `Contrast volume is within safe limits (Ceiling: ${macdMl} mL).`;
+  let recommendation = `Contrast volume is within safe limits (Ceiling: ${macdMl} mL${isCappedAt300 ? ' [300 mL Hard Cap Applied]' : ''}).`;
 
   if (isSevereRenalImpairment && contrastGivenMl >= 30) {
     alertLevel = 'critical';
-    recommendation = `CONTRAST TOXICITY CRITICAL WARNING (eGFR < 30 or Scr >= 3.0): Severe renal failure / AKI. Absolute contrast ceiling strictly capped at ${macdMl} mL. Strongly consider non-contrast CO2 angiography, IVUS, and mandatory pre/post IV bicarbonate/saline hydration.`;
+    recommendation = `CONTRAST TOXICITY CRITICAL WARNING (eGFR < 30 or Scr >= 3.0): Severe renal failure / AKI. Conservative default sets a 40 mL volume cap (pending IR faculty protocol approval). Strongly consider non-contrast CO2 angiography, IVUS, and strongly consider individualized pre/post IV hydration (assessing cardiopulmonary tolerance).`;
   } else if (isExceeded) {
     alertLevel = 'critical';
-    recommendation = `CRITICAL ALERT: Contrast volume (${contrastGivenMl} mL) reaches or exceeds Maximum Allowable Dose (${macdMl} mL). Enforce aggressive IV hydration (1 mL/kg/h NS for 12h pre/post) and consider staged procedure or CO2 angiography.`;
+    recommendation = `CRITICAL ALERT: Contrast volume (${contrastGivenMl} mL) reaches or exceeds Maximum Allowable Dose (${macdMl} mL). Strongly consider volume expansion (1 mL/kg/h NS pre/post if tolerated) and consider staged procedure or CO2 angiography.`;
   } else if (highAkiRisk) {
     alertLevel = 'warning';
     recommendation = `WARNING: Contrast-to-eGFR ratio (${ratio}) exceeds 3.7, indicating elevated risk of Contrast-Induced Acute Kidney Injury (CI-AKI). Minimize additional fluoroscopic runs.`;
   } else if (isSevereRenalImpairment) {
     alertLevel = 'warning';
-    recommendation = `SEVERE RENAL RISK (eGFR < 30 or Scr >= 3.0): High probability of worsening nephropathy. Strict hard ceiling: ${macdMl} mL (Iso-osmolar Iodixanol preferred).`;
+    recommendation = `SEVERE RENAL RISK (eGFR < 30 or Scr >= 3.0): High probability of worsening nephropathy. Conservative default ceiling: 40 mL (pending IR faculty protocol approval; Iso-osmolar Iodixanol preferred).`;
   }
 
   return {
     valid: true,
     macdMl,
+    rawMacdMl: rawMacd,
     contrastGivenMl,
     isExceeded,
+    isCappedAt300,
+    validationNotice,
+    acrNkfGuidance,
+    clinicalNotes,
     contrastToEgfrRatio: ratio,
     highAkiRisk,
     alertLevel,
@@ -108,8 +142,13 @@ export function calculateContrastSafety(
   return {
     valid: res.valid,
     macd: res.macdMl,
+    rawMacd: res.rawMacdMl,
     contrastGiven: res.contrastGivenMl,
     isExceeded: res.isExceeded,
+    isCappedAt300: res.isCappedAt300,
+    clinicalNotes: res.clinicalNotes,
+    validationNotice: res.validationNotice,
+    acrNkfGuidance: res.acrNkfGuidance,
     contrastToEgfrRatio: res.contrastToEgfrRatio,
     highAkiRisk: res.highAkiRisk,
     recommendation: res.recommendation
@@ -179,27 +218,27 @@ export function calculateEgfrDetails(
   if (egfr < 15) {
     ckdStage = 'G5 (Kidney Failure, < 15 mL/min/1.73m2)';
     stageCode = 'G5';
-    contrastAdvice = 'CRITICAL CI-AKI RISK: End-stage renal disease. Evaluate hemodialysis timing or consider non-contrast / CO2 angiography.';
+    contrastAdvice = 'ACR-NKF 2020: eGFR < 30 mL/min/1.73m2 not on dialysis. Prophylactic IV volume expansion is indicated. Consider non-contrast or CO2 angiography where feasible.';
     riskLevel = 'high';
   } else if (egfr < 30) {
     ckdStage = 'G4 (Severely Decreased, 15 - 29 mL/min/1.73m2)';
     stageCode = 'G4';
-    contrastAdvice = 'HIGH CI-AKI RISK: Minimize contrast volume, consider CO2 angiography, aggressive pre/post hydration (1 mL/kg/h NS for 12 hours).';
+    contrastAdvice = 'ACR-NKF 2020: Prophylactic IV hydration is indicated (eGFR < 30 mL/min/1.73m2 not on dialysis). Minimize contrast volume and avoid repetitive studies within 48h.';
     riskLevel = 'high';
   } else if (egfr < 45) {
     ckdStage = 'G3b (Moderately to Severely Decreased, 30 - 44 mL/min/1.73m2)';
     stageCode = 'G3b';
-    contrastAdvice = 'MODERATE CI-AKI RISK: Pre-hydrate with normal saline (1 mL/kg/h for 6h pre and 6h post), use iso-osmolar non-ionic contrast.';
+    contrastAdvice = 'ACR-NKF 2020: Prophylactic IV volume expansion is an individualized clinical decision based on patient risk factors. Routine prophylaxis is not universally mandated.';
     riskLevel = 'moderate';
   } else if (egfr < 60) {
     ckdStage = 'G3a (Mildly to Moderately Decreased, 45 - 59 mL/min/1.73m2)';
     stageCode = 'G3a';
-    contrastAdvice = 'MILD RISK: Ensure oral/IV hydration, avoid repetitive contrast injections within 48 hours.';
+    contrastAdvice = 'ACR-NKF 2020: Prophylaxis is not indicated for stable patients with eGFR >= 45 mL/min/1.73m2. Standard oral hydration recommended.';
     riskLevel = 'low';
   } else if (egfr < 90) {
     ckdStage = 'G2 (Mildly Decreased, 60 - 89 mL/min/1.73m2)';
     stageCode = 'G2';
-    contrastAdvice = 'Low risk: Standard hydration protocol and routine monitoring.';
+    contrastAdvice = 'ACR-NKF 2020: Prophylaxis is not indicated (eGFR >= 45 mL/min/1.73m2). Standard clinical monitoring.';
     riskLevel = 'low';
   }
 
@@ -540,55 +579,194 @@ export function calculateBsa(weightKg: number, heightCm: number): BsaResult {
   };
 }
 
-export interface CirseComplication {
-  grade: number;
-  title: string;
-  definition: string;
-  clinicalAction: string;
-}
+// ============================================================================
+// CIRSE COMPLICATIONS CLASSIFICATION SYSTEM (NUMERIC GRADES 1 TO 6)
+// Reference: Filippiadis DK, et al. CIRSE Quality Assurance Document and
+// Standards for Classification of Complications. Cardiovasc Intervent Radiol 2017;40(8):1141-1146.
+// ============================================================================
+
+export type CirseGrade = 1 | 2 | 3 | 4 | 5 | 6;
+
+export const CirseGradeSchema = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+  z.literal(6),
+]);
+
+export const CirseComplicationSchema = z.object({
+  grade: CirseGradeSchema,
+  system: z.literal('CIRSE'),
+  title: z.string(),
+  definition: z.string(),
+  clinicalAction: z.string(),
+});
+
+export type CirseComplication = z.infer<typeof CirseComplicationSchema>;
 
 /**
  * CIRSE (Cardiovascular and Interventional Radiological Society of Europe)
- * Classification System for Complications
+ * Classification System for Complications (Numeric Grades 1 to 6)
+ * Based on therapy escalation and clinical outcome.
  */
 export const CIRSE_COMPLICATIONS: CirseComplication[] = [
   {
     grade: 1,
-    title: 'Grade 1 (Minor / Self-Limiting)',
-    definition: 'No therapy required, no consequence; resolves spontaneously.',
-    clinicalAction: 'Routine observation only (e.g. minor puncture site ecchymosis).'
+    system: 'CIRSE',
+    title: 'Grade 1: No therapy, no consequence',
+    definition: 'No therapy required, no consequence; resolves without clinical sequelae (CIRSE 2017, Filippiadis et al.).',
+    clinicalAction: 'Routine observation and standard post-procedure monitoring (e.g. minor puncture site ecchymosis).'
   },
   {
     grade: 2,
-    title: 'Grade 2 (Nominal Therapy)',
-    definition: 'Requires nominal therapy, no consequence; includes overnight observation without clinical escalation.',
-    clinicalAction: 'Outpatient treatment or brief monitoring (e.g. minor groin hematoma).'
+    system: 'CIRSE',
+    title: 'Grade 2: Nominal therapy, no consequence',
+    definition: 'Requires nominal therapy (e.g. oral analgesics, minor dressing change), no consequence; includes overnight observation without escalation.',
+    clinicalAction: 'Outpatient treatment or brief ward monitoring (e.g. small self-limiting groin hematoma).'
   },
   {
     grade: 3,
-    title: 'Grade 3 (Additional Therapy / Short Stay)',
-    definition: 'Requires additional interventional therapy or short hospitalization (< 48 hours).',
-    clinicalAction: 'Interventional remediation (e.g. ultrasound-guided thrombin injection for pseudoaneurysm).'
+    system: 'CIRSE',
+    title: 'Grade 3: Additional interventional therapy / short hospitalization (<48h)',
+    definition: 'Requires additional percutaneous or interventional therapy, or unplanned short hospitalization (< 48 hours).',
+    clinicalAction: 'Interventional remediation (e.g. percutaneous thrombin injection for femoral pseudoaneurysm).'
   },
   {
     grade: 4,
-    title: 'Grade 4 (Major Therapy / Escalation)',
-    definition: 'Requires major therapy, unplanned increase in level of care, prolonged hospitalization (> 48 hours), or ICU admission.',
-    clinicalAction: 'Immediate specialist intervention (e.g. non-target embolization requiring covered stenting).'
+    system: 'CIRSE',
+    title: 'Grade 4: Major therapy, prolonged hospitalization (>48h) or ICU escalation',
+    definition: 'Requires major therapy, unplanned surgical conversion, prolonged hospitalization (> 48 hours), or intensive care unit (ICU) admission.',
+    clinicalAction: 'Immediate multidisciplinary escalation (e.g. acute arterial thrombosis requiring surgical thrombectomy or ICU admission for resuscitation).'
   },
   {
     grade: 5,
-    title: 'Grade 5 (Permanent Adverse Sequelae)',
-    definition: 'Permanent adverse sequelae, organ loss, or major disability.',
-    clinicalAction: 'Multidisciplinary morbidity review and surgical intervention.'
+    system: 'CIRSE',
+    title: 'Grade 5: Permanent adverse sequelae',
+    definition: 'Permanent adverse sequelae, irreversible organ impairment, limb loss, or permanent disability resulting from the procedure.',
+    clinicalAction: 'Multidisciplinary morbidity review, long-term rehabilitation, and specialized clinical follow-up.'
   },
   {
     grade: 6,
-    title: 'Grade 6 (Death)',
-    definition: 'Patient death resulting directly or indirectly from interventional procedure.',
-    clinicalAction: 'Formal departmental mortality and root-cause audit.'
+    system: 'CIRSE',
+    title: 'Grade 6: Death',
+    definition: 'Procedure-related patient death occurring intraprocedurally or during subsequent care.',
+    clinicalAction: 'Mandatory departmental morbidity & mortality (M&M) audit and root-cause analysis.'
   }
 ];
+
+export function isCirseGrade(val: unknown): val is CirseGrade {
+  return typeof val === 'number' && [1, 2, 3, 4, 5, 6].includes(val);
+}
+
+export function getCirseComplication(grade: CirseGrade | number): CirseComplication | undefined {
+  return CIRSE_COMPLICATIONS.find((c) => c.grade === grade);
+}
+
+export function classifyCirseComplication(grade: CirseGrade): CirseComplication {
+  const result = getCirseComplication(grade);
+  if (!result) {
+    throw new Error(`Invalid CIRSE complication grade: ${grade}. CIRSE strictly requires integer grades 1 through 6.`);
+  }
+  return result;
+}
+
+// ============================================================================
+// SIR ADVERSE EVENT CLASSIFICATION SYSTEM (LETTER CLASSES A TO F)
+// Reference: Sacks D, et al. Society of Interventional Radiology Clinical Practice
+// Guidelines. J Vasc Interv Radiol 2003;14(9 Pt 2):S199-S202.
+// ============================================================================
+
+export type SirClass = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+export type SirSeverity = 'Minor' | 'Major';
+
+export const SirClassSchema = z.enum(['A', 'B', 'C', 'D', 'E', 'F']);
+export const SirSeveritySchema = z.enum(['Minor', 'Major']);
+
+export const SirComplicationSchema = z.object({
+  sirClass: SirClassSchema,
+  system: z.literal('SIR'),
+  severity: SirSeveritySchema,
+  title: z.string(),
+  definition: z.string(),
+  clinicalAction: z.string(),
+});
+
+export type SirComplication = z.infer<typeof SirComplicationSchema>;
+
+/**
+ * SIR (Society of Interventional Radiology) Adverse Event Classification (Sacks et al., JVIR 2003)
+ * Strictly distinct from the CIRSE numeric 1-6 grading scale (Filippiadis et al., CVIR 2017)
+ * and the newer SIR 2017 numeric system (Khalilzadeh et al., JVIR 2017).
+ * Minor: Classes A, B. Major: Classes C, D, E, F.
+ */
+export const SIR_COMPLICATIONS: SirComplication[] = [
+  {
+    sirClass: 'A',
+    system: 'SIR',
+    severity: 'Minor',
+    title: 'Class A: No therapy, no consequence',
+    definition: 'Minor adverse event requiring no intervention and resulting in no adverse sequelae.',
+    clinicalAction: 'Routine post-procedure documentation.'
+  },
+  {
+    sirClass: 'B',
+    system: 'SIR',
+    severity: 'Minor',
+    title: 'Class B: Nominal therapy, no consequence (includes overnight observation)',
+    definition: 'Nominal therapy required without permanent consequence; includes overnight admission for observation only.',
+    clinicalAction: 'Bedside evaluation, symptomatic oral therapy or ice pack.'
+  },
+  {
+    sirClass: 'C',
+    system: 'SIR',
+    severity: 'Major',
+    title: 'Class C: Requires therapy, minor hospitalization (<48 hours)',
+    definition: 'Requires therapy and/or minor hospitalization (<48 hours).',
+    clinicalAction: 'Targeted procedural or pharmacologic intervention, extended monitoring.'
+  },
+  {
+    sirClass: 'D',
+    system: 'SIR',
+    severity: 'Major',
+    title: 'Class D: Requires major therapy, unplanned increase in care, hospitalization (>48 hours)',
+    definition: 'Requires major therapy, an unplanned increase in the level of care, or prolonged hospitalization (>48 hours).',
+    clinicalAction: 'Urgent interventional/surgical management, high-dependency or ICU step-up.'
+  },
+  {
+    sirClass: 'E',
+    system: 'SIR',
+    severity: 'Major',
+    title: 'Class E: Permanent adverse sequelae',
+    definition: 'Adverse event resulting in permanent impairment or loss of organ function.',
+    clinicalAction: 'Comprehensive multi-specialty intervention and morbidity audit.'
+  },
+  {
+    sirClass: 'F',
+    system: 'SIR',
+    severity: 'Major',
+    title: 'Class F: Death',
+    definition: 'Procedure-related death.',
+    clinicalAction: 'Formal Morbidity and Mortality review reporting.'
+  }
+];
+
+export function isSirClass(val: unknown): val is SirClass {
+  return typeof val === 'string' && ['A', 'B', 'C', 'D', 'E', 'F'].includes(val);
+}
+
+export function getSirComplication(sirClass: SirClass | string): SirComplication | undefined {
+  return SIR_COMPLICATIONS.find((s) => s.sirClass === sirClass);
+}
+
+export function classifySirAdverseEvent(sirClass: SirClass): SirComplication {
+  const result = getSirComplication(sirClass);
+  if (!result) {
+    throw new Error(`Invalid SIR complication class: ${sirClass}. SIR strictly requires letter classes A through F.`);
+  }
+  return result;
+}
 
 // Re-export all procedure-linked calculators and metadata registry
 export * from './procedureCalculators';

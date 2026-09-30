@@ -5,10 +5,10 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { generateSafeCsv } from "@vascule/utils/sanitizers";
 import Link from "next/link";
 import {
-  REAL_SMS_PATIENT_REGISTRY,
   RealSmsPatientCase,
   getCathLabModality,
 } from "../../lib/realData/smsCathLabRealData";
+import { AUTHENTIC_SMS_MASTER_CASES } from "../../lib/realData/smsMasterAnalysisCases";
 import {
   BookOpen,
   Search,
@@ -24,7 +24,6 @@ import {
   Stethoscope,
   Building2,
   Clock,
-  Sparkles,
   CheckCircle2,
   AlertCircle,
   ExternalLink,
@@ -223,7 +222,7 @@ export default function CathLabMasterLogbookPage() {
       radiationDose: "Low-dose",
     }));
 
-    return [...storeCases, ...REAL_SMS_PATIENT_REGISTRY];
+    return [...storeCases, ...AUTHENTIC_SMS_MASTER_CASES];
   }, [storePatients]);
 
   // Filtered Registry
@@ -334,12 +333,12 @@ export default function CathLabMasterLogbookPage() {
 
   // Aggregate Metrics
   const stats = useMemo(() => {
-    const total = REAL_SMS_PATIENT_REGISTRY.length;
-    const maay = REAL_SMS_PATIENT_REGISTRY.filter((c) => c.schemeType === "MAAY").length;
-    const rghs = REAL_SMS_PATIENT_REGISTRY.filter((c) => c.schemeType === "RGHS").length;
-    const paid = REAL_SMS_PATIENT_REGISTRY.filter((c) => c.schemeType === "PAID").length;
-    const male = REAL_SMS_PATIENT_REGISTRY.filter((c) => c.gender === "Male").length;
-    const female = REAL_SMS_PATIENT_REGISTRY.filter((c) => c.gender === "Female").length;
+    const total = AUTHENTIC_SMS_MASTER_CASES.length;
+    const maay = AUTHENTIC_SMS_MASTER_CASES.filter((c) => c.schemeType === "MAAY").length;
+    const rghs = AUTHENTIC_SMS_MASTER_CASES.filter((c) => c.schemeType === "RGHS").length;
+    const paid = AUTHENTIC_SMS_MASTER_CASES.filter((c) => c.schemeType === "PAID").length;
+    const male = AUTHENTIC_SMS_MASTER_CASES.filter((c) => c.gender === "Male").length;
+    const female = AUTHENTIC_SMS_MASTER_CASES.filter((c) => c.gender === "Female").length;
 
     return {
       total,
@@ -491,30 +490,6 @@ export default function CathLabMasterLogbookPage() {
     }
   };
 
-  const handleCopyAllSummaries = async () => {
-    const divider = "═".repeat(60);
-    const count = Math.min(sortedData.length, 50);
-    const batchText = sortedData.slice(0, count).map((c, i) => {
-      return `CASE #${i + 1} • DSA #${c.dsaNo} • ${c.patientName} (${c.crNumber})\n${generateCaseOperativeSummary(c)}`;
-    }).join(`\n\n${divider}\n\n`);
-
-    await navigator.clipboard.writeText(batchText);
-    setDossierFeedback(`Copied ${count} Operative Summaries to clipboard!`);
-    setTimeout(() => setDossierFeedback(null), 3500);
-  };
-
-  const handleCopyAllDischarges = async () => {
-    const divider = "═".repeat(60);
-    const count = Math.min(sortedData.length, 50);
-    const batchText = sortedData.slice(0, count).map((c, i) => {
-      return `CASE #${i + 1} • DSA #${c.dsaNo} • ${c.patientName} (${c.crNumber})\n${generateCaseDischargeSummary(c)}`;
-    }).join(`\n\n${divider}\n\n`);
-
-    await navigator.clipboard.writeText(batchText);
-    setDossierFeedback(`Copied ${count} Discharge Summaries to clipboard!`);
-    setTimeout(() => setDossierFeedback(null), 3500);
-  };
-
   const handleDownloadDossierFile = () => {
     const divider = "═".repeat(70);
     const textContent = sortedData.map((c, i) => {
@@ -540,14 +515,9 @@ export default function CathLabMasterLogbookPage() {
               <BookOpen className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-bold text-[#202124]">
-                  SMS Cath-Lab Master Interventional Registry &amp; Logbook
-                </h1>
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]">
-                  Authentic SMS Records
-                </span>
-              </div>
+              <h1 className="text-xl font-bold text-[#202124]">
+                Cath-Lab Master Procedure Logbook
+              </h1>
               <p className="text-sm text-[#5F6368] mt-0.5 flex items-center gap-2 flex-wrap">
                 <span>Department of Radiodiagnosis &amp; Interventional Radiology</span>
                 <span>•</span>
@@ -634,10 +604,10 @@ export default function CathLabMasterLogbookPage() {
             <button
               onClick={() => setBatchShareModalOpen(true)}
               className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer shadow-xs"
-              title="Pull & share operative notes and discharge summaries for all filtered cases"
+              title="Export dossier for all filtered cases"
             >
-              <Sparkles className="w-4 h-4 text-blue-600" />
-              <span>Pull &amp; Share All Notes ({sortedData.length})</span>
+              <FileText className="w-4 h-4 text-blue-600" />
+              <span>Dossier Export ({sortedData.length})</span>
             </button>
 
             <button
@@ -878,7 +848,6 @@ export default function CathLabMasterLogbookPage() {
 
           {/* Modality Filter */}
           <div className="flex items-center gap-1 text-[#5F6368]">
-            <Sparkles className="w-3.5 h-3.5" />
             <span className="font-medium">Modality:</span>
             <div className="flex items-center gap-1 ml-0.5">
               {(["ALL", "XA", "CT", "US"] as const).map((mod) => (
@@ -1684,7 +1653,7 @@ export default function CathLabMasterLogbookPage() {
             {/* Modal Footer */}
             <div className="pt-3 border-t border-[#DADCE0] flex items-center justify-between">
               <div className="text-[11px] text-[#5F6368]">
-                SMS Angiosuite IR Registry • e-Hospital &amp; RGHS/MAAY Compliant
+                Cath-Lab Master Procedure Logbook • Department of Radiodiagnosis &amp; Interventional Radiology
               </div>
               <button
                 type="button"
@@ -1704,10 +1673,10 @@ export default function CathLabMasterLogbookPage() {
           <div className="bg-white border border-[#DADCE0] rounded-2xl w-full max-w-3xl shadow-2xl p-5 sm:p-6 relative max-h-[92vh] overflow-y-auto flex flex-col gap-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#DADCE0]">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-blue-600" />
+                <FileText className="w-5 h-5 text-blue-600" />
                 <div>
                   <h3 className="text-base font-bold text-zinc-950">
-                    Pull &amp; Share All Operative Notes &amp; Summaries
+                    Export Filtered Dossier Records
                   </h3>
                   <p className="text-xs text-zinc-500">
                     Compiled dossier for {sortedData.length} records matching current filter
@@ -1724,46 +1693,18 @@ export default function CathLabMasterLogbookPage() {
             </div>
 
             {/* Quick Batch Actions */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <button
-                type="button"
-                onClick={handleCopyAllSummaries}
-                className="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl text-left transition-colors cursor-pointer flex flex-col justify-between"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-xs text-blue-800">
-                  <ClipboardList className="w-4 h-4" />
-                  <span>Copy All Summaries</span>
-                </div>
-                <p className="text-[11px] text-blue-700 mt-1">
-                  Concatenates top 50 operative summaries for WhatsApp &amp; morning rounds
-                </p>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCopyAllDischarges}
-                className="p-3 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl text-left transition-colors cursor-pointer flex flex-col justify-between"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-xs text-purple-800">
-                  <FileText className="w-4 h-4" />
-                  <span>Copy All Discharges</span>
-                </div>
-                <p className="text-[11px] text-purple-700 mt-1">
-                  Concatenates official IHMS discharge summaries
-                </p>
-              </button>
-
+            <div>
               <button
                 type="button"
                 onClick={handleDownloadDossierFile}
-                className="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-left transition-colors cursor-pointer flex flex-col justify-between"
+                className="w-full p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-left transition-colors cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-1"
               >
                 <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-800">
                   <Download className="w-4 h-4" />
-                  <span>Download Text Dossier</span>
+                  <span>Download Text Dossier ({sortedData.length} Cases)</span>
                 </div>
-                <p className="text-[11px] text-emerald-700 mt-1">
-                  Exports all {sortedData.length} operative reports as a consolidated file
+                <p className="text-[11px] text-emerald-700">
+                  Exports operative reports and discharge summaries as a consolidated text file
                 </p>
               </button>
             </div>

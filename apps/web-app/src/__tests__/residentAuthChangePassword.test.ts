@@ -5,6 +5,9 @@ import {
   updateStaffPassword,
   resetStaffDirectoryToDefaults,
   toggleStaffActiveStatus,
+  getStaffAccountByCode,
+  getStaffRegistryOverrides,
+  saveStaffRegistryOverrides,
 } from "../../app/lib/staffAccounts";
 import {
   persistStaffSession,
@@ -12,8 +15,6 @@ import {
   getRememberedStaffCode,
   clearStaffSession,
   SESSION_STORAGE_KEY,
-  LAST_USER_KEY,
-  REMEMBER_ME_KEY,
 } from "../../app/lib/auth/sessionPersistence";
 
 const storageMap = new Map<string, string>();
@@ -24,7 +25,7 @@ const mockLocalStorage = {
   clear: () => { storageMap.clear(); },
 };
 
-describe("Resident Authentication & Change Password Suite", () => {
+describe("Client-Side Password Security & Auth.js Delegation Suite", () => {
   beforeEach(() => {
     storageMap.clear();
     Object.defineProperty(globalThis, "window", {
@@ -41,19 +42,60 @@ describe("Resident Authentication & Change Password Suite", () => {
     clearStaffSession();
   });
 
-  it("authenticates a resident with default institutional PIN", () => {
-    const resident = authenticateStaff("DM01", "123456");
-    expect(resident).not.toBeNull();
-    expect(resident?.code).toBe("DM01");
-    expect(resident?.name).toBe("Dr. Neel Yadav");
-    expect(resident?.role).toBe("DOCTOR");
-    expect(resident?.tier).toBe("DM_RESIDENT");
+  it("rejects client-side authentication for all staff IDs and PINs", () => {
+    expect(authenticateStaff("DM01", "123456")).toBeNull();
+    expect(authenticateStaff("ADMIN01", "admin123")).toBeNull();
+    expect(authenticateStaff("ADMIN01", "123456")).toBeNull();
+    expect(authenticateStaff("ADMIN01", "admin")).toBeNull();
+    expect(authenticateStaff("FC01", "123456")).toBeNull();
+    expect(authenticateStaff("TC01", "123456")).toBeNull();
+    expect(authenticateStaff("NONEXISTENT", "123456")).toBeNull();
   });
 
-  it("rejects password update if current password is wrong", () => {
-    const res = changeStaffPassword("DM01", "wrongPin", "999888");
+  it("never stores passwords in localStorage overrides", () => {
+    const overrides = getStaffRegistryOverrides();
+    expect((overrides as unknown as Record<string, unknown>).passwords).toBeUndefined();
+
+    saveStaffRegistryOverrides(overrides);
+    const raw = localStorage.getItem("vascule_staff_overrides_v1");
+    if (raw) {
+      expect(raw).not.toContain("password");
+      expect(raw).not.toContain("123456");
+      expect(raw).not.toContain("admin123");
+    }
+  });
+
+  it("sanitizes legacy passwords from localStorage when retrieving overrides", () => {
+    localStorage.setItem(
+      "vascule_staff_overrides_v1",
+      JSON.stringify({
+        passwords: { DM01: "insecurePin", ADMIN01: "superSecret" },
+        activeStatus: { DM01: true },
+        permissions: {},
+        customAccounts: [],
+      })
+    );
+
+    const overrides = getStaffRegistryOverrides();
+    expect((overrides as unknown as Record<string, unknown>).passwords).toBeUndefined();
+    expect(overrides.activeStatus.DM01).toBe(true);
+
+    // Saving back does not include passwords in localStorage
+    saveStaffRegistryOverrides(overrides);
+    const updated = localStorage.getItem("vascule_staff_overrides_v1");
+    expect(updated).not.toContain("insecurePin");
+    expect(updated).not.toContain("superSecret");
+  });
+
+  it("rejects client-side password modification and does not store passwords in localStorage", () => {
+    const res = changeStaffPassword("DM01", "123456", "SecureDM2026");
     expect(res.success).toBe(false);
-    expect(res.message).toContain("Current password or PIN is incorrect");
+    expect(res.message).toContain("disabled");
+
+    const rawOverrides = localStorage.getItem("vascule_staff_overrides_v1");
+    if (rawOverrides) {
+      expect(rawOverrides).not.toContain("SecureDM2026");
+    }
   });
 
   it("rejects password update if new password is too short (< 4 chars)", () => {
@@ -68,37 +110,14 @@ describe("Resident Authentication & Change Password Suite", () => {
     expect(res.message).toContain("different from current password");
   });
 
-  it("allows resident to successfully change their password and log in with new password", () => {
-    const changeRes = changeStaffPassword("DM01", "123456", "SecureDM2026");
-    expect(changeRes.success).toBe(true);
+  it("delegates admin password reset without saving plain text in browser storage", () => {
+    const res = updateStaffPassword("DM01", "NewSecurePin99");
+    expect(res.success).toBe(true);
 
-    // Old password should now fail
-    const failedAuth = authenticateStaff("DM01", "123456");
-    expect(failedAuth).toBeNull();
-
-    // New password succeeds
-    const successAuth = authenticateStaff("DM01", "SecureDM2026");
-    expect(successAuth).not.toBeNull();
-    expect(successAuth?.code).toBe("DM01");
-  });
-
-  it("persists changed password in localStorage across simulated page reload for subsequent logins", () => {
-    // Resident changes password
-    const changeRes = changeStaffPassword("DM01", "123456", "VascPass2026!");
-    expect(changeRes.success).toBe(true);
-
-    // Verify localStorage has the override saved
-    const rawOverrides = localStorage.getItem("vascule_staff_overrides_v1");
-    expect(rawOverrides).not.toBeNull();
-    expect(rawOverrides).toContain("VascPass2026!");
-
-    // Next login with new password succeeds
-    const nextLogin = authenticateStaff("DM01", "VascPass2026!");
-    expect(nextLogin).not.toBeNull();
-    expect(nextLogin?.code).toBe("DM01");
-
-    // Old password remains rejected
-    expect(authenticateStaff("DM01", "123456")).toBeNull();
+    const raw = localStorage.getItem("vascule_staff_overrides_v1");
+    if (raw) {
+      expect(raw).not.toContain("NewSecurePin99");
+    }
   });
 });
 
@@ -119,38 +138,27 @@ describe("Session Persistence Suite", () => {
     clearStaffSession();
   });
 
-  it("persists active staff session to storage with rememberMe", () => {
-    const resident = authenticateStaff("DM01", "123456")!;
+  it("persists only the staff login hint; Auth.js owns authentication", () => {
+    const resident = getStaffAccountByCode("DM01")!;
     persistStaffSession(resident, { rememberMe: true });
 
-    const retrieved = getPersistedStaffSession();
-    expect(retrieved).not.toBeNull();
-    expect(retrieved?.code).toBe("DM01");
-    expect(retrieved?.name).toBe("Dr. Neel Yadav");
+    expect(getPersistedStaffSession()).toBeNull();
+    expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
 
     const remembered = getRememberedStaffCode();
     expect(remembered.code).toBe("DM01");
     expect(remembered.rememberMe).toBe(true);
   });
 
-  it("restores session from localStorage across simulated page reload", () => {
-    const resident = authenticateStaff("DM01", "123456")!;
-    persistStaffSession(resident, { rememberMe: true });
+  it("does not restore authentication from a legacy localStorage session", () => {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ code: "DM01", role: "DOCTOR" }));
 
-    // Verify localStorage holds the session
-    const rawStorage = localStorage.getItem(SESSION_STORAGE_KEY);
-    expect(rawStorage).not.toBeNull();
-    expect(rawStorage).toContain("DM01");
-
-    // Direct retrieval simulates page reload mount reading from localStorage
-    const restored = getPersistedStaffSession();
-    expect(restored).not.toBeNull();
-    expect(restored?.code).toBe("DM01");
-    expect(restored?.name).toBe("Dr. Neel Yadav");
+    expect(getPersistedStaffSession()).toBeNull();
+    expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
   });
 
   it("invalidates session if staff account is revoked or deactivated", () => {
-    const resident = authenticateStaff("DM01", "123456")!;
+    const resident = getStaffAccountByCode("DM01")!;
     persistStaffSession(resident, { rememberMe: true });
 
     // Admin deactivates DM01 account
@@ -162,7 +170,7 @@ describe("Session Persistence Suite", () => {
   });
 
   it("clears stored session on logout", () => {
-    const resident = authenticateStaff("DM01", "123456")!;
+    const resident = getStaffAccountByCode("DM01")!;
     persistStaffSession(resident, { rememberMe: true });
 
     clearStaffSession();

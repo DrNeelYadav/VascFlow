@@ -2,19 +2,17 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
-  authenticateStaff,
   getEffectiveStaffAccounts,
   getStaffAccountByCode,
   StaffAccount,
 } from "./lib/staffAccounts";
-import { useEndoflowStore } from "./dashboard/useEndoflowStore";
 import { EndoFlowLogo } from "./components/EndoFlowLogo";
 import { ChangePasswordModal } from "./components/ChangePasswordModal";
 import {
   persistStaffSession,
-  getPersistedStaffSession,
   getRememberedStaffCode,
 } from "./lib/auth/sessionPersistence";
 import {
@@ -32,7 +30,6 @@ import {
 
 export default function LandingPage() {
   const router = useRouter();
-  const setCurrentStaff = useEndoflowStore((s) => s.setCurrentStaff);
 
   const [staffCode, setStaffCode] = useState<string>("DM01");
   const [password, setPassword] = useState<string>("");
@@ -47,16 +44,10 @@ export default function LandingPage() {
 
   React.useEffect(() => {
     setEffectiveAccounts(getEffectiveStaffAccounts());
-    // Auto-restore remembered staff code or active session
-    const active = getPersistedStaffSession();
-    if (active?.code) {
-      setStaffCode(active.code);
-    } else {
-      const remembered = getRememberedStaffCode();
-      if (remembered?.code) {
-        setStaffCode(remembered.code);
-        setRememberMe(remembered.rememberMe);
-      }
+    const remembered = getRememberedStaffCode();
+    if (remembered.code) {
+      setStaffCode(remembered.code);
+      setRememberMe(remembered.rememberMe);
     }
   }, []);
 
@@ -64,13 +55,13 @@ export default function LandingPage() {
     effectiveAccounts.find((s) => s.code.toUpperCase() === staffCode.trim().toUpperCase()) ||
     getStaffAccountByCode(staffCode);
 
-  const handleQuickSelect = (code: string, _defaultPin?: string) => {
+  const handleQuickSelect = (code: string) => {
     setStaffCode(code);
     setPassword("");
     setErrorMsg(null);
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setIsSubmitting(true);
@@ -82,27 +73,31 @@ export default function LandingPage() {
       return;
     }
 
-    const staff = authenticateStaff(staffCode, password);
-    if (!staff) {
-      setErrorMsg("Invalid credentials. Please enter your designated ID and PIN.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    setCurrentStaff(staff);
     try {
-      persistStaffSession(staff, { rememberMe });
-    } catch {
-      // Safe fallback
-    }
-
-    setTimeout(() => {
-      if (staff.role === "ADMIN") {
-        router.push("/admin");
-      } else {
-        router.push("/dashboard");
+      const email = targetAccount?.email || (staffCode ? `${staffCode.trim().toLowerCase()}@sms.rajasthan.gov.in` : "");
+      if (!email) {
+        throw new Error("This staff account is not configured for institutional sign-in.");
       }
-    }, 400);
+
+      const result = await signIn("credentials", {
+        institutionalEmail: email,
+        securityPin: password,
+        roleCode: targetAccount?.code || staffCode.trim().toUpperCase(),
+        redirect: false,
+      });
+
+      if (!result || result.error) {
+        throw new Error("Sign-in failed. Check your credentials or contact the system administrator.");
+      }
+
+      if (targetAccount) {
+        persistStaffSession(targetAccount, { rememberMe });
+      }
+      router.replace(targetAccount?.role === "ADMIN" ? "/admin" : "/dashboard");
+    } catch (error) {
+      setErrorMsg(error instanceof Error ? error.message : "Institutional sign-in is unavailable.");
+      setIsSubmitting(false);
+    }
   };
 
   const featureCards = [
@@ -214,7 +209,7 @@ export default function LandingPage() {
                   <div className="flex flex-wrap gap-1.5 pt-0.5">
                     <button
                       type="button"
-                      onClick={() => handleQuickSelect("DM01", "123456")}
+                      onClick={() => handleQuickSelect("DM01")}
                       className={`px-2 py-1 rounded text-[11px] font-mono border transition-colors cursor-pointer ${
                         staffCode === "DM01"
                           ? "bg-[#1A73E8] text-white border-[#1A73E8]"
@@ -225,7 +220,7 @@ export default function LandingPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleQuickSelect("FC01", "123456")}
+                      onClick={() => handleQuickSelect("FC01")}
                       className={`px-2 py-1 rounded text-[11px] font-mono border transition-colors cursor-pointer ${
                         staffCode === "FC01"
                           ? "bg-[#1A73E8] text-white border-[#1A73E8]"
@@ -236,7 +231,7 @@ export default function LandingPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleQuickSelect("TC01", "123456")}
+                      onClick={() => handleQuickSelect("TC01")}
                       className={`px-2 py-1 rounded text-[11px] font-mono border transition-colors cursor-pointer ${
                         staffCode === "TC01"
                           ? "bg-[#1A73E8] text-white border-[#1A73E8]"
@@ -247,7 +242,7 @@ export default function LandingPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleQuickSelect("NO07", "123456")}
+                      onClick={() => handleQuickSelect("NO07")}
                       className={`px-2 py-1 rounded text-[11px] font-mono border transition-colors cursor-pointer ${
                         staffCode === "NO07"
                           ? "bg-[#1A73E8] text-white border-[#1A73E8]"
@@ -258,7 +253,7 @@ export default function LandingPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleQuickSelect("ADMIN01", "admin123")}
+                      onClick={() => handleQuickSelect("ADMIN01")}
                       className={`px-2 py-1 rounded text-[11px] font-mono border flex items-center gap-1 transition-colors cursor-pointer ${
                         staffCode === "ADMIN01"
                           ? "bg-[#9333EA] text-white border-[#9333EA]"

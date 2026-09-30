@@ -12,17 +12,13 @@ import {
   Calendar,
   Layers,
   ChevronDown,
-  RotateCcw,
   Sparkles,
   Info,
-  Check,
   Clock,
   Pill,
   Activity,
   AlertCircle,
   Search,
-  Copy,
-  Edit3,
   Stethoscope,
   Syringe,
   FileCheck,
@@ -339,8 +335,6 @@ export default function ConsentAndPreparationPage() {
   const [opCathLabSuite, setOpCathLabSuite] = useState<string>(
     "Cath Lab 1 (Philips Azurion 7 B20/15 Biplane Suite)"
   );
-  const [isOpEditMode, setIsOpEditMode] = useState<boolean>(false);
-  const [copySuccess, setCopySuccess] = useState<boolean>(false);
 
   // Sync procedure details into operative report on procedure change
   useEffect(() => {
@@ -383,88 +377,6 @@ export default function ConsentAndPreparationPage() {
     if (patientCreatinine <= 0) return 300;
     return Math.round((5 * weightKg) / patientCreatinine);
   }, [weightKg, patientCreatinine]);
-
-  // Reset Op Note to catalog standard
-  const handleResetOpNote = () => {
-    if (!activeTemplate) return;
-    setOpIndication(activeTemplate.indicationEn || "");
-    setOpProceduralSteps(activeTemplate.descriptionEn || "");
-    setOpAnesthesiaType(
-      activeTemplate.sedationTypeEn ||
-        "Local Anesthesia infiltration (2% Xylocaine) with Monitored Conscious Sedation"
-    );
-    setOpIntraOpFindings(
-      "Diagnostic fluoroscopy and DSA confirmed target pathology. No evidence of arterial/venous dissection, non-target embolization, or acute contrast extravasation."
-    );
-    setOpTechnicalResult(
-      "Technical success achieved (100%). Complete target occlusion / revascularization with preserved flow in non-target branches and brisk distal run-off."
-    );
-  };
-
-  // Copy Op Note Text to Clipboard
-  const handleCopyOpNote = () => {
-    const formatted = `================================================================================
-SMS HOSPITAL & MEDICAL COLLEGE, JAIPUR
-DEPARTMENT OF RADIODIAGNOSIS & INTERVENTIONAL RADIOLOGY
-CLINICAL INTERVENTIONAL OPERATIVE REPORT
-================================================================================
-PATIENT DEMOGRAPHICS:
-Patient Name : ${patientName || "—"}
-Age / Sex    : ${[patientAge ? `${patientAge} Y` : "", patientGender].filter(Boolean).join(" / ") || "—"}
-CR / UHID No : ${crNumber || "—"}
-Ward / IPD   : ${fixedWard} ${ipdNumber ? `(IPD: ${ipdNumber})` : ""}
-Date & Time  : ${[procedureDate, procedureTime].filter(Boolean).join(" • ") || "—"}
-Suite        : ${opCathLabSuite}
-Operator     : ${residentDoctor}
-Consultant   : ${doctorName} (${doctorDesignation})
-
-PROCEDURE PERFORMED:
-${activeTemplate.nameEn}
-
-1. CLINICAL INDICATION & DIAGNOSIS:
-${opIndication}
-
-2. VASCULAR ACCESS & ANESTHESIA:
-Access Site : ${opAccessSite}
-Anesthesia  : ${opAnesthesiaType}
-
-3. HARDWARE & IMPLANTS USED:
-${opHardwareUsed}
-
-4. PROCEDURAL TECHNIQUE & EXECUTION:
-${opProceduralSteps}
-
-5. INTRA-PROCEDURAL FINDINGS:
-${opIntraOpFindings}
-
-6. TECHNICAL RESULT & HEMOSTASIS:
-Result      : ${opTechnicalResult}
-Hemostasis  : ${opHemostasisMethod}
-
-7. DOSIMETRY & CONTRAST:
-Fluoro Time : ${opFluoroTime}
-DAP Dose    : ${opDapDose}
-Contrast Vol: ${opContrastVolume}
-Safety MACD : ${macdLimitMl} mL
-
-8. POST-OPERATIVE ORDERS & SURVEILLANCE:
-${opPostOpOrders}
-
-9. MEDICATION & DISCHARGE REGIMEN:
-Medications : ${opMedicationPlan}
-Advice      : ${opDischargeAdvice}
-Complications: ${opComplications}
-
-================================================================================
-Primary Operator: ${residentDoctor}
-Supervising Faculty: ${doctorName}
-Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
-================================================================================`;
-
-    navigator.clipboard.writeText(formatted);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
-  };
 
   // Load from preset patients
   const handleLoadPresetPatient = (caseId: string) => {
@@ -575,15 +487,12 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base font-semibold text-zinc-900">
-                Informed Consent &amp; Pre-Procedure Preparation Workstation
+                Informed Consent
               </h1>
               <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200">
                 Bilingual (हिंदी / English)
               </span>
             </div>
-            <p className="text-xs text-zinc-500 mt-0.5">
-              SMS Medical College, Jaipur • Compliant with NMC &amp; Supreme Court Informed Consent Standards
-            </p>
           </div>
         </div>
 
@@ -926,9 +835,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
       {/* ========================================================================= */}
       {activeTab === "CONSENT" && (
         <div className="bg-white p-8 md:p-10 rounded-xl border border-zinc-200 shadow-sm print:shadow-none print:border-none print:p-0 print:m-0 print:w-full flex flex-col gap-6 text-zinc-900">
-          {/* Institutional Official Header: Bold SMS Hospital with Logo, No Govt Dept string */}
-          {/* Institutional Official Header: Bold SMS Hospital with Official Logo */}
-          <div className="border-b-2 border-zinc-900 pb-3 text-center flex flex-col items-center">
+          {/* Institutional Official Header: Print Only so interactive form is immediately accessible on screen */}
+          <div className="hidden print:flex border-b-2 border-zinc-900 pb-3 text-center flex-col items-center">
             <div className="flex items-center justify-center gap-4 sm:gap-6 mb-1.5">
               <img
                 src="/sms_hospital_logo.png"
@@ -1454,8 +1362,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
       {/* ========================================================================= */}
       {activeTab === "PREPARATION" && (
         <div className="bg-white p-8 md:p-10 rounded-xl border border-zinc-200 shadow-sm print:shadow-none print:border-none print:p-0 print:m-0 print:w-full flex flex-col gap-6 text-zinc-900">
-          {/* Header */}
-          <div className="border-b-2 border-zinc-900 pb-3 text-center flex flex-col items-center">
+          {/* Header: Print Only so preparation sheet is immediately accessible on screen */}
+          <div className="hidden print:flex border-b-2 border-zinc-900 pb-3 text-center flex-col items-center">
             <div className="flex items-center justify-center gap-3.5 sm:gap-4 mb-1">
               <img
                 src="/sms_hospital_logo.png"
@@ -1764,8 +1672,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
       {/* ========================================================================= */}
       {activeTab === "OPERATIVE_NOTE" && (
         <div className="bg-white p-8 md:p-10 rounded-xl border border-zinc-200 shadow-sm print:shadow-none print:border-none print:p-0 print:m-0 print:w-full flex flex-col gap-6 text-zinc-900 printable-sheet">
-          {/* Institutional Official Header: Bold SMS Hospital with Official Logo */}
-          <div className="border-b-2 border-zinc-900 pb-3 text-center flex flex-col items-center">
+          {/* Institutional Official Header: Print Only so operative note is immediately accessible on screen */}
+          <div className="hidden print:flex border-b-2 border-zinc-900 pb-3 text-center flex-col items-center">
             <div className="flex items-center justify-center gap-4 sm:gap-6 mb-1.5">
               <img
                 src="/sms_hospital_logo.png"
@@ -1804,46 +1712,6 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 : languageMode === "EN"
                 ? "CLINICAL INTERVENTIONAL RADIOLOGY OPERATIVE REPORT & POST-PROCEDURE ORDERS"
                 : "CLINICAL INTERVENTIONAL RADIOLOGY OPERATIVE REPORT & POST-PROCEDURE ORDERS (प्रक्रिया रिपोर्ट)"}
-            </div>
-          </div>
-
-          {/* Action Toolbar for Operative Note (Hidden during Print) */}
-          <div className="print:hidden flex flex-wrap items-center justify-between gap-2 p-3 bg-zinc-50 rounded-lg border border-zinc-200 text-xs">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-zinc-700 flex items-center gap-1">
-                <Edit3 className="w-3.5 h-3.5 text-blue-600" />
-                Interactive Operative Note Editor:
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsOpEditMode(!isOpEditMode)}
-                className={`px-2.5 py-1 rounded font-medium transition cursor-pointer text-[11px] ${
-                  isOpEditMode
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-100"
-                }`}
-              >
-                {isOpEditMode ? "✓ Done Editing" : "✎ Edit All Fields"}
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleResetOpNote}
-                className="px-2.5 py-1 rounded bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-100 text-[11px] font-medium flex items-center gap-1 transition cursor-pointer"
-              >
-                <RotateCcw className="w-3 h-3" />
-                <span>Reset to Catalog Standard</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleCopyOpNote}
-                className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 text-[11px] font-semibold flex items-center gap-1 transition cursor-pointer"
-              >
-                {copySuccess ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                <span>{copySuccess ? "Copied!" : "Copy Operative Note"}</span>
-              </button>
             </div>
           </div>
 

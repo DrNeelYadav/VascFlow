@@ -5,15 +5,15 @@ services:
     container_name: vascule-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB: vascule_os
-      POSTGRES_USER: vascule_admin
-      POSTGRES_PASSWORD: vascule_dev_secret_2026
+      POSTGRES_DB: ${POSTGRES_DB:-vascule_os}
+      POSTGRES_USER: ${POSTGRES_USER:-vascule_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vascule_local_dev}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U vascule_admin -d vascule_os"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vascule_admin} -d ${POSTGRES_DB:-vascule_os}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,33 +21,7 @@ services:
     networks:
       - vascule-network
 
-  # Core Authentication & Directory Microservice (Go 1.22)
-  auth-service:
-    build:
-      context: ./services/auth-service
-      dockerfile: Dockerfile
-    container_name: vascule-auth-service
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      DATABASE_URL: postgresql://vascule_admin:vascule_dev_secret_2026@postgres:5432/vascule_os?schema=public
-      JWT_SECRET: vascule-os-enterprise-secret-key-angiosuite-2026
-      PORT: "8080"
-      ENV: production
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    networks:
-      - vascule-network
-
-  # Clinical Web Application (Next.js / Vite Monorepo UI)
+  # Clinical Web Application (Next.js Monorepo UI)
   web-app:
     build:
       context: .
@@ -55,15 +29,16 @@ services:
     container_name: vascule-web-app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:3000"
     environment:
       NODE_ENV: production
       PORT: "3000"
-      NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: vascule-nextauth-super-secret-key-2026
-      AUTH_SERVICE_INTERNAL_URL: http://auth-service:8080
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-vascule_admin}:${POSTGRES_PASSWORD:-vascule_local_dev}@postgres:5432/${POSTGRES_DB:-vascule_os}?schema=public}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-vascule_local_dev_nextauth_secret_key_32c}
+      AUTH_SERVICE_INTERNAL_URL: ${AUTH_SERVICE_INTERNAL_URL:-}
     depends_on:
-      auth-service:
+      postgres:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
@@ -71,47 +46,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-  # Clinical Interoperability & HL7/FHIR Microservice (Go 1.22)
-  fhir-service:
-    build:
-      context: ./services/fhir-service
-      dockerfile: Dockerfile
-    container_name: vascule-fhir-service
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-      - "2575:2575"
-    environment:
-      PORT: "8081"
-      MLLP_PORT: "2575"
-      ENV: production
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    networks:
-      - vascule-network
-
-  # Medical Imaging & DICOMweb QIDO-RS Microservice (Go 1.22)
-  dicom-service:
-    build:
-      context: ./services/dicom-service
-      dockerfile: Dockerfile
-    container_name: vascule-dicom-service
-    restart: unless-stopped
-    ports:
-      - "8082:8082"
-    environment:
-      PORT: "8082"
-      ENV: production
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
     networks:
       - vascule-network
 

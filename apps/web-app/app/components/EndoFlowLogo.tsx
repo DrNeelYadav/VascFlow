@@ -27,6 +27,18 @@ export function EndoFlowLogo({
     lg: "text-xl",
   };
 
+  const iconDimensions = {
+    sm: 28,
+    md: 36,
+    lg: 44,
+  };
+
+  const subtitleSizes = {
+    sm: "text-[9px]",
+    md: "text-[10px]",
+    lg: "text-xs",
+  };
+
   const isLightText = theme === "light";
 
   return (
@@ -36,6 +48,8 @@ export function EndoFlowLogo({
         <img
           src="/endoflow_logo.svg"
           alt="EndoFlow Logo"
+          width={iconDimensions[size]}
+          height={iconDimensions[size]}
           className="w-full h-full object-contain"
         />
       </div>
@@ -52,7 +66,7 @@ export function EndoFlowLogo({
         </div>
         {showSubtitle && (
           <span
-            className={`text-[10px] font-mono tracking-wider uppercase mt-0.5 ${
+            className={`${subtitleSizes[size]} font-mono tracking-wider uppercase mt-0.5 ${
               isLightText ? "text-[#9AA0A6]" : "text-[#5F6368]"
             }`}
           >

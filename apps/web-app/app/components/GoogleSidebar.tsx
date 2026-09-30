@@ -5,26 +5,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Stethoscope,
-  BedDouble,
-  Kanban,
   Calendar,
   BookOpen,
   FileText,
   FileSignature,
   Activity,
-  ShieldCheck,
   Package,
   Settings,
-  Plus,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   X,
-  GraduationCap,
-  BarChart3,
-  PieChart,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useEndoflowStore } from "../dashboard/useEndoflowStore";
+import { EndoFlowLogo } from "./EndoFlowLogo";
 
 export interface NavItem {
   id: string;
@@ -51,15 +46,11 @@ export function GoogleSidebar({
 
   // Live indicators from store
   const ctReviews = useEndoflowStore((s) => s.ctReviews);
-  const beds = useEndoflowStore((s) => s.beds);
-  const patients = useEndoflowStore((s) => s.patients);
   const bookedCases = useEndoflowStore((s) => s.bookedCases);
 
   const currentStaff = useEndoflowStore((s) => s.currentStaff);
 
   const pendingReviewsCount = ctReviews.filter((r) => r.status === "Pending Review").length;
-  const occupiedBedsCount = beds.filter((b) => b.status === "occupied").length;
-  const activeCasesCount = patients.filter((p) => p.status !== "Discharged").length;
   const bookedCasesCount = bookedCases.filter((c) => c.status !== "Completed").length;
 
   useEffect(() => {
@@ -107,20 +98,6 @@ export function GoogleSidebar({
       badge: pendingReviewsCount > 0 ? pendingReviewsCount : undefined,
     },
     {
-      id: "bed-board",
-      name: "Ward & Bed Board",
-      href: "/dashboard/bed-board",
-      icon: BedDouble,
-      badge: `${occupiedBedsCount}/8`,
-    },
-    {
-      id: "worklist",
-      name: "Today's Cath-Lab Worklist",
-      href: "/dashboard/worklist",
-      icon: Kanban,
-      badge: activeCasesCount > 0 ? activeCasesCount : undefined,
-    },
-    {
       id: "calendar",
       name: "OT Schedule & Calendar",
       href: "/dashboard/calendar",
@@ -132,7 +109,6 @@ export function GoogleSidebar({
       name: "Cath-Lab Master Logbook & Registry",
       href: "/dashboard/logbook",
       icon: BookOpen,
-      badge: "1,059",
     },
     {
       id: "operative-notes",
@@ -146,17 +122,12 @@ export function GoogleSidebar({
       href: "/dashboard/discharge",
       icon: FileText,
     },
-    ...(currentStaff?.code === "DM01"
-      ? [
-          {
-            id: "publications",
-            name: "Research Studio (VAPSA)",
-            href: "/dashboard/publications",
-            icon: GraduationCap,
-            badge: "PI Only",
-          },
-        ]
-      : []),
+    {
+      id: "schemes-correlation",
+      name: "Scheme Code Correlation",
+      href: "/dashboard/schemes-correlation",
+      icon: FileSpreadsheet,
+    },
   ];
 
   // 2. Extras (Collapsible Group)
@@ -222,19 +193,7 @@ export function GoogleSidebar({
                 onClick={() => onCloseMobile?.()}
                 className="flex items-center gap-2 hover:opacity-85 transition-opacity"
               >
-                <img
-                  src="/sms_hospital_logo.png"
-                  alt="SMS Hospital Logo"
-                  className="w-6 h-6 object-contain shrink-0"
-                />
-                <div className="flex flex-col">
-                  <span className="text-[13px] font-semibold text-[#1C1C1E] tracking-tight leading-none">
-                    EndoIR
-                  </span>
-                  <span className="text-[10px] text-[#8E8E93] font-medium leading-tight mt-0.5">
-                    Angiosuite Clinical Suite
-                  </span>
-                </div>
+                <EndoFlowLogo size="sm" showSubtitle={false} theme="dark" />
               </Link>
             )}
 
@@ -385,19 +344,6 @@ export function GoogleSidebar({
             )}
           </div>
         </div>
-
-        {/* Hospital Footer */}
-        {(!isCollapsed || isMobileOpen) && (
-          <div className="p-3 border-t border-[#E5E5EA] bg-white text-[11px] text-[#636366] leading-tight flex items-center justify-between">
-            <div>
-              <div className="font-semibold text-[#1C1C1E] tracking-tight">SMS Hospital, Jaipur</div>
-              <div className="text-[10px] text-[#8E8E93]">Dept of Radiodiagnosis &amp; IR</div>
-            </div>
-            <span className="px-2 py-0.5 text-[10px] rounded-full bg-[#34C759]/15 text-[#248A3D] font-semibold">
-              Verified
-            </span>
-          </div>
-        )}
       </aside>
     </>
   );

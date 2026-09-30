@@ -9,7 +9,8 @@ import { CommandMenu } from "../components/command-menu";
 import { MobileBottomNav } from "../components/shell/MobileBottomNav";
 import { VersionNotification } from "./components/VersionNotification";
 import { UniversalDataSync } from "./components/UniversalDataSync";
-import { persistStaffSession, getPersistedStaffSession } from "../lib/auth/sessionPersistence";
+import { useSession } from "next-auth/react";
+import type { StaffAccount, StaffTier } from "../lib/staffAccounts";
 import { useEndoflowStore } from "./useEndoflowStore";
 
 export default function DashboardLayout({
@@ -24,6 +25,7 @@ export default function DashboardLayout({
 
   const currentStaff = useEndoflowStore((s) => s.currentStaff);
   const setCurrentStaff = useEndoflowStore((s) => s.setCurrentStaff);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     try {
@@ -50,18 +52,54 @@ export default function DashboardLayout({
   }, [isCathLabDark]);
 
   useEffect(() => {
-    try {
-      const persisted = getPersistedStaffSession();
-      if (persisted && persisted.code) {
-        if (!currentStaff || currentStaff.code !== persisted.code) {
-          setCurrentStaff(persisted);
-        }
-        persistStaffSession(persisted, { rememberMe: true });
-      } else if (currentStaff) {
-        persistStaffSession(currentStaff, { rememberMe: true });
-      }
-    } catch {}
-  }, []);
+    if (status === "loading") return;
+    const user = session?.user;
+    const code = user?.roleCode?.toUpperCase() || "";
+    const tier = user?.roleTier?.toUpperCase() || "";
+
+    if (!user || !code) {
+      setCurrentStaff(null);
+      useEndoflowStore.setState({
+        patients: [],
+        beds: [],
+        bookedCases: [],
+        ctReviews: [],
+        dopplerRecords: [],
+      });
+      return;
+    }
+
+    const staffTier: StaffTier = tier === "FACULTY" || code.startsWith("FC")
+      ? "FACULTY"
+      : tier === "FELLOW" || code.startsWith("DM")
+        ? "DM_RESIDENT"
+        : tier === "RESIDENT" || tier === "SENIOR_RESIDENT" || code.startsWith("SR")
+          ? "SENIOR_RESIDENT"
+          : tier === "NURSING" || code.startsWith("NO")
+            ? "NURSING_OFFICER"
+            : tier === "TECHNICIAN" || code.startsWith("TC")
+              ? "CATHLAB_TECHNICIAN"
+              : "SYSTEM_ADMINISTRATOR";
+    const staffRole: StaffAccount["role"] = staffTier === "CATHLAB_TECHNICIAN"
+      ? "TECHNICIAN"
+      : staffTier === "NURSING_OFFICER"
+        ? "NURSE"
+        : staffTier === "SYSTEM_ADMINISTRATOR"
+          ? "ADMIN"
+          : "DOCTOR";
+
+    setCurrentStaff({
+      code,
+      name: user.name || user.email || "Staff",
+      email: user.email || undefined,
+      role: staffRole,
+      tier: staffTier,
+      title: tier || "Clinical Staff",
+      department: user.department || "",
+      avatar: (user.name || "S").slice(0, 2).toUpperCase(),
+      isActive: true,
+    });
+  }, [session, status, setCurrentStaff]);
 
   const containerBg = isCathLabDark
     ? "dark bg-[#09090b] text-slate-100"

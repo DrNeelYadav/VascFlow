@@ -138,8 +138,8 @@ export async function authorizeInstitutionalCredentials(
     return null;
   }
 
-  const authServiceBase =
-    process.env.AUTH_SERVICE_INTERNAL_URL || "http://127.0.0.1:8080";
+  const authServiceBase = process.env.AUTH_SERVICE_INTERNAL_URL;
+  if (!authServiceBase) return null;
   const loginUrl = `${authServiceBase.replace(/\/+$/, "")}/api/v1/auth/login`;
 
   try {
@@ -158,9 +158,8 @@ export async function authorizeInstitutionalCredentials(
     });
 
     if (!response.ok) {
-      const errorBody = await response.text();
       console.error(
-        `[Auth.js] Authorization rejected by auth-service (${response.status}): ${errorBody}`
+        `[Auth.js] Authorization rejected by auth-service (${response.status}).`
       );
       return null;
     }
@@ -201,9 +200,7 @@ export async function authorizeInstitutionalCredentials(
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret:
-    process.env.NEXTAUTH_SECRET ||
-    process.env.AUTH_SECRET ||
-    "vascule-os-production-grade-institutional-jwt-secret-key-32chars",
+    process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   session: {
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24 hours to match backend token TTL

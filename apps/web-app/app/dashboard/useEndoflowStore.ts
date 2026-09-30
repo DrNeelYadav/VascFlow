@@ -43,18 +43,18 @@ export const ModalityTypeSchema = z.enum(["XA", "CT", "US", "ROSE"]);
 export type ModalityType = z.infer<typeof ModalityTypeSchema>;
 
 export const LabsSchema = z.object({
-  ast: z.number().default(25),
-  alt: z.number().default(25),
-  bili: z.number().default(0.8),
-  ldh: z.number().default(180),
-  alb: z.number().default(4.0),
-  creat: z.number().default(0.9),
-  inr: z.number().default(1.1),
-  plt: z.number().default(220000),
-  fib: z.number().default(280),
-  protc: z.number().default(85),
-  prots: z.number().default(90),
-  ascitesGrade: z.string().default("none"),
+  ast: z.number().optional(),
+  alt: z.number().optional(),
+  bili: z.number().optional(),
+  ldh: z.number().optional(),
+  alb: z.number().optional(),
+  creat: z.number().optional(),
+  inr: z.number().optional(),
+  plt: z.number().optional(),
+  fib: z.number().optional(),
+  protc: z.number().optional(),
+  prots: z.number().optional(),
+  ascitesGrade: z.string().optional(),
 });
 export type Labs = z.infer<typeof LabsSchema>;
 
@@ -68,13 +68,13 @@ export type IpdLocation = z.infer<typeof IpdLocationSchema>;
 
 export const PreOpPrepSchema = z.object({
   bedLocation: z.string().default("Ward D-Block"),
-  npoHours: z.number().min(0).default(6),
-  inrChecked: z.boolean().default(true),
-  creatinineChecked: z.boolean().default(true),
-  consentSigned: z.boolean().default(true),
+  npoHours: z.number().min(0).default(0),
+  inrChecked: z.boolean().default(false),
+  creatinineChecked: z.boolean().default(false),
+  consentSigned: z.boolean().default(false),
   ivCannulaGauge: z.string().default("18G Green"),
   calledToLab: z.boolean().default(false),
-  labCleared: z.boolean().default(true),
+  labCleared: z.boolean().default(false),
 });
 export type PreOpPrep = z.infer<typeof PreOpPrepSchema>;
 
@@ -83,7 +83,7 @@ export const InRoomTelemetrySchema = z.object({
   elapsedFluoroSeconds: z.number().min(0).default(0),
   contrastInjectedMl: z.number().min(0).default(0),
   macdThresholdMl: z.number().min(1).default(180),
-  vitals: z.string().default("120/80 mmHg, HR 72, SpO2 99%"),
+  vitals: z.string().optional(),
   targetArtery: z.string().default("Target Territory"),
   cathetersInUse: z.array(z.string()).default([]),
   currentStepDescription: z.string().default("Diagnostic Roadmapping Angiogram"),
@@ -127,7 +127,7 @@ export const EndoflowPatientSchema = z.object({
   sex: z.enum(["Male", "Female"]),
   hid: z.string().min(1), // Immutable Hospital Identifier
   scanId: z.string().min(1),
-  phone: z.string().default("9829000000"),
+  phone: z.string().default(""),
   unit: z.string().default("Gastroenterology"),
   postedBy: z.string().default("Dr. Neel Yadav"),
   time: z.string().default("09:00 AM"),
@@ -137,8 +137,8 @@ export const EndoflowPatientSchema = z.object({
   modality: ModalityTypeSchema,
   status: ClinicalStageSchema,
   scheme: z.string().default("MAAY"),
-  schemeTid: z.string().default("TID-9482103"),
-  beneficiaryId: z.string().default("Jan Aadhaar 7821-9482-10"),
+  schemeTid: z.string().default(""),
+  beneficiaryId: z.string().default(""),
   preAuthStatus: z.string().default("Approved"),
   ipd: IpdLocationSchema,
   labs: LabsSchema,

@@ -27,7 +27,6 @@ import {
   FileSpreadsheet,
   Stethoscope,
   ChevronRight,
-  Sparkles,
   Info,
   Clock,
   Building,
@@ -66,7 +65,7 @@ export default function CathLabMastersPage() {
       case "COMBINED":
         return UNIFIED_CATH_LAB_DATASET;
       case "ALL_HISTORICAL":
-        return [...PARSED_ALL_DSA_CASES, ...PARSED_2026_CASES];
+        return PARSED_ALL_DSA_CASES;
       default:
         return UNIFIED_CATH_LAB_DATASET;
     }
@@ -194,7 +193,7 @@ export default function CathLabMastersPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
               <ShieldCheck className="w-3.5 h-3.5" />
-              100% Authentic SMS Hospital Datasets
+              SMS Hospital Cath-Lab Registry
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
               Interventional Radiology Masters
@@ -330,7 +329,7 @@ export default function CathLabMastersPage() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                2025 + 2026 ({UNIFIED_CATH_LAB_DATASET.length})
+                All Records ({UNIFIED_CATH_LAB_DATASET.length})
               </button>
               <button
                 type="button"
@@ -363,7 +362,7 @@ export default function CathLabMastersPage() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                All Years ({PARSED_ALL_DSA_CASES.length + PARSED_2026_CASES.length})
+                Master Registry ({PARSED_ALL_DSA_CASES.length})
               </button>
             </div>
 

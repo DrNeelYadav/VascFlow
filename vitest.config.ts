@@ -7,6 +7,7 @@ export default defineConfig({
       "@vascule/utils/sanitizers": path.resolve(__dirname, "./packages/utils/src/sanitizers.ts"),
       "@vascule/utils": path.resolve(__dirname, "./packages/utils/src"),
       "@": path.resolve(__dirname, "./apps/web-app"),
+      "server-only": path.resolve(__dirname, "./apps/web-app/src/__tests__/empty-module.ts"),
     },
   },
   test: {

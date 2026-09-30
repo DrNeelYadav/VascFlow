@@ -203,14 +203,14 @@ it("verifies newly integrated high-frequency SMS Cath-Lab procedures exist with 
     expect(ringPtbd?.title).toContain("Ring Internal-External Catheter");
   });
 
-  it("verifies REAL_SMS_PATIENT_REGISTRY contains 758 authentic cases with complete logbook attributes", async () => {
+  it("verifies REAL_SMS_PATIENT_REGISTRY contains 758 de-identified cases with complete logbook attributes", async () => {
     const { REAL_SMS_PATIENT_REGISTRY } = await import("../../app/lib/realData/smsCathLabRealData");
     expect(REAL_SMS_PATIENT_REGISTRY.length).toBe(758);
 
-    // Verify presence of representative patients
-    expect(REAL_SMS_PATIENT_REGISTRY.some((c) => c.patientName === "Pavan Kumar Sharma")).toBe(true);
-    expect(REAL_SMS_PATIENT_REGISTRY.some((c) => c.patientName === "Mewaram Gurjar")).toBe(true);
-    expect(REAL_SMS_PATIENT_REGISTRY.some((c) => c.crNumber === "90722116057927")).toBe(true);
+    // Verify presence of representative de-identified patients
+    expect(REAL_SMS_PATIENT_REGISTRY.some((c) => c.patientName === "Patient 001")).toBe(true);
+    expect(REAL_SMS_PATIENT_REGISTRY.some((c) => c.patientName === "Patient 002")).toBe(true);
+    expect(REAL_SMS_PATIENT_REGISTRY.some((c) => c.crNumber === "CR-0001")).toBe(true);
 
     // Verify all cases have valid scheme types and DSA numbers
     REAL_SMS_PATIENT_REGISTRY.forEach((c) => {

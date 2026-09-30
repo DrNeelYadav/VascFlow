@@ -71,7 +71,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
 
   // Selection & Presentation State
   const [selectedPatientId, setSelectedPatientId] = useState<string>(
-    SMS_PATIENT_ARCHIVE_DATASET[0]?.irNumber || "IR-1057"
+    SMS_PATIENT_ARCHIVE_DATASET[0]?.irNumber || "IR-SYN-001"
   );
   const [activeDocMode, setActiveDocMode] = useState<"DISCHARGE" | "OPERATIVE_NOTE">("DISCHARGE");
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
@@ -168,14 +168,14 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
               Department of Interventional Radiology
             </span>
             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              {SMS_PATIENT_ARCHIVE_DATASET.length} Authentic Clinical Records
+              {SMS_PATIENT_ARCHIVE_DATASET.length} De-identified Reference Records
             </span>
           </div>
           <h2 className="text-lg font-bold text-[#202124] mt-1">
-            Patient Dossier &amp; Clinical Archive Directory
+            Patient Dossier &amp; De-identified Reference Archive
           </h2>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Search authentic patient discharge cards &amp; post-operative notes by Year, Month, Name, Gender, Procedure, or IR Number.
+            Search de-identified patient discharge cards &amp; post-operative notes by Year, Month, Name, Gender, Procedure, or IR Number.
           </p>
         </div>
 
@@ -377,9 +377,9 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
           </div>
         </div>
 
-        {/* Right Column (8 cols on lg): Authentic Dossier Presentation */}
+        {/* Right Column (8 cols on lg): De-identified Reference Dossier Presentation */}
         <div className="lg:col-span-8 space-y-4">
-          {/* Patient Folder Header Card */}
+          {/* De-identified Patient Header Card */}
           <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#F1F3F4]">
               <div>
@@ -437,7 +437,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
             {/* Folder Location & Metadata Metadata Bar */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs bg-[#F8F9FA] p-3 rounded-xl border border-[#DADCE0]">
               <div>
-                <span className="text-[10px] text-[#5F6368] block">Physical Archive Folder:</span>
+                <span className="text-[10px] text-[#5F6368] block">Reference Archive Path:</span>
                 <span className="font-mono text-[11px] text-[#202124] font-medium break-all flex items-center gap-1">
                   <FolderOpen className="w-3 h-3 text-amber-600 shrink-0" />
                   {currentPatient.folderPath || `DSA Archive / Year ${currentPatient.year} / ${currentPatient.month}`}
@@ -505,14 +505,14 @@ ${currentPatient.dischargeData.followUp}`;
                 <div className="p-8 text-center space-y-2">
                   <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
                   <h4 className="text-sm font-bold text-slate-800">
-                    Discharge Card Not Present in Folder
+                    Discharge Card Not Present in Record
                   </h4>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    This patient's physical archive folder does not contain a scanned Bed Head Ticket / Discharge Card (`bht.pdf`). In accordance with clinical accuracy guidelines, synthetic content has not been fabricated.
+                    This reference case does not contain an associated Bed Head Ticket / Discharge Summary.
                   </p>
                 </div>
               ) : currentPatient.dischargeData ? (
-                /* Authentic A4 Presentation Canvas */
+                /* De-identified Clinical A4 Presentation Canvas */
                 <div className="p-6 sm:p-8 space-y-5 text-[#202124] text-xs">
                   {/* Hospital & State Header */}
                   <div className="text-center border-b-2 border-slate-900 pb-3 space-y-1">
@@ -732,14 +732,14 @@ Conclusion: ${op.technicalSuccess}`;
                 <div className="p-8 text-center space-y-2">
                   <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
                   <h4 className="text-sm font-bold text-slate-800">
-                    Post-Operative Note Not Present in Folder
+                    Post-Operative Note Not Present in Record
                   </h4>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    This patient's physical archive folder does not contain a scanned Operative Procedure Note (`report.pdf`). In accordance with clinical accuracy guidelines, synthetic content has not been fabricated.
+                    This reference case does not contain an associated Operative Procedure Note.
                   </p>
                 </div>
               ) : currentPatient.operativeNoteData ? (
-                /* Authentic Operative Report Canvas */
+                /* De-identified Operative Report Canvas */
                 <div className="p-6 sm:p-8 space-y-5 text-[#202124] text-xs">
                   {/* Department Operative Header */}
                   <div className="text-center border-b-2 border-slate-900 pb-3 space-y-1">

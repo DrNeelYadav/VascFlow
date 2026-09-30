@@ -50,6 +50,7 @@ import { SsoIhmsPrefill } from "./SsoIhmsPrefill";
 import { PatientArchiveDossier } from "./PatientArchiveDossier";
 import { MasterProcedure } from "../../lib/masterCatalog";
 import { getAllProcedureFamilies, getDischargeTemplate, CriteriaField } from './procedureDischargeTemplates';
+import { getNextValidWorkingAppointmentDate } from "../../lib/rajasthanHolidays2026";
 import {
   VaricoseClinicalModel,
   VaricoceleClinicalModel,
@@ -321,9 +322,7 @@ export function synthesizeDischargeRecord({
       updated.investigations.labResults = [];
     }
 
-    const fuDateVaricose = new Date();
-    fuDateVaricose.setDate(fuDateVaricose.getDate() + 10);
-    const fuDateVaricoseStr = `${String(fuDateVaricose.getDate()).padStart(2, "0")}-${String(fuDateVaricose.getMonth() + 1).padStart(2, "0")}-${fuDateVaricose.getFullYear()}`;
+    const fuDateVaricoseStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 7);
 
     updated.dischargeDetails.generalAdvise = synthesizeVenousDischargeAdvice(clinicalModel).join('\n');
     updated.dischargeDetails.conditionOnDischarge = "Improved";
@@ -383,9 +382,7 @@ export function synthesizeDischargeRecord({
       updated.investigations.labResults = [];
     }
 
-    const fuDateVaricocele = new Date();
-    fuDateVaricocele.setDate(fuDateVaricocele.getDate() + 14);
-    const fuDateVaricoceleStr = `${String(fuDateVaricocele.getDate()).padStart(2, "0")}-${String(fuDateVaricocele.getMonth() + 1).padStart(2, "0")}-${fuDateVaricocele.getFullYear()}`;
+    const fuDateVaricoceleStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 14);
 
     updated.dischargeDetails.generalAdvise = synthesizeVaricoceleDischargeAdvice().join('\n');
     updated.dischargeDetails.conditionOnDischarge = "Improved";
@@ -476,9 +473,7 @@ export function synthesizeDischargeRecord({
         },
       ];
 
-      const fuDateTips = new Date();
-      fuDateTips.setDate(fuDateTips.getDate() + 30);
-      const fuDateTipsStr = `${String(fuDateTips.getDate()).padStart(2, "0")}-${String(fuDateTips.getMonth() + 1).padStart(2, "0")}-${fuDateTips.getFullYear()}`;
+      const fuDateTipsStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 30);
 
       updated.dischargeDetails.generalAdvise = `1. High protein, low salt diet (< 2g sodium/day). Daily morning weight monitoring.\n2. Strict adherence to Apixaban anticoagulation.\n3. Watch for hepatic encephalopathy signs (confusion, lethargy, inverted sleep cycles).\n4. Puncture site status: ${otherIr.punctureSiteStatus}.\n5. Analgesia status: ${otherIr.analgesia}.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
@@ -552,9 +547,7 @@ export function synthesizeDischargeRecord({
         },
       ];
 
-      const fuDateBae = new Date();
-      fuDateBae.setDate(fuDateBae.getDate() + 14);
-      const fuDateBaeStr = `${String(fuDateBae.getDate()).padStart(2, "0")}-${String(fuDateBae.getMonth() + 1).padStart(2, "0")}-${fuDateBae.getFullYear()}`;
+      const fuDateBaeStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 14);
 
       updated.dischargeDetails.generalAdvise = `1. Avoid forceful coughing, throat clearing, or straining.\n2. Bed rest for 48 hours.\n3. Puncture site care: ${otherIr.punctureSiteStatus}.\n4. Immediate report to hospital emergency if fresh hemoptysis recurs.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
@@ -619,9 +612,7 @@ export function synthesizeDischargeRecord({
         },
       ];
 
-      const fuDatePtbd = new Date();
-      fuDatePtbd.setDate(fuDatePtbd.getDate() + 7);
-      const fuDatePtbdStr = `${String(fuDatePtbd.getDate()).padStart(2, "0")}-${String(fuDatePtbd.getMonth() + 1).padStart(2, "0")}-${fuDatePtbd.getFullYear()}`;
+      const fuDatePtbdStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 7);
 
       updated.dischargeDetails.generalAdvise = `1. Empty and measure biliary drainage bag output twice daily in mL.\n2. Keep puncture site dressing dry and intact; flush catheter with 5-10 mL sterile normal saline once daily as instructed.\n3. Do not pull or kink the external tubing.\n4. Puncture site care: ${otherIr.punctureSiteStatus}.\n5. Immediate emergency visit if catheter dislodges, drain output suddenly stops, or high fever with chills occurs.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
@@ -763,9 +754,7 @@ export function synthesizeDischargeRecord({
         { sNo: 2, medicine: "Cap. Amoxicillin and Potassium Clavulanate 625mg [RMSCL DDC #505]", genericName: "Amoxicillin and Potassium Clavulanate 625mg", dosePower: "625mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
         { sNo: 3, medicine: "Mupirocin 2% Ointment [RMSCL DDC #278]", genericName: "Mupirocin 2% Ointment", dosePower: "Local", route: "TOPICAL", frequency: "BD", days: 5, instructions: "Apply locally over puncture site" },
       ];
-      const fuDateFistulo = new Date();
-      fuDateFistulo.setDate(fuDateFistulo.getDate() + 14);
-      const fuDateFistuloStr = `${String(fuDateFistulo.getDate()).padStart(2, "0")}-${String(fuDateFistulo.getMonth() + 1).padStart(2, "0")}-${fuDateFistulo.getFullYear()}`;
+      const fuDateFistuloStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 14);
 
       updated.dischargeDetails.generalAdvise = "1. Avoid taking blood pressure, blood draws, or wearing tight wristbands/jewelry on the fistula arm.\n2. Palpate the thrill twice daily (morning & night).\n3. Hemodialysis permitted from existing access after 24 hours.\n4. Report to emergency immediately if the thrill or murmur disappears.";
       updated.dischargeDetails.followUp = "Review in Dialysis Access Clinic / IR OPD Room 48 in 2 weeks.";
@@ -786,7 +775,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "CONVENTIONAL TRANSARTERIAL CHEMOEMBOLIZATION (cTACE)",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Meenu Bagarhatta",
+        processDoneBy: "Dr Alok Verma",
       };
       proc.surgicalProcedure = "CONVENTIONAL TRANSARTERIAL CHEMOEMBOLIZATION (cTACE)";
       proc.operationType = "Major";
@@ -800,9 +789,7 @@ export function synthesizeDischargeRecord({
         { sNo: 3, medicine: "Tab. Cefixime 200mg [RMSCL DDC #112]", genericName: "Cefixime 200mg", dosePower: "200mg", route: "ORAL", frequency: "BD", days: 5, instructions: "Post meals" },
         { sNo: 4, medicine: "Tab. Paracetamol 650mg [RMSCL DDC #28]", genericName: "Paracetamol 650mg", dosePower: "650mg", route: "ORAL", frequency: "TID", days: 5, instructions: "For post-embolization fever/ache" },
       ];
-      const fuDateTace = new Date();
-      fuDateTace.setDate(fuDateTace.getDate() + 28);
-      const fuDateTaceStr = `${String(fuDateTace.getDate()).padStart(2, "0")}-${String(fuDateTace.getMonth() + 1).padStart(2, "0")}-${fuDateTace.getFullYear()}`;
+      const fuDateTaceStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 28);
 
       updated.dischargeDetails.generalAdvise = "1. Adequate oral fluids (2-3 L/day) for contrast and chemotherapy clearance.\n2. Light, non-oily diet.\n3. Puncture site care: keep dry for 48 hours.\n4. Report to emergency if persistent intractable vomiting, severe abdominal pain, or jaundice occurs.";
       updated.dischargeDetails.followUp = "Review in IR OPD Room 48 / Liver Clinic in 4 weeks with dynamic multiphasic CECT and serum AFP.";
@@ -858,9 +845,7 @@ export function synthesizeDischargeRecord({
         },
       ];
 
-      const fuDateBiopsy = new Date();
-      fuDateBiopsy.setDate(fuDateBiopsy.getDate() + 5);
-      const fuDateBiopsyStr = `${String(fuDateBiopsy.getDate()).padStart(2, "0")}-${String(fuDateBiopsy.getMonth() + 1).padStart(2, "0")}-${fuDateBiopsy.getFullYear()}`;
+      const fuDateBiopsyStr = getNextValidWorkingAppointmentDate(new Date().toISOString(), 5);
 
       updated.dischargeDetails.generalAdvise = `1. Rest quietly at home for 24 hours; avoid lifting heavy weights or strenuous work for 48 hours.\n2. Keep waterproof dressing dry for 24 hours.\n3. Puncture site care: ${otherIr.punctureSiteStatus}.\n4. Report immediately if dizziness, shoulder tip pain, severe right upper abdominal pain, or black stools occur.`;
       updated.dischargeDetails.followUp = otherIr.followUpAdvice;
@@ -872,42 +857,42 @@ export function synthesizeDischargeRecord({
   if (category === "varicose_veins") {
     updated.postOperativeNotes = {
       accessSiteHemostasis: `Puncture site (${varicose.laterality} GSV / access site): Complete hemostasis achieved. Puncture clean, dry and intact with zero hematoma. Class II graduated compression stocking applied.`,
-      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "BP: 112/84 mmHg, HR: 66 bpm regular, SpO2: 100% on ambient air, RR: 18/min, Afebrile (98°F)",
+      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "",
       sheathRemovalTime: updated.postOperativeNotes?.sheathRemovalTime || `${new Date().toLocaleDateString("en-IN")} 10:45 AM (Immediate post-closure in Angiosuite)`,
       sheathStatus: "Removed",
       recoveryStatus: `Conscious, oriented, pain minimal (VAS 1/10). Early ambulation protocol initiated with Class II compression stockings in place. Able to void urine and ambulate comfortably.`,
       recoveryBed: "Cath-Lab Holding Rec-01",
       distalPulses: "Strong (+++) - Dorsalis pedis and posterior tibial arterial pulsations palpated strong and equal bilaterally",
       immediateComplications: "Nil - Zero hematoma, zero DVT on completion Doppler, zero sensory deficit",
-      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr Shashank Sharma",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr. Neel Yadav",
       recordedAt: `${new Date().toLocaleDateString("en-IN")} 11:30 AM`,
       notes: `Successful ${varicose.modality} ablation of ${varicose.laterality} GSV. Non-compressible occluded GSV cast confirmed. Patient cleared for discharge.`,
     };
   } else if (category === "varicocele") {
     updated.postOperativeNotes = {
       accessSiteHemostasis: `Right common femoral vein / IJV puncture site: ${otherIr.punctureSiteStatus || "Clean, Dry & Intact (No Hematoma/Bruit)"}. Manual compression applied; complete seal achieved.`,
-      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "BP: 118/76 mmHg, HR: 68 bpm regular, SpO2: 99% on room air, RR: 16/min",
+      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "",
       sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:00 AM (Immediate post-embolization)`,
       sheathStatus: "Removed",
       recoveryStatus: `Conscious and oriented. Minimal scrotal discomfort. Supine bed rest for 2 hours maintained. Ice pack applied to access and scrotal site.`,
       recoveryBed: "Daycare Holding Bay 03",
       distalPulses: "Strong (+++) - Bilateral femoral and distal peripheral pulses intact",
       immediateComplications: "Nil - Zero access site hematoma, zero coil migration, zero scrotal swelling",
-      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr Shashank Sharma",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr. Neel Yadav",
       recordedAt: `${new Date().toLocaleDateString("en-IN")} 11:45 AM`,
       notes: "Internal spermatic vein embolization completed. Hemostasis verified. Discharged on oral NSAIDs and scrotal support advice.",
     };
   } else {
     updated.postOperativeNotes = {
       accessSiteHemostasis: `Access site status: ${otherIr.punctureSiteStatus}. Complete hemostasis verified with pressure dressing in situ.`,
-      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "BP: 120/76 mmHg, HR: 72 bpm, SpO2: 99% on ambient air, RR: 16/min",
+      telemetryVitals: updated.postOperativeNotes?.telemetryVitals || "",
       sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Vascular closure / pressure hemostasis confirmed)`,
       sheathStatus: "Removed",
       recoveryStatus: `Conscious, oriented, hemodynamically stable. Pain control: ${otherIr.analgesia}. Recovery bed rest instructions active.`,
       recoveryBed: "Cath-Lab Holding PACU-01",
       distalPulses: "Strong (+++) - Distal peripheral pulses palpated and intact bilaterally",
       immediateComplications: "Nil - Zero access site bleeding, zero pseudoaneurysm, zero distal vascular compromise",
-      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr Meenu Bagarhatta",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr. Neel Yadav",
       recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:15 PM`,
       notes: `Technical outcome: ${otherIr.technicalSuccess}. Post-operative recovery monitoring completed uneventfully.`,
     };
@@ -974,6 +959,7 @@ export default function DischargeSummaryPage() {
   // New dynamic templates state
   const [selectedProcedureKey, setSelectedProcedureKey] = useState<string>("varicose_veins");
   const [dynamicCriteria, setDynamicCriteria] = useState<Record<string, any>>({});
+  const [isFindingsDropdownOpen, setIsFindingsDropdownOpen] = useState<boolean>(false);
 
   // Procedure Category Selector (Legacy - keeping for fallback)
   const [procedureCategory, setProcedureCategory] =
@@ -986,19 +972,19 @@ export default function DischargeSummaryPage() {
     findings: {
       varicoseVeins: true,
       venousUlcer: false,
-      hyperpigmentation: true,
+      hyperpigmentation: false,
       lipodermatosclerosis: false,
-      coronaPhlebectatica: true,
-      edema: true,
-      achingPain: true,
-      nightCramps: true,
+      coronaPhlebectatica: false,
+      edema: false,
+      achingPain: false,
+      nightCramps: false,
       restlessLegs: false,
       thrombophlebitis: false,
     },
     symptomDuration: "10 months",
     itchingDuration: "3 months",
     ulcerSizeAndSite: "None",
-    familyHistory: "Present (Mother)",
+    familyHistory: "Absent",
     truncal: createDefaultTruncal(),
     perforators: createDefaultPerforators(),
     sclerotherapy: createDefaultSclerotherapy(),
@@ -1082,7 +1068,7 @@ export default function DischargeSummaryPage() {
       setSummaryData(prev => {
         const familyRisk = template.synthesizeFamilyAndRiskHistory
           ? template.synthesizeFamilyAndRiskHistory(dynamicCriteria)
-          : (prev.caseSummary?.familyHistory || "Nil significant family history");
+          : (prev.caseSummary?.familyHistory || "Absent");
 
         return {
           ...prev,
@@ -1103,7 +1089,7 @@ export default function DischargeSummaryPage() {
           ...(prev.procedureDetails[0] || {}),
           sNo: 1,
           dateTime: new Date().toLocaleDateString("en-IN") + " 10:00 AM",
-          processDoneBy: "Dr Shashank Sharma",
+          processDoneBy: "Dr. Alok Verma",
           procedureDetail: operativeNote,
           surgicalProcedure: template.procedureFamily,
           operationType: template.procedureType,
@@ -1121,14 +1107,14 @@ export default function DischargeSummaryPage() {
         },
         postOperativeNotes: {
           accessSiteHemostasis: postOpRec?.accessSiteHemostasis || `Access site hemostasis: Pressure dressing intact. Site clean, dry, zero active oozing or hematoma.`,
-          telemetryVitals: prev.postOperativeNotes?.telemetryVitals || "BP: 120/78 mmHg, HR: 72 bpm regular, SpO2: 99% on room air, RR: 16/min",
+          telemetryVitals: prev.postOperativeNotes?.telemetryVitals || "",
           sheathRemovalTime: `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Vascular closure confirmed)`,
           sheathStatus: "Removed",
           recoveryStatus: postOpRec?.recoveryStatus || `Conscious, oriented x3, hemodynamically stable. Post-op orders: ${template.dischargeAdvice[0] || "Rest quietly in bed."}`,
           recoveryBed: postOpRec?.recoveryBedMonitoring || prev.postOperativeNotes?.recoveryBed || "Cath-Lab Holding Rec-01",
           distalPulses: postOpRec?.distalPulses || "Strong (+++) - Bilateral distal peripheral pulses intact",
           immediateComplications: postOpRec?.immediateComplications || "Nil documented - Zero immediate procedural complications",
-          recordedBy: "Dr Shashank Sharma",
+          recordedBy: "Dr. Neel Yadav",
           recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:00 PM`,
           notes: postOpRec?.notes || `Post-procedural recovery for ${template.procedureFamily} completed uneventfully. Vitals and access site hemostasis verified.`,
         },
@@ -1423,8 +1409,8 @@ Follow Up: ${summaryData.dischargeDetails.followUp}${
         ? `\nNext Appointment Date: ${summaryData.dischargeDetails.followUpDate}`
         : ""
     }
-Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
-      summaryData.dischargeDetails.dischargePreparedBy
+Approved by: ${summaryData.dischargeDetails.approvedBy || "Dr. Alok Verma"} | Assistant Professor: ${summaryData.dischargeDetails.assistantProfessor || "Dr. Shashank Sharma"} | Prepared by: ${
+      summaryData.dischargeDetails.dischargePreparedBy || "Dr. Neel Yadav"
     }`;
 
     copyTextToClipboard(fullText, "Full Discharge Summary");
@@ -1487,129 +1473,30 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
     showNotification("Attachment removed.");
   };
 
-  // Visual exhibit rendering
+  // Visual attachment rendering
   const renderAttachmentVisual = (att: ProceduralImageAttachment) => {
     if (
       att.dataUrl &&
       (att.dataUrl.startsWith("data:image/") ||
         att.dataUrl.startsWith("http") ||
-        att.dataUrl.startsWith("blob:"))
+        att.dataUrl.startsWith("blob:") ||
+        att.dataUrl.startsWith("/"))
     ) {
       return (
         <img
           src={att.dataUrl}
           alt={att.title}
-          className="w-full max-h-52 object-contain rounded bg-black border border-[#3C4043]"
+          className="w-full max-h-56 object-contain rounded bg-black border border-[#3C4043]"
         />
-      );
-    }
-
-    if (att.modality === "XA") {
-      return (
-        <svg
-          viewBox="0 0 400 220"
-          className="w-full h-44 bg-[#050811] rounded select-none font-mono text-[9px]"
-        >
-          <rect width="400" height="220" fill="#050811" />
-          <circle
-            cx="200"
-            cy="110"
-            r="95"
-            fill="none"
-            stroke="#334155"
-            strokeWidth="1"
-            strokeDasharray="4 4"
-            opacity="0.4"
-          />
-          <path
-            d="M 200 210 Q 202 160 198 120 Q 195 90 215 60"
-            fill="none"
-            stroke="#F8FAFC"
-            strokeWidth="4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 198 120 Q 160 110 135 85 Q 115 65 90 50"
-            fill="none"
-            stroke="#E2E8F0"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 198 120 Q 240 115 270 100 Q 295 85 320 65"
-            fill="none"
-            stroke="#E2E8F0"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <text x="12" y="18" fill="#4ADE80" fontWeight="bold">
-            SMS JAIPUR • ANGIOSUITE 1
-          </text>
-          <text x="12" y="30" fill="#94A3B8">
-            XA FLUOROSCOPY / DSA
-          </text>
-          <text x="388" y="18" fill="#FBBF24" textAnchor="end">
-            FRAME VERIFIED
-          </text>
-          <text x="12" y="208" fill="#94A3B8">
-            DAP: 16.4 Gy·cm²
-          </text>
-          <text x="388" y="208" fill="#4ADE80" textAnchor="end">
-            TECHNICAL SUCCESS
-          </text>
-        </svg>
       );
     }
 
     return (
-      <svg
-        viewBox="0 0 400 220"
-        className="w-full h-44 bg-[#020617] rounded select-none font-mono text-[9px]"
-      >
-        <rect width="400" height="220" fill="#020617" />
-        <path
-          d="M 40 90 Q 200 85 360 95"
-          fill="none"
-          stroke="#94A3B8"
-          strokeWidth="2.5"
-        />
-        <path
-          d="M 40 135 Q 200 130 360 140"
-          fill="none"
-          stroke="#94A3B8"
-          strokeWidth="2.5"
-        />
-        <rect
-          x="140"
-          y="75"
-          width="130"
-          height="70"
-          fill="none"
-          stroke="#EAB308"
-          strokeWidth="1"
-          strokeDasharray="4 2"
-        />
-        <path
-          d="M 142 95 Q 200 92 268 100 L 268 128 Q 200 122 142 130 Z"
-          fill="#DC2626"
-          opacity="0.85"
-        />
-        <text x="12" y="18" fill="#FACC15" fontWeight="bold">
-          SMS HOSPITAL • USG DOPPLER
-        </text>
-        <text x="12" y="30" fill="#94A3B8">
-          LINEAR COLOR DOPPLER
-        </text>
-        <text x="388" y="18" fill="#4ADE80" textAnchor="end">
-          PRF: 2.5 kHz
-        </text>
-        <text x="200" y="208" fill="#FACC15" textAnchor="middle">
-          NON-COMPRESSIBLE CAST CONFIRMED
-        </text>
-        <text x="388" y="208" fill="#4ADE80" textAnchor="end">
-          PATENT DEEP SYSTEM
-        </text>
-      </svg>
+      <div className="w-full h-36 bg-[#0F172A] rounded flex flex-col items-center justify-center text-slate-400 gap-1.5 p-4">
+        <Camera className="w-6 h-6 text-slate-500" />
+        <span className="text-xs font-semibold text-slate-200">{att.title}</span>
+        <span className="text-[10px] text-slate-400 font-mono">[{att.modality}] Attached Image Record</span>
+      </div>
     );
   };
 
@@ -1617,33 +1504,31 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
     <div className="space-y-4 max-w-6xl mx-auto pb-16 print:p-0 print:m-0 print:max-w-none">
       {/* Toast Notification */}
       {copyToast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#1E8E3E] text-white text-xs font-semibold shadow-lg flex items-center gap-2 animate-bounce print:hidden">
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2 rounded-xl bg-[#1E8E3E] text-white text-xs font-semibold shadow-lg flex items-center gap-2 print:hidden transition-opacity">
           <CheckCircle2 className="w-4 h-4" />
           <span>{copyToast}</span>
         </div>
       )}
 
       {/* Top Header & Fast Action Bar */}
-      <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8]">
-              IHMS e-Hospital Studio
-            </span>
-            <h1 className="text-lg font-bold text-[#202124]">
-              Interactive Discharge Summary Generator
-            </h1>
-          </div>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Interventional Radiology • Clinical Documentation &amp; Procedure Summary
-          </p>
+      <div className="bg-white border border-[#DADCE0] rounded-xl px-4 py-2.5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 print:hidden">
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8]">
+            IHMS e-Hospital
+          </span>
+          <h1 className="text-sm font-bold text-[#202124]">
+            Discharge Summary Generator
+          </h1>
+          <span className="text-[11px] text-[#5F6368] hidden md:inline">
+            &bull; Interventional Radiology
+          </span>
         </div>
 
         {/* Global Action Copiers & Print */}
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={handleCopyFullIhms}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold transition-all shadow-2xs cursor-pointer active:scale-95"
             title="Copy entire formatted discharge summary for portal"
           >
             <Copy className="w-3.5 h-3.5" />
@@ -1652,7 +1537,7 @@ Approved by: ${summaryData.dischargeDetails.approvedBy} | Prepared by: ${
 
           <button
             onClick={handlePrint}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-xs font-semibold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-xs font-semibold transition-colors cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
             <span>Print Official A4</span>
@@ -1757,83 +1642,83 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
       </div>
 
       {/* Patient Selection Bar */}
-      <div className="bg-white border border-[#DADCE0] rounded-2xl p-3 sm:p-4 shadow-xs space-y-2.5 print:hidden">
+      <div className="bg-white border border-[#DADCE0] rounded-xl p-2.5 shadow-2xs space-y-2 print:hidden">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <span className="text-xs font-bold text-[#3C4043] flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-[#1A73E8]" />
-            Patient / Procedure Context:
+          <span className="text-[11px] font-bold text-[#3C4043] flex items-center gap-1.5">
+            <User className="w-3 h-3 text-[#1A73E8]" />
+            Patient Context:
           </span>
-          <div className="grid grid-cols-2 sm:flex sm:items-center rounded-lg bg-[#F1F3F4] p-0.5 text-xs font-semibold w-full sm:w-auto gap-0.5">
+          <div className="grid grid-cols-2 sm:flex sm:items-center rounded-lg bg-[#F1F3F4] p-0.5 text-[11px] font-semibold w-full sm:w-auto gap-0.5">
             <button
               onClick={() => setActiveTab("preview")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1 ${
                 activeTab === "preview"
-                  ? "bg-white text-[#1A73E8] shadow-xs"
+                  ? "bg-white text-[#1A73E8] shadow-2xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
-              <Eye className="w-3.5 h-3.5" />
+              <Eye className="w-3 h-3" />
               <span>Print Preview</span>
             </button>
             <button
               onClick={() => setActiveTab("editor")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1 ${
                 activeTab === "editor"
-                  ? "bg-white text-[#1A73E8] shadow-xs"
+                  ? "bg-white text-[#1A73E8] shadow-2xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
-              <Sliders className="w-3.5 h-3.5" />
+              <Sliders className="w-3 h-3" />
               <span>Fine-Tune</span>
             </button>
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1 ${
                 activeTab === "analytics"
-                  ? "bg-white text-[#1A73E8] shadow-xs"
+                  ? "bg-white text-[#1A73E8] shadow-2xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
-              <BarChart3 className="w-3.5 h-3.5 text-[#1A73E8]" />
-              <span>Charts/Metrics</span>
+              <BarChart3 className="w-3 h-3 text-[#1A73E8]" />
+              <span>Charts</span>
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1 ${
                 activeTab === "history"
-                  ? "bg-white text-[#1A73E8] shadow-xs"
+                  ? "bg-white text-[#1A73E8] shadow-2xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
-              <History className="w-3.5 h-3.5 text-[#1A73E8]" />
-              <span>Records History</span>
+              <History className="w-3 h-3 text-[#1A73E8]" />
+              <span>History</span>
             </button>
             <button
               onClick={() => setActiveTab("sso")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1 ${
                 activeTab === "sso"
-                  ? "bg-white text-[#1A73E8] shadow-xs"
+                  ? "bg-white text-[#1A73E8] shadow-2xs"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
-              <Globe className="w-3.5 h-3.5 text-[#137333]" />
-              <span>SSO Ingestion</span>
+              <Globe className="w-3 h-3 text-[#137333]" />
+              <span>SSO</span>
             </button>
             <button
               onClick={() => setActiveTab("archive")}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1 ${
                 activeTab === "archive"
-                  ? "bg-white text-[#E37400] shadow-xs font-bold"
+                  ? "bg-white text-[#E37400] shadow-2xs font-bold"
                   : "text-[#5F6368] hover:text-[#202124]"
               }`}
             >
-              <FolderOpen className="w-3.5 h-3.5 text-[#E37400]" />
-              <span>Patient Dossier Archive (1,057)</span>
+              <FolderOpen className="w-3 h-3 text-[#E37400]" />
+              <span>Dossier Archive</span>
             </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
           {/* Real Admitted / Active Store Patients */}
           {patients
             .filter((pt) => !["Anjum Nisha", "Ramswaroop Meena", "Prem Devi", "Santosh Devi", "Bhanwar Lal", "Abdul Latif", "Mohit Verma", "Ghanshyam Gurjar"].includes(pt.name))
@@ -1841,14 +1726,14 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
             <button
               key={pt.id}
               onClick={() => handleSelectPatient(pt.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 ${
                 selectedPatientId === pt.id
-                  ? "bg-[#1A73E8] text-white shadow-xs"
+                  ? "bg-[#1A73E8] text-white shadow-2xs"
                   : "bg-[#FFFFFF] text-[#3C4043] border border-[#DADCE0] hover:bg-[#F8F9FA]"
               }`}
             >
               <span>{pt.name}</span>
-              <span className="text-[10px] text-[#80868B]">
+              <span className="text-[10px] opacity-75">
                 ({pt.procedure.slice(0, 16)})
               </span>
             </button>
@@ -1857,10 +1742,10 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
           {/* Custom New Patient / Procedure */}
           <button
             onClick={() => handleSelectPatient(`CUSTOM-${Date.now()}`)}
-            className="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 border border-dashed border-[#1A73E8] text-[#1A73E8] hover:bg-[#E8F0FE]"
+            className="px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 border border-dashed border-[#1A73E8] text-[#1A73E8] hover:bg-[#E8F0FE]"
           >
             <Plus className="w-3 h-3" />
-            <span>+ Enter Procedure / New Patient</span>
+            <span>+ New Patient</span>
           </button>
         </div>
 
@@ -1869,14 +1754,14 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
       {/* ==================================================================== */}
       {/* CLINICAL FINDINGS & PROCEDURE PARAMETERS                             */}
       {/* ==================================================================== */}
-      <div className="bg-white border-2 border-[#1A73E8]/30 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4 print:hidden">
+      <div className="bg-white border border-[#DADCE0] rounded-xl p-3.5 sm:p-4 shadow-2xs space-y-3 print:hidden">
         {/* Category Selector Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F1F3F4] pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#F1F3F4] pb-2.5">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#1A73E8] animate-ping" />
-              <h2 className="text-xs font-black uppercase tracking-wider text-[#1A73E8] flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#1A73E8]" />
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#1A73E8]" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#1A73E8] flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#1A73E8]" />
                 Procedure Findings &amp; Clinical Parameters
               </h2>
             </div>
@@ -2009,11 +1894,11 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
               </div>
             </div>
 
-            {/* 10 Clinical Findings Checkboxes */}
+            {/* Clinical Findings Dropdown Button with Multi-Select */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#202124] flex items-center gap-1">
-                  <span>Clinical Findings &amp; Symptoms (Tick to Include):</span>
+                <span className="text-xs font-bold text-[#202124]">
+                  Clinical Findings &amp; Symptoms:
                 </span>
                 <div className="flex items-center gap-2">
                   <button
@@ -2032,107 +1917,130 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                     }}
                     className="px-2 py-0.5 rounded text-[10px] font-bold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
                   >
-                    Not Evaluated / Clear All
+                    Clear All
                   </button>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#E8F0FE] text-[#1A73E8] font-bold">
-                    {
-                      Object.values(varicoseCriteria.findings).filter(Boolean)
-                        .length
-                    }{" "}
-                    Selected
+                    {Object.values(varicoseCriteria.findings).filter(Boolean).length} Selected
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+              {/* Dropdown Toggle Button */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsFindingsDropdownOpen(!isFindingsDropdownOpen)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-[#DADCE0] bg-white text-xs font-medium text-[#202124] hover:bg-[#F8F9FA] transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Stethoscope className="w-3.5 h-3.5 text-[#1A73E8]" />
+                    <span>
+                      {Object.values(varicoseCriteria.findings).filter(Boolean).length === 0
+                        ? "Select Clinical Findings (Click to open list)"
+                        : `Clinical Findings (${Object.values(varicoseCriteria.findings).filter(Boolean).length} selected)`}
+                    </span>
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-[#5F6368] transition-transform ${
+                      isFindingsDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isFindingsDropdownOpen && (
+                  <div className="mt-1 p-3 bg-white border border-[#DADCE0] rounded-xl shadow-lg z-20 space-y-2">
+                    <div className="flex items-center justify-between pb-1 border-b border-[#F1F3F4] text-[11px]">
+                      <span className="font-bold text-[#3C4043]">Select all that apply:</span>
+                      <button
+                        type="button"
+                        onClick={() => setIsFindingsDropdownOpen(false)}
+                        className="text-[10px] font-bold text-[#1A73E8] hover:underline"
+                      >
+                        Done
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-60 overflow-y-auto">
+                      {[
+                        { key: "varicoseVeins", label: "Varicose veins", ceap: "C2" },
+                        { key: "venousUlcer", label: "Venous ulcer", ceap: "C5/C6" },
+                        { key: "hyperpigmentation", label: "Hyperpigmentation / Stasis dermatitis", ceap: "C4a" },
+                        { key: "lipodermatosclerosis", label: "Lipodermatosclerosis", ceap: "C4b" },
+                        { key: "coronaPhlebectatica", label: "Corona phlebectatica", ceap: "C1" },
+                        { key: "edema", label: "Edema / Leg swelling", ceap: "C3" },
+                        { key: "achingPain", label: "Aching pain / Heaviness", ceap: "Sx" },
+                        { key: "nightCramps", label: "Night cramps", ceap: "Sx" },
+                        { key: "restlessLegs", label: "Restless legs", ceap: "Sx" },
+                        { key: "thrombophlebitis", label: "Superficial thrombophlebitis", ceap: "C4+" },
+                      ].map((item) => {
+                        const isChecked = varicoseCriteria.findings[item.key as keyof VaricoseCriteria["findings"]];
+                        return (
+                          <label
+                            key={item.key}
+                            className={`flex items-center gap-2 p-1.5 rounded-lg border text-xs cursor-pointer select-none transition-colors ${
+                              isChecked
+                                ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8] font-bold"
+                                : "bg-white border-[#DADCE0] text-[#3C4043] hover:bg-[#F8F9FA]"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) =>
+                                setVaricoseCriteria({
+                                  ...varicoseCriteria,
+                                  findings: {
+                                    ...varicoseCriteria.findings,
+                                    [item.key]: e.target.checked,
+                                  },
+                                })
+                              }
+                              className="rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8] cursor-pointer"
+                            />
+                            <span className="flex-1 truncate">{item.label}</span>
+                            <span className="text-[9px] text-[#5F6368] font-mono">[{item.ceap}]</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Active Selected Chips */}
+              <div className="flex flex-wrap gap-1 pt-1">
                 {[
-                  {
-                    key: "varicoseVeins",
-                    label: "Varicose veins",
-                    ceap: "C2",
-                  },
-                  {
-                    key: "venousUlcer",
-                    label: "Venous ulcer",
-                    ceap: "C5/C6",
-                  },
-                  {
-                    key: "hyperpigmentation",
-                    label: "Hyperpigmentation / Stasis dermatitis",
-                    ceap: "C4a",
-                  },
-                  {
-                    key: "lipodermatosclerosis",
-                    label: "Lipodermatosclerosis",
-                    ceap: "C4b",
-                  },
-                  {
-                    key: "coronaPhlebectatica",
-                    label: "Corona phlebectatica",
-                    ceap: "C1",
-                  },
-                  {
-                    key: "edema",
-                    label: "Edema / Leg swelling",
-                    ceap: "C3",
-                  },
-                  {
-                    key: "achingPain",
-                    label: "Aching pain / Heaviness",
-                    ceap: "Sx",
-                  },
-                  {
-                    key: "nightCramps",
-                    label: "Night cramps",
-                    ceap: "Sx",
-                  },
-                  {
-                    key: "restlessLegs",
-                    label: "Restless legs",
-                    ceap: "Sx",
-                  },
-                  {
-                    key: "thrombophlebitis",
-                    label: "Superficial thrombophlebitis",
-                    ceap: "C4+",
-                  },
-                ].map((item) => {
-                  const isChecked =
-                    varicoseCriteria.findings[
-                      item.key as keyof VaricoseCriteria["findings"]
-                    ];
-                  return (
-                    <label
+                  { key: "varicoseVeins", label: "Varicose veins", ceap: "C2" },
+                  { key: "venousUlcer", label: "Venous ulcer", ceap: "C5/C6" },
+                  { key: "hyperpigmentation", label: "Hyperpigmentation", ceap: "C4a" },
+                  { key: "lipodermatosclerosis", label: "Lipodermatosclerosis", ceap: "C4b" },
+                  { key: "coronaPhlebectatica", label: "Corona phlebectatica", ceap: "C1" },
+                  { key: "edema", label: "Edema", ceap: "C3" },
+                  { key: "achingPain", label: "Aching pain", ceap: "Sx" },
+                  { key: "nightCramps", label: "Night cramps", ceap: "Sx" },
+                  { key: "restlessLegs", label: "Restless legs", ceap: "Sx" },
+                  { key: "thrombophlebitis", label: "Thrombophlebitis", ceap: "C4+" },
+                ]
+                  .filter((item) => varicoseCriteria.findings[item.key as keyof VaricoseCriteria["findings"]])
+                  .map((item) => (
+                    <span
                       key={item.key}
-                      className={`flex items-start gap-2 p-2 rounded-xl border text-xs cursor-pointer select-none transition-all ${
-                        isChecked
-                          ? "bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8] font-bold shadow-2xs"
-                          : "bg-white border-[#DADCE0] text-[#3C4043] hover:bg-[#F8F9FA]"
-                      }`}
+                      onClick={() =>
+                        setVaricoseCriteria({
+                          ...varicoseCriteria,
+                          findings: {
+                            ...varicoseCriteria.findings,
+                            [item.key]: false,
+                          },
+                        })
+                      }
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#E8F0FE] text-[#1A73E8] border border-[#1A73E8]/30 cursor-pointer hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors"
+                      title="Click to remove"
                     >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={(e) =>
-                          setVaricoseCriteria({
-                            ...varicoseCriteria,
-                            findings: {
-                              ...varicoseCriteria.findings,
-                              [item.key]: e.target.checked,
-                            },
-                          })
-                        }
-                        className="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8] cursor-pointer"
-                      />
-                      <div className="flex-1 leading-snug">
-                        <span>{item.label}</span>
-                        <span className="block text-[9px] text-[#5F6368] font-mono">
-                          [{item.ceap}]
-                        </span>
-                      </div>
-                    </label>
-                  );
-                })}
+                      <span>{item.label}</span>
+                      <span className="text-[9px] font-bold">&times;</span>
+                    </span>
+                  ))}
               </div>
             </div>
 
@@ -2246,10 +2154,10 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                   className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold"
                 >
                   {[
+                    "Absent",
                     "Present (Mother)",
                     "Present (Father)",
                     "Present (Both Parents)",
-                    "Absent",
                   ].map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
@@ -2307,40 +2215,31 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {[
                   {
                     key: "gsvAboveKnee",
                     label: "GSV Above-Knee",
                     diamKey: "gsvAboveKneeDiameterMm",
-                    defaultDiam: 7.5,
                   },
                   {
                     key: "gsvBelowKnee",
                     label: "GSV Below-Knee",
                     diamKey: "gsvBelowKneeDiameterMm",
-                    defaultDiam: 4.2,
                   },
                   {
                     key: "ssv",
                     label: "SSV (Saphenopopliteal)",
                     diamKey: "ssvDiameterMm",
-                    defaultDiam: 5.1,
-                  },
-                  {
-                    key: "aasv",
-                    label: "AASV (Ant. Accessory)",
-                    diamKey: "aasvDiameterMm",
-                    defaultDiam: 4.8,
                   },
                 ].map((trunk) => {
                   const t = varicoseCriteria.truncal || createDefaultTruncal();
                   const isChecked = !!(t as any)[trunk.key];
-                  const diam = (t as any)[trunk.diamKey] ?? trunk.defaultDiam;
+                  const diam = (t as any)[trunk.diamKey];
                   return (
                     <div
                       key={trunk.key}
-                      className={`p-2 rounded-lg border text-xs transition-all ${
+                      className={`p-2.5 rounded-xl border text-xs transition-all ${
                         isChecked
                           ? "bg-white border-[#1A73E8] shadow-2xs"
                           : "bg-white border-[#DADCE0] opacity-80"
@@ -2360,25 +2259,27 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                         />
                         <span>{trunk.label}</span>
                       </label>
-                      <div className="mt-1.5 flex items-center justify-between text-[11px] text-[#5F6368]">
+                      <div className="mt-2 flex items-center justify-between text-[11px] text-[#5F6368]">
                         <span>Caliber:</span>
                         <div className="flex items-center gap-1 font-mono">
                           <input
                             type="number"
                             step="0.1"
-                            min="1"
+                            min="0"
                             max="25"
-                            value={diam}
+                            placeholder="Optional (mm)"
+                            value={diam && diam > 0 ? diam : ""}
                             onChange={(e) => {
+                              const val = parseFloat(e.target.value) || 0;
                               setVaricoseCriteria({
                                 ...varicoseCriteria,
                                 truncal: {
                                   ...t,
-                                  [trunk.diamKey]: parseFloat(e.target.value) || 0,
+                                  [trunk.diamKey]: val,
                                 },
                               });
                             }}
-                            className="w-14 px-1 py-0.5 rounded border border-[#DADCE0] bg-white text-right text-xs font-semibold text-[#202124]"
+                            className="w-24 px-1.5 py-0.5 rounded border border-[#DADCE0] bg-white text-right text-xs font-semibold text-[#202124] placeholder:font-sans placeholder:text-[10px] placeholder:text-slate-400"
                           />
                           <span>mm</span>
                         </div>
@@ -2389,111 +2290,66 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
               </div>
             </div>
 
-            {/* Deep Ultrasound Perforator Mapping */}
-            <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#DADCE0] pb-2">
+            {/* Perforator Veins (Optional - 1-Click Incompetent Toggle) */}
+            <div className="p-3 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#DADCE0] pb-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-[#202124] uppercase tracking-wider">
-                    Deep Ultrasound Perforator Mapping
+                    Perforator Veins (Optional)
                   </span>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FEF7E0] text-[#B06000]">
-                    Pathological: Caliber &ge; 3.5mm &bull; Reflux &ge; 0.5s
+                  <span className="text-[10px] text-[#5F6368]">
+                    Click perforator name to toggle Incompetent: Yes / No
                   </span>
                 </div>
-                <span className="text-[10px] text-[#5F6368]">
-                  {(varicoseCriteria.perforators || createDefaultPerforators()).filter((p) => p.status === "Treated with UGFS").length} Treated with UGFS
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#E8F0FE] text-[#1A73E8]">
+                  {(varicoseCriteria.perforators || createDefaultPerforators()).filter((p) => p.incompetent).length} Incompetent
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                 {(varicoseCriteria.perforators || createDefaultPerforators()).map((perf, pIdx) => {
-                  const isPathological = perf.pathologicalDiameterMm >= 3.5 && perf.refluxDurationSec >= 0.5;
+                  const isIncompetent = !!perf.incompetent;
                   return (
-                    <div
+                    <button
                       key={perf.name}
-                      className={`p-2 rounded-lg border text-xs bg-white space-y-1.5 transition-all ${
-                        perf.status === "Treated with UGFS"
-                          ? "border-[#137333] shadow-2xs"
-                          : "border-[#DADCE0]"
+                      type="button"
+                      onClick={() => {
+                        const perfs = [...(varicoseCriteria.perforators || createDefaultPerforators())];
+                        const nextInc = !isIncompetent;
+                        perfs[pIdx] = {
+                          ...perfs[pIdx],
+                          incompetent: nextInc,
+                          pathologicalDiameterMm: nextInc ? (perfs[pIdx].pathologicalDiameterMm || 3.5) : 0,
+                          refluxDurationSec: nextInc ? (perfs[pIdx].refluxDurationSec || 0.6) : 0,
+                          status: nextInc ? "Treated with UGFS" : "Observed (Sub-critical)",
+                        };
+                        setVaricoseCriteria({ ...varicoseCriteria, perforators: perfs });
+                      }}
+                      className={`p-2.5 rounded-xl border text-xs font-semibold text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                        isIncompetent
+                          ? "bg-[#E6F4EA] border-[#1E8E3E] text-[#137333] shadow-2xs ring-1 ring-[#1E8E3E]/30"
+                          : "bg-white border-[#DADCE0] text-[#3C4043] hover:bg-[#F8F9FA]"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-1">
-                        <span className="font-bold text-[#202124] text-[11px] leading-tight">
-                          {perf.name}
-                        </span>
-                        {isPathological && (
-                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-red-100 text-red-700 whitespace-nowrap">
-                            &ge;3.5mm
-                          </span>
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-bold text-[11px] leading-tight truncate">{perf.name}</span>
+                        {isIncompetent ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#1E8E3E] shrink-0" />
+                        ) : (
+                          <span className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
                         )}
                       </div>
-                      <p className="text-[10px] text-[#5F6368] leading-tight line-clamp-1">
-                        {perf.location}
-                      </p>
-
-                      <div className="grid grid-cols-2 gap-1 text-[11px]">
-                        <div className="flex items-center gap-1 font-mono">
-                          <span className="text-[10px] text-[#5F6368]">Cal:</span>
-                          <input
-                            type="number"
-                            step="0.1"
-                            min="1"
-                            max="15"
-                            value={perf.pathologicalDiameterMm}
-                            onChange={(e) => {
-                              const perfs = [...(varicoseCriteria.perforators || createDefaultPerforators())];
-                              const val = parseFloat(e.target.value) || 0;
-                              perfs[pIdx] = { ...perfs[pIdx], pathologicalDiameterMm: val, incompetent: val >= 3.5 };
-                              setVaricoseCriteria({ ...varicoseCriteria, perforators: perfs });
-                            }}
-                            className="w-12 px-1 py-0.5 rounded border border-[#DADCE0] bg-white text-xs text-right font-semibold"
-                          />
-                          <span className="text-[10px]">mm</span>
-                        </div>
-                        <div className="flex items-center gap-1 font-mono">
-                          <span className="text-[10px] text-[#5F6368]">Reflux:</span>
-                          <input
-                            type="number"
-                            step="0.1"
-                            min="0"
-                            max="10"
-                            value={perf.refluxDurationSec}
-                            onChange={(e) => {
-                              const perfs = [...(varicoseCriteria.perforators || createDefaultPerforators())];
-                              const val = parseFloat(e.target.value) || 0;
-                              perfs[pIdx] = { ...perfs[pIdx], refluxDurationSec: val };
-                              setVaricoseCriteria({ ...varicoseCriteria, perforators: perfs });
-                            }}
-                            className="w-12 px-1 py-0.5 rounded border border-[#DADCE0] bg-white text-xs text-right font-semibold"
-                          />
-                          <span className="text-[10px]">s</span>
-                        </div>
-                      </div>
-
-                      <div className="pt-1 flex items-center justify-between border-t border-[#F1F3F4]">
-                        <span className="text-[10px] font-bold text-[#3C4043]">Status:</span>
-                        <select
-                          value={perf.status}
-                          onChange={(e) => {
-                            const perfs = [...(varicoseCriteria.perforators || createDefaultPerforators())];
-                            perfs[pIdx] = {
-                              ...perfs[pIdx],
-                              status: e.target.value as PerforatorMappingItem["status"],
-                            };
-                            setVaricoseCriteria({ ...varicoseCriteria, perforators: perfs });
-                          }}
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
-                            perf.status === "Treated with UGFS"
-                              ? "bg-[#E6F4EA] text-[#137333] border-[#137333]"
-                              : "bg-white text-[#5F6368] border-[#DADCE0]"
-                          }`}
-                        >
-                          <option value="Treated with UGFS">Treated with UGFS</option>
-                          <option value="Observed (Sub-critical)">Observed</option>
-                          <option value="Ablated">Ablated</option>
-                        </select>
-                      </div>
-                    </div>
+                      <span className="text-[10px] text-[#5F6368] truncate">{perf.location}</span>
+                      <span
+                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded text-center uppercase tracking-wider ${
+                          isIncompetent
+                            ? "bg-[#137333] text-white"
+                            : "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        Incompetent: {isIncompetent ? "YES" : "NO"}
+                      </span>
+                    </button>
                   );
                 })}
               </div>
@@ -3293,12 +3149,14 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
                       {summaryData.postOperativeNotes?.accessSiteHemostasis || "Access site dry and intact. Pressure dressing applied. Zero active oozing, zero visible hematoma or bruit."}
                     </span>
                   </p>
-                  <p>
-                    <strong className="text-[#202124]">Telemetry &amp; Monitor Vitals:</strong>{" "}
-                    <span className="font-mono text-[#1A73E8]">
-                      {summaryData.postOperativeNotes?.telemetryVitals || "BP: 120/80 mmHg, HR: 72/min, SpO2: 99%, RR: 16/min"}
-                    </span>
-                  </p>
+                  {summaryData.postOperativeNotes?.telemetryVitals ? (
+                    <p>
+                      <strong className="text-[#202124]">Telemetry &amp; Monitor Vitals:</strong>{" "}
+                      <span className="font-mono text-[#1A73E8]">
+                        {summaryData.postOperativeNotes.telemetryVitals}
+                      </span>
+                    </p>
+                  ) : null}
                   <p>
                     <strong className="text-[#202124]">Sheath Removal &amp; Profile:</strong>{" "}
                     <span className="text-[#3C4043]">
@@ -3486,11 +3344,10 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#202124] flex items-center gap-1.5">
                   <Camera className="w-3.5 h-3.5 text-[#1A73E8]" />
-                  PROCEDURAL IMAGING &amp; ANGIOGRAM EXHIBIT (SMS HOSPITAL JAIPUR)
+                  Procedural Imaging &amp; Completion Verification
                 </h4>
                 <p className="text-[10px] text-[#5F6368]">
-                  Cath-Lab Angiosuite Documentation &bull; Intra-procedural &amp;
-                  Completion Verification
+                  Cath-Lab Angiosuite Documentation
                 </p>
               </div>
               <div className="flex items-center gap-2 print:hidden">
@@ -3590,21 +3447,29 @@ Recorded By: ${p?.recordedBy || summaryData.dischargeDetails.dischargePreparedBy
             </div>
 
             {/* Signature Area */}
-            <div className="pt-8 flex items-center justify-between border-t border-[#DADCE0] text-xs">
+            <div className="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#DADCE0] text-xs">
               <div>
                 <p className="font-bold text-[#202124]">
-                  {summaryData.dischargeDetails.dischargePreparedBy}
+                  {summaryData.dischargeDetails.dischargePreparedBy || "Dr. Neel Yadav"}
                 </p>
                 <p className="text-[10px] text-[#5F6368]">
-                  Discharge Prepared By (Senior Resident)
+                  Doing Doctor / Senior Resident (IR)
                 </p>
               </div>
-              <div className="text-right">
+              <div className="text-left sm:text-center">
                 <p className="font-bold text-[#202124]">
-                  {summaryData.dischargeDetails.approvedBy}
+                  {summaryData.dischargeDetails.assistantProfessor || "Dr. Shashank Sharma"}
                 </p>
                 <p className="text-[10px] text-[#5F6368]">
-                  Approved By (Unit Head / Senior Professor)
+                  Assistant Professor (IR)
+                </p>
+              </div>
+              <div className="text-left sm:text-right">
+                <p className="font-bold text-[#202124]">
+                  {summaryData.dischargeDetails.approvedBy || "Dr. Alok Verma"}
+                </p>
+                <p className="text-[10px] text-[#5F6368]">
+                  Senior Professor &amp; Unit Head (IR)
                 </p>
               </div>
             </div>
@@ -4590,7 +4455,7 @@ Advice on Discharge: Class II graduated compression stockings. Avoid prolonged s
                     archivedPt.dischargeData?.operativeSummary ||
                     archivedPt.operativeNoteData?.indication ||
                     `Interventional Radiology procedure: ${archivedPt.procedureName}. Technical success documented.`,
-                  processDoneBy: archivedPt.operativeNoteData?.operators || "Dr Shashank Sharma",
+                  processDoneBy: archivedPt.operativeNoteData?.operators || "Dr. Alok Verma",
                 },
               ],
               dischargeMedications: archivedPt.dischargeData?.medications?.length
@@ -4609,6 +4474,9 @@ Advice on Discharge: Class II graduated compression stockings. Avoid prolonged s
                 : prev.dischargeMedications,
               dischargeDetails: {
                 ...prev.dischargeDetails,
+                approvedBy: "Dr. Alok Verma",
+                assistantProfessor: "Dr. Shashank Sharma",
+                dischargePreparedBy: archivedPt.operativeNoteData?.operators || "Dr. Neel Yadav",
                 generalAdvise: archivedPt.dischargeData?.dischargeAdvice || prev.dischargeDetails.generalAdvise,
                 followUp: archivedPt.dischargeData?.followUp || prev.dischargeDetails.followUp,
               },

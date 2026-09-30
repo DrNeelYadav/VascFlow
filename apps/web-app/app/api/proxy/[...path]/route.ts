@@ -107,94 +107,6 @@ export function resetCircuitBreakerRegistry(): void {
 }
 
 /**
- * Generates an instantaneous graceful degraded mock clinical payload
- * when the circuit breaker is OPEN, preventing downstream UI crashes.
- */
-export function getDegradedClinicalFallback(path: string, traceId: string) {
-  if (path.includes("patients")) {
-    return {
-      status: "degraded",
-      circuitBreaker: "OPEN-FALLBACK",
-      message: "Clinical service temporarily degraded. Displaying cached telemetry baseline.",
-      traceId,
-      data: {
-        id: "IR-FALLBACK-001",
-        mrn: "#FALLBACK-ANGIO",
-        name: "OFFLINE PATIENT CACHE",
-        hemodynamics: {
-          abp: "120/80",
-          map: 93,
-          hr: 75,
-          spo2: 98,
-        },
-        degradedMode: true,
-      },
-    };
-  }
-
-  if (path.includes("studies")) {
-    return {
-      status: "degraded",
-      circuitBreaker: "OPEN-FALLBACK",
-      message: "PACS/DICOM service unavailable. Returning emergency local study cache.",
-      traceId,
-      studies: [
-        {
-          studyInstanceUid: "1.2.840.113619.FALLBACK.EMERGENCY",
-          modality: "XA",
-          patientName: "OFFLINE^CACHE",
-          degradedMode: true,
-        },
-      ],
-    };
-  }
-
-  if (path.includes("ai")) {
-    return {
-      status: "degraded",
-      circuitBreaker: "OPEN-FALLBACK",
-      message: "AI Clinical Decision Support service degraded. Adhere to manual SIR/CIRSE guidelines.",
-      traceId,
-      queryId: "AI-FALLBACK-001",
-      recommendation: "AI service temporarily in degraded fallback mode. Consult attending physician directly.",
-      riskLevel: "HIGH",
-      physicianSignOffRequired: true,
-      guidelines: [
-        {
-          citation: "SIR-2023-FALLBACK",
-          title: "Society of Interventional Radiology Standard Operating Guidelines (Offline)",
-          publishingBody: "SIR",
-          year: 2023,
-          evidenceGrade: "Class I, Level A",
-        },
-      ],
-      confidenceScore: 0.5,
-      degradedMode: true,
-    };
-  }
-
-  if (path.includes("notifications")) {
-    return {
-      status: "degraded",
-      circuitBreaker: "OPEN-FALLBACK",
-      message: "Push notification service unavailable. Storing alert in local queue.",
-      traceId,
-      dispatched: false,
-      degradedMode: true,
-    };
-  }
-
-  return {
-    status: "degraded",
-    circuitBreaker: "OPEN-FALLBACK",
-    message: "Upstream clinical microservice offline; circuit breaker is OPEN.",
-    traceId,
-    timestamp: Date.now(),
-    degradedMode: true,
-  };
-}
-
-/**
  * Core BFF proxy handler connecting browser clients to internal microservices.
  */
 async function handleProxy(request: NextRequest, context: RouteContext) {
@@ -247,20 +159,30 @@ async function handleProxy(request: NextRequest, context: RouteContext) {
     request.headers.get("x-request-id") ||
     crypto.randomUUID();
 
-  // 3. Fast Circuit Breaker Check: If OPEN, fast-fail with graceful degraded clinical state
+  // 3. Fast Circuit Breaker Check: If OPEN, fast-fail with HTTP 503 Service Unavailable
   const circuit = getCircuitStatus(targetKey);
   if (circuit.state === "OPEN") {
-    const degradedData = getDegradedClinicalFallback(joinedPath, traceId);
-    return NextResponse.json(degradedData, {
-      status: 200,
-      headers: {
-        "x-trace-id": traceId,
-        "x-circuit-breaker": "OPEN-FALLBACK",
-        "retry-after": Math.ceil(
-          Math.max(0, (circuit.nextAllowedAttempt - Date.now()) / 1000)
-        ).toString(),
+    const retryAfter = Math.ceil(
+      Math.max(0, (circuit.nextAllowedAttempt - Date.now()) / 1000)
+    ).toString();
+    return NextResponse.json(
+      {
+        error: "Service Unavailable",
+        message: "Clinical upstream service is temporarily unavailable. Circuit breaker is OPEN.",
+        target: destinationUrl,
+        traceId,
+        circuitBreaker: "OPEN",
+        retryAfterSeconds: parseInt(retryAfter, 10) || 0,
       },
-    });
+      {
+        status: 503,
+        headers: {
+          "x-trace-id": traceId,
+          "x-circuit-breaker": "OPEN",
+          "retry-after": retryAfter,
+        },
+      }
+    );
   }
 
   // 4. Prepare sanitized forwarding headers
@@ -304,26 +226,6 @@ async function handleProxy(request: NextRequest, context: RouteContext) {
   const incomingAuth = request.headers.get("authorization");
   if (incomingAuth?.toLowerCase().startsWith("bearer ")) {
     bearerToken = incomingAuth.substring(7).trim();
-  }
-
-  if (!bearerToken) {
-    const candidateCookies = [
-      "vascule_token",
-      "access_token",
-      "auth_token",
-      "__Secure-authjs.session-token",
-      "authjs.session-token",
-      "__Secure-next-auth.session-token",
-      "next-auth.session-token",
-    ];
-
-    for (const cookieName of candidateCookies) {
-      const val = request.cookies.get(cookieName)?.value;
-      if (val) {
-        bearerToken = val;
-        break;
-      }
-    }
   }
 
   if (!bearerToken) {
@@ -411,14 +313,28 @@ async function handleProxy(request: NextRequest, context: RouteContext) {
     );
 
     if (newState === "OPEN") {
-      const fallback = getDegradedClinicalFallback(joinedPath, traceId);
-      return NextResponse.json(fallback, {
-        status: 200,
-        headers: {
-          "x-trace-id": traceId,
-          "x-circuit-breaker": "OPEN-FALLBACK",
+      const retryAfter = Math.ceil(
+        Math.max(0, (getCircuitStatus(targetKey).nextAllowedAttempt - Date.now()) / 1000)
+      ).toString();
+      return NextResponse.json(
+        {
+          error: "Service Unavailable",
+          message: "Clinical upstream service is unreachable. Circuit breaker tripped to OPEN.",
+          target: destinationUrl,
+          traceId,
+          detail: error instanceof Error ? error.message : "Network communication error",
+          circuitBreaker: "OPEN",
+          retryAfterSeconds: parseInt(retryAfter, 10) || 0,
         },
-      });
+        {
+          status: 503,
+          headers: {
+            "x-trace-id": traceId,
+            "x-circuit-breaker": "OPEN",
+            "retry-after": retryAfter,
+          },
+        }
+      );
     }
 
     return NextResponse.json(

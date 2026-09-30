@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AlertTriangle, ShieldCheck, Zap, Droplets, Info } from "lucide-react";
+import { calculateMacd } from "../../lib/calculators";
 
 export interface FlowsheetVitalsProps {
   creatinine: number;
@@ -42,12 +43,19 @@ export function DosimetryCalculator({
 
   const isHighDoseAirKerma = airKermaGy >= 5.0 || totalDapGyCm2 >= 500;
 
-  // Cigarroa's Maximum Allowable Contrast Dose (MACD)
-  // Formula: (5 mL * Weight in kg) / Serum Creatinine (mg/dL)
-  const macdLimit = Number(((5 * weightKg) / (creatinine || 1.0)).toFixed(0));
-  const contrastRatio = Number((contrastDeliveredMl / (macdLimit || 1)).toFixed(2));
-  const isContrastExceeded = contrastRatio >= 1.0;
-  const isApproachingLimit = contrastRatio >= 0.8 && !isContrastExceeded;
+  // Cigarroa's Maximum Allowable Contrast Dose (MACD).
+  // Single source of truth: this component is rendered directly beneath the
+  // cath-lab flowsheet, so a second local copy of the formula meant two
+  // disagreeing ceilings on screen at once - and `creatinine || 1.0` invented a
+  // full-dose allowance for a patient whose renal function was never measured.
+  const macdResult = calculateMacd(weightKg, creatinine, contrastDeliveredMl);
+  const macdLimit = macdResult.valid ? macdResult.macdMl : 0;
+  const isRenalDataMissing = !macdResult.valid;
+  const contrastRatio = isRenalDataMissing
+    ? 0
+    : Number((contrastDeliveredMl / (macdLimit || 1)).toFixed(2));
+  const isContrastExceeded = !isRenalDataMissing && contrastRatio >= 1.0;
+  const isApproachingLimit = !isRenalDataMissing && contrastRatio >= 0.8 && !isContrastExceeded;
   const isHighRadiation = totalDapGyCm2 > 300 || fluoroTimeMinutes > 45 || isHighDoseAirKerma;
 
   return (
@@ -135,7 +143,9 @@ export function DosimetryCalculator({
           </div>
 
           <div className="mt-2 pt-2 border-t border-slate-200/80 text-[10px] font-mono text-slate-500">
-            Formula: (5 × Weight in kg) / Serum Creatinine = (5 × {weightKg} kg) / {creatinine || 1.0} mg/dL = {macdLimit} mL
+            {isRenalDataMissing
+              ? "Ceiling unavailable: serum creatinine is not recorded. A measured value is required before contrast administration."
+              : `Formula: (5 × Weight in kg) / Serum Creatinine = (5 × ${weightKg} kg) / ${creatinine} mg/dL = ${macdLimit} mL (300 mL hard cap enforced)`}
           </div>
         </div>
 

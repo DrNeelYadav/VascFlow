@@ -10,6 +10,11 @@ test-results/
 
 # Next.js Build Outputs
 .next/
+
+# SSO review agent output (regenerate: node .agents/review/agent.mjs)
+REVIEW.md
+sso-scan.json
+.agents/review/briefing.json
 out/
 
 # Turborepo Cache
@@ -50,4 +55,6 @@ _legacy_vite_archive/
 abstract_assets/
 *.docx
 *.xlsx
+graphify-out/
+
 

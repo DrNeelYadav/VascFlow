@@ -18,7 +18,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 # Compile application bundle
-RUN npm run build || npx next build
+RUN (npm run build || npx next build) && \
+    if [ -d "apps/web-app/.next" ] && [ ! -d ".next" ]; then cp -r apps/web-app/.next .next; fi && \
+    if [ -d "apps/web-app/public" ] && [ ! -d "public" ]; then cp -r apps/web-app/public public; fi
 
 # Stage 3: Hardened production runner
 FROM node:20-alpine AS runner
@@ -33,11 +35,14 @@ ENV HOSTNAME="0.0.0.0"
 RUN addgroup -g 10001 -S vascule && \
     adduser -u 10001 -S vascule -G vascule
 
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/next.config.mjs ./next.config.mjs
-COPY --from=builder --chown=vascule:vascule /app/dist ./dist
+COPY --from=builder --chown=vascule:vascule /app/package.json ./package.json
+COPY --from=builder --chown=vascule:vascule /app/node_modules ./node_modules
+COPY --from=builder --chown=vascule:vascule /app/next.config.mjs ./next.config.mjs
+COPY --from=builder --chown=vascule:vascule /app/public ./public
 COPY --from=builder --chown=vascule:vascule /app/.next ./.next
+
+# Ensure non-root user has proper ownership of application files and runtime cache
+RUN chown -R vascule:vascule /app
 
 USER vascule:vascule
 

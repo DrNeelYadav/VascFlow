@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CaseStatus, logAuditTrail, prisma } from "@vascule/db";
-import { auth } from "@/auth";
-import { db, isFirebaseConfigured } from "@/app/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { CaseStatus } from "@vascule/db";
+import { getAdminFirestore } from "@/app/lib/firebaseAdmin";
+import {
+  canViewIdentifiableClinicalData,
+  getVerifiedStaff,
+} from "@/app/lib/auth/clinicalAccess";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const VALID_STATUSES: CaseStatus[] = [
   CaseStatus.SCHEDULED,
@@ -15,185 +19,125 @@ const VALID_STATUSES: CaseStatus[] = [
   CaseStatus.DISCHARGED,
 ];
 
-// Persistent status cache with database backing
-const localStatusCache: Record<
-  string,
-  { status: CaseStatus; updatedAt: string; history: Array<{ status: CaseStatus; timestamp: string; actor: string }> }
-> = {};
+function privateJson(body: unknown, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: { "Cache-Control": "private, no-store" },
+  });
+}
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   context: { params: Promise<{ caseId: string }> }
 ) {
-  const { caseId } = await context.params;
-
-  let currentStatus: CaseStatus = CaseStatus.SCHEDULED;
-  let updatedAt = new Date().toISOString();
-  let history: Array<{ status: CaseStatus; timestamp: string; actor: string }> = [];
-
-  try {
-    const existingReport = await prisma.procedureReport.findUnique({
-      where: { caseId },
-    });
-    if (existingReport) {
-      currentStatus = (existingReport.status as CaseStatus) || CaseStatus.SCHEDULED;
-      updatedAt = existingReport.updatedAt.toISOString();
-    } else {
-      const existingSlot = await prisma.scheduleSlot.findUnique({
-        where: { id: caseId },
-      });
-      if (existingSlot) {
-        currentStatus = (existingSlot.status as CaseStatus) || CaseStatus.SCHEDULED;
-        updatedAt = existingSlot.updatedAt.toISOString();
-      } else if (localStatusCache[caseId]) {
-        currentStatus = localStatusCache[caseId].status;
-        updatedAt = localStatusCache[caseId].updatedAt;
-        history = localStatusCache[caseId].history;
-      }
-    }
-  } catch {
-    if (localStatusCache[caseId]) {
-      currentStatus = localStatusCache[caseId].status;
-      updatedAt = localStatusCache[caseId].updatedAt;
-      history = localStatusCache[caseId].history;
-    }
+  const staff = await getVerifiedStaff();
+  if (!staff) return privateJson({ error: "Authentication required." }, 401);
+  if (!canViewIdentifiableClinicalData(staff)) {
+    return privateJson({ error: "Physician access is required." }, 403);
   }
 
-  return NextResponse.json({
-    success: true,
-    caseId,
-    status: currentStatus,
-    updatedAt,
-    history,
-  });
+  const { caseId } = await context.params;
+  try {
+    const snapshot = await getAdminFirestore().collection("cases").doc(caseId).get();
+    if (!snapshot.exists) return privateJson({ error: "Case not found." }, 404);
+    const data = snapshot.data() || {};
+    return privateJson({
+      success: true,
+      caseId,
+      status: data.status || CaseStatus.SCHEDULED,
+      updatedAt: data.updatedAt || data.createdAt || null,
+      history: Array.isArray(data.statusHistory) ? data.statusHistory : [],
+    });
+  } catch (error) {
+    console.error("[Case status GET] Live cloud read failed:", error);
+    return privateJson({ error: "Live case status is unavailable." }, 503);
+  }
 }
 
 export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ caseId: string }> }
 ) {
+  const staff = await getVerifiedStaff();
+  if (!staff) return privateJson({ error: "Authentication required." }, 401);
+  if (!canViewIdentifiableClinicalData(staff)) {
+    return privateJson({ error: "Physician access is required." }, 403);
+  }
+
+  const { caseId } = await context.params;
+  let body: Record<string, unknown>;
   try {
-    const { caseId } = await context.params;
-    const body = await request.json();
-    const nextStatus = body.nextStatus as CaseStatus;
-
-    // Strict session validation: do not default silently to fake identities
-    const session = await auth();
-    const actorStaffId = session?.user?.email || session?.user?.id || body.staffId;
-    if (!actorStaffId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized: Active authenticated session or verified staff identifier required.",
-        },
-        { status: 401 }
-      );
+    const value: unknown = await request.json();
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return privateJson({ error: "Invalid status update." }, 400);
     }
+    body = value as Record<string, unknown>;
+  } catch {
+    return privateJson({ error: "Invalid request body." }, 400);
+  }
 
-    const notes = body.notes || "";
+  const nextStatus = body.nextStatus as CaseStatus;
+  if (!VALID_STATUSES.includes(nextStatus)) {
+    return privateJson({ error: "Invalid case status." }, 400);
+  }
 
-    if (!nextStatus || !VALID_STATUSES.includes(nextStatus)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Invalid status: ${nextStatus}. Allowed: ${VALID_STATUSES.join(", ")}`,
-        },
-        { status: 400 }
-      );
-    }
+  const staffId = staff.id || staff.email;
+  if (!staffId) return privateJson({ error: "Verified staff identity is missing." }, 401);
 
-    const previousStatus = localStatusCache[caseId]?.status || CaseStatus.SCHEDULED;
-    const nowIso = new Date().toISOString();
+  try {
+    const db = getAdminFirestore();
+    const caseRef = db.collection("cases").doc(caseId);
+    const auditRef = db.collection("audit_logs").doc();
+    const now = new Date().toISOString();
+    const result = await db.runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(caseRef);
+      if (!snapshot.exists) return null;
 
-    const historyEntry = {
-      status: nextStatus,
-      timestamp: nowIso,
-      actor: actorStaffId,
-    };
-
-    // Update local cache
-    if (!localStatusCache[caseId]) {
-      localStatusCache[caseId] = {
+      const current = snapshot.data() || {};
+      const previousStatus = current.status || null;
+      const entry = {
         status: nextStatus,
-        updatedAt: nowIso,
-        history: [historyEntry],
+        timestamp: now,
+        actor: staffId,
+        ...(typeof body.notes === "string" && body.notes.trim()
+          ? { notes: body.notes.trim().slice(0, 2000) }
+          : {}),
       };
-    } else {
-      localStatusCache[caseId].status = nextStatus;
-      localStatusCache[caseId].updatedAt = nowIso;
-      localStatusCache[caseId].history.push(historyEntry);
-    }
+      const priorHistory = Array.isArray(current.statusHistory)
+        ? current.statusHistory
+        : [];
 
-    // Persist to database
-    try {
-      await prisma.procedureReport.upsert({
-        where: { caseId },
-        update: {
-          status: nextStatus,
-          updatedAt: new Date(),
-        },
-        create: {
-          caseId,
-          status: nextStatus,
-          indication: notes || "Procedure initiated via EndoFlow RIS pipeline",
-        },
+      transaction.update(caseRef, {
+        status: nextStatus,
+        updatedAt: now,
+        statusHistory: [...priorHistory.slice(-99), entry],
       });
-
-      // Also update ScheduleSlot if present
-      await prisma.scheduleSlot.updateMany({
-        where: { id: caseId },
-        data: { status: nextStatus },
-      });
-    } catch (dbErr) {
-      console.warn("[Case Status DB Persistence Warning]:", dbErr);
-    }
-
-    if (isFirebaseConfigured() && db) {
-      try {
-        await setDoc(doc(db, "cases", caseId), { status: nextStatus, updatedAt: nowIso }, { merge: true });
-      } catch (e) {
-        console.warn("[Firestore Status Sync Warning]:", e);
-      }
-    }
-
-    const isEmergencyOverride = Boolean(body.isEmergencyOverride);
-    const overrideReason = body.overrideReason || undefined;
-
-    // Write tamper-evident audit trail with SHA-256 sequential chain
-    const auditRecord = await logAuditTrail({
-      actorStaffId,
-      action: isEmergencyOverride ? "EMERGENCY_OVERRIDE" : "STATUS_TRANSITION",
-      entityType: "ProcedureCase",
-      entityId: caseId,
-      isEmergencyOverride,
-      overrideReason,
-      ipAddress: request.headers.get("x-forwarded-for") || "127.0.0.1",
-      userAgent: request.headers.get("user-agent") || "RIS-Worklist-Terminal/1.0",
-      details: {
+      transaction.create(auditRef, {
+        action: "STATUS_TRANSITION",
+        entityType: "ProcedureCase",
+        entityId: caseId,
+        actorStaffId: staffId,
         previousStatus,
         nextStatus,
-        notes,
-        isEmergencyOverride,
-        overrideReason,
-        timestamp: nowIso,
-      },
+        timestamp: now,
+        ...(body.isEmergencyOverride === true && typeof body.overrideReason === "string"
+          ? { emergencyOverrideReason: body.overrideReason.trim().slice(0, 1000) }
+          : {}),
+      });
+
+      return { previousStatus, history: [...priorHistory.slice(-99), entry] };
     });
 
-    return NextResponse.json({
+    if (!result) return privateJson({ error: "Case not found." }, 404);
+    return privateJson({
       success: true,
       caseId,
       status: nextStatus,
-      updatedAt: nowIso,
-      auditId: auditRecord.id,
+      updatedAt: now,
+      history: result.history,
     });
   } catch (error) {
-    console.error("[Case Status Route Error]:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "Internal Server Error",
-      },
-      { status: 500 }
-    );
+    console.error("[Case status PATCH] Live cloud update failed:", error);
+    return privateJson({ error: "Case status could not be saved to the live record." }, 503);
   }
 }

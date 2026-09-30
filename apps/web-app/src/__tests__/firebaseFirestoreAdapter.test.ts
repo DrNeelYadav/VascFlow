@@ -7,8 +7,33 @@ import { GET as getAudit, POST as postAudit } from "../../app/api/audit/route";
 
 vi.mock("@/auth", () => ({
   auth: vi.fn().mockResolvedValue({
-    user: { id: "dr-roy-01", email: "dr.roy@smsmc.gov.in" },
+    user: {
+      id: "dr-roy-01",
+      email: "dr.roy@smsmc.gov.in",
+      roleTier: "FACULTY",
+      roleCode: "FACULTY",
+    },
   }),
+}));
+
+vi.mock("@/app/lib/firebaseAdmin", () => ({
+  getAdminFirestore: vi.fn(() => ({
+    collection: vi.fn((colName: string) => ({
+      limit: vi.fn(() => ({
+        get: vi.fn().mockResolvedValue({
+          docs: [
+            {
+              id: "case-01",
+              data: () => ({ procedure: "TACE", status: "SCHEDULED" }),
+            },
+          ],
+        }),
+      })),
+      doc: vi.fn((id?: string) => ({
+        set: vi.fn().mockResolvedValue({}),
+      })),
+    })),
+  })),
 }));
 
 describe("Google Cloud Firestore Adapter & Serverless Routes Suite", () => {

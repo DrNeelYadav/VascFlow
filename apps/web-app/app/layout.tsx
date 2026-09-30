@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "EndoIR | SMS IR Angiosuite Clinical System",
+  title: "EndoFlow | SMS IR Angiosuite Clinical System",
   description:
     "Institutional clinical workflow system for interventional radiology suites.",
-  applicationName: "EndoIR",
+  applicationName: "EndoFlow",
   authors: [{ name: "SMS IR Angiosuite" }],
   keywords: [
-    "EndoIR",
+    "EndoFlow",
     "SMS Hospital",
     "Cath Lab",
     "Interventional Radiology",
@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
+      { url: "/endoflow_logo.svg", type: "image/svg+xml" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon.png", sizes: "192x192", type: "image/png" },
     ],
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "EndoIR",
+    title: "EndoFlow",
   },
 };
 

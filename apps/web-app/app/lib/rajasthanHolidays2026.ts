@@ -141,3 +141,53 @@ export function isDateElectiveBlocked(dateStr: string): {
   }
   return { blocked: false, reason: null };
 }
+
+/**
+ * Returns the next valid hospital working appointment date advancing past Sundays and
+ * official Rajasthan Gazetted Holidays.
+ */
+export function getNextValidWorkingAppointmentDate(
+  startDateStr: string,
+  daysAhead: number = 7
+): string {
+  let date: Date;
+  if (/^\d{2}-\d{2}-\d{4}$/.test(startDateStr)) {
+    const [day, month, year] = startDateStr.split("-").map(Number);
+    date = new Date(year, month - 1, day);
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(startDateStr)) {
+    const [year, month, day] = startDateStr.split("-").map(Number);
+    date = new Date(year, month - 1, day);
+  } else {
+    date = new Date(startDateStr);
+    if (isNaN(date.getTime())) {
+      date = new Date();
+    }
+  }
+
+  // Advance by daysAhead
+  date.setDate(date.getDate() + daysAhead);
+
+  // Advance past Sundays and Gazetted Holidays
+  while (true) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const ymd = `${year}-${month}-${day}`;
+
+    const holiday = getHolidayForDate(ymd);
+    const isSunday = date.getDay() === 0;
+    const isGazetted = holiday.isHoliday && holiday.type === "Gazetted";
+
+    if (isSunday || isGazetted) {
+      date.setDate(date.getDate() + 1);
+    } else {
+      break;
+    }
+  }
+
+  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const y = date.getFullYear();
+  return `${d}-${m}-${y}`;
+}
+

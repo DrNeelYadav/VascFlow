@@ -127,48 +127,48 @@ export function createDefaultPerforators(): PerforatorMappingItem[] {
     {
       name: 'Cockett I (Lower Paratibial 6-8cm)',
       location: 'Medial calf, 6-8 cm proximal to medial malleolus',
-      pathologicalDiameterMm: 2.4,
-      refluxDurationSec: 0.2,
+      pathologicalDiameterMm: 0,
+      refluxDurationSec: 0,
       status: 'Observed (Sub-critical)',
       incompetent: false,
     },
     {
       name: 'Cockett II (Mid Paratibial 12-15cm)',
       location: 'Medial calf, 12-15 cm proximal to medial malleolus',
-      pathologicalDiameterMm: 4.2,
-      refluxDurationSec: 1.8,
-      status: 'Treated with UGFS',
-      incompetent: true,
+      pathologicalDiameterMm: 0,
+      refluxDurationSec: 0,
+      status: 'Observed (Sub-critical)',
+      incompetent: false,
     },
     {
       name: 'Cockett III (Upper Paratibial 18-24cm)',
       location: 'Medial calf, 18-24 cm proximal to medial malleolus',
-      pathologicalDiameterMm: 3.8,
-      refluxDurationSec: 1.4,
-      status: 'Treated with UGFS',
-      incompetent: true,
+      pathologicalDiameterMm: 0,
+      refluxDurationSec: 0,
+      status: 'Observed (Sub-critical)',
+      incompetent: false,
     },
     {
       name: "Boyd's (Proximal Medial Calf below knee)",
       location: 'Medial calf, ~10 cm distal to medial tibial plateau',
-      pathologicalDiameterMm: 3.9,
-      refluxDurationSec: 1.2,
-      status: 'Treated with UGFS',
-      incompetent: true,
+      pathologicalDiameterMm: 0,
+      refluxDurationSec: 0,
+      status: 'Observed (Sub-critical)',
+      incompetent: false,
     },
     {
       name: "Dodd's (Mid-Thigh Adductor Canal)",
       location: 'Mid-thigh medial aspect within adductor canal',
-      pathologicalDiameterMm: 2.8,
-      refluxDurationSec: 0.3,
+      pathologicalDiameterMm: 0,
+      refluxDurationSec: 0,
       status: 'Observed (Sub-critical)',
       incompetent: false,
     },
     {
       name: 'Hunterian (Proximal Thigh Adductor Canal)',
       location: 'Proximal to mid-thigh along sartorius muscle',
-      pathologicalDiameterMm: 2.6,
-      refluxDurationSec: 0.2,
+      pathologicalDiameterMm: 0,
+      refluxDurationSec: 0,
       status: 'Observed (Sub-critical)',
       incompetent: false,
     },
@@ -178,15 +178,15 @@ export function createDefaultPerforators(): PerforatorMappingItem[] {
 export function createDefaultTruncal(): TruncalIncompetence {
   return {
     gsvAboveKnee: true,
-    gsvAboveKneeDiameterMm: 7.8,
+    gsvAboveKneeDiameterMm: 0,
     gsvBelowKnee: true,
-    gsvBelowKneeDiameterMm: 5.4,
+    gsvBelowKneeDiameterMm: 0,
     ssv: false,
-    ssvDiameterMm: 3.2,
-    aasv: true,
-    aasvDiameterMm: 4.8,
-    sfjRefluxDurationSec: 2.8,
-    spjRefluxDurationSec: 0.2,
+    ssvDiameterMm: 0,
+    aasv: false,
+    aasvDiameterMm: 0,
+    sfjRefluxDurationSec: 0,
+    spjRefluxDurationSec: 0,
   };
 }
 
@@ -248,7 +248,7 @@ export function synthesizeVenousDiagnosis(model: VaricoseClinicalModel): string 
   if (model.truncal.aasv) truncalSegments.push('AASV');
 
   const truncalStr = truncalSegments.length > 0 ? truncalSegments.join(' & ') : 'GSV';
-  const treatedPerforators = model.perforators.filter(p => p.status === 'Treated with UGFS').map(p => p.name.split(' ')[0]);
+  const treatedPerforators = model.perforators.filter(p => p.incompetent || p.status === 'Treated with UGFS').map(p => p.name.split(' ')[0]);
   const perfStr = treatedPerforators.length > 0 ? ` with incompetent perforators (${treatedPerforators.join(', ')})` : '';
 
   let modalityDesc = 'Endovenous Cyanoacrylate Closure (VenaSeal)';
@@ -276,11 +276,45 @@ export function synthesizeVenousComplaints(model: VaricoseClinicalModel): string
 
 export function synthesizeVenousHistory(model: VaricoseClinicalModel): string {
   const { score, severity } = calculateVcssTotal(model.vcss);
-  const treatedPerfs = model.perforators.filter(p => p.status === 'Treated with UGFS').map(p => `${p.name} (caliber ${p.pathologicalDiameterMm}mm, reflux ${p.refluxDurationSec}s)`);
+  const treatedPerfs = model.perforators
+    .filter(p => p.incompetent || p.status === 'Treated with UGFS')
+    .map(p => {
+      let desc = p.name;
+      const parts: string[] = [];
+      if (p.pathologicalDiameterMm && p.pathologicalDiameterMm > 0) parts.push(`caliber ${p.pathologicalDiameterMm}mm`);
+      if (p.refluxDurationSec && p.refluxDurationSec > 0) parts.push(`reflux ${p.refluxDurationSec}s`);
+      return parts.length > 0 ? `${desc} (${parts.join(', ')})` : desc;
+    });
+
   const ulcerText = model.ulcerSizeAndSite && model.ulcerSizeAndSite !== 'None' ? ` Active venous ulceration noted at ${model.ulcerSizeAndSite}.` : '';
   const procedurePlan = model.modality.includes('VenaSeal') ? 'VenaSeal cyanoacrylate glue embolization' : 'endovenous thermal ablation';
 
-  return `Patient presented to the Department of Interventional Radiology, SMS Hospital, Jaipur with a ${model.symptomDuration} history of symptomatic chronic venous disease affecting the ${model.laterality}. Evaluated under standard SVS/AVF guidelines. Clinical evaluation demonstrates CEAP Class ${model.ceapClass} with a Venous Clinical Severity Score (VCSS) of ${score}/30 (${severity} disease).${ulcerText} Comprehensive high-resolution venous color duplex ultrasonography revealed truncal venous reflux: GSV caliber ${model.truncal.gsvAboveKneeDiameterMm} mm at mid-thigh with saphenofemoral junction (SFJ) reflux duration of ${model.truncal.sfjRefluxDurationSec} s (pathological threshold >= 0.5 s)${model.truncal.ssv ? `, SSV caliber ${model.truncal.ssvDiameterMm} mm with SPJ reflux duration of ${model.truncal.spjRefluxDurationSec} s` : ''}${model.truncal.aasv ? `, anterior accessory saphenous vein (AASV) incompetence (${model.truncal.aasvDiameterMm} mm)` : ''}. Deep ultrasound perforator mapping demonstrated incompetent paratibial/thigh perforators: ${treatedPerfs.length > 0 ? treatedPerfs.join('; ') : 'sub-critical perforators'}. Deep venous system (common femoral, femoral, and popliteal veins) was widely patent with normal phasic respiratory variations, competent valves, and complete absence of deep vein thrombosis (DVT). Treatment successfully executed with ${procedurePlan}. Family history: ${model.familyHistory}.`;
+  const truncalFindings: string[] = [];
+  if (model.truncal.gsvAboveKnee) {
+    const cal = model.truncal.gsvAboveKneeDiameterMm && model.truncal.gsvAboveKneeDiameterMm > 0 ? ` caliber ${model.truncal.gsvAboveKneeDiameterMm} mm at mid-thigh` : '';
+    const reflux = model.truncal.sfjRefluxDurationSec && model.truncal.sfjRefluxDurationSec > 0 ? ` with saphenofemoral junction (SFJ) reflux duration of ${model.truncal.sfjRefluxDurationSec} s (pathological threshold >= 0.5 s)` : ' with saphenofemoral junction (SFJ) reflux';
+    truncalFindings.push(`GSV above-knee${cal}${reflux}`);
+  }
+  if (model.truncal.gsvBelowKnee) {
+    const cal = model.truncal.gsvBelowKneeDiameterMm && model.truncal.gsvBelowKneeDiameterMm > 0 ? ` (caliber ${model.truncal.gsvBelowKneeDiameterMm} mm)` : '';
+    truncalFindings.push(`GSV below-knee incompetence${cal}`);
+  }
+  if (model.truncal.ssv) {
+    const cal = model.truncal.ssvDiameterMm && model.truncal.ssvDiameterMm > 0 ? ` caliber ${model.truncal.ssvDiameterMm} mm` : '';
+    const reflux = model.truncal.spjRefluxDurationSec && model.truncal.spjRefluxDurationSec > 0 ? ` with SPJ reflux duration of ${model.truncal.spjRefluxDurationSec} s` : ' with SPJ reflux';
+    truncalFindings.push(`SSV${cal}${reflux}`);
+  }
+  if (model.truncal.aasv) {
+    const cal = model.truncal.aasvDiameterMm && model.truncal.aasvDiameterMm > 0 ? ` (${model.truncal.aasvDiameterMm} mm)` : '';
+    truncalFindings.push(`anterior accessory saphenous vein (AASV) incompetence${cal}`);
+  }
+
+  const truncalText = truncalFindings.length > 0 ? truncalFindings.join('; ') : 'superficial venous reflux';
+  const perfText = treatedPerfs.length > 0
+    ? `Deep ultrasound perforator mapping demonstrated incompetent paratibial/thigh perforators: ${treatedPerfs.join('; ')}.`
+    : 'Deep ultrasound perforator mapping demonstrated no pathological perforators.';
+
+  return `Patient presented to the Department of Interventional Radiology, SMS Hospital, Jaipur with a ${model.symptomDuration} history of symptomatic chronic venous disease affecting the ${model.laterality}. Evaluated under standard SVS/AVF guidelines. Clinical evaluation demonstrates CEAP Class ${model.ceapClass} with a Venous Clinical Severity Score (VCSS) of ${score}/30 (${severity} disease).${ulcerText} Comprehensive high-resolution venous color duplex ultrasonography revealed truncal venous reflux: ${truncalText}. ${perfText} Deep venous system (common femoral, femoral, and popliteal veins) was widely patent with normal phasic respiratory variations, competent valves, and complete absence of deep vein thrombosis (DVT). Treatment successfully executed with ${procedurePlan}. Family history: ${model.familyHistory}.`;
 }
 
 export function synthesizeVenousLocalExam(model: VaricoseClinicalModel): string {
@@ -305,7 +339,7 @@ export function synthesizeVenousOperativeNote(model: VaricoseClinicalModel): str
   const isEvlt = model.modality.includes('EVLT');
   const hasUgfs = model.modality.includes('UGFS') || model.sclerotherapy.totalVolumeMl > 0;
 
-  const treatedPerfs = model.perforators.filter(p => p.status === 'Treated with UGFS').map(p => p.name);
+  const treatedPerfs = model.perforators.filter(p => p.incompetent || p.status === 'Treated with UGFS').map(p => p.name);
   const aliquots = model.glueAliquotsCount || 14;
   const glueVol = model.totalGlueVolumeMl || (aliquots * 0.09).toFixed(2);
 
@@ -328,8 +362,13 @@ export function synthesizeVenousOperativeNote(model: VaricoseClinicalModel): str
 
   // Sclerotherapy
   if (hasUgfs) {
+    const perfScleroText = treatedPerfs.length > 0 ? ` and incompetent perforating veins (${treatedPerfs.join(', ')})` : '';
     op += `3. CONCOMITANT ULTRASOUND-GUIDED FOAM SCLEROTHERAPY (UGFS - TESSARI METHOD):\n`;
-    op += `Concomitant UGFS performed for residual tortuous branch varicosities (${model.sclerotherapy.aboveKneeThighVarices ? 'above-knee thigh tributaries, ' : ''}${model.sclerotherapy.belowKneeCalfVarices ? 'below-knee calf clusters' : ''}) and incompetent perforating veins (${treatedPerfs.join(', ')}). Sclerosant foam prepared using the Tessari double-syringe technique via a 3-way stopcock with ${model.sclerotherapy.sclerosantAgent} and room air in a 1:4 liquid-to-gas ratio. Direct percutaneous micro-puncture using 23G/25G butterfly needles under sonographic vision. Incompetent perforator fascial defect sealed with targeted injection under duplex flow arrest. Total foam sclerosant volume strictly limited to ${model.sclerotherapy.totalVolumeMl.toFixed(1)} mL (well within the UIP <= 10 mL safety consensus limit). Immediate intraluminal micro-foam distribution and venospasm verified.\n\n`;
+    op += `Concomitant UGFS performed for residual tortuous branch varicosities (${model.sclerotherapy.aboveKneeThighVarices ? 'above-knee thigh tributaries, ' : ''}${model.sclerotherapy.belowKneeCalfVarices ? 'below-knee calf clusters' : ''})${perfScleroText}. Sclerosant foam prepared using the Tessari double-syringe technique via a 3-way stopcock with ${model.sclerotherapy.sclerosantAgent} and room air in a 1:4 liquid-to-gas ratio. Direct percutaneous micro-puncture using 23G/25G butterfly needles under sonographic vision.`;
+    if (treatedPerfs.length > 0) {
+      op += ` Incompetent perforator fascial defect sealed with targeted injection under duplex flow arrest.`;
+    }
+    op += ` Total foam sclerosant volume strictly limited to ${model.sclerotherapy.totalVolumeMl.toFixed(1)} mL (well within the UIP <= 10 mL safety consensus limit). Immediate intraluminal micro-foam distribution and venospasm verified.\n\n`;
   }
 
   // Completion Duplex
@@ -357,14 +396,14 @@ export function synthesizeVenousPostOpNote(model: VaricoseClinicalModel): PostOp
 
   return {
     accessSiteHemostasis: 'Complete Hemostasis Achieved. Sterile pressure dressing intact; puncture clean & dry with zero hematoma or bruit.',
-    telemetryVitals: 'BP: 118/76 mmHg, HR: 68 bpm regular, SpO2: 100% on ambient air, RR: 16/min, Afebrile (98.4°F)',
+    telemetryVitals: '',
     sheathRemovalTime: `${dateStr} ${timeStr} (Immediate post-closure in Angiosuite / US-guided closure)`,
     sheathStatus: 'Removed',
     recoveryStatus: `Conscious, oriented x3, pain VAS ${model.vasPainScore || 1}/10, completed ${model.immediateAmbulationMinutes || 25}m ambulation protocol. EGIT Grade 0, DVT absent.`,
     recoveryBed: 'Venous Daycare PACU / Cath-Lab Holding Bay-03',
     distalPulses: 'Strong (+++) - Bilateral Dorsalis Pedis & Posterior Tibial pulses warm with brisk capillary refill (<2s)',
     immediateComplications: 'Nil - Zero hematoma, zero DVT, zero EGIT, zero skin burn, zero nerve injury',
-    recordedBy: 'Dr. Neel Yadav (Senior Resident IR) / Dr. Shashank Sharma (Professor IR)',
+    recordedBy: 'Dr. Neel Yadav (Senior Resident IR) / Dr. Alok Verma (Professor & Head IR)',
     recordedAt: `${dateStr} ${timeStr}`,
     notes: notesText,
     completionDuplex: 'Full target occlusion with dense acoustic shadowing, patent CFV & popliteal vein',
@@ -472,11 +511,47 @@ export function synthesizeVenousRedFlags(): string[] {
 }
 
 export function synthesizeVenousSonographyReport(model: VaricoseClinicalModel): string {
-  const treatedPerfs = model.perforators.filter(p => p.status === 'Treated with UGFS').map(p => `${p.name} (Dia: ${p.pathologicalDiameterMm}mm, Reflux: ${p.refluxDurationSec}s)`);
+  const treatedPerfs = model.perforators
+    .filter(p => p.incompetent || p.status === 'Treated with UGFS')
+    .map(p => {
+      const parts: string[] = [];
+      if (p.pathologicalDiameterMm && p.pathologicalDiameterMm > 0) parts.push(`Dia: ${p.pathologicalDiameterMm}mm`);
+      if (p.refluxDurationSec && p.refluxDurationSec > 0) parts.push(`Reflux: ${p.refluxDurationSec}s`);
+      return parts.length > 0 ? `${p.name} (${parts.join(', ')})` : p.name;
+    });
+
+  const sfjRefluxText = model.truncal.sfjRefluxDurationSec && model.truncal.sfjRefluxDurationSec > 0
+    ? `continuous retrograde reflux (${model.truncal.sfjRefluxDurationSec}s > 0.5s cutoff)`
+    : 'pathological retrograde reflux (> 0.5s cutoff)';
+
+  const gsvSegments: string[] = [];
+  if (model.truncal.gsvAboveKnee) {
+    const cal = model.truncal.gsvAboveKneeDiameterMm && model.truncal.gsvAboveKneeDiameterMm > 0 ? ` (${model.truncal.gsvAboveKneeDiameterMm}mm)` : '';
+    gsvSegments.push(`above-knee${cal}`);
+  }
+  if (model.truncal.gsvBelowKnee) {
+    const cal = model.truncal.gsvBelowKneeDiameterMm && model.truncal.gsvBelowKneeDiameterMm > 0 ? ` (${model.truncal.gsvBelowKneeDiameterMm}mm)` : '';
+    gsvSegments.push(`below-knee${cal}`);
+  }
+  const gsvDesc = gsvSegments.length > 0 ? gsvSegments.join(' and ') : 'segments';
+
+  let ssvLine = '';
+  if (model.truncal.ssv) {
+    const cal = model.truncal.ssvDiameterMm && model.truncal.ssvDiameterMm > 0 ? ` (${model.truncal.ssvDiameterMm}mm)` : '';
+    const reflux = model.truncal.spjRefluxDurationSec && model.truncal.spjRefluxDurationSec > 0 ? `, reflux ${model.truncal.spjRefluxDurationSec}s` : '';
+    ssvLine = `- Saphenopopliteal Junction (SPJ) & SSV: Incompetent${cal}${reflux}.\n`;
+  }
+
+  let aasvLine = '';
+  if (model.truncal.aasv) {
+    const cal = model.truncal.aasvDiameterMm && model.truncal.aasvDiameterMm > 0 ? ` (${model.truncal.aasvDiameterMm}mm)` : '';
+    aasvLine = `- Anterior Accessory Saphenous Vein (AASV): Incompetent${cal} with anterior thigh varicosities.\n`;
+  }
+
   return `VENOUS COLOR DUPLEX DOPPLER SCAN (${model.laterality.toUpperCase()}):
-- Saphenofemoral Junction (SFJ): Incompetent with marked continuous retrograde reflux (${model.truncal.sfjRefluxDurationSec}s > 0.5s cutoff).
-- Great Saphenous Vein (GSV): Dilated along entire above-knee (${model.truncal.gsvAboveKneeDiameterMm}mm) and below-knee (${model.truncal.gsvBelowKneeDiameterMm}mm) segments with pathological reflux.
-${model.truncal.ssv ? `- Saphenopopliteal Junction (SPJ) & SSV: Incompetent (${model.truncal.ssvDiameterMm}mm, reflux ${model.truncal.spjRefluxDurationSec}s).\n` : ''}${model.truncal.aasv ? `- Anterior Accessory Saphenous Vein (AASV): Incompetent (${model.truncal.aasvDiameterMm}mm) with anterior thigh varicosities.\n` : ''}- Incompetent Perforators: ${treatedPerfs.length > 0 ? treatedPerfs.join('; ') : 'None pathological'}.
+- Saphenofemoral Junction (SFJ): Incompetent with marked ${sfjRefluxText}.
+- Great Saphenous Vein (GSV): Dilated along ${gsvDesc} with pathological reflux.
+${ssvLine}${aasvLine}- Perforators: ${treatedPerfs.length > 0 ? treatedPerfs.join('; ') : 'None pathological (competent)'}.
 - Deep Venous Conduits: Common Femoral, Superficial Femoral, and Popliteal Veins are fully compressible, widely patent with normal phasic respiratory variation and zero intraluminal thrombus (DVT Ruled Out).`;
 }
 
@@ -530,14 +605,14 @@ export function synthesizeVaricocelePostOpNote(model: VaricoceleClinicalModel): 
 
   return {
     accessSiteHemostasis: 'RCFV puncture site clean, dry, and intact. Firm pressure dressing applied; zero visible hematoma or active oozing.',
-    telemetryVitals: 'BP: 120/78 mmHg, HR: 72 bpm regular, SpO2: 99% on ambient air, RR: 16/min, Afebrile',
+    telemetryVitals: '',
     sheathRemovalTime: `${dateStr} ${timeStr} (Immediate post-procedure hemostasis in Angiosuite)`,
     sheathStatus: 'Removed',
     recoveryStatus: `Conscious, oriented x3, pain VAS ${model.vasPainScore || 1}/10. Scrotal support (langot) applied. Bed rest for 2 hours completed uneventfully.`,
     recoveryBed: 'Venous Daycare PACU Bay-02',
     distalPulses: 'Strong (+++) bilaterally equal - Dorsalis Pedis & Posterior Tibial pulses intact with rapid capillary refill',
     immediateComplications: 'Nil - Zero groin hematoma, zero pseudoaneurysm, zero testicular ischemia, zero coil migration',
-    recordedBy: 'Dr. Neel Yadav (Senior Resident IR) / Dr. Shashank Sharma (Professor IR)',
+    recordedBy: 'Dr. Neel Yadav (Senior Resident IR) / Dr. Alok Verma (Professor & Head IR)',
     recordedAt: `${dateStr} ${timeStr}`,
     notes: `Transvenous Varicocele Embolization Recovery: Sandwich coil and foam embolization verified on completion DSA. Puncture site sealed. Scrotal support applied. Patient ambulating comfortably without pain or dizziness.`,
   };

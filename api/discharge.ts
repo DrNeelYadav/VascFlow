@@ -3,6 +3,10 @@
  * Configured in vercel.json with 1024 MB memory and 30s maximum execution timeout.
  */
 
+// Single source of truth for the contrast ceiling. This route certifies contrast
+// safety into a document pushed to IHMS, so it must not reimplement the formula.
+import { calculateMacd } from '../apps/web-app/app/lib/calculators';
+
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,14 +43,29 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const weight = Number(body.weightKg) || 60;
-    const creatinine = Number(body.serumCreatinine) || 1.0;
-    const contrast = Number(body.contrastVolumeMl) || 50;
+    // Weight, creatinine and contrast volume are clinical inputs, not optional
+    // form fields. Each previously fell back to a plausible constant
+    // (60 kg / 1.0 mg/dL / 50 mL), which meant a summary asserting
+    // "within safe renal threshold" could be computed entirely from invented
+    // numbers and then pushed to the hospital information system.
+    const weight = Number(body.weightKg);
+    const creatinine = Number(body.serumCreatinine);
+    const contrast = Number(body.contrastVolumeMl);
 
-    // Cigarroa formula: MACD = (5 * Weight in kg) / Serum Creatinine (mg/dL)
-    const macd = Math.round(((5 * weight) / Math.max(0.1, creatinine)) * 10) / 10;
-    const ratio = Math.round((contrast / Math.max(1, macd)) * 100) / 100;
-    const isHighRisk = ratio > 1.0;
+    if (!weight || weight <= 0 || !creatinine || creatinine <= 0) {
+      return res.status(400).json({
+        error:
+          'Cannot certify contrast safety: a measured weightKg and serumCreatinine are required.',
+      });
+    }
+
+    // Single source of truth for the contrast ceiling.
+    const macd = calculateMacd(weight, creatinine, contrast);
+    if (!macd.valid) {
+      return res.status(400).json({
+        error: 'Cannot certify contrast safety: invalid weight or serum creatinine.',
+      });
+    }
 
     const dischargeRecord = {
       id: `ds-${Date.now()}`,
@@ -63,12 +82,12 @@ export default async function handler(req: any, res: any) {
       complications: body.complications || 'None',
       contrastSafety: {
         administeredContrastVolumeMl: contrast,
-        maxAllowableContrastDoseMl: macd,
-        ratio,
-        isCiAkiHighRisk: isHighRisk,
-        alertMessage: isHighRisk
+        maxAllowableContrastDoseMl: macd.macdMl,
+        ratio: contrast / macd.macdMl,
+        isCiAkiHighRisk: macd.alertLevel === 'critical',
+        alertMessage: macd.isExceeded
           ? 'WARNING: Administered contrast exceeds Maximum Allowable Contrast Dose (MACD). High risk for CI-AKI.'
-          : 'Contrast volume is within safe renal threshold.',
+          : macd.recommendation,
       },
       dischargeAdvice: body.dischargeAdvice || 'Keep puncture site dry for 48 hours. Rest for 24 hours.',
       followUpAdvice: body.followUpAdvice || 'Review in IR OPD Room 922 after 4 weeks.',

@@ -3,36 +3,36 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Clinical Cases Collection
     match /cases/{caseId} {
-      allow read, write: if true; // Institutional intranet & web-app access
+      allow read, write: if request.auth != null; // Authenticated clinical workstation access
     }
 
     // Inpatient Bed Board Matrix
     match /beds/{bedId} {
-      allow read, write: if true; // Institutional intranet & clinical workstation access
+      allow read, write: if request.auth != null; // Authenticated clinical workstation access
     }
 
     // Patient Registry Collection
     match /patients/{patientId} {
-      allow read, write: if true; // Institutional intranet & clinical workstation access
+      allow read, write: if request.auth != null; // Authenticated clinical workstation access
     }
 
     // OPD CT Review Queue
     match /ctReviews/{reviewId} {
-      allow read, write: if true; // Institutional intranet & multi-device sync
+      allow read, write: if request.auth != null; // Authenticated multi-device sync
     }
 
     // OT Scheduled & Booked Cases
     match /bookedCases/{caseId} {
-      allow read, write: if true; // Institutional intranet & multi-device sync
+      allow read, write: if request.auth != null; // Authenticated multi-device sync
     }
 
     // Cath Lab Hardware & Inventory Collection
     match /inventory/{sku} {
-      allow read, write: if true;
+      allow read, write: if request.auth != null;
     }
 
     match /inventory_usage/{usageId} {
-      allow read, create: if true;
+      allow read, create: if request.auth != null;
     }
 
     // Rajasthan Health Schemes Packages Catalog
@@ -43,8 +43,8 @@ service cloud.firestore {
 
     // Immutable Regulatory Audit Trail (Append-Only)
     match /audit_logs/{logId} {
-      allow read: if true;
-      allow create: if true;
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
       allow update, delete: if false; // Tamper-evident, append-only
     }
   }

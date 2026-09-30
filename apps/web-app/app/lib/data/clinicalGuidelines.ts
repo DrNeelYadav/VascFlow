@@ -19,7 +19,7 @@ export interface ComplicationGrade {
 export interface ClinicalGuidelineItem {
   id: string;
   code: string;
-  society: 'CIRSE' | 'SIR' | 'RERC';
+  society: 'CIRSE' | 'SIR';
   procedureName: string;
   title: string;
   year: number;

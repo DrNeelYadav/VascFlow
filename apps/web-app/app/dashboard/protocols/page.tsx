@@ -450,7 +450,7 @@ export default function DrugProtocolsPage() {
 
   return (
     <div className="space-y-5 pb-16 font-sans select-none">
-      {/* Top Banner & Search - Apple HIG / Google Clean Aesthetic */}
+      {/* Header Banner */}
       <div className="flex items-center justify-between flex-wrap gap-4 bg-white border border-[#E5E5EA] rounded-2xl p-4 shadow-xs">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#007AFF]/10 text-[#007AFF] flex items-center justify-center font-bold">
@@ -458,13 +458,13 @@ export default function DrugProtocolsPage() {
           </div>
           <div>
             <h1 className="text-base font-semibold text-[#1C1C1E] tracking-tight flex items-center gap-2">
-              <span>Clinical Protocols &amp; Fused Decision Calculators</span>
+              <span>Protocols &amp; Calculators</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#E5E5EA] text-[#3A3A3C]">
                 48 Protocols
               </span>
             </h1>
             <p className="text-xs text-[#8E8E93] mt-0.5">
-              Live integrated risk stratification, Rajasthan Yojana package tariffs, target vessels, and authentic hardware bundles.
+              Risk stratification, Yojana tariffs, and procedure guidelines.
             </p>
           </div>
         </div>
@@ -648,7 +648,7 @@ export default function DrugProtocolsPage() {
         </div>
 
         {/* ================================================================= */}
-        {/* FUSED INLINE CLINICAL CALCULATORS SECTION (CORE ARCHITECTURE) */}
+        {/* CLINICAL CALCULATORS SECTION */}
         {/* ================================================================= */}
         <div className="rounded-2xl border border-[#E5E5EA] bg-[#F9F9FB] p-4.5 space-y-4 shadow-xs">
           <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[#E5E5EA]">
@@ -658,10 +658,10 @@ export default function DrugProtocolsPage() {
               </div>
               <div>
                 <h3 className="text-xs font-bold text-[#1C1C1E] tracking-tight uppercase">
-                  Fused Decision Calculator &amp; Safety Guardrails
+                  Clinical Calculators
                 </h3>
                 <p className="text-[11px] text-[#8E8E93]">
-                  Embedded mathematical risk stratification running live directly inside this protocol.
+                  Integrated risk scoring and safety thresholds.
                 </p>
               </div>
             </div>
@@ -676,16 +676,16 @@ export default function DrugProtocolsPage() {
                     onChange={(e) => setBcsActiveCalcTab(e.target.value)}
                     className="appearance-none pl-3 pr-8 py-1.5 text-xs font-bold bg-white border border-[#007AFF]/40 rounded-xl text-[#007AFF] focus:border-[#007AFF] outline-none cursor-pointer shadow-xs"
                   >
-                    <option value="ALL">⚡ View All 9 Calculators (Complete Panel)</option>
-                    <option value="CRL">📐 6. Harbin &amp; Awaya Caudate/Right Lobe Ratio (C/RL) &amp; Volumetry</option>
-                    <option value="ROTTERDAM">1. Rotterdam BCS-PI Score (Prognosis &amp; Survival)</option>
-                    <option value="CLICHY">2. Clichy Prognostic Score (BCS-TIPS Shunt Indication)</option>
-                    <option value="MELD">3. MELD 3.0 Score (TIPS Candidacy &amp; 90-Day Mortality)</option>
-                    <option value="CTP">4. Child-Turcotte-Pugh (CTP) Score &amp; Functional Class</option>
-                    <option value="ALBI">5. ALBI Grade (Objective Albumin-Bilirubin Reserve)</option>
-                    <option value="HVPG">7. Hepatic Venous Pressure Gradient (HVPG &amp; Target)</option>
-                    <option value="COMPOSITE">8. BCS Composite Shunt &amp; Collateral Embolization Risk</option>
-                    <option value="MACD">9. Cigarroa MACD Contrast Ceiling (CI-AKI Guardrail)</option>
+                    <option value="ALL">⚡ All 9 Calculators</option>
+                    <option value="CRL">📐 6. C/RL Ratio &amp; Volumetry</option>
+                    <option value="ROTTERDAM">1. Rotterdam BCS-PI Score</option>
+                    <option value="CLICHY">2. Clichy Prognostic Score</option>
+                    <option value="MELD">3. MELD 3.0 Score</option>
+                    <option value="CTP">4. Child-Turcotte-Pugh (CTP)</option>
+                    <option value="ALBI">5. ALBI Grade</option>
+                    <option value="HVPG">7. HVPG &amp; Target</option>
+                    <option value="COMPOSITE">8. BCS Composite Shunt Risk</option>
+                    <option value="MACD">9. Cigarroa MACD Contrast Ceiling</option>
                   </select>
                   <ChevronDown className="w-3.5 h-3.5 text-[#007AFF] absolute right-2.5 top-2.5 pointer-events-none" />
                 </div>
@@ -727,7 +727,7 @@ export default function DrugProtocolsPage() {
                     : "bg-white text-[#636366] hover:bg-[#F2F2F7] border border-[#E5E5EA]"
                 }`}
               >
-                ⚡ All 9 Panel
+                ⚡ All 9
               </button>
               <button
                 type="button"
@@ -739,7 +739,7 @@ export default function DrugProtocolsPage() {
                 }`}
               >
                 <Gauge className="w-3 h-3" />
-                <span>CT/MR Caudate &amp; Liver Ratio</span>
+                <span>C/RL Ratio</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-black ${
                     bcsActiveCalcTab === "CRL" ? "bg-white/20 text-white" : "bg-purple-200 text-purple-900"
@@ -2070,6 +2070,10 @@ export default function DrugProtocolsPage() {
                     <p className="text-[11px] text-[#636366] leading-relaxed border-t border-[#F2F2F7] pt-1">
                       {macdResult.recommendation}
                     </p>
+                    <div className="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-200 text-[10px] text-slate-600 space-y-1">
+                      <div><strong className="text-slate-700">Scope:</strong> {macdResult.validationNotice}</div>
+                      <div><strong className="text-slate-700">Guideline:</strong> {macdResult.acrNkfGuidance}</div>
+                    </div>
                   </div>
                 </div>
               </div>

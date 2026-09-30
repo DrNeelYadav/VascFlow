@@ -1,0 +1,73 @@
+name: Vascule OS - Code Review Gate
+
+# Deterministic layer of the SSO review agent (.agents/review/).
+# Exits 2 when a critical finding exists in the changed files, blocking the
+# merge. The LLM adjudication layer (skill: sso-code-review) is intentionally
+# NOT run here: it is slow and non-deterministic, and CI needs a reliable gate.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  review-gate:
+    name: Code Review Gate (scanner + typecheck)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run review scanner against the PR diff
+        run: |
+          node .agents/review/agent.mjs \
+            --scan-only \
+            --git-range "origin/${{ github.base_ref }}...HEAD" \
+            | tee review-scan.txt
+
+      - name: Publish full report as an artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-report
+          path: |
+            review-scan.txt
+            REVIEW.md
+            sso-scan.json
+
+      - name: Annotate the PR with the finding count
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('sso-scan.json', 'utf8'));
+            const s = data.summary;
+            const body = [
+              '### SSO Code Review Gate',
+              '',
+              `Findings in changed files: **${s.critical || 0} critical**, ${s.high || 0} high, ${s.medium || 0} medium, ${s.low || 0} low.`,
+              '',
+              'Full report is attached as the `review-report` artifact.',
+            ].join('\n');
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: (s.critical ? '**Merge blocked.**\n\n' : '') + body,
+            });

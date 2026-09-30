@@ -5,6 +5,8 @@
  * Sawai Man Singh (SMS) Medical College & Attached Hospitals, Jaipur
  */
 
+import { getNextValidWorkingAppointmentDate } from "../../lib/rajasthanHolidays2026";
+
 export interface PatientAdmissionDetails {
   hospitalName: string;
   hospitalAddress: string;
@@ -129,6 +131,7 @@ export interface PatientDischargeDetails {
   followUp: string;
   followUpDate?: string;
   approvedBy: string;
+  assistantProfessor?: string;
   dischargePreparedBy: string;
 }
 
@@ -188,7 +191,7 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     hospitalName: "SAWAI MAN SINGH HOSPITAL JAIPUR",
     hospitalAddress: "SAWAI RAM SINGH ROAD TONK ROAD, JAIPUR",
     departmentName: "INTERVENTIONAL RADIOLOGY",
-    unitHead: "DR MEENU BAGARHATTA",
+    unitHead: "Dr. Alok Verma",
     unitName: "UNIT I",
     opdDays: "Mon,Tue,Wed,Thu,Fri,Sat",
     hid: "150223147650888",
@@ -205,8 +208,9 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     abhaAddress: "91587244105074@abdm",
     abhaNumber: "91-5872-4410-5074",
     unitDoctors: [
-      { name: "DR Meenu Bagarhatta", designation: "Senior Professor & Head" },
-      { name: "Dr Shashank Sharma", designation: "Professor" },
+      { name: "Dr. Alok Verma", designation: "Senior Professor & Head" },
+      { name: "Dr. Shashank Sharma", designation: "Assistant Professor" },
+      { name: "Dr. Neel Yadav", designation: "Senior Resident" },
     ],
   },
   caseSummary: {
@@ -287,14 +291,14 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
   ],
   postOperativeNotes: {
     accessSiteHemostasis: "Manual compression applied to left GSV puncture site below knee; complete hemostasis achieved. Puncture site clean, dry & intact. Zero hematoma or active oozing.",
-    telemetryVitals: "BP: 112/84 mmHg, HR: 66 bpm, SpO2: 100% on ambient air, RR: 18/min, Afebrile (98°F)",
+    telemetryVitals: "",
     sheathRemovalTime: "31-08-2026 10:35 AM (Immediate post-procedure in Cath-Lab angiosuite)",
     sheathStatus: "Removed",
     recoveryStatus: "Conscious, oriented, calm and comfortable (Pain VAS 1/10). Class II compression applied. Ambulation initiated after 2 hours with assistance.",
     recoveryBed: "Cath-Lab Holding Rec-01",
     distalPulses: "Strong (+++) - Bilateral Dorsalis Pedis and Posterior Tibial arteries palpable",
     immediateComplications: "Nil - Zero hematoma, zero DVT on completion Doppler, zero distal ischemia",
-    recordedBy: "Dr Shashank Sharma (Professor of IR)",
+    recordedBy: "Dr. Neel Yadav (Senior Resident IR)",
     recordedAt: "31-08-2026 11:00 AM",
     notes: "Patient tolerated endovenous glue ablation well. Completion duplex confirmed non-compressible left GSV cast with patent deep femoral vein. Discharged in stable condition.",
   },
@@ -316,8 +320,9 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     conditionOnDischarge: "Improved",
     followUp: "Follow up Doppler after 1 month in IR OPD Room 48 / Old Gastro Ward (Mon/Thu).",
     followUpDate: "01-10-2026",
-    approvedBy: "DR Meenu Bagarhatta",
-    dischargePreparedBy: "Dr Shashank Sharma",
+    approvedBy: "Dr. Alok Verma",
+    assistantProfessor: "Dr. Shashank Sharma",
+    dischargePreparedBy: "Dr. Neel Yadav",
   },
   attachments: [
     {
@@ -340,7 +345,7 @@ export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
     hospitalName: "SMS SUPER SPECIALITY HOSPITAL JAIPUR",
     hospitalAddress: "9 VIVEKANAND MARG NEAR TRAUMA HOSPITAL JAIPUR",
     departmentName: "INTERVENTIONAL RADIOLOGY / GASTROENTEROLOGY",
-    unitHead: "DR MEENU BAGARHATTA",
+    unitHead: "Dr. Alok Verma",
     unitName: "UNIT 1",
     opdDays: "Mon,Thu",
     hid: "240826303019538",
@@ -357,8 +362,9 @@ export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
     abhaAddress: "anjumnisha1995@abdm",
     abhaNumber: "91-1045-4574-3452",
     unitDoctors: [
-      { name: "DR Sudhir Maharshi", designation: "Professor" },
-      { name: "DR Kamlesh Kumar Sharma", designation: "Associate Professor" },
+      { name: "Dr. Alok Verma", designation: "Senior Professor & Head" },
+      { name: "Dr. Shashank Sharma", designation: "Assistant Professor" },
+      { name: "Dr. Neel Yadav", designation: "Senior Resident" },
     ],
   },
   caseSummary: {
@@ -449,14 +455,14 @@ export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
   ],
   postOperativeNotes: {
     accessSiteHemostasis: "Right Internal Jugular Vein (IJV) puncture site sealed; pressure dressing applied. Zero hematoma, zero local bruit, dressing dry and intact.",
-    telemetryVitals: "BP: 120/76 mmHg, HR: 72 bpm sinus rhythm, SpO2: 99% on ambient air, RR: 16/min, Temp: 98.0°F",
+    telemetryVitals: "",
     sheathRemovalTime: "26-08-2026 12:15 PM (Post-procedure check completed in Angiosuite)",
     sheathStatus: "Removed",
     recoveryStatus: "Conscious, oriented, stable hemodynamics. Fluid restriction 1.5 L/day initiated. Shifted safely to 202 Gastro Ward for ongoing observation.",
     recoveryBed: "202 GASTRO MALE AND FEMALE / GASTROUI-24",
     distalPulses: "Strong (+++) - Radial and carotid pulses bilaterally palpable and equal",
     immediateComplications: "Nil - Zero neck hematoma, zero hemothorax/pneumothorax, zero access site hemorrhage",
-    recordedBy: "Dr Naresh Mangalhara (Associate Professor of IR)",
+    recordedBy: "Dr. Neel Yadav (Senior Resident IR)",
     recordedAt: "26-08-2026 01:00 PM",
     notes: "Post-venography recovery uneventful. Anticoagulation protocol with Apixaban bridged according to protocol. No acute distress.",
   },
@@ -480,8 +486,9 @@ export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
     conditionOnDischarge: "Improved",
     followUp: "In Gastro OPD Room No. 3, 4, 5 after 2 weeks; SOS on Monday/Thursday or immediate visit to IR Emergency in case of worsening distension.",
     followUpDate: "14-09-2026",
-    approvedBy: "DR MEENU BAGARHATTA",
-    dischargePreparedBy: "Dr Naresh Mangalhara",
+    approvedBy: "Dr. Alok Verma",
+    assistantProfessor: "Dr. Shashank Sharma",
+    dischargePreparedBy: "Dr. Neel Yadav",
   },
   attachments: [
     {
@@ -544,13 +551,13 @@ export function generateIhmsDischargeForPatient(patient: {
   cectFindings?: string;
   ipd: { ward: string; bed: string; podDay: string };
   labs: {
-    ast: number;
-    alt: number;
-    bili: number;
-    alb: number;
-    creat: number;
-    inr: number;
-    plt: number;
+    ast?: number;
+    alt?: number;
+    bili?: number;
+    alb?: number;
+    creat?: number;
+    inr?: number;
+    plt?: number;
   };
   inRoom?: {
     activeSheathAccess?: string;
@@ -750,13 +757,13 @@ export function generateIhmsDischargeForPatient(patient: {
       sonography: "Pre-procedure Doppler mapping completed. Post-procedure ultrasound verifies widely patent access site and target vessel flow.",
       ctScan: "CECT roadmap reviewed prior to intervention.",
       labResults: [
-        { testName: "LIVER FUNCTION", parameterName: "AST", firstResult: `${patient.labs.ast} U/L` },
-        { testName: "LIVER FUNCTION", parameterName: "ALT", firstResult: `${patient.labs.alt} U/L` },
-        { testName: "LIVER FUNCTION", parameterName: "Total Bilirubin", firstResult: `${patient.labs.bili} mg/dL` },
-        { testName: "LIVER FUNCTION", parameterName: "Serum Albumin", firstResult: `${patient.labs.alb} g/dL` },
-        { testName: "RENAL FUNCTION", parameterName: "Serum Creatinine", firstResult: `${patient.labs.creat} mg/dL` },
-        { testName: "COAGULATION", parameterName: "PT / INR", firstResult: `${patient.labs.inr}` },
-        { testName: "CBC", parameterName: "Platelets", firstResult: `${patient.labs.plt.toLocaleString()} /uL` },
+        { testName: "LIVER FUNCTION", parameterName: "AST", firstResult: patient.labs.ast !== undefined ? `${patient.labs.ast} U/L` : "N/A" },
+        { testName: "LIVER FUNCTION", parameterName: "ALT", firstResult: patient.labs.alt !== undefined ? `${patient.labs.alt} U/L` : "N/A" },
+        { testName: "LIVER FUNCTION", parameterName: "Total Bilirubin", firstResult: patient.labs.bili !== undefined ? `${patient.labs.bili} mg/dL` : "N/A" },
+        { testName: "LIVER FUNCTION", parameterName: "Serum Albumin", firstResult: patient.labs.alb !== undefined ? `${patient.labs.alb} g/dL` : "N/A" },
+        { testName: "RENAL FUNCTION", parameterName: "Serum Creatinine", firstResult: patient.labs.creat !== undefined ? `${patient.labs.creat} mg/dL` : "N/A" },
+        { testName: "COAGULATION", parameterName: "PT / INR", firstResult: patient.labs.inr !== undefined ? `${patient.labs.inr}` : "N/A" },
+        { testName: "CBC", parameterName: "Platelets", firstResult: patient.labs.plt !== undefined ? `${patient.labs.plt.toLocaleString()} /uL` : "N/A" },
       ],
     },
     procedureDetails: [
@@ -767,7 +774,7 @@ export function generateIhmsDischargeForPatient(patient: {
         surgicalProcedure: patient.procedure,
         anaesthesiaType: anaesthesia,
         procedureDetail,
-        processDoneBy: patient.postedBy || "Dr Naresh Mangalhara",
+        processDoneBy: patient.postedBy || "Dr. Neel Yadav",
       },
     ],
     postOperativeNotes: {
@@ -776,7 +783,7 @@ export function generateIhmsDischargeForPatient(patient: {
         : "Vascular access site dry and intact. Manual compression / closure achieved. Zero hematoma, bruit or active oozing.",
       telemetryVitals: patient.inRoom?.vitals
         ? `Monitored Cath-Lab Holding Vitals: ${patient.inRoom.vitals}. Temperature: 98.4°F, Respiratory Rate: 16/min regular.`
-        : "BP: 120/80 mmHg, HR: 72 bpm regular, SpO2: 99% on room air, RR: 16/min, Afebrile",
+        : "",
       sheathRemovalTime: patient.postOp?.sheathRemoved
         ? `${new Date().toLocaleDateString("en-IN")} 11:30 AM (Sheath safely removed post-procedure; manual hemostasis confirmed)`
         : "Sheath in situ under continuous hemodynamic monitoring",
@@ -805,13 +812,10 @@ export function generateIhmsDischargeForPatient(patient: {
       followUp: isVaricose
         ? "Follow-up in Interventional Radiology OPD Room 48 / Old Gastro Ward after 4 weeks with repeat Doppler check."
         : "Follow-up in Interventional Radiology OPD Room 48 / Old Gastro Ward after 2 weeks with repeat Doppler check.",
-      followUpDate: (() => {
-        const d = new Date();
-        d.setDate(d.getDate() + (isVaricose ? 30 : 14));
-        return `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(2, "0")}-${d.getFullYear()}`;
-      })(),
-      approvedBy: "DR MEENU BAGARHATTA",
-      dischargePreparedBy: patient.postedBy || "Dr Naresh Mangalhara",
+      followUpDate: getNextValidWorkingAppointmentDate(new Date().toISOString(), isVaricose ? 30 : 14),
+      approvedBy: "Dr. Alok Verma",
+      assistantProfessor: "Dr. Shashank Sharma",
+      dischargePreparedBy: patient.postedBy || "Dr. Neel Yadav",
     },
     attachments:
       patient.attachments && patient.attachments.length > 0

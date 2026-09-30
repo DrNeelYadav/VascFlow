@@ -20,31 +20,22 @@ import {
   WorklistTable,
   PatientWorklistEntry,
   CaseStatus,
-  INITIAL_RIS_WORKLIST_CASES,
 } from "./WorklistTable";
 import { BookingChart } from "./BookingChart";
 import { StatusTransitionModal } from "./StatusTransitionModal";
 import { StatEmergencyModal } from "./StatEmergencyModal";
-import { db, isFirebaseConfigured } from "../../lib/firebase";
-import { doc, updateDoc, setDoc } from "firebase/firestore";
-
-const WORKLIST_STORAGE_KEY = "vascflow_ris_worklist";
 
 function normalizeCase(c: any): PatientWorklistEntry {
   return {
-    caseId: c.caseId || c.id || `CASE-${Date.now()}`,
-    crNumber: c.crNumber || c.uhid || "SMS-2026-000",
-    patientName: c.patientName || "Unknown Patient",
-    procedureName: c.procedureName || c.procedure || "Interventional Radiology Procedure",
-    plannedTime:
-      c.plannedTime ||
-      (c.createdAt
-        ? new Date(c.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        : "09:00 AM"),
-    operatorResident: c.operatorResident || "Dr. Neel Yadav",
-    supervisingConsultant: c.supervisingConsultant || "Dr. Meenu Bagarhatta",
+    caseId: c.caseId || c.id || "",
+    crNumber: c.crNumber || c.uhid || "",
+    patientName: c.patientName || "",
+    procedureName: c.procedureName || c.procedure || "",
+    plannedTime: c.plannedTime || "",
+    operatorResident: c.operatorResident || "",
+    supervisingConsultant: c.supervisingConsultant || "",
     status: (c.status as CaseStatus) || "SCHEDULED",
-    fastingConfirmed: c.fastingConfirmed ?? true,
+    fastingConfirmed: c.fastingConfirmed === true,
     contrastAllergy: c.contrastAllergy ?? false,
     room: c.room || "Cath Lab (Philips Azurion)",
     modality: c.modality || "XA",
@@ -57,32 +48,13 @@ function normalizeCase(c: any): PatientWorklistEntry {
 }
 
 export default function RisWorklistPage() {
-  const [cases, setCases] = useState<PatientWorklistEntry[]>(INITIAL_RIS_WORKLIST_CASES);
+  const [cases, setCases] = useState<PatientWorklistEntry[]>([]);
   const [activeTab, setActiveTab] = useState<string>("ALL");
   const [scheduledRoomFilter, setScheduledRoomFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // 1. On mount: check cached cases in localStorage, then fetch latest cases from /api/cases
+  // Worklist data comes from the authenticated cloud API; never restore PHI from browser storage.
   useEffect(() => {
-    try {
-      const cached = localStorage.getItem(WORKLIST_STORAGE_KEY);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed)) {
-          const sanitized = parsed.filter(
-            (c: any) =>
-              c.patientName !== "Ramesh Sharma" &&
-              c.patientName !== "Kamla Devi" &&
-              c.caseId !== "case_sms_001" &&
-              c.caseId !== "case_sms_002"
-          );
-          setCases(sanitized);
-        }
-      }
-    } catch (err) {
-      console.warn("Failed to load cached worklist from localStorage:", err);
-    }
-
     fetch("/api/cases")
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -90,25 +62,12 @@ export default function RisWorklistPage() {
       })
       .then((data) => {
         if (Array.isArray(data)) {
-          const normalized = data
-            .map(normalizeCase)
-            .filter(
-              (c: PatientWorklistEntry) =>
-                c.patientName !== "Ramesh Sharma" &&
-                c.patientName !== "Kamla Devi" &&
-                c.caseId !== "case_sms_001" &&
-                c.caseId !== "case_sms_002"
-            );
-          setCases(normalized);
-          try {
-            localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(normalized));
-          } catch (e) {
-            console.warn("Failed to cache cases to localStorage:", e);
-          }
+          setCases(data.map(normalizeCase).filter((c: PatientWorklistEntry) => c.caseId));
         }
       })
       .catch((err) => {
         console.warn("Could not fetch latest cases from /api/cases:", err);
+        setCases([]);
       });
   }, []);
 
@@ -139,45 +98,24 @@ export default function RisWorklistPage() {
     notes: string = "",
     emergencyOverride?: { isEmergencyOverride: boolean; overrideReason: string }
   ) => {
-    setCases((prev) => {
-      const updated = prev.map((c) =>
-        c.caseId === caseId ? { ...c, status: nextStatus } : c
-      );
-      try {
-        localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(updated));
-      } catch (e) {
-        console.warn("Failed to persist updated cases to localStorage:", e);
-      }
-      return updated;
-    });
-
     try {
-      await fetch(`/api/cases/${caseId}/status`, {
+      const response = await fetch(`/api/cases/${encodeURIComponent(caseId)}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nextStatus,
           notes,
-          staffId: "dr.roy@smsmc.gov.in",
           isEmergencyOverride: emergencyOverride?.isEmergencyOverride,
           overrideReason: emergencyOverride?.overrideReason,
         }),
       });
-    } catch (err) {
-      console.warn("Status transition fallback applied:", err);
-    }
-
-    if (typeof window !== "undefined" && isFirebaseConfigured()) {
-      try {
-        const caseDocRef = doc(db, "cases", caseId);
-        updateDoc(caseDocRef, {
-          status: nextStatus,
-          notes,
-          updatedAt: new Date().toISOString(),
-        }).catch(() => {});
-      } catch (err) {
-        console.warn("Firestore direct status update warning:", err);
+      if (!response.ok) {
+        throw new Error("Status change was not saved to the live clinical record.");
       }
+      setCases((prev) => prev.map((c) => c.caseId === caseId ? { ...c, status: nextStatus } : c));
+    } catch (err) {
+      console.error("Status transition failed:", err);
+      throw err;
     }
   };
 
@@ -191,25 +129,15 @@ export default function RisWorklistPage() {
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          const normalized = data.map(normalizeCase);
+          const normalized = data.map(normalizeCase).filter((c: PatientWorklistEntry) => c.caseId);
           setCases(normalized);
-          try {
-            localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(normalized));
-          } catch (e) {
-            console.warn("Failed to cache cases to localStorage:", e);
-          }
           return;
         }
       }
     } catch (err) {
-      console.warn("Failed to reload from /api/cases, resetting to demo cases:", err);
+      console.warn("Failed to reload live cases:", err);
     }
-    setCases(INITIAL_RIS_WORKLIST_CASES);
-    try {
-      localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(INITIAL_RIS_WORKLIST_CASES));
-    } catch (e) {
-      console.warn("Failed to cache demo cases to localStorage:", e);
-    }
+    setCases([]);
   };
 
   // Metric counts calculated from live cases
@@ -264,11 +192,8 @@ export default function RisWorklistPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#DADCE0] pb-4">
         <div>
           <h1 className="text-2xl font-bold text-[#202124] tracking-tight">
-            Operative Worklist
+            Cath-Lab Worklist
           </h1>
-          <p className="text-xs text-[#5F6368] mt-1">
-            Department of Radiodiagnosis &amp; Interventional Radiology &bull; SMS Medical College &amp; Attached Hospitals
-          </p>
         </div>
 
         {/* Date & Quick Refresh */}
@@ -298,18 +223,15 @@ export default function RisWorklistPage() {
             </div>
             <div>
               <h2 className="text-sm font-bold text-[#202124] uppercase tracking-wider">
-                Today&apos;s Scheduled Patients
+                Today&apos;s Patients
               </h2>
-              <p className="text-[11px] text-[#5F6368]">
-                Instant clinical access: verify prep, planned operator, room assignment &amp; one-click action
-              </p>
             </div>
           </div>
 
           {/* Quick Roster Scope Filter */}
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
             {[
-              { id: "ALL", label: `All Today (${cases.length})` },
+              { id: "ALL", label: `All (${cases.length})` },
               {
                 id: "ACTIVE",
                 label: `Active (${
@@ -321,14 +243,14 @@ export default function RisWorklistPage() {
                   ).length
                 })`,
               },
-              { id: "AZURION", label: "Cath Lab (Philips Azurion)" },
-              { id: "CT", label: "CT Suite" },
-              { id: "PTBD", label: "PTBD Room" },
-              { id: "PCD", label: "PCD Room" },
-              { id: "BIOPSY", label: "Biopsy Room" },
-              { id: "US_REVIEW", label: "Ultrasound Review Room" },
-              { id: "MSK_USG", label: "MSK USG & Procedure" },
-              { id: "FNAC", label: "FNAC Room" },
+              { id: "AZURION", label: "Cath Lab" },
+              { id: "CT", label: "CT" },
+              { id: "PTBD", label: "PTBD" },
+              { id: "PCD", label: "PCD" },
+              { id: "BIOPSY", label: "Biopsy" },
+              { id: "US_REVIEW", label: "US Review" },
+              { id: "MSK_USG", label: "MSK USG" },
+              { id: "FNAC", label: "FNAC" },
             ].map((scope) => (
               <button
                 key={scope.id}
@@ -413,7 +335,7 @@ export default function RisWorklistPage() {
                       className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1A73E8] text-white text-xs font-semibold py-1.5 hover:bg-[#1557B0] transition shadow-2xs"
                     >
                       <CheckCircle2 className="h-3.5 w-3.5" />
-                      Check In &amp; Prep
+                      Check In
                     </button>
                   ) : (
                     <Link
@@ -529,12 +451,12 @@ export default function RisWorklistPage() {
         {/* Filter Pills */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
           {[
-            { id: "ALL", label: `All Cases (${cases.length})` },
+            { id: "ALL", label: `All (${cases.length})` },
             { id: "SCHEDULED", label: "Scheduled" },
             { id: "PREPPED", label: "Prepped" },
-            { id: "IN_LAB", label: "Active Lab" },
-            { id: "HOLDING", label: "Post-Op Holding" },
-            { id: "REPORT_DRAFT", label: "Pending Sign-Off" },
+            { id: "IN_LAB", label: "In Lab" },
+            { id: "HOLDING", label: "Holding" },
+            { id: "REPORT_DRAFT", label: "Pending" },
             { id: "FINALIZED", label: "Finalized" },
           ].map((tab) => (
             <button
@@ -556,7 +478,7 @@ export default function RisWorklistPage() {
           <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-[#5F6368]" />
           <input
             type="text"
-            placeholder="Search patient, CR, or procedure..."
+            placeholder="Search worklist..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-full border border-[#DADCE0] bg-[#F8F9FA] py-1.5 pl-9 pr-3 text-xs text-[#202124] placeholder:text-[#5F6368] focus:border-[#1A73E8] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#1A73E8]"
@@ -569,11 +491,6 @@ export default function RisWorklistPage() {
         cases={cases}
         onCasesChange={(updatedCases) => {
           setCases(updatedCases);
-          try {
-            localStorage.setItem(WORKLIST_STORAGE_KEY, JSON.stringify(updatedCases));
-          } catch (e) {
-            console.warn("Failed to update localStorage:", e);
-          }
         }}
         activeFilter={activeTab}
         searchQuery={searchQuery}

@@ -218,13 +218,19 @@ export function verifyAbdmMtlsHeaders(request: NextRequest): { valid: boolean; r
 }
 
 /**
- * Extracts and decodes session claims from NextAuth JWT or fallback cookies at the edge.
+ * Extracts and decodes session claims from verified NextAuth JWT tokens at the edge.
  */
 export async function getSessionClaims(request: NextRequest) {
-  const secret =
-    process.env.NEXTAUTH_SECRET ||
-    process.env.AUTH_SECRET ||
-    "vascule-nextauth-super-secret-key-2026";
+  const secret = process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET;
+  if (!secret) {
+    return {
+      isAuthenticated: false,
+      userId: "",
+      email: "",
+      roleCode: "",
+      roleTier: "",
+    };
+  }
 
   try {
     const token = await getToken({
@@ -245,67 +251,7 @@ export async function getSessionClaims(request: NextRequest) {
       };
     }
   } catch {
-    // Non-fatal, fallback to cookie checks below
-  }
-
-  // Fallback: Check institutional cookie or raw session token for test & proxy environments
-  const candidateCookies = [
-    "authjs.session-token",
-    "__Secure-authjs.session-token",
-    "vascule_token",
-    "next-auth.session-token",
-    "__Secure-next-auth.session-token",
-  ];
-
-  for (const cookieName of candidateCookies) {
-    const cookieVal = request.cookies.get(cookieName)?.value;
-    if (cookieVal) {
-      // If token is in JWT format (header.payload.signature), decode payload
-      const parts = cookieVal.split(".");
-      if (parts.length === 3) {
-        try {
-          const payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-          const decodedStr = atob(payloadBase64);
-          const parsed = JSON.parse(decodedStr);
-          const roleCode = parsed.roleCode || parsed.role || "";
-          const roleTier = parsed.roleTier || deriveRoleTier(roleCode);
-          return {
-            isAuthenticated: true,
-            userId: parsed.id || parsed.sub || "",
-            email: parsed.email || "",
-            roleCode,
-            roleTier,
-          };
-        } catch {
-          // Continue to next cookie candidate
-        }
-      } else {
-        // Raw session token fallback deduction (e.g. SESSION_TOKEN_FOR_ADMIN_USER)
-        let roleCode = "STAFF";
-        const upper = cookieVal.toUpperCase();
-        if (upper.includes("ADMIN")) {
-          roleCode = "ADMIN";
-        } else if (upper.includes("FACULTY")) {
-          roleCode = "FACULTY";
-        } else if (upper.includes("FELLOW")) {
-          roleCode = "FELLOW";
-        } else if (upper.includes("RESIDENT")) {
-          roleCode = "RESIDENT";
-        } else if (upper.includes("NURSE")) {
-          roleCode = "NURSE";
-        } else if (upper.includes("TECH")) {
-          roleCode = "TECH";
-        }
-        const roleTier = deriveRoleTier(roleCode);
-        return {
-          isAuthenticated: true,
-          userId: cookieVal,
-          email: `${roleCode.toLowerCase()}@hospital.lan`,
-          roleCode,
-          roleTier,
-        };
-      }
-    }
+    // Fail securely on token verification error or malformed token
   }
 
   return {
@@ -316,6 +262,7 @@ export async function getSessionClaims(request: NextRequest) {
     roleTier: "",
   };
 }
+
 
 /**
  * Next.js Edge Middleware enforcing Role-Based Access Control (RBAC) and Security Headers.

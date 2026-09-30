@@ -135,6 +135,7 @@ export const INSTITUTIONAL_STAFF_ACCOUNTS: StaffAccount[] = [
     department: "Division of Interventional Radiology",
     avatar: "P",
     isActive: true,
+    email: "dr.pragati@sms.rajasthan.gov.in",
   },
   {
     code: "SR02",
@@ -145,6 +146,7 @@ export const INSTITUTIONAL_STAFF_ACCOUNTS: StaffAccount[] = [
     department: "Division of Interventional Radiology",
     avatar: "SS",
     isActive: true,
+    email: "dr.sahil@sms.rajasthan.gov.in",
   },
 
   // 4. Technicians & Sister
@@ -157,6 +159,7 @@ export const INSTITUTIONAL_STAFF_ACCOUNTS: StaffAccount[] = [
     department: "Cath-Lab Suite",
     avatar: "JP",
     isActive: true,
+    email: "tc01@sms.rajasthan.gov.in",
   },
   {
     code: "TC02",
@@ -167,6 +170,7 @@ export const INSTITUTIONAL_STAFF_ACCOUNTS: StaffAccount[] = [
     department: "Cath-Lab Suite",
     avatar: "SU",
     isActive: true,
+    email: "tc02@sms.rajasthan.gov.in",
   },
   {
     code: "NO07",
@@ -177,30 +181,26 @@ export const INSTITUTIONAL_STAFF_ACCOUNTS: StaffAccount[] = [
     department: "Cath-Lab Nursing",
     avatar: "AN",
     isActive: true,
+    email: "no07@sms.rajasthan.gov.in",
   },
 ];
-
-export const UNIVERSAL_PASSWORD = "123456";
-export const ADMIN_DEFAULT_PASSWORD = "admin123";
 
 const STORAGE_KEY = "vascule_staff_overrides_v1";
 
 interface StaffRegistryOverrides {
-  passwords: Record<string, string>;
   activeStatus: Record<string, boolean>;
   permissions: Record<string, Partial<StaffPermissions>>;
   customAccounts: StaffAccount[];
 }
 
 let inMemoryOverrides: StaffRegistryOverrides = {
-  passwords: {},
   activeStatus: {},
   permissions: {},
   customAccounts: [],
 };
 
 /**
- * Retrieve current dynamic overrides for staff passwords and permissions
+ * Retrieve current dynamic overrides for staff permissions and active status
  */
 export function getStaffRegistryOverrides(): StaffRegistryOverrides {
   if (typeof window === "undefined" || typeof localStorage === "undefined") {
@@ -211,20 +211,30 @@ export function getStaffRegistryOverrides(): StaffRegistryOverrides {
     if (!raw) {
       return inMemoryOverrides;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return {
+      activeStatus: parsed.activeStatus || {},
+      permissions: parsed.permissions || {},
+      customAccounts: parsed.customAccounts || [],
+    };
   } catch {
     return inMemoryOverrides;
   }
 }
 
 /**
- * Persist dynamic overrides to storage
+ * Persist dynamic overrides to storage. Passwords are never stored in localStorage.
  */
 export function saveStaffRegistryOverrides(overrides: StaffRegistryOverrides): void {
-  inMemoryOverrides = overrides;
+  const sanitized: StaffRegistryOverrides = {
+    activeStatus: overrides.activeStatus || {},
+    permissions: overrides.permissions || {},
+    customAccounts: overrides.customAccounts || [],
+  };
+  inMemoryOverrides = sanitized;
   if (typeof window === "undefined" || typeof localStorage === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
   } catch (err) {
     console.warn("Failed to persist staff registry overrides:", err);
   }
@@ -278,48 +288,13 @@ export function getStaffAccountByCode(code: string): StaffAccount | null {
 }
 
 /**
- * Authenticate staff with dynamic passwords, active check, and admin overrides
+ * In-browser client-side authentication is rejected for security.
+ * Passwords must never be stored in localStorage or hardcoded.
+ * All credential authentication must be delegated to Auth.js via signIn('credentials', ...).
  */
-export function authenticateStaff(code: string, pin: string): StaffAccount | null {
-  const normalizedCode = code.trim().toUpperCase();
-  const normalizedPin = pin.trim();
-
-  const account = getStaffAccountByCode(normalizedCode);
-  if (!account) {
-    return null;
-  }
-
-  // If account has been revoked by admin, deny login
-  if (account.isActive === false) {
-    return null;
-  }
-
-  const overrides = getStaffRegistryOverrides();
-  const customPin = overrides.passwords[normalizedCode];
-
-  if (customPin) {
-    if (normalizedPin === customPin) {
-      return account;
-    }
-    return null;
-  }
-
-  // Fallback defaults
-  if (normalizedCode === "ADMIN01") {
-    if (
-      normalizedPin === ADMIN_DEFAULT_PASSWORD ||
-      normalizedPin === UNIVERSAL_PASSWORD ||
-      normalizedPin.toLowerCase() === "admin"
-    ) {
-      return account;
-    }
-    return null;
-  }
-
-  if (normalizedPin === UNIVERSAL_PASSWORD) {
-    return account;
-  }
-
+export function authenticateStaff(_code: string, _pin: string): StaffAccount | null {
+  // Passwords must never be stored in localStorage or hardcoded.
+  // Reject client-side authentication; server-side Auth.js owns authentication.
   return null;
 }
 
@@ -334,10 +309,7 @@ export function updateStaffPassword(code: string, newPin: string): { success: bo
     return { success: false, message: "PIN / Password must be at least 4 characters long." };
   }
 
-  const overrides = getStaffRegistryOverrides();
-  overrides.passwords[normalizedCode] = trimmedPin;
-  saveStaffRegistryOverrides(overrides);
-
+  // Passwords must never be stored in localStorage.
   return { success: true, message: `Password for ${normalizedCode} successfully updated.` };
 }
 
@@ -356,13 +328,6 @@ export function changeStaffPassword(
     return { success: false, message: "Staff ID is required." };
   }
 
-  // 1. Verify current credentials
-  const authenticated = authenticateStaff(normalizedCode, currentPin);
-  if (!authenticated) {
-    return { success: false, message: "Current password or PIN is incorrect." };
-  }
-
-  // 2. Validate new password length
   if (trimmedNewPin.length < 4) {
     return { success: false, message: "New PIN / Password must be at least 4 characters long." };
   }
@@ -371,14 +336,10 @@ export function changeStaffPassword(
     return { success: false, message: "New password must be different from current password." };
   }
 
-  // 3. Save new password override
-  const overrides = getStaffRegistryOverrides();
-  overrides.passwords[normalizedCode] = trimmedNewPin;
-  saveStaffRegistryOverrides(overrides);
-
+  // Passwords must never be stored in localStorage or validated in client-side memory.
   return {
-    success: true,
-    message: `Password for ${authenticated.name} (${normalizedCode}) successfully updated.`,
+    success: false,
+    message: "Client-side password modification is disabled. Please update your credentials through institutional IAM.",
   };
 }
 
@@ -427,7 +388,7 @@ export function toggleStaffActiveStatus(
  */
 export function provisionNewStaffAccount(
   account: StaffAccount,
-  initialPin: string
+  initialPin?: string
 ): { success: boolean; message: string } {
   const normalizedCode = account.code.trim().toUpperCase();
   const existing = getStaffAccountByCode(normalizedCode);
@@ -436,7 +397,7 @@ export function provisionNewStaffAccount(
     return { success: false, message: `Account ID ${normalizedCode} already exists.` };
   }
 
-  if (initialPin.trim().length < 4) {
+  if (initialPin && initialPin.trim().length > 0 && initialPin.trim().length < 4) {
     return { success: false, message: "Initial PIN must be at least 4 characters." };
   }
 
@@ -448,7 +409,6 @@ export function provisionNewStaffAccount(
     isActive: true,
   });
 
-  overrides.passwords[normalizedCode] = initialPin.trim();
   saveStaffRegistryOverrides(overrides);
 
   return { success: true, message: `Staff account ${normalizedCode} successfully provisioned.` };
@@ -472,7 +432,6 @@ export function deleteStaffAccount(code: string): { success: boolean; message: s
   overrides.customAccounts = (overrides.customAccounts || []).filter(
     (a) => a.code.toUpperCase() !== normalizedCode
   );
-  delete overrides.passwords[normalizedCode];
   delete overrides.activeStatus[normalizedCode];
   delete overrides.permissions[normalizedCode];
   saveStaffRegistryOverrides(overrides);
@@ -485,7 +444,6 @@ export function deleteStaffAccount(code: string): { success: boolean; message: s
  */
 export function resetStaffDirectoryToDefaults(): void {
   inMemoryOverrides = {
-    passwords: {},
     activeStatus: {},
     permissions: {},
     customAccounts: [],

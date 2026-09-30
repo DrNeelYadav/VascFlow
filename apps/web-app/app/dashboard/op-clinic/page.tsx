@@ -18,10 +18,6 @@ import {
   getHolidayForDate,
 } from "../../lib/rajasthanHolidays2026";
 import {
-  getScheduledRadiationTasks,
-  RadiationSentinelTask,
-} from "../../lib/censusEngine";
-import {
   Stethoscope,
   BedDouble,
   CalendarPlus,
@@ -40,7 +36,6 @@ import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   UserCheck,
   FileText,
   Clock,
@@ -48,7 +43,6 @@ import {
   Activity,
   History,
   ShieldAlert,
-  Zap,
   Pause,
   Play,
   RotateCcw,
@@ -186,16 +180,11 @@ export default function OpClinicConsultationDeskPage() {
     linkHref?: string;
     linkLabel?: string;
   } | null>(null);
-  const [sentinelTasks, setSentinelTasks] = useState<RadiationSentinelTask[]>([]);
 
   // Action Popover State for Review Queue
   const [activePopover, setActivePopover] = useState<{ id: string; type: "contact" | "date" | "postpone" } | null>(null);
   const [popoverInput, setPopoverInput] = useState<string>("");
   const [popoverReason, setPopoverReason] = useState<string>("");
-
-  useEffect(() => {
-    setSentinelTasks(getScheduledRadiationTasks());
-  }, []);
 
   // Holiday check on Cath-Lab booking date
   const bookingDateHoliday = useMemo(() => {
@@ -429,19 +418,16 @@ export default function OpClinicConsultationDeskPage() {
           bed: vacantBed.title,
           podDay: "Pre-Op",
         },
-        labs: {
-          ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9,
-          inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none",
-        },
+        labs: {},
         preOp: {
           bedLocation: vacantBed.title,
-          npoHours: 6,
-          inrChecked: true,
-          creatinineChecked: true,
-          consentSigned: true,
+          npoHours: 0,
+          inrChecked: false,
+          creatinineChecked: false,
+          consentSigned: false,
           ivCannulaGauge: "18G Green",
           calledToLab: false,
-          labCleared: true,
+          labCleared: false,
         },
       };
 
@@ -508,19 +494,16 @@ export default function OpClinicConsultationDeskPage() {
           bed: "Angio Table 01",
           podDay: "Emergent",
         },
-        labs: {
-          ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9,
-          inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none",
-        },
+        labs: {},
         preOp: {
           bedLocation: "Cath-Lab Direct Table",
           npoHours: 0,
-          inrChecked: true,
-          creatinineChecked: true,
-          consentSigned: true,
+          inrChecked: false,
+          creatinineChecked: false,
+          consentSigned: false,
           ivCannulaGauge: "16G Grey",
           calledToLab: true,
-          labCleared: true,
+          labCleared: false,
         },
       };
 
@@ -976,8 +959,8 @@ export default function OpClinicConsultationDeskPage() {
         preAuthStatus: "Emergency Pre-Auth",
         disposition: "STAT_CATH_LAB",
         ipd: { admissionType: "STAT_CATH_LAB", ward: "Cath Lab", bed: "Angio Table 01", podDay: "Emergent" },
-        labs: { ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9, inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none" },
-        preOp: { bedLocation: "Cath-Lab Direct Table", npoHours: 0, inrChecked: true, creatinineChecked: true, consentSigned: true, ivCannulaGauge: "16G Grey", calledToLab: true, labCleared: true },
+        labs: {},
+        preOp: { bedLocation: "Cath-Lab Direct Table", npoHours: 0, inrChecked: false, creatinineChecked: false, consentSigned: false, ivCannulaGauge: "16G Grey", calledToLab: true, labCleared: false },
       };
       admitPatient(newPatientRecord);
     } else if (selectedBedId !== "none" && selectedBedId !== "on_call") {
@@ -1009,8 +992,8 @@ export default function OpClinicConsultationDeskPage() {
           preAuthStatus: "Approved",
           disposition: "ADMIT_WARD_PREOP",
           ipd: { admissionType: "IPD", ward: targetBed.type === "ICU" ? "Liver ICU" : "IR Ward D-Block", bed: targetBed.title, podDay: "Pre-Op" },
-          labs: { ast: 25, alt: 25, bili: 0.8, ldh: 180, alb: 4.0, creat: 0.9, inr: 1.1, plt: 220000, fib: 280, protc: 85, prots: 90, ascitesGrade: "none" },
-          preOp: { bedLocation: targetBed.title, npoHours: 6, inrChecked: true, creatinineChecked: true, consentSigned: true, ivCannulaGauge: "18G Green", calledToLab: false, labCleared: true },
+          labs: {},
+          preOp: { bedLocation: targetBed.title, npoHours: 0, inrChecked: false, creatinineChecked: false, consentSigned: false, ivCannulaGauge: "18G Green", calledToLab: false, labCleared: false },
         };
         admitPatient(newPatientRecord);
         updateBed(targetBed.id, {
@@ -1165,48 +1148,6 @@ export default function OpClinicConsultationDeskPage() {
               {successBanner.linkLabel}
             </Link>
           )}
-        </div>
-      )}
-
-      {/* 3. High-Dose Fluoroscopy Sentinel Surveillance Tasks */}
-      {sentinelTasks.length > 0 && (
-        <div className="bg-amber-50/70 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/60 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center gap-2 mb-2.5 text-amber-900 dark:text-amber-200 font-bold text-xs">
-            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-            <span>High-Dose Radiation Sentinel Tasks ({sentinelTasks.length})</span>
-            <span className="px-2 py-0.5 rounded text-[10px] bg-amber-200 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 font-mono font-bold">
-              SIR/CIRSE Safety Protocol (≥5.0 Gy / ≥60 min)
-            </span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-            {sentinelTasks.map((t) => (
-              <div
-                key={t.id}
-                className="bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-900/60 rounded-xl p-3 flex flex-col justify-between gap-2 text-xs shadow-2xs"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="font-bold text-[#1C1C1E] dark:text-slate-100">
-                      {t.patientName} (CR: {t.patientCrNo})
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-bold font-mono">
-                      Due: {t.scheduledForDate}
-                    </span>
-                  </div>
-                  <div className="text-[11px] text-amber-800 dark:text-amber-300 font-mono mt-1">
-                    {t.triggerReason}
-                  </div>
-                  <p className="text-[11px] text-[#5F6368] dark:text-slate-400 mt-1 leading-relaxed">
-                    {t.instructions}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between pt-1 border-t border-amber-100 dark:border-amber-900/40 text-[10px] text-amber-700 dark:text-amber-300 font-semibold">
-                  <span>Task: {t.taskType}</span>
-                  <span className="text-amber-800 dark:text-amber-400 font-mono">Target: {t.targetRoute}</span>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
@@ -1624,7 +1565,7 @@ export default function OpClinicConsultationDeskPage() {
                   onClick={handleSaveAndExecute}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
                 >
-                  <Zap className="w-3.5 h-3.5" />
+                  <CalendarPlus className="w-3.5 h-3.5" />
                   <span>Save &amp; Book Cath-Lab (Execute)</span>
                 </button>
               </div>
@@ -2214,11 +2155,6 @@ export default function OpClinicConsultationDeskPage() {
           </div>
         </div>
       )}
-
-      {/* Footer Attribution */}
-      <div className="text-center py-4 text-xs text-[#8E8E93] select-none">
-        SMS Hospital Angiosuite • Made by Dr. Neel Yadav
-      </div>
     </div>
   );
 }

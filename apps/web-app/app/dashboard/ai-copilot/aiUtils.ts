@@ -1,8 +1,10 @@
 // ---------------------------------------------------------------------------
-// Vascule OS AI Clinical Copilot & Decision Tree Logic
+// VascFlow Deterministic Clinical Guidelines & Procedural Decision Flowcharts
+// Department of Interventional Radiology, SMS Medical College, Jaipur
+// Evidence-grounded deterministic clinical decision algorithms (CIRSE / SIR / AASLD)
 // ---------------------------------------------------------------------------
 
-export interface DecisionTreeNode {
+export interface ClinicalDecisionNode {
   id: string;
   scenario: string;
   prompt: string;
@@ -16,7 +18,10 @@ export interface DecisionTreeNode {
   }[];
 }
 
-export const CLINICAL_DECISION_TREES: Record<string, DecisionTreeNode> = {
+// Backward-compatibility alias
+export type DecisionTreeNode = ClinicalDecisionNode;
+
+export const DETERMINISTIC_CLINICAL_FLOWCHARTS: Record<string, ClinicalDecisionNode> = {
   // Scenario 1: BAE (Massive Hemoptysis)
   "bae-root": {
     id: "bae-root",
@@ -153,24 +158,18 @@ export const CLINICAL_DECISION_TREES: Record<string, DecisionTreeNode> = {
   },
 };
 
-/**
- * Sanitizes user chat prompt to prevent prompt injection and remove control characters.
- */
-export function sanitizeClinicalPrompt(prompt: string): string {
-  if (!prompt || typeof prompt !== "string") return "";
-  return prompt
-    .replace(/[<>]/g, "") // Strip HTML/script tags
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Strip non-printable ASCII
-    .trim()
-    .slice(0, 1000); // Limit length to 1000 characters
-}
+// Aliased for backward compatibility with existing clinical decision tree references
+export const CLINICAL_DECISION_TREES = DETERMINISTIC_CLINICAL_FLOWCHARTS;
 
 /**
  * Calculates Cigarroa Maximum Allowable Contrast Dose (MACD) in milliliters.
  * Formula: (5 mL * weight in kg) / serum creatinine in mg/dL.
+ * Mandatory 300 mL maximum hard ceiling cap applied to avoid acute tubular necrosis.
+ * Originally validated for coronary angiography; evaluate alongside ACR-NKF 2020 eGFR guidance.
  */
 export function calculateMacdLimit(weightKg: number, serumCreatinineMgDl: number): number {
   if (weightKg <= 0 || serumCreatinineMgDl <= 0) return 0;
   const raw = (5.0 * weightKg) / serumCreatinineMgDl;
-  return Math.round(raw * 10) / 10;
+  const calculatedDose = Math.round(raw * 10) / 10;
+  return Math.min(calculatedDose, 300);
 }

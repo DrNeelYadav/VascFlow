@@ -75,6 +75,9 @@ export default function OperativeNotesPage() {
   // Edit Mode Toggle for the SMS Official Sheet
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
+  // Mobile Dual-View Toggle (< lg): "CONFIG" vs "PREVIEW"
+  const [mobileView, setMobileView] = useState<"CONFIG" | "PREVIEW">("CONFIG");
+
   // Selected Patient State
   const [selectedPatientCaseId, setSelectedPatientCaseId] = useState<string>("CUSTOM");
   const [patientName, setPatientName] = useState("Ramswaroop Meena");
@@ -414,17 +417,9 @@ export default function OperativeNotesPage() {
       <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-4 sm:p-5 shadow-xs print:hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                SMS Hospital Jaipur
-              </span>
-              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                Post-Operative Notes &amp; Operative Records
-              </h1>
-            </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-              Department of Interventional Radiology (इंटरवेंशनल रेडियोलॉजी विभाग) • SMS Medical College &amp; Hospital, Jaipur
-            </p>
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+              Operative Notes
+            </h1>
           </div>
 
           {/* Header Action Controls */}
@@ -439,7 +434,7 @@ export default function OperativeNotesPage() {
               title="Toggle inline editing for operative findings and technique"
             >
               {isEditMode ? <Check className="w-3.5 h-3.5" /> : <Edit3 className="w-3.5 h-3.5" />}
-              <span>{isEditMode ? "Finish Editing" : "Edit Note"}</span>
+              <span>{isEditMode ? "Done" : "Edit Note"}</span>
             </button>
 
             <button
@@ -447,7 +442,7 @@ export default function OperativeNotesPage() {
               className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer active:scale-95"
             >
               <Copy className="w-3.5 h-3.5" />
-              <span>Copy SMS Note</span>
+              <span>Copy Note</span>
             </button>
 
             <button
@@ -456,7 +451,7 @@ export default function OperativeNotesPage() {
               title="Share formatted note on WhatsApp"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">WhatsApp</span>
+              <span>WhatsApp</span>
             </button>
 
             <button
@@ -464,7 +459,7 @@ export default function OperativeNotesPage() {
               className="px-3.5 py-1.5 bg-zinc-800 hover:bg-zinc-900 text-white dark:bg-zinc-700 dark:hover:bg-zinc-600 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print Sheet</span>
+              <span>Print</span>
             </button>
 
             <Link
@@ -472,7 +467,7 @@ export default function OperativeNotesPage() {
               className="px-3 py-1.5 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-semibold rounded-xl hover:bg-amber-100 transition-colors flex items-center gap-1.5"
             >
               <FolderOpen className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Archive</span>
+              <span>Archive</span>
             </Link>
           </div>
         </div>
@@ -486,10 +481,38 @@ export default function OperativeNotesPage() {
         )}
       </div>
 
+      {/* Mobile Dual-View Toggle (< lg) */}
+      <div className="flex lg:hidden bg-zinc-100 dark:bg-zinc-800/80 p-1 rounded-xl border border-zinc-200 dark:border-zinc-700 print:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileView("CONFIG")}
+          className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            mobileView === "CONFIG"
+              ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+          }`}
+        >
+          <Edit3 className="w-3.5 h-3.5" />
+          <span>Configure Note</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileView("PREVIEW")}
+          className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            mobileView === "PREVIEW"
+              ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
+              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>Preview Sheet</span>
+        </button>
+      </div>
+
       {/* Main Two-Column Workflow (Left: Procedure & Patient Selection, Right: Official SMS Note Document) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 print:block">
         {/* Left Column (5 Cols) - Procedure & Patient Selector */}
-        <div className="lg:col-span-5 space-y-4 print:hidden">
+        <div className={`lg:col-span-5 space-y-4 print:hidden ${mobileView === "CONFIG" ? "block" : "hidden lg:block"}`}>
           {/* Procedure Partitioning Selector: Daily Routine (16) vs Others (1,100+) */}
           <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-4 shadow-xs">
             {/* Mode Switcher Tabs */}
@@ -523,7 +546,7 @@ export default function OperativeNotesPage() {
             {catalogMode === "ROUTINE" && (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400 px-1 mb-1">
-                  <span>Common Daily Procedures (SMS IR Angiosuite)</span>
+                  <span>Routine Procedures</span>
                   <span className="font-semibold text-blue-600 dark:text-blue-400">1-Tap Select</span>
                 </div>
 
@@ -807,7 +830,7 @@ export default function OperativeNotesPage() {
         </div>
 
         {/* Right Column (7 Cols) - The Authentic SMS Hospital Operative Sheet */}
-        <div className="lg:col-span-7 space-y-4 print:w-full print:block">
+        <div className={`lg:col-span-7 space-y-4 print:w-full print:block ${mobileView === "PREVIEW" ? "block" : "hidden lg:block"}`}>
           {/* View Tabs Bar */}
           <div className="bg-white dark:bg-[#1E1E1E] border border-[#DADCE0] dark:border-[#3C4043] rounded-2xl p-1.5 flex items-center justify-between shadow-xs print:hidden overflow-x-auto">
             <div className="flex items-center gap-1 shrink-0">

@@ -63,25 +63,53 @@ export interface AuditLogRecord {
   timestamp: Date;
 }
 
-const DEFAULT_AUDIT_SECRET =
-  process.env.AUDIT_HMAC_SECRET ||
-  process.env.NEXTAUTH_SECRET ||
-  "vascule-tamper-evident-audit-secret-key-2026";
+const isTestMode =
+  process.env.NODE_ENV === "test" ||
+  Boolean(process.env.VITEST) ||
+  Boolean(process.env.JEST_WORKER_ID);
 
-const DEFAULT_PHI_KEY =
-  process.env.PHI_ENCRYPTION_KEY ||
-  "vascule-phi-aes256-secret-hardened-key-2026-32b!"; // 32 bytes
+const testEphemeralAuditSecret = isTestMode
+  ? crypto.randomBytes(32).toString("hex")
+  : "";
+const testEphemeralPhiKey = isTestMode
+  ? crypto.randomBytes(32).toString("hex")
+  : "";
+
+export function getAuditHmacSecret(): string {
+  if (process.env.AUDIT_HMAC_SECRET) {
+    return process.env.AUDIT_HMAC_SECRET;
+  }
+  if (isTestMode) {
+    return testEphemeralAuditSecret;
+  }
+  throw new Error(
+    "Security policy violation: AUDIT_HMAC_SECRET environment variable is missing. Refusing to operate with insecure hardcoded fallback."
+  );
+}
+
+export function getPhiEncryptionKey(): string {
+  if (process.env.PHI_ENCRYPTION_KEY) {
+    return process.env.PHI_ENCRYPTION_KEY;
+  }
+  if (isTestMode) {
+    return testEphemeralPhiKey;
+  }
+  throw new Error(
+    "Security policy violation: PHI_ENCRYPTION_KEY environment variable is missing. Refusing to operate with insecure hardcoded fallback."
+  );
+}
 
 /**
  * Encrypts sensitive PHI (Protected Health Information) at rest using AES-256-GCM.
  */
 export function encryptPhiPayload(
   data: unknown,
-  secretKey: string = DEFAULT_PHI_KEY
+  secretKey?: string
 ): string {
+  const activeKey = secretKey || getPhiEncryptionKey();
   const text = typeof data === "string" ? data : JSON.stringify(data);
   const iv = crypto.randomBytes(12); // 96-bit IV for GCM
-  const key = crypto.createHash("sha256").update(secretKey).digest(); // 256-bit key
+  const key = crypto.createHash("sha256").update(activeKey).digest(); // 256-bit key
 
   const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
   let encrypted = cipher.update(text, "utf8", "hex");
@@ -96,8 +124,9 @@ export function encryptPhiPayload(
  */
 export function decryptPhiPayload(
   cipherEnvelope: string,
-  secretKey: string = DEFAULT_PHI_KEY
+  secretKey?: string
 ): unknown {
+  const activeKey = secretKey || getPhiEncryptionKey();
   const parts = cipherEnvelope.split(":");
   if (parts.length !== 3) {
     throw new Error("Invalid PHI cipher envelope format");
@@ -106,7 +135,7 @@ export function decryptPhiPayload(
   const [ivHex, authTagHex, encryptedHex] = parts;
   const iv = Buffer.from(ivHex, "hex");
   const authTag = Buffer.from(authTagHex, "hex");
-  const key = crypto.createHash("sha256").update(secretKey).digest();
+  const key = crypto.createHash("sha256").update(activeKey).digest();
 
   const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
   decipher.setAuthTag(authTag);
@@ -131,8 +160,9 @@ export function computeTamperHash(
   entityId: string,
   ipAddress: string,
   payloadString: string,
-  secret: string = DEFAULT_AUDIT_SECRET
+  secret?: string
 ): string {
+  const activeSecret = secret || getAuditHmacSecret();
   const canonicalString = [
     timestampIso,
     actorStaffId,
@@ -144,7 +174,7 @@ export function computeTamperHash(
   ].join("|");
 
   return crypto
-    .createHmac("sha256", secret)
+    .createHmac("sha256", activeSecret)
     .update(canonicalString)
     .digest("hex");
 }
@@ -154,7 +184,7 @@ export function computeTamperHash(
  */
 export function verifyAuditIntegrity(
   record: AuditLogRecord,
-  secret: string = DEFAULT_AUDIT_SECRET
+  secret?: string
 ): boolean {
   try {
     const details = JSON.parse(record.detailsJson) as StoredAuditDetails;
@@ -162,6 +192,7 @@ export function verifyAuditIntegrity(
       return false;
     }
 
+    const activeSecret = secret || getAuditHmacSecret();
     const expectedHash = computeTamperHash(
       details.timestamp,
       record.staffId,
@@ -170,7 +201,7 @@ export function verifyAuditIntegrity(
       record.entityId,
       record.ipAddress,
       details.data,
-      secret
+      activeSecret
     );
 
     return crypto.timingSafeEqual(
@@ -267,8 +298,8 @@ export async function logAuditTrail(
   options?: { dbClient?: typeof prisma; hmacSecret?: string; phiKey?: string }
 ): Promise<AuditLogRecord> {
   const client = options?.dbClient || prisma;
-  const hmacSecret = options?.hmacSecret || DEFAULT_AUDIT_SECRET;
-  const phiKey = options?.phiKey || DEFAULT_PHI_KEY;
+  const hmacSecret = options?.hmacSecret || getAuditHmacSecret();
+  const phiKey = options?.phiKey || getPhiEncryptionKey();
 
   const now = new Date();
   const timestampIso = now.toISOString();

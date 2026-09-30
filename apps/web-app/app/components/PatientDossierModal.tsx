@@ -137,9 +137,9 @@ export function PatientDossierModal({
 
   const ctpResult = useMemo(() => {
     return calculateChildPugh({
-      bilirubinMg: bili,
-      albuminGdl: alb,
-      inr,
+      bilirubinMg: bili ?? 1.0,
+      albuminGdl: alb ?? 3.5,
+      inr: inr ?? 1.0,
       ascites:
         ascitesGrade === "none"
           ? "None"
@@ -152,9 +152,9 @@ export function PatientDossierModal({
 
   const meldResult = useMemo(() => {
     return calculateMeld3({
-      creatinine: creat,
-      bilirubin: bili,
-      inr,
+      creatinine: creat ?? 1.0,
+      bilirubin: bili ?? 1.0,
+      inr: inr ?? 1.0,
       sodium: 138,
       albumin: alb,
       isFemale: sex === "Female",
@@ -162,11 +162,11 @@ export function PatientDossierModal({
   }, [creat, bili, inr, alb, sex]);
 
   const macdResult = useMemo(() => {
-    return calculateCigarroaMACD(68, creat);
+    return calculateCigarroaMACD(68, creat ?? 1.0);
   }, [creat]);
 
   const egfrResult = useMemo(() => {
-    return calculateEgfrCkdEpi(creat, age, sex === "Female");
+    return calculateEgfrCkdEpi(creat ?? 1.0, age, sex === "Female");
   }, [creat, age, sex]);
 
   useEffect(() => {
@@ -527,8 +527,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       </label>
                       <input
                         type="number"
-                        value={ast}
-                        onChange={(e) => setAst(Number(e.target.value))}
+                        value={ast ?? ""}
+                        onChange={(e) => setAst(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -538,8 +538,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       </label>
                       <input
                         type="number"
-                        value={alt}
-                        onChange={(e) => setAlt(Number(e.target.value))}
+                        value={alt ?? ""}
+                        onChange={(e) => setAlt(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -550,8 +550,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       <input
                         type="number"
                         step="0.1"
-                        value={bili}
-                        onChange={(e) => setBili(Number(e.target.value))}
+                        value={bili ?? ""}
+                        onChange={(e) => setBili(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -561,8 +561,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       </label>
                       <input
                         type="number"
-                        value={ldh}
-                        onChange={(e) => setLdh(Number(e.target.value))}
+                        value={ldh ?? ""}
+                        onChange={(e) => setLdh(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -573,8 +573,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       <input
                         type="number"
                         step="0.1"
-                        value={alb}
-                        onChange={(e) => setAlb(Number(e.target.value))}
+                        value={alb ?? ""}
+                        onChange={(e) => setAlb(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -585,8 +585,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       <input
                         type="number"
                         step="0.01"
-                        value={creat}
-                        onChange={(e) => setCreat(Number(e.target.value))}
+                        value={creat ?? ""}
+                        onChange={(e) => setCreat(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -597,8 +597,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       <input
                         type="number"
                         step="0.01"
-                        value={inr}
-                        onChange={(e) => setInr(Number(e.target.value))}
+                        value={inr ?? ""}
+                        onChange={(e) => setInr(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -608,8 +608,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       </label>
                       <input
                         type="number"
-                        value={plt}
-                        onChange={(e) => setPlt(Number(e.target.value))}
+                        value={plt ?? ""}
+                        onChange={(e) => setPlt(e.target.value ? Number(e.target.value) : undefined)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
                       />
                     </div>
@@ -618,7 +618,7 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                         Ascites Grade
                       </label>
                       <select
-                        value={ascitesGrade}
+                        value={ascitesGrade ?? "none"}
                         onChange={(e) => setAscitesGrade(e.target.value)}
                         className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs"
                       >

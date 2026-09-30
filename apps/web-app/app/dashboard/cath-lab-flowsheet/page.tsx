@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { DosimetryCalculator } from "../../components/cath-lab/DosimetryCalculator";
 import { ImplantTracker } from "../../components/cath-lab/ImplantTracker";
+import { calculateMacd } from "../../lib/calculators";
 import { INITIAL_RIS_WORKLIST_CASES } from "../worklist/worklistData";
 import { useEndoflowStore } from "../useEndoflowStore";
 import {
@@ -85,12 +86,23 @@ function CathLabFlowsheetContent() {
   const [pushSuccessBanner, setPushSuccessBanner] = useState<string | null>(null);
   const [isHudMode, setIsHudMode] = useState<boolean>(false);
 
-  const safeCr = creatinine > 0 ? creatinine : 1;
-  const macdLimit = Math.round((5 * weightKg) / safeCr);
-  const isAkiRisk = creatinine >= 2.0;
-  const effectiveContrastCeiling = isAkiRisk ? Math.min(40, macdLimit) : macdLimit;
-  const isContrastExceeded = contrastDeliveredMl >= effectiveContrastCeiling;
-  const isContrastNearLimit = !isContrastExceeded && contrastDeliveredMl >= effectiveContrastCeiling * 0.8;
+  // Contrast ceiling: single source of truth.
+  // Previously this recomputed (5 * weightKg) / safeCr locally, with no 300 mL
+  // hard cap and `creatinine > 0 ? creatinine : 1` standing in for an unmeasured
+  // renal function. calculateMacd() enforces the 300 mL cap, applies the 40 mL
+  // severe-impairment ceiling, and returns valid:false when creatinine is
+  // missing - which now BLOCKS dose entry instead of inventing a normal value.
+  const macd = useMemo(
+    () => calculateMacd(weightKg, creatinine, contrastDeliveredMl),
+    [weightKg, creatinine, contrastDeliveredMl]
+  );
+  const isRenalDataMissing = !macd.valid;
+  const macdLimit = macd.valid ? macd.macdMl : 0;
+  const effectiveContrastCeiling = macdLimit;
+  const isAkiRisk = creatinine >= 3.0;
+  const isContrastExceeded = macd.valid && macd.isExceeded;
+  const isContrastNearLimit =
+    macd.valid && !macd.isExceeded && contrastDeliveredMl >= effectiveContrastCeiling * 0.8;
 
   // Synchronize with active patient record in store
   useEffect(() => {
@@ -149,9 +161,17 @@ function CathLabFlowsheetContent() {
 
   const handlePushToReport = () => {
     if (!currentPatient) return;
+    // Refuse to generate a clinical report without a measured creatinine: the
+    // previous code fell back to 1.0 mg/dL and wrote a fabricated MACD into the
+    // operative record.
+    if (isRenalDataMissing) {
+      setPushSuccessBanner(
+        "Cannot push to report: serum creatinine is not recorded for this patient."
+      );
+      return;
+    }
     const pid = currentPatient.id;
-    const safeCr = creatinine > 0 ? creatinine : 1;
-    const macdLimit = Math.round((5 * weightKg) / safeCr);
+    const macdLimit = macd.macdMl;
 
     // 1. Update in-room telemetry in store
     updateInRoomTelemetry(pid, {
@@ -313,6 +333,23 @@ function CathLabFlowsheetContent() {
             </div>
           </div>
 
+          {/* Blocking state: no measured creatinine means no contrast ceiling can
+              be derived. Previously this screen silently assumed Cr = 1.0 and
+              displayed a full-dose ceiling for an unmeasured patient. */}
+          {isRenalDataMissing && (
+            <div className="rounded-xl border-2 border-amber-500 bg-amber-950/80 p-3 text-amber-100 flex items-center gap-3">
+              <ShieldAlert className="h-6 w-6 text-amber-400 shrink-0" />
+              <div>
+                <div className="text-sm font-black uppercase tracking-wider text-amber-300">
+                  CONTRAST CEILING UNAVAILABLE - SERUM CREATININE NOT RECORDED
+                </div>
+                <div className="text-xs text-amber-200">
+                  Record a measured serum creatinine before administering iodinated contrast. A dose ceiling cannot be derived without renal function.
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Critical Contrast Safety Alarm Banner if Exceeded */}
           {isContrastExceeded && (
             <div className="rounded-xl border-2 border-rose-500 bg-rose-950/80 p-3 text-rose-200 flex items-center gap-3 animate-pulse">
@@ -355,7 +392,9 @@ function CathLabFlowsheetContent() {
             >
               <div className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center justify-between">
                 <span>CONTRAST DOSE</span>
-                <span className="text-[10px] text-zinc-400">LIMIT: {effectiveContrastCeiling} mL</span>
+                <span className="text-[10px] text-zinc-400">
+                  LIMIT: {isRenalDataMissing ? "—" : `${effectiveContrastCeiling} mL`}
+                </span>
               </div>
               <div
                 className={`text-4xl font-mono font-black mt-1 ${
@@ -369,10 +408,16 @@ function CathLabFlowsheetContent() {
                 {contrastDeliveredMl} <span className="text-lg text-zinc-400 font-normal">mL</span>
               </div>
               <div className="text-xs font-mono text-zinc-400 mt-2">
-                {isAkiRisk ? "CIRSE AKI Hard Cap: 40 mL" : `Cigarroa MACD: ${macdLimit} mL`}
+                {isRenalDataMissing
+                  ? "BLOCKED: serum creatinine not recorded"
+                  : isAkiRisk
+                  ? "CIRSE AKI Hard Cap: 40 mL"
+                  : `Cigarroa MACD: ${macdLimit} mL`}
               </div>
               <div className="text-[10px] font-mono text-amber-300/80 mt-1">
-                Formula: (5 × Weight in kg) / Serum Creatinine = (5 × {weightKg} kg) / {safeCr} mg/dL = {macdLimit} mL
+                {isRenalDataMissing
+                  ? "A measured serum creatinine is required before a contrast ceiling can be applied."
+                  : `Formula: (5 × Weight in kg) / Serum Creatinine = (5 × ${weightKg} kg) / ${creatinine} mg/dL = ${macdLimit} mL (300 mL hard cap enforced)`}
               </div>
             </div>
 

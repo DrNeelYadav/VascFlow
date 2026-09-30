@@ -166,13 +166,15 @@ export default function OtScheduleCalendarPage() {
           specialInvestigations: [],
           preScanAnatomy: {},
           hardwareChecklist: [],
-          postOpPlan: rc.procedureDetail || "Standard post-procedural monitoring & hemostasis.",
+          // The real registry carries no per-case post-op plan text; leave it
+          // empty rather than substituting a generic clinical sentence.
+          postOpPlan: "",
           status: "Completed",
           npoVerified: true,
           labsVerified: true,
           bloodProductsVerified: true,
           hardwareVerified: true,
-          screenedBy: rc.operatingFaculty || "Faculty Cath-Lab Staff",
+          screenedBy: "SMS IR Cath-Lab",
           screenedAt: `${yyyyMmDd}T09:00:00.000Z`,
           keptForTomorrow: false,
           admissionCardUpdated: true,

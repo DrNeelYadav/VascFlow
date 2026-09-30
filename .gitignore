@@ -56,5 +56,6 @@ abstract_assets/
 *.docx
 *.xlsx
 graphify-out/
+tools/ir_bundler/_index/ocr_cache/
 
 

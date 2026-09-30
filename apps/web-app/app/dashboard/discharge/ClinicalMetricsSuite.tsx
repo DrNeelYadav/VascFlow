@@ -19,7 +19,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { REAL_SMS_PATIENT_REGISTRY } from "../../lib/realData/smsCathLabRealData";
-import { REAL_2026_CLINICAL_CASES } from "../../lib/realData/sms2026Discharges";
+import { AUTHENTIC_SMS_MASTER_CASES } from "../../lib/realData/smsMasterAnalysisCases";
 
 export interface ClinicalMetricsProps {
   onSelectProcedure?: (procedureName: string) => void;
@@ -145,20 +145,17 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
       "Elderly (>60Y)": 0,
     };
 
-    REAL_SMS_PATIENT_REGISTRY.forEach((c) => {
+    // Kept for the historical DSA registry; the synthetic 2026 duplicate of
+    // this block was removed to stop double-counting the same patients.
+
+
+    // The former synthetic 2026 discharge set was removed; demographics now
+    // come from the authentic master registry only, so these totals count
+    // real patients rather than placeholder records.
+    AUTHENTIC_SMS_MASTER_CASES.forEach((c) => {
       if (c.gender === "Female") femaleCount++;
       else maleCount++;
       const a = c.age || 40;
-      if (a <= 20) ageGroups["Pediatric & Young (<20Y)"]++;
-      else if (a <= 40) ageGroups["Adult (21-40Y)"]++;
-      else if (a <= 60) ageGroups["Middle Age (41-60Y)"]++;
-      else ageGroups["Elderly (>60Y)"]++;
-    });
-
-    REAL_2026_CLINICAL_CASES.forEach((c) => {
-      if (c.gender === "Female") femaleCount++;
-      else maleCount++;
-      const a = parseInt(c.age) || 40;
       if (a <= 20) ageGroups["Pediatric & Young (<20Y)"]++;
       else if (a <= 40) ageGroups["Adult (21-40Y)"]++;
       else if (a <= 60) ageGroups["Middle Age (41-60Y)"]++;

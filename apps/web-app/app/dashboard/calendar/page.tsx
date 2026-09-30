@@ -14,8 +14,8 @@ import {
   normalizeSmsCathLabDate,
 } from "../../lib/realData/smsCathLabRealData";
 import {
-  REAL_2026_CLINICAL_CASES,
-} from "../../lib/realData/sms2026Discharges";
+  AUTHENTIC_SMS_MASTER_CASES,
+} from "../../lib/realData/smsMasterAnalysisCases";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -138,24 +138,29 @@ export default function OtScheduleCalendarPage() {
       }
     });
 
-    // Also map authentic 2026 clinical discharge cases directly extracted from PDFs
-    REAL_2026_CLINICAL_CASES.forEach((rc, idx) => {
-      const yyyyMmDd = rc.procedureIsoDate;
-      if (yyyyMmDd) {
+    // 2026 authentic master-registry cases. The former synthetic
+    // REAL_2026_CLINICAL_CASES feed was removed with sms2026Discharges.ts;
+    // these rows are real patients from the DSA registry instead.
+    AUTHENTIC_SMS_MASTER_CASES.forEach((rc, idx) => {
+      const normDate = normalizeSmsCathLabDate(rc.date);
+      const yyyyMmDd = normDate
+        ? `${normDate.split(".")[2]}-${normDate.split(".")[1]}-${normDate.split(".")[0]}`
+        : "";
+      if (yyyyMmDd && yyyyMmDd.startsWith("2026")) {
         const record: BookedCaseRecord = {
-          id: rc.id || `DISCH-2026-${idx}`,
+          id: `AUTH-2026-${rc.dsaNo || idx}`,
           patientName: rc.patientName,
-          age: parseInt(rc.age) || 45,
+          age: typeof rc.age === "number" ? rc.age : parseInt(String(rc.age)) || 0,
           sex: rc.gender === "Female" ? "Female" : "Male",
-          contactNumber: "9829000000",
-          ssoNumber: rc.crNo || `SMS-2026-${idx}`,
-          location: rc.ward || "Old Gastro IR Ward",
+          contactNumber: "",
+          ssoNumber: rc.crNumber || `SMS-DSA-${rc.dsaNo || idx}`,
+          location: rc.unit || "Old Gastro IR Ward",
           scheduledDate: yyyyMmDd,
           organSystem: "Cath-Lab Interventional Radiology",
           diseaseKey: "vascular",
           procedureTitle: rc.procedureName,
           urgency: "Elective",
-          bookedBy: rc.operatingFaculty || "Dr. Naresh Mangalhara (Associate Professor)",
+          bookedBy: "SMS IR Cath-Lab",
           bookedAt: `${yyyyMmDd}T09:00:00.000Z`,
           orderedLabs: [],
           specialInvestigations: [],

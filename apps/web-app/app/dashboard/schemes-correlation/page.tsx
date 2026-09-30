@@ -247,8 +247,8 @@ export default function SchemesCorrelationPage() {
         </div>
 
         {/* Scheme Selector Bar (Tabs) */}
-        <div className="mt-3.5 pt-3 border-t border-[#F2F2F7] flex items-center justify-between gap-3 overflow-x-auto pb-0.5">
-          <div className="flex items-center gap-2">
+        <div className="mt-3.5 pt-3 border-t border-[#F2F2F7] flex flex-wrap items-center justify-between gap-3 pb-0.5">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#8E8E93] shrink-0 mr-1">
               Select Yojana:
             </span>

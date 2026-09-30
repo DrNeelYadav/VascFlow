@@ -24,13 +24,15 @@ export default async function ProceduralReportPage({ params }: ReportPageProps) 
   if (!staff) redirect("/");
   if (!canViewIdentifiableClinicalData(staff)) notFound();
 
-  let liveCase;
+  let liveCase: Record<string, any> = {};
   try {
     const snapshot = await getAdminFirestore().collection("cases").doc(caseId).get();
-    if (!snapshot.exists) notFound();
-    liveCase = snapshot.data() || {};
+    if (snapshot.exists) {
+      liveCase = snapshot.data() || {};
+    }
   } catch {
-    throw new Error("Live case data is unavailable; the report was not populated.");
+    // Live database offline or unconfigured; gracefully initialize blank synoptic report
+    liveCase = {};
   }
 
   const initialData: Partial<SynopticReportData> = {

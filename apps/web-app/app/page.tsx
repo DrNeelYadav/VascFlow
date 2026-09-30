@@ -79,21 +79,43 @@ export default function LandingPage() {
         throw new Error("This staff account is not configured for institutional sign-in.");
       }
 
-      const result = await signIn("credentials", {
-        institutionalEmail: email,
-        securityPin: password,
-        roleCode: targetAccount?.code || staffCode.trim().toUpperCase(),
-        redirect: false,
-      });
+      const targetDestination = targetAccount?.role === "ADMIN" ? "/admin" : "/dashboard";
+      const fullCallbackUrl = typeof window !== "undefined" ? `${window.location.origin}${targetDestination}` : targetDestination;
+
+      let result: any = null;
+      try {
+        result = await signIn("credentials", {
+          institutionalEmail: email,
+          securityPin: password,
+          roleCode: targetAccount?.code || staffCode.trim().toUpperCase(),
+          callbackUrl: fullCallbackUrl,
+          redirectTo: fullCallbackUrl,
+          redirect: false,
+        });
+      } catch (signInErr: any) {
+        // NextAuth v5 beta client quirk: line 298 executes `new URL(data.url)` without base origin.
+        // If data.url is relative, browser throws TypeError: "Failed to construct 'URL': Invalid URL".
+        if (signInErr instanceof TypeError && signInErr.message.includes("URL")) {
+          const sessionRes = await fetch("/api/auth/session").catch(() => null);
+          const sessionData = sessionRes ? await sessionRes.json().catch(() => null) : null;
+          if (sessionData && sessionData.user) {
+            result = { ok: true, error: null };
+          } else {
+            throw new Error("Invalid institutional PIN / password. Please check your credentials.");
+          }
+        } else {
+          throw signInErr;
+        }
+      }
 
       if (!result || result.error) {
-        throw new Error("Sign-in failed. Check your credentials or contact the system administrator.");
+        throw new Error("Invalid institutional PIN / password. Please check your credentials.");
       }
 
       if (targetAccount) {
         persistStaffSession(targetAccount, { rememberMe });
       }
-      router.replace(targetAccount?.role === "ADMIN" ? "/admin" : "/dashboard");
+      router.replace(targetDestination);
     } catch (error) {
       setErrorMsg(error instanceof Error ? error.message : "Institutional sign-in is unavailable.");
       setIsSubmitting(false);

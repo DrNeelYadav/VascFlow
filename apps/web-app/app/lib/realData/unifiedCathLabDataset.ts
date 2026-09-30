@@ -1,12 +1,11 @@
 /**
  * Unified Cath-Lab Dataset Adapter & Normalizer
  * Ingests 100% authentic SMS Hospital clinical records:
- * 1. REAL_2026_CLINICAL_CASES (from apps/web-app/app/lib/realData/sms2026Discharges.ts)
- * 2. REAL_SMS_PATIENT_REGISTRY (from apps/web-app/app/lib/realData/smsCathLabRealData.ts)
- * Zero synthetic AI slop - strictly authentic records.
+ * 1. AUTHENTIC_SMS_MASTER_CASES (997 real DSA cases, IR 1-997)
+ * The former synthetic 2026 discharge feed was deleted; this dataset is now
+ * sourced exclusively from authentic registry records.
  */
 
-import { REAL_2026_CLINICAL_CASES, Real2026Case } from "./sms2026Discharges";
 import {
   REAL_SMS_PATIENT_REGISTRY,
   RealSmsPatientCase,
@@ -189,40 +188,6 @@ export function parseAgeString(ageStr: string | number | undefined): number {
     return isNaN(val) || val <= 0 ? 45 : val;
   }
   return 45;
-}
-
-/**
- * Normalizes 2026 cases into UnifiedCathCase format
- */
-function normalize2026Case(c: Real2026Case, index: number): UnifiedCathCase {
-  const age = parseAgeString(c.age);
-  const dateIso = c.procedureIsoDate || (c.procedureDate.length === 10 ? c.procedureDate.split("-").reverse().join("-") : "2026-01-01");
-  const dObj = new Date(dateIso);
-  const validDate = isNaN(dObj.getTime()) ? new Date(2026, 0, 1) : dObj;
-  const month = validDate.getMonth() + 1;
-  const year = validDate.getFullYear();
-
-  return {
-    id: c.id || `SMS2026-${index + 1}`,
-    source: "2026_DISCHARGES",
-    year: year || 2026,
-    month,
-    monthLabel: MONTH_NAMES[month - 1] || "Jan",
-    dateDisplay: c.procedureDate || `${validDate.getDate().toString().padStart(2, "0")}-${(validDate.getMonth() + 1).toString().padStart(2, "0")}-${validDate.getFullYear()}`,
-    dateIso: isNaN(dObj.getTime()) ? "2026-01-01" : dateIso,
-    patientName: c.patientName,
-    age,
-    ageCohort: getAgeCohort(age),
-    gender: c.gender === "Female" ? "Female" : "Male",
-    crNo: c.crNo,
-    admissionNo: c.admissionNo,
-    procedureName: c.procedureName,
-    procedureCategory: categorizeProcedure(c.procedureName, c.diagnosis),
-    diagnosis: c.diagnosis,
-    schemeType: "MMSY/RGHS/Free",
-    unitOrWard: c.ward || "Old Gastro IR Ward",
-    operatingFaculty: c.operatingFaculty,
-  };
 }
 
 /**

@@ -355,6 +355,13 @@ def scan_documents(
                     continue
                 full = Path(dirpath) / fname
                 key, tokens = tokenize(str(full))
+                # Discharge cards sit in patient-named folders, so the folder
+                # is a second name source. Month/date folders contribute
+                # nothing and are skipped by the generic-token filter.
+                parent = Path(dirpath).name
+                if parent and not DATE_RE.search(parent):
+                    _, parent_tokens = tokenize(parent)
+                    tokens |= parent_tokens
                 # Many filenames carry the procedure date, which disambiguates
                 # patients who share a name across years.
                 doc_date, _ = parse_date(extract_date_token(str(full)))

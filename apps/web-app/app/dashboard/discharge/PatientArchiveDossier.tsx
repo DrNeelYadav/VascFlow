@@ -2,9 +2,9 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import {
-  SMS_PATIENT_ARCHIVE_DATASET,
+  SMS_PATIENT_ARCHIVE_REAL,
   ArchivedPatientRecord,
-} from "../../lib/realData/smsPatientArchiveDataset";
+} from "../../lib/realData/smsPatientArchiveReal";
 import {
   Search,
   Filter,
@@ -71,7 +71,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
 
   // Selection & Presentation State
   const [selectedPatientId, setSelectedPatientId] = useState<string>(
-    SMS_PATIENT_ARCHIVE_DATASET[0]?.irNumber || "IR-SYN-001"
+    SMS_PATIENT_ARCHIVE_REAL[0]?.irNumber || ""
   );
   const [activeDocMode, setActiveDocMode] = useState<"DISCHARGE" | "OPERATIVE_NOTE">("DISCHARGE");
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
@@ -87,7 +87,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
       }
       if (irParam) {
         const dsaNum = parseInt(irParam.replace(/\D/g, ""), 10);
-        const match = SMS_PATIENT_ARCHIVE_DATASET.find(
+        const match = SMS_PATIENT_ARCHIVE_REAL.find(
           (p) =>
             p.dsaNo === String(dsaNum) ||
             p.irNumber.toLowerCase() === irParam.toLowerCase() ||
@@ -103,7 +103,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
 
   // Filtered Archive List
   const filteredPatients = useMemo(() => {
-    return SMS_PATIENT_ARCHIVE_DATASET.filter((p) => {
+    return SMS_PATIENT_ARCHIVE_REAL.filter((p) => {
       if (selectedYear !== "ALL" && String(p.year) !== selectedYear) return false;
       if (selectedMonth !== "ALL" && p.month.toLowerCase() !== selectedMonth.toLowerCase()) return false;
       if (selectedGender !== "ALL" && p.gender !== selectedGender) return false;
@@ -139,7 +139,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
     return (
       filteredPatients.find((p) => p.irNumber === selectedPatientId) ||
       filteredPatients[0] ||
-      SMS_PATIENT_ARCHIVE_DATASET[0]
+      SMS_PATIENT_ARCHIVE_REAL[0]
     );
   }, [filteredPatients, selectedPatientId]);
 
@@ -168,14 +168,14 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
               Department of Interventional Radiology
             </span>
             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              {SMS_PATIENT_ARCHIVE_DATASET.length} De-identified Reference Records
+              {SMS_PATIENT_ARCHIVE_REAL.length} Verified Patient Records
             </span>
           </div>
           <h2 className="text-lg font-bold text-[#202124] mt-1">
-            Patient Dossier &amp; De-identified Reference Archive
+            Patient Dossier &amp; Verified Records Archive
           </h2>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Search de-identified patient discharge cards &amp; post-operative notes by Year, Month, Name, Gender, Procedure, or IR Number.
+            Search authentic patient discharge cards &amp; post-operative notes by Year, Month, Name, Procedure, or IR Number. Only patients with a real document on file are listed.
           </p>
         </div>
 
@@ -333,7 +333,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
 
                     <div className="flex items-center justify-between gap-1 text-[10px]">
                       <span className="font-mono text-[#5F6368]">
-                        {p.age}y • {p.gender === "Female" ? "F" : "M"} • CR: {p.crNo}
+                        {p.age}y • {p.gender === "Unknown" ? "Sex n/r" : p.gender === "Female" ? "F" : "M"} • CR: {p.crNo}
                       </span>
 
                       {/* File availability badges */}
@@ -395,7 +395,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
                   {currentPatient.patientName}
                 </h3>
                 <p className="text-xs text-[#5F6368] font-mono">
-                  Age: {currentPatient.age} Y • Gender: {currentPatient.gender} • CR No: {currentPatient.crNo}
+                  Age: {currentPatient.age} Y • Gender: {currentPatient.gender === "Unknown" ? "not recorded" : currentPatient.gender} • CR No: {currentPatient.crNo}
                   {currentPatient.admissionNo ? ` • Admission: ${currentPatient.admissionNo}` : ""}
                 </p>
               </div>
@@ -440,7 +440,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
                 <span className="text-[10px] text-[#5F6368] block">Reference Archive Path:</span>
                 <span className="font-mono text-[11px] text-[#202124] font-medium break-all flex items-center gap-1">
                   <FolderOpen className="w-3 h-3 text-amber-600 shrink-0" />
-                  {currentPatient.folderPath || `DSA Archive / Year ${currentPatient.year} / ${currentPatient.month}`}
+                  {currentPatient.folderPath || `SMS IR Archive / IR ${currentPatient.dsaNo} / ${currentPatient.procedureDate || "date not recorded"}`}
                 </span>
               </div>
               <div>
@@ -460,44 +460,31 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
             </div>
           </div>
 
-          {/* DOCUMENT PRESENTATION 1: Official IHMS e-Hospital Discharge Summary */}
+          {/* DOCUMENT PRESENTATION 1: Discharge card -- real on-disk documents */}
           {activeDocMode === "DISCHARGE" && (
             <div className="bg-white border border-[#DADCE0] rounded-2xl shadow-xs overflow-hidden">
               <div className="p-3 bg-[#F8F9FA] border-b border-[#DADCE0] flex items-center justify-between text-xs print:hidden">
                 <span className="font-bold text-[#202124] flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5 text-[#1A73E8]" />
-                  IHMS e-Hospital Discharge Summary (Official Rajasthan Hospital Format)
+                  Discharge Card / Bed Head Ticket
                 </span>
                 <button
                   onClick={() => {
-                    if (currentPatient.dischargeData) {
-                      const text = `DISCHARGE SUMMARY - SMS HOSPITAL JAIPUR
-Patient: ${currentPatient.patientName} | Age/Sex: ${currentPatient.age}Y/${currentPatient.gender} | CR: ${currentPatient.crNo}
-IR Number: #${currentPatient.dsaNo} | Ward: ${currentPatient.unitOrWard} | Date: ${currentPatient.procedureDate}
+                    const refs = currentPatient.dischargeDocuments;
+                    const text = `DISCHARGE CARD - SMS HOSPITAL JAIPUR
+Patient: ${currentPatient.patientName} | Age: ${currentPatient.age} | CR: ${currentPatient.crNo}
+IR Number: #${currentPatient.dsaNo} | Date: ${currentPatient.procedureDate}
 Diagnosis: ${currentPatient.diagnosis}
 Procedure: ${currentPatient.procedureName}
 
-CASE SUMMARY:
-${currentPatient.dischargeData.caseHistory}
-
-OPERATIVE SUMMARY:
-${currentPatient.dischargeData.operativeSummary}
-
-MEDICATIONS:
-${currentPatient.dischargeData.medications.map((m) => `${m.sNo}. ${m.medicine} ${m.dosePower} (${m.frequency}) x ${m.days} days`).join("\n")}
-
-DISCHARGE ADVICE:
-${currentPatient.dischargeData.dischargeAdvice}
-
-FOLLOW-UP:
-${currentPatient.dischargeData.followUp}`;
-                      handleCopy(text, "Discharge Summary");
-                    }
+ON-FILE DOCUMENTS (${refs.length}):
+${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.chars} chars, matched by ${d.linkReason}`).join("\n")}`;
+                    handleCopy(text, "Discharge Card Index");
                   }}
                   className="px-2.5 py-1 rounded bg-white border border-[#DADCE0] hover:border-[#1A73E8] text-[11px] font-semibold text-[#1A73E8] flex items-center gap-1 cursor-pointer"
                 >
                   <Copy className="w-3 h-3" />
-                  <span>Copy Discharge</span>
+                  <span>Copy Index</span>
                 </button>
               </div>
 
@@ -505,226 +492,113 @@ ${currentPatient.dischargeData.followUp}`;
                 <div className="p-8 text-center space-y-2">
                   <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
                   <h4 className="text-sm font-bold text-slate-800">
-                    Discharge Card Not Present in Record
+                    No Discharge Card On File
                   </h4>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    This reference case does not contain an associated Bed Head Ticket / Discharge Summary.
+                    No discharge document for this IR number was found in the
+                    SMS Jaipur IR archive. This is a genuine gap in the record,
+                    not a missing extract.
                   </p>
                 </div>
-              ) : currentPatient.dischargeData ? (
-                /* De-identified Clinical A4 Presentation Canvas */
+              ) : (
                 <div className="p-6 sm:p-8 space-y-5 text-[#202124] text-xs">
-                  {/* Hospital & State Header */}
                   <div className="text-center border-b-2 border-slate-900 pb-3 space-y-1">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                      GOVERNMENT OF RAJASTHAN • MEDICAL HEALTH &amp; FAMILY WELFARE
+                      SMS Medical College &amp; S.M.S. Hospital, Jaipur
                     </p>
-                    <h3 className="text-base font-extrabold tracking-tight text-slate-900">
-                      SMS MEDICAL COLLEGE &amp; ATTACHED HOSPITALS, JAIPUR
+                    <h3 className="text-base font-bold uppercase tracking-wide">
+                      Interventional Radiology
                     </h3>
-                    <p className="text-xs font-semibold text-[#1A73E8]">
-                      DEPARTMENT OF INTERVENTIONAL RADIOLOGY (DSA ANGIOSUITE)
-                    </p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">
-                      IHMS E-HOSPITAL CLINICAL DISCHARGE SUMMARY &bull; IR #{currentPatient.dsaNo}
+                    <p className="text-[10px] text-slate-600">
+                      Discharge record indexed by IR number
                     </p>
                   </div>
 
-                  {/* Demographics Table */}
-                  <div className="border border-[#DADCE0] rounded-lg overflow-hidden">
-                    <div className="bg-[#F8F9FA] px-3 py-1.5 font-bold text-[11px] border-b border-[#DADCE0] text-slate-700">
-                      PATIENT DEMOGRAPHIC &amp; ADMISSION RECORD
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 text-xs">
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">Patient Name:</span>
-                        <span className="font-bold text-[#202124]">{currentPatient.patientName}</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {[
+                      ["IR Number", `#${currentPatient.dsaNo}`],
+                      ["Patient", currentPatient.patientName || "Not recorded"],
+                      ["Age", currentPatient.age || "Not recorded"],
+                      ["CR Number", currentPatient.crNo || "Not recorded"],
+                      ["Procedure Date", currentPatient.procedureDate || "Not recorded"],
+                      ["Unit / Ward", currentPatient.unitOrWard || "Not recorded"],
+                    ].map(([label, value]) => (
+                      <div key={label}>
+                        <span className="text-[10px] text-[#5F6368] block uppercase">{label}</span>
+                        <span className="font-medium text-[#202124]">{value}</span>
                       </div>
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">Age / Gender:</span>
-                        <span className="font-mono">{currentPatient.age} Y / {currentPatient.gender}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">CR Number:</span>
-                        <span className="font-mono font-bold text-[#1A73E8]">{currentPatient.crNo}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">Admission Ward / Bed:</span>
-                        <span>{currentPatient.unitOrWard}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">Date of Admission:</span>
-                        <span className="font-mono">{currentPatient.dischargeData.admissionDate}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">Date of Discharge:</span>
-                        <span className="font-mono">{currentPatient.dischargeData.dischargeDate}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">Govt Scheme:</span>
-                        <span className="font-semibold text-emerald-800">{currentPatient.scheme}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#5F6368] block">IR Identifier:</span>
-                        <span className="font-mono font-bold text-[#202124]">#{currentPatient.dsaNo}</span>
-                      </div>
-                    </div>
+                    ))}
                   </div>
 
-                  {/* Diagnosis & Complaints */}
-                  <div className="border border-[#DADCE0] rounded-lg p-3.5 space-y-2">
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-[#5F6368] block">Primary Diagnosis:</span>
-                      <p className="font-bold text-slate-900 text-sm">{currentPatient.diagnosis}</p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-[#5F6368] block">Chief Complaints:</span>
-                      <p className="text-slate-700 leading-relaxed">{currentPatient.dischargeData.chiefComplaints}</p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-[#5F6368] block">Case Summary &amp; History:</span>
-                      <p className="text-slate-700 leading-relaxed">{currentPatient.dischargeData.caseHistory}</p>
-                    </div>
+                  <div>
+                    <span className="text-[10px] text-[#5F6368] block uppercase">Diagnosis</span>
+                    <p className="text-slate-700 leading-relaxed">
+                      {currentPatient.diagnosis || "Not recorded in the registry."}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[#5F6368] block uppercase">Procedure</span>
+                    <p className="font-semibold text-[#202124]">
+                      {currentPatient.procedureName || "Not recorded in the registry."}
+                    </p>
                   </div>
 
-                  {/* Physical Examination Table */}
-                  <div className="border border-[#DADCE0] rounded-lg overflow-hidden">
-                    <div className="bg-[#F8F9FA] px-3 py-1.5 font-bold text-[11px] border-b border-[#DADCE0] text-slate-700">
-                      PHYSICAL EXAMINATION AT DISCHARGE
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-3 text-center text-xs">
-                      <div className="bg-slate-50 p-2 rounded border border-slate-200">
-                        <span className="text-[10px] text-[#5F6368] block">Blood Pressure</span>
-                        <span className="font-mono font-bold text-slate-900">{currentPatient.dischargeData.physicalExam.bloodPressure}</span>
+                  <div className="border-t border-[#DADCE0] pt-4 space-y-2">
+                    <span className="text-[10px] text-[#5F6368] block uppercase">
+                      Source documents ({currentPatient.dischargeDocuments.length})
+                    </span>
+                    {currentPatient.dischargeDocuments.map((d, i) => (
+                      <div
+                        key={d.path}
+                        className="flex items-start gap-2 p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-[#1A73E8] mt-0.5 shrink-0" />
+                        <div className="min-w-0">
+                          <p className="font-mono text-[11px] text-[#202124] break-all">
+                            {d.path}
+                          </p>
+                          <p className="text-[10px] text-[#5F6368] mt-0.5">
+                            Extracted via {d.method} &middot; {d.chars.toLocaleString()} characters
+                            &middot; matched by {d.linkReason.replace(/_/g, " ")}
+                          </p>
+                        </div>
                       </div>
-                      <div className="bg-slate-50 p-2 rounded border border-slate-200">
-                        <span className="text-[10px] text-[#5F6368] block">Pulse Rate</span>
-                        <span className="font-mono font-bold text-slate-900">{currentPatient.dischargeData.physicalExam.pulse}</span>
-                      </div>
-                      <div className="bg-slate-50 p-2 rounded border border-slate-200">
-                        <span className="text-[10px] text-[#5F6368] block">Temperature</span>
-                        <span className="font-mono font-bold text-slate-900">{currentPatient.dischargeData.physicalExam.temperature}</span>
-                      </div>
-                      <div className="bg-slate-50 p-2 rounded border border-slate-200">
-                        <span className="text-[10px] text-[#5F6368] block">Resp Rate</span>
-                        <span className="font-mono font-bold text-slate-900">{currentPatient.dischargeData.physicalExam.respiratoryRate}</span>
-                      </div>
-                      <div className="bg-slate-50 p-2 rounded border border-slate-200">
-                        <span className="text-[10px] text-[#5F6368] block">SpO2 (Room Air)</span>
-                        <span className="font-mono font-bold text-emerald-700">{currentPatient.dischargeData.physicalExam.spo2}</span>
-                      </div>
-                    </div>
-                    <div className="p-3 pt-0 text-[11px] text-slate-600 space-y-1">
-                      <p><strong>Systemic Exam:</strong> {currentPatient.dischargeData.physicalExam.systemicExam}</p>
-                      <p><strong>Local Puncture Site:</strong> {currentPatient.dischargeData.physicalExam.localExam}</p>
-                    </div>
-                  </div>
-
-                  {/* Operative Summary */}
-                  <div className="border border-[#DADCE0] rounded-lg p-3.5 space-y-1.5 bg-[#F8F9FA]">
-                    <span className="text-[10px] uppercase font-bold text-[#1A73E8] block">Interventional Procedure Executed:</span>
-                    <p className="font-bold text-slate-900">{currentPatient.procedureName}</p>
-                    <p className="text-slate-700 leading-relaxed text-[11px]">{currentPatient.dischargeData.operativeSummary}</p>
-                  </div>
-
-                  {/* Discharge Medications Table */}
-                  <div className="border border-[#DADCE0] rounded-lg overflow-hidden">
-                    <div className="bg-[#F8F9FA] px-3 py-1.5 font-bold text-[11px] border-b border-[#DADCE0] text-slate-700 flex items-center justify-between">
-                      <span>DISCHARGE MEDICATIONS (RMSCL EDL COMPLIANT)</span>
-                      <span className="text-[10px] font-normal text-slate-500">Mukhya Mantri Nishulk Dawa Yojana</span>
-                    </div>
-                    <table className="w-full text-left text-xs border-collapse">
-                      <thead className="bg-slate-100 text-slate-600 text-[10px] font-bold border-b border-slate-200">
-                        <tr>
-                          <th className="p-2 w-10 text-center">S.No</th>
-                          <th className="p-2">Medicine Name</th>
-                          <th className="p-2">Dose / Strength</th>
-                          <th className="p-2">Frequency</th>
-                          <th className="p-2 text-center">Duration</th>
-                          <th className="p-2">Instructions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200">
-                        {currentPatient.dischargeData.medications.map((m) => (
-                          <tr key={m.sNo} className="hover:bg-slate-50">
-                            <td className="p-2 text-center font-mono">{m.sNo}</td>
-                            <td className="p-2 font-semibold text-slate-900">{m.medicine}</td>
-                            <td className="p-2 font-mono">{m.dosePower}</td>
-                            <td className="p-2 font-bold text-blue-700">{m.frequency}</td>
-                            <td className="p-2 text-center font-mono">{m.days} days</td>
-                            <td className="p-2 text-slate-600">{m.instructions}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* Advice & Follow-Up */}
-                  <div className="border border-[#DADCE0] rounded-lg p-3.5 space-y-2">
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-[#5F6368] block">General Instructions &amp; Wound Care:</span>
-                      <p className="text-slate-700 whitespace-pre-line leading-relaxed text-[11px]">{currentPatient.dischargeData.dischargeAdvice}</p>
-                    </div>
-                    <div className="pt-2 border-t border-slate-200">
-                      <span className="text-[10px] uppercase font-bold text-[#1A73E8] block">Follow-Up Schedule:</span>
-                      <p className="font-semibold text-slate-900 text-xs">{currentPatient.dischargeData.followUp}</p>
-                    </div>
-                  </div>
-
-                  {/* Signatures */}
-                  <div className="pt-6 grid grid-cols-2 gap-8 text-center text-xs">
-                    <div>
-                      <div className="border-t border-slate-400 pt-1 font-semibold text-slate-800">
-                        Dr. Neel Yadav / Nilesh
-                      </div>
-                      <div className="text-[10px] text-slate-500">DM Resident / Senior Registrar</div>
-                      <div className="text-[10px] text-slate-400">Dept of Interventional Radiology</div>
-                    </div>
-                    <div>
-                      <div className="border-t border-slate-400 pt-1 font-semibold text-slate-800">
-                        Dr. Meenu Bagarhatta / Dr. Naresh Mangalhara
-                      </div>
-                      <div className="text-[10px] text-slate-500">Senior Professor &amp; Head / Associate Professor</div>
-                      <div className="text-[10px] text-slate-400">Department of Interventional Radiology, SMS Jaipur</div>
-                    </div>
+                    ))}
+                    <p className="text-[10px] text-[#5F6368] italic pt-1">
+                      Vital signs, medication lists and narrative fields are not shown because
+                      they are not reliably machine-readable across this scanned corpus. The
+                      authoritative content is in the source document listed above.
+                    </p>
                   </div>
                 </div>
-              ) : null}
+              )}
             </div>
           )}
 
-          {/* DOCUMENT PRESENTATION 2: Official Interventional Radiology Operative Procedure Note */}
+          {/* DOCUMENT PRESENTATION 2: Post-operative note -- real on-disk documents */}
           {activeDocMode === "OPERATIVE_NOTE" && (
             <div className="bg-white border border-[#DADCE0] rounded-2xl shadow-xs overflow-hidden">
               <div className="p-3 bg-[#F8F9FA] border-b border-[#DADCE0] flex items-center justify-between text-xs print:hidden">
                 <span className="font-bold text-[#202124] flex items-center gap-1.5">
                   <Activity className="w-3.5 h-3.5 text-[#1A73E8]" />
-                  Department of Interventional Radiology Operative Procedure Note
+                  Post-Operative / Operative Procedure Note
                 </span>
                 <button
                   onClick={() => {
-                    if (currentPatient.operativeNoteData) {
-                      const op = currentPatient.operativeNoteData;
-                      const text = `INTERVENTIONAL RADIOLOGY OPERATIVE REPORT
-SMS MEDICAL COLLEGE & HOSPITALS, JAIPUR
-Patient: ${currentPatient.patientName} | Age/Sex: ${currentPatient.age}Y/${currentPatient.gender} | CR: ${currentPatient.crNo}
+                    const refs = currentPatient.operativeDocuments;
+                    const text = `OPERATIVE NOTE INDEX - SMS HOSPITAL JAIPUR
+Patient: ${currentPatient.patientName} | Age: ${currentPatient.age} | CR: ${currentPatient.crNo}
 IR Number: #${currentPatient.dsaNo} | Date: ${currentPatient.procedureDate}
 Procedure: ${currentPatient.procedureName}
-Indication: ${op.indication}
-Operators: ${op.operators}
-Access Site: ${op.accessSite} | Sheath: ${op.sheath}
-Diagnostic Catheter: ${op.diagnosticCath} | Microcatheter: ${op.microCath} | Microwire: ${op.microWire}
-Embolic Agents: ${op.embolicAgent}
-Contrast Volume: ${op.contrastMl} mL | Heparin: ${op.heparinUnits}
-Findings & Technique: ${op.findings}
-Conclusion: ${op.technicalSuccess}`;
-                      handleCopy(text, "Operative Note");
-                    }
+
+ON-FILE DOCUMENTS (${refs.length}):
+${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.chars} chars, matched by ${d.linkReason}`).join("\n")}`;
+                    handleCopy(text, "Operative Note Index");
                   }}
                   className="px-2.5 py-1 rounded bg-white border border-[#DADCE0] hover:border-[#1A73E8] text-[11px] font-semibold text-[#1A73E8] flex items-center gap-1 cursor-pointer"
                 >
                   <Copy className="w-3 h-3" />
-                  <span>Copy Operative Note</span>
+                  <span>Copy Index</span>
                 </button>
               </div>
 
@@ -732,167 +606,88 @@ Conclusion: ${op.technicalSuccess}`;
                 <div className="p-8 text-center space-y-2">
                   <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
                   <h4 className="text-sm font-bold text-slate-800">
-                    Post-Operative Note Not Present in Record
+                    No Post-Operative Note On File
                   </h4>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    This reference case does not contain an associated Operative Procedure Note.
+                    No operative or post-operative document for this IR number was
+                    found in the SMS Jaipur IR archive. Only a minority of the
+                    1058 IR numbers have a digital post-op note; the rest are
+                    paper-only.
                   </p>
                 </div>
-              ) : currentPatient.operativeNoteData ? (
-                /* De-identified Operative Report Canvas */
+              ) : (
                 <div className="p-6 sm:p-8 space-y-5 text-[#202124] text-xs">
-                  {/* Department Operative Header */}
                   <div className="text-center border-b-2 border-slate-900 pb-3 space-y-1">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                      DEPARTMENT OF INTERVENTIONAL RADIOLOGY
+                      Department of Interventional Radiology
                     </p>
-                    <h3 className="text-base font-extrabold tracking-tight text-slate-900">
-                      SMS MEDICAL COLLEGE &amp; HOSPITALS, JAIPUR
+                    <h3 className="text-base font-bold uppercase tracking-wide">
+                      Operative Procedure Record
                     </h3>
-                    <p className="text-xs font-semibold text-[#1A73E8]">
-                      CATH-LAB &amp; ANGIOSUITE OPERATIVE PROCEDURE REPORT
-                    </p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">
-                      DSA CASE #{currentPatient.dsaNo} &bull; DATE: {currentPatient.procedureDate}
+                    <p className="text-[10px] text-slate-600">
+                      Indexed by IR number
                     </p>
                   </div>
 
-                  {/* Patient & Procedure Summary Strip */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                    <div>
-                      <span className="text-[10px] text-slate-500 block">Patient Name:</span>
-                      <span className="font-bold text-slate-900">{currentPatient.patientName}</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-500 block">CR / Registration:</span>
-                      <span className="font-mono font-bold text-blue-700">{currentPatient.crNo}</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-500 block">Age / Sex:</span>
-                      <span className="font-mono">{currentPatient.age} Y / {currentPatient.gender}</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-500 block">Procedure Date:</span>
-                      <span className="font-mono font-bold">{currentPatient.procedureDate}</span>
-                    </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {[
+                      ["IR Number", `#${currentPatient.dsaNo}`],
+                      ["Patient", currentPatient.patientName || "Not recorded"],
+                      ["Age", currentPatient.age || "Not recorded"],
+                      ["CR Number", currentPatient.crNo || "Not recorded"],
+                      ["Procedure Date", currentPatient.procedureDate || "Not recorded"],
+                      ["Category", currentPatient.procedureCategory],
+                    ].map(([label, value]) => (
+                      <div key={label}>
+                        <span className="text-[10px] text-[#5F6368] block uppercase">{label}</span>
+                        <span className="font-medium text-[#202124]">{value}</span>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Procedure Title & Operators */}
-                  <div className="p-3.5 bg-blue-50/60 border border-blue-100 rounded-xl space-y-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Intervention:</span>
-                    <h4 className="text-sm font-extrabold text-blue-950">{currentPatient.procedureName}</h4>
-                    <p className="text-[11px] text-slate-600">
-                      <strong>Clinical Indication:</strong> {currentPatient.operativeNoteData.indication}
+                  <div>
+                    <span className="text-[10px] text-[#5F6368] block uppercase">Procedure</span>
+                    <p className="font-semibold text-[#202124]">
+                      {currentPatient.procedureName || "Not recorded in the registry."}
                     </p>
-                    <p className="text-[11px] text-slate-600">
-                      <strong>Interventionalists:</strong> {currentPatient.operativeNoteData.operators}
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[#5F6368] block uppercase">Diagnosis / Indication</span>
+                    <p className="text-slate-700 leading-relaxed">
+                      {currentPatient.diagnosis || "Not recorded in the registry."}
                     </p>
                   </div>
 
-                  {/* Hardware & Access Hardware Strip */}
-                  <div className="border border-[#DADCE0] rounded-xl overflow-hidden">
-                    <div className="bg-[#F8F9FA] px-3 py-1.5 font-bold text-[11px] border-b border-[#DADCE0] text-slate-700">
-                      VASCULAR ACCESS &amp; INTERVENTIONAL HARDWARE USED
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 text-xs">
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">Primary Access Site:</span>
-                        <span className="font-semibold text-slate-900">{currentPatient.operativeNoteData.accessSite}</span>
+                  <div className="border-t border-[#DADCE0] pt-4 space-y-2">
+                    <span className="text-[10px] text-[#5F6368] block uppercase">
+                      Source documents ({currentPatient.operativeDocuments.length})
+                    </span>
+                    {currentPatient.operativeDocuments.map((d) => (
+                      <div
+                        key={d.path}
+                        className="flex items-start gap-2 p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]"
+                      >
+                        <Activity className="w-3.5 h-3.5 text-[#1A73E8] mt-0.5 shrink-0" />
+                        <div className="min-w-0">
+                          <p className="font-mono text-[11px] text-[#202124] break-all">
+                            {d.path}
+                          </p>
+                          <p className="text-[10px] text-[#5F6368] mt-0.5">
+                            Extracted via {d.method} &middot; {d.chars.toLocaleString()} characters
+                            &middot; matched by {d.linkReason.replace(/_/g, " ")}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">Vascular Sheath:</span>
-                        <span className="font-mono font-semibold text-slate-900">{currentPatient.operativeNoteData.sheath}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">Diagnostic Catheter:</span>
-                        <span className="font-mono text-slate-800">{currentPatient.operativeNoteData.diagnosticCath}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">Microcatheter &amp; Microwire:</span>
-                        <span className="font-mono text-slate-800">
-                          {currentPatient.operativeNoteData.microCath} • {currentPatient.operativeNoteData.microWire}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">Embolic Agent / Implants:</span>
-                        <span className="font-semibold text-indigo-900">{currentPatient.operativeNoteData.embolicAgent}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">Angioplasty Balloon / Stent:</span>
-                        <span className="font-mono text-slate-800">{currentPatient.operativeNoteData.balloon}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Dosimetry & Safety Metrics */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
-                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                      <span className="text-[10px] text-slate-500 block">Contrast Volume</span>
-                      <span className="font-mono font-bold text-blue-700 text-sm">
-                        {currentPatient.operativeNoteData.contrastMl} mL
-                      </span>
-                    </div>
-                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                      <span className="text-[10px] text-slate-500 block">Heparin Dose</span>
-                      <span className="font-mono font-bold text-slate-900 text-sm">
-                        {currentPatient.operativeNoteData.heparinUnits}
-                      </span>
-                    </div>
-                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                      <span className="text-[10px] text-slate-500 block">Technical Endpoint</span>
-                      <span className="font-bold text-emerald-700 text-xs">
-                        {currentPatient.operativeNoteData.technicalSuccess}
-                      </span>
-                    </div>
-                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                      <span className="text-[10px] text-slate-500 block">Complications</span>
-                      <span className="font-bold text-emerald-700 text-xs">
-                        {currentPatient.operativeNoteData.complications}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Narrative Findings & Procedural Technique */}
-                  <div className="border border-[#DADCE0] rounded-xl p-3.5 space-y-2">
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">Operative Technique:</span>
-                      <p className="text-slate-800 leading-relaxed text-[11px]">
-                        {currentPatient.operativeNoteData.techniqueSummary}
-                      </p>
-                    </div>
-                    <div className="pt-2 border-t border-slate-200">
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">Angiographic Findings:</span>
-                      <p className="text-slate-800 leading-relaxed text-[11px]">
-                        {currentPatient.operativeNoteData.findings}
-                      </p>
-                    </div>
-                    <div className="pt-2 border-t border-slate-200">
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">Post-Operative Recovery Instructions:</span>
-                      <p className="text-slate-800 leading-relaxed text-[11px]">
-                        {currentPatient.operativeNoteData.postOpCare}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Operator Signature Block */}
-                  <div className="pt-6 grid grid-cols-2 gap-8 text-center text-xs">
-                    <div>
-                      <div className="border-t border-slate-400 pt-1 font-semibold text-slate-800">
-                        Primary Operator
-                      </div>
-                      <div className="text-[10px] text-slate-500">DM Resident / Senior Registrar</div>
-                      <div className="text-[10px] text-slate-400">Department of Interventional Radiology</div>
-                    </div>
-                    <div>
-                      <div className="border-t border-slate-400 pt-1 font-semibold text-slate-800">
-                        Supervising Interventional Radiologist
-                      </div>
-                      <div className="text-[10px] text-slate-500">Sr. Professor / Associate Professor</div>
-                      <div className="text-[10px] text-slate-400">SMS Medical College &amp; Attached Hospitals, Jaipur</div>
-                    </div>
+                    ))}
+                    <p className="text-[10px] text-[#5F6368] italic pt-1">
+                      Access site, sheath size, embolic agent and contrast volume are not
+                      shown as structured fields because they are not reliably
+                      machine-readable across this corpus. The authoritative content is
+                      in the source document listed above.
+                    </p>
                   </div>
                 </div>
-              ) : null}
+              )}
             </div>
           )}
         </div>

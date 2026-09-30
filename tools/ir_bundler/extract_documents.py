@@ -92,14 +92,53 @@ def ocr_page_array(page, dpi: int = 200):
     return arr[:, :, :3] if arr.shape[2] >= 3 else arr
 
 
+def _enable_cuda():
+    """Put the pip-installed CUDA runtime DLLs on PATH.
+
+    onnxruntime-gpu 1.30 ships a CUDA 13 build that will not initialize against
+    the cudnn/cublas CUDA 12 wheels, and silently falls back to CPU -- which
+    made OCR 20x slower (21.7 s/page vs 1.08 s/page) with only a WARNING line.
+    Pinning onnxruntime-gpu==1.22.0 and preloading these dirs is what actually
+    enables the GPU on this box (GTX 1650, driver 591.86).
+    """
+    import pathlib
+    try:
+        import nvidia
+    except ImportError:
+        return False
+    root = pathlib.Path(nvidia.__file__).parent
+    for pkg in ("cuda_runtime", "cudnn", "cublas", "cufft", "curand", "nvjitlink"):
+        d = root / pkg / "bin"
+        if d.exists():
+            try:
+                os.add_dll_directory(str(d))
+            except Exception:
+                pass
+            os.environ["PATH"] = str(d) + ";" + os.environ.get("PATH", "")
+    import onnxruntime as ort
+    return "CUDAExecutionProvider" in ort.get_available_providers()
+
+
 _OCR = None
+_OCR_CUDA = False
 
 
 def _get_ocr():
-    global _OCR
+    """One RapidOCR instance per worker process, GPU-backed when available."""
+    global _OCR, _OCR_CUDA
     if _OCR is None:
         from rapidocr_onnxruntime import RapidOCR
-        _OCR = RapidOCR()
+        _enable_cuda()
+        _OCR_CUDA = bool(os.environ.get("IRBUNDLER_OCR_CUDA", "1") != "0")
+        try:
+            _OCR = RapidOCR(det_use_cuda=_OCR_CUDA, cls_use_cuda=_OCR_CUDA,
+                            rec_use_cuda=_OCR_CUDA)
+        except Exception:
+            _OCR = RapidOCR()
+        if _OCR_CUDA:
+            import onnxruntime as ort
+            if "CUDAExecutionProvider" not in ort.get_available_providers():
+                _OCR_CUDA = False
     return _OCR
 
 
@@ -387,14 +426,53 @@ def link_records(records: list[dict], registry_rows) -> None:
         rec["link_reason"] = "no_identifier_match"
 
 
+def checkpoint_path(args) -> Path:
+    return Path(args.out) / "extract_checkpoint.json"
+
+
+def load_checkpoint(args) -> list[dict]:
+    p = checkpoint_path(args)
+    if not p.exists():
+        return []
+    try:
+        return json.loads(p.read_text(encoding="utf8")).get("records", [])
+    except Exception:
+        return []
+
+
+def save_checkpoint(path: Path, chunk: list[dict]) -> None:
+    """Append-only merge so a long OCR run survives an interruption."""
+    existing: list[dict] = []
+    if path.exists():
+        try:
+            existing = json.loads(path.read_text(encoding="utf8")).get("records", [])
+        except Exception:
+            existing = []
+    by_rel = {r["rel"]: r for r in existing}
+    for r in chunk:
+        by_rel[r["rel"]] = r
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps({"records": list(by_rel.values())}, indent=1),
+                   encoding="utf8")
+    tmp.replace(path)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Extract identifiers from real IR documents.")
     ap.add_argument("--root", default=str(DEFAULT_ROOT))
     ap.add_argument("--out", default=str(INDEX_DIR))
-    ap.add_argument("--workers", type=int, default=max(2, (os.cpu_count() or 4) - 2))
+    # OCR is GPU-backed, so the pool exists to overlap PDF rasterisation and
+    # model setup rather than to parallelise inference. More workers than this
+    # just contend for 4 GB of VRAM.
+    ap.add_argument("--workers", type=int, default=3)
+    ap.add_argument("--cpu-only", action="store_true",
+                    help="disable CUDA OCR and fall back to CPU")
     ap.add_argument("--limit", type=int, default=0, help="0 = all")
     args = ap.parse_args()
 
+    if args.cpu_only:
+        os.environ["IRBUNDLER_OCR_CUDA"] = "0"
     root = Path(args.root)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -408,19 +486,40 @@ def main() -> int:
         jobs = jobs[: args.limit]
     print(f"documents to process: {len(jobs)}  workers: {args.workers}")
 
-    records: list[dict] = []
+    records: list[dict] = list(load_checkpoint(args))
+    seen = {r["rel"] for r in records}
+    todo = [j for j in jobs if j["rel"] not in seen]
+    print(f"resuming: {len(records)} already done, {len(todo)} remaining")
+
     t0 = time.time()
     done = 0
+    ckpt_path = checkpoint_path(args)
+    chunk: list[dict] = []
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
-        futures = {pool.submit(process_document, j): j for j in jobs}
+        futures = [pool.submit(process_document, j) for j in todo]
         for fut in as_completed(futures):
-            records.append(fut.result())
+            try:
+                rec = fut.result()
+            except Exception as exc:
+                # A worker dying (usually OOM under parallel ONNX OCR) must not
+                # discard the hours of work already finished.
+                print(f"  worker lost ({type(exc).__name__}); continuing", flush=True)
+                pool.shutdown(wait=False, cancel_futures=True)
+                pool = ProcessPoolExecutor(max_workers=max(2, args.workers // 2))
+                futures = []
+                continue
+            records.append(rec)
+            chunk.append(rec)
             done += 1
-            if done % 25 == 0 or done == len(jobs):
+            if len(chunk) >= 50:
+                save_checkpoint(ckpt_path, chunk)
+                chunk = []
+            if done % 25 == 0 or done == len(todo):
                 rate = done / max(time.time() - t0, 1e-6)
-                eta = (len(jobs) - done) / max(rate, 1e-6)
-                print(f"  {done}/{len(jobs)}  {rate*60:.1f}/min  eta {eta/60:.1f} min",
+                eta = (len(todo) - done) / max(rate, 1e-6)
+                print(f"  {done}/{len(todo)}  {rate*60:.1f}/min  eta {eta/60:.1f} min",
                       flush=True)
+    save_checkpoint(ckpt_path, chunk)
 
     link_records(records, registry_rows)
     records.sort(key=lambda r: r["rel"])

@@ -17,6 +17,7 @@ import {
   ChevronDown,
   X,
   FileSpreadsheet,
+  Film,
 } from "lucide-react";
 import { useEndoflowStore } from "../dashboard/useEndoflowStore";
 import { EndoFlowLogo } from "./EndoFlowLogo";
@@ -121,6 +122,12 @@ export function GoogleSidebar({
       name: "Discharge Summaries (IHMS)",
       href: "/dashboard/discharge",
       icon: FileText,
+    },
+    {
+      id: "imaging",
+      name: "Imaging & Cine Viewer",
+      href: "/dashboard/imaging",
+      icon: Film,
     },
     {
       id: "schemes-correlation",

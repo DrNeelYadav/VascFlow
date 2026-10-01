@@ -279,11 +279,17 @@ export function getEffectiveStaffAccounts(): StaffAccount[] {
 }
 
 /**
- * Lookup staff account by code
+ * Lookup staff account by code or email
  */
-export function getStaffAccountByCode(code: string): StaffAccount | null {
+export function getStaffAccountByCode(identifier: string): StaffAccount | null {
+  if (!identifier) return null;
   const accounts = getEffectiveStaffAccounts();
-  const match = accounts.find((a) => a.code.toUpperCase() === code.trim().toUpperCase());
+  const cleaned = identifier.trim().toLowerCase();
+  const match = accounts.find(
+    (a) =>
+      a.code.toLowerCase() === cleaned ||
+      (a.email && a.email.toLowerCase() === cleaned)
+  );
   return match || null;
 }
 

@@ -322,9 +322,14 @@ export async function middleware(request: NextRequest) {
   }
 
   // 0. Edge Rate Limiting Perimeter Defense (Sliding Window RFC 7807)
-  const matchedRule = RATE_LIMIT_RULES.find((rule) =>
-    pathname.startsWith(rule.prefix)
-  );
+  const isAuthRead =
+    pathname === "/api/auth/session" ||
+    pathname === "/api/auth/csrf" ||
+    pathname === "/api/auth/providers";
+
+  const matchedRule = isAuthRead
+    ? undefined
+    : RATE_LIMIT_RULES.find((rule) => pathname.startsWith(rule.prefix));
 
   let rateLimitHeaderInfo: RateLimitResult | null = null;
   if (matchedRule) {

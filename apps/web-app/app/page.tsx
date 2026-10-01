@@ -74,11 +74,13 @@ export default function LandingPage() {
     }
 
     try {
-      const email = targetAccount?.email || (staffCode ? `${staffCode.trim().toLowerCase()}@sms.rajasthan.gov.in` : "");
+      const isEmail = staffCode.includes("@");
+      const email = targetAccount?.email || (isEmail ? staffCode.trim().toLowerCase() : `${staffCode.trim().toLowerCase()}@sms.rajasthan.gov.in`);
       if (!email) {
         throw new Error("This staff account is not configured for institutional sign-in.");
       }
 
+      const roleCodeToSend = targetAccount?.code || (isEmail ? staffCode.split("@")[0].toUpperCase() : staffCode.trim().toUpperCase());
       const targetDestination = targetAccount?.role === "ADMIN" ? "/admin" : "/dashboard";
       const fullCallbackUrl = typeof window !== "undefined" ? `${window.location.origin}${targetDestination}` : targetDestination;
 
@@ -87,7 +89,7 @@ export default function LandingPage() {
         result = await signIn("credentials", {
           institutionalEmail: email,
           securityPin: password,
-          roleCode: targetAccount?.code || staffCode.trim().toUpperCase(),
+          roleCode: roleCodeToSend,
           callbackUrl: fullCallbackUrl,
           redirectTo: fullCallbackUrl,
           redirect: false,
@@ -112,10 +114,16 @@ export default function LandingPage() {
         throw new Error("Invalid institutional PIN / password. Please check your credentials.");
       }
 
-      if (targetAccount) {
-        persistStaffSession(targetAccount, { rememberMe });
+      const resolvedAccount = targetAccount || getStaffAccountByCode(staffCode);
+      if (resolvedAccount) {
+        persistStaffSession(resolvedAccount, { rememberMe });
       }
       router.replace(targetDestination);
+      setTimeout(() => {
+        if (window.location.pathname === "/" || window.location.pathname === "/login") {
+          window.location.href = targetDestination;
+        }
+      }, 500);
     } catch (error) {
       setErrorMsg(error instanceof Error ? error.message : "Institutional sign-in is unavailable.");
       setIsSubmitting(false);

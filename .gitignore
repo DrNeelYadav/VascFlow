@@ -28,12 +28,17 @@ build/
 # Python artifacts
 __pycache__/
 *.py[cod]
+.venv/
+venv/
+ENV/
 
 # Environment Variables & Secrets
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+**/.env
+!/.env
 *.dump
 *.dump.enc
 *.enc
@@ -58,5 +63,6 @@ abstract_assets/
 graphify-out/
 tools/ir_bundler/_index/ocr_cache/
 tools/ir_bundler/_index/extract_checkpoint.json
+tools/ir_bundler/_index/fluoro_*/
 
 

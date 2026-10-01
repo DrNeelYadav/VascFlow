@@ -102,7 +102,15 @@ export interface ProcedureDetailItem {
   dateTime: string;
   operationType: "Minor" | "Major";
   surgicalProcedure: string;
-  anaesthesiaType: "LOCAL" | "CONSCIOUS SEDATION" | "GENERAL" | "REGIONAL";
+  // "NOT RECORDED" is a real state: the DSA registry carries no anaesthesia
+  // field, and defaulting those cases to "LOCAL" asserted a clinical fact
+  // the source never stated.
+  anaesthesiaType:
+    | "LOCAL"
+    | "CONSCIOUS SEDATION"
+    | "GENERAL"
+    | "REGIONAL"
+    | "NOT RECORDED";
   procedureDetail: string;
   processDoneBy: string;
 }

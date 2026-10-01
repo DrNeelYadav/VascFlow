@@ -4430,7 +4430,14 @@ Advice on Discharge: Class II graduated compression stockings. Avoid prolonged s
                 admissionNo: archivedPt.admissionNo || archivedPt.crNo || `CR-${archivedPt.dsaNo}`,
                 patientName: archivedPt.patientName,
                 age: archivedPt.age ? String(archivedPt.age) : prev.admissionDetails.age,
-                gender: archivedPt.gender === "Female" ? "F" : "M",
+                // The registry does not carry sex, so this is often "Unknown".
+                // Mapping it to "M" would assert a sex the source never stated.
+                gender:
+                  archivedPt.gender === "Female"
+                    ? "F"
+                    : archivedPt.gender === "Male"
+                      ? "M"
+                      : "Other",
                 dateOfAdmission: archivedPt.procedureDate || prev.admissionDetails.dateOfAdmission,
                 dateOfDischarge: archivedPt.procedureDate || prev.admissionDetails.dateOfDischarge,
                 patientCategory: archivedPt.scheme || prev.admissionDetails.patientCategory,
@@ -4439,46 +4446,49 @@ Advice on Discharge: Class II graduated compression stockings. Avoid prolonged s
               caseSummary: {
                 ...prev.caseSummary,
                 diagnosis: archivedPt.procedureName,
-                complaints: archivedPt.dischargeData?.chiefComplaints || `Presented for ${archivedPt.procedureName}`,
+                // No fabricated narrative. If the source document has no
+                // complaints/history text we say so rather than inventing a
+                // plausible clinical sentence.
+                complaints:
+                  archivedPt.diagnosis ||
+                  "Not recorded in the source document.",
                 caseHistory:
-                  archivedPt.dischargeData?.caseHistory ||
-                  `Patient evaluated and admitted under Interventional Radiology for ${archivedPt.procedureName} (DSA IR-${archivedPt.dsaNo}).`,
+                  archivedPt.dischargeDocuments.length > 0
+                    ? `Discharge card on file: ${archivedPt.dischargeDocuments
+                        .map((d) => d.path.split("\\").pop())
+                        .join(", ")}`
+                    : "No discharge card on file for this IR number.",
               },
               procedureDetails: [
                 {
                   sNo: 1,
-                  dateTime: archivedPt.procedureDate ? `${archivedPt.procedureDate} 10:00 AM` : "10:00 AM",
+                  dateTime: archivedPt.procedureDate
+                    ? `${archivedPt.procedureDate} (time not recorded)`
+                    : "Date not recorded",
                   operationType: "Major",
-                  surgicalProcedure: archivedPt.procedureName,
-                  anaesthesiaType: "LOCAL",
+                  surgicalProcedure: archivedPt.procedureName || "Not recorded",
+                  anaesthesiaType: "NOT RECORDED",
                   procedureDetail:
-                    archivedPt.dischargeData?.operativeSummary ||
-                    archivedPt.operativeNoteData?.indication ||
-                    `Interventional Radiology procedure: ${archivedPt.procedureName}. Technical success documented.`,
-                  processDoneBy: archivedPt.operativeNoteData?.operators || "Dr. Alok Verma",
+                    archivedPt.operativeDocuments.length > 0
+                      ? `Operative note on file: ${archivedPt.operativeDocuments
+                          .map((d) => d.path.split("\\").pop())
+                          .join(", ")}`
+                      : "No operative note on file for this IR number.",
+                  // Operator is not in the registry or reliably in the notes.
+                  processDoneBy: "Not recorded",
                 },
               ],
-              dischargeMedications: archivedPt.dischargeData?.medications?.length
-                ? archivedPt.dischargeData.medications.map((m, idx) => ({
-                    sNo: idx + 1,
-                    medicine: m.medicine,
-                    genericName: m.medicine,
-                    dosePower: m.dosePower,
-                    route: "ORAL",
-                    frequency: (["BD", "OD", "TID", "QID", "SOS", "HS"].includes(m.frequency)
-                      ? m.frequency
-                      : "BD") as DischargeMedicationItem["frequency"],
-                    days: m.days,
-                    instructions: m.instructions,
-                  }))
-                : prev.dischargeMedications,
+              dischargeMedications: prev.dischargeMedications,
               dischargeDetails: {
                 ...prev.dischargeDetails,
-                approvedBy: "Dr. Alok Verma",
-                assistantProfessor: "Dr. Shashank Sharma",
-                dischargePreparedBy: archivedPt.operativeNoteData?.operators || "Dr. Neel Yadav",
-                generalAdvise: archivedPt.dischargeData?.dischargeAdvice || prev.dischargeDetails.generalAdvise,
-                followUp: archivedPt.dischargeData?.followUp || prev.dischargeDetails.followUp,
+                // These were hardcoded names on every record regardless of who
+                // actually performed the case. Left blank until sourced.
+                approvedBy: "",
+                assistantProfessor: "",
+                dischargePreparedBy: "",
+                generalAdvise:
+                  "Not recorded. See the source discharge document.",
+                followUp: "Not recorded. See the source discharge document.",
               },
             }));
             setActiveTab("editor");

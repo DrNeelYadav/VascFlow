@@ -26,7 +26,6 @@ export function persistStaffSession(
     }
     // Remove legacy client-created auth cookies; they are not valid credentials.
     document.cookie = "vascule_token=; path=/; max-age=0; SameSite=Lax";
-    document.cookie = "authjs.session-token=; path=/; max-age=0; SameSite=Lax";
   } catch {
     // Remembering the user is optional; authentication is not affected.
   }

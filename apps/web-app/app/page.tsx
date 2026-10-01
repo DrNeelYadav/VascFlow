@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   getEffectiveStaffAccounts,
@@ -82,48 +81,34 @@ export default function LandingPage() {
 
       const roleCodeToSend = targetAccount?.code || (isEmail ? staffCode.split("@")[0].toUpperCase() : staffCode.trim().toUpperCase());
       const targetDestination = targetAccount?.role === "ADMIN" ? "/admin" : "/dashboard";
-      const fullCallbackUrl = typeof window !== "undefined" ? `${window.location.origin}${targetDestination}` : targetDestination;
 
-      let result: any = null;
-      try {
-        result = await signIn("credentials", {
+      // 1. Direct institutional authentication endpoint (avoids Auth.js v5 client-side CSRF race condition)
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          staffCode: staffCode.trim(),
           institutionalEmail: email,
-          securityPin: password,
-          roleCode: roleCodeToSend,
-          callbackUrl: fullCallbackUrl,
-          redirectTo: fullCallbackUrl,
-          redirect: false,
-        });
-      } catch (signInErr: any) {
-        // NextAuth v5 beta client quirk: line 298 executes `new URL(data.url)` without base origin.
-        // If data.url is relative, browser throws TypeError: "Failed to construct 'URL': Invalid URL".
-        if (signInErr instanceof TypeError && signInErr.message.includes("URL")) {
-          const sessionRes = await fetch("/api/auth/session").catch(() => null);
-          const sessionData = sessionRes ? await sessionRes.json().catch(() => null) : null;
-          if (sessionData && sessionData.user) {
-            result = { ok: true, error: null };
-          } else {
-            throw new Error("Invalid institutional PIN / password. Please check your credentials.");
-          }
-        } else {
-          throw signInErr;
+          password: password.trim(),
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const resolvedAccount = targetAccount || getStaffAccountByCode(staffCode);
+        if (resolvedAccount) {
+          persistStaffSession(resolvedAccount, { rememberMe });
         }
+        const destination = data.redirectTo || targetDestination;
+        window.location.href = destination;
+        return;
       }
 
-      if (!result || result.error) {
-        throw new Error("Invalid institutional PIN / password. Please check your credentials.");
+      const errorData = await res.json().catch(() => null);
+      if (errorData?.error) {
+        throw new Error(errorData.error);
       }
-
-      const resolvedAccount = targetAccount || getStaffAccountByCode(staffCode);
-      if (resolvedAccount) {
-        persistStaffSession(resolvedAccount, { rememberMe });
-      }
-      router.replace(targetDestination);
-      setTimeout(() => {
-        if (window.location.pathname === "/" || window.location.pathname === "/login") {
-          window.location.href = targetDestination;
-        }
-      }, 500);
+      throw new Error("Invalid institutional PIN / password. Please check your credentials.");
     } catch (error) {
       setErrorMsg(error instanceof Error ? error.message : "Institutional sign-in is unavailable.");
       setIsSubmitting(false);

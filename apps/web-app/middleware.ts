@@ -224,7 +224,7 @@ export async function getSessionClaims(request: NextRequest) {
   const secret =
     process.env.NEXTAUTH_SECRET ||
     process.env.AUTH_SECRET ||
-    "vascflow-angiosuite-clinical-secret-2026-secure-session-key";
+    "vascflow-production-secret-hospital-key-2026";
 
   try {
     const token = await getToken({

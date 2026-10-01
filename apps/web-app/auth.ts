@@ -2,6 +2,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
   INSTITUTIONAL_STAFF_ACCOUNTS,
+  getEffectiveStaffAccounts,
   getStaffPermissions,
 } from "./app/lib/staffAccounts";
 
@@ -146,7 +147,8 @@ export async function authorizeInstitutionalCredentials(
   if (!authServiceBase) {
     const emailClean = institutionalEmail.toLowerCase().trim();
     const roleClean = roleCode.toUpperCase().trim();
-    const targetAccount = INSTITUTIONAL_STAFF_ACCOUNTS.find(
+    const accounts = getEffectiveStaffAccounts();
+    const targetAccount = accounts.find(
       (a) =>
         a.code.toUpperCase() === roleClean ||
         a.code.toUpperCase() === emailClean.toUpperCase() ||
@@ -253,7 +255,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   secret:
     process.env.NEXTAUTH_SECRET ||
     process.env.AUTH_SECRET ||
-    "vascflow-angiosuite-clinical-secret-2026-secure-session-key",
+    "vascflow-production-secret-hospital-key-2026",
   session: {
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24 hours to match backend token TTL

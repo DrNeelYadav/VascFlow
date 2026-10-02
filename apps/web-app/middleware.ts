@@ -152,20 +152,28 @@ export function resetRateLimitStore(): void {
  * Validates whether an incoming HTTP Origin belongs to trusted institutional domains
  * or dedicated mobile tablet and angiosuite workstation subnets.
  */
-export function isTrustedOrigin(origin: string | null): boolean {
+export function isTrustedOrigin(origin: string | null, requestUrl?: string): boolean {
   if (!origin) return true; // Direct same-origin requests
   try {
+    if (requestUrl) {
+      const reqUrl = new URL(requestUrl);
+      if (reqUrl.origin.toLowerCase() === origin.toLowerCase()) {
+        return true;
+      }
+    }
     const url = new URL(origin);
     const hostname = url.hostname.toLowerCase();
 
-    // 1. Institutional Hospital Domains
+    // 1. Institutional Hospital Domains & Vercel Deployments
     if (
       hostname === "vascule.sms.rajasthan.gov.in" ||
       hostname.endsWith(".sms.rajasthan.gov.in") ||
       hostname === "hospital.lan" ||
       hostname.endsWith(".hospital.lan") ||
       hostname === "localhost" ||
-      hostname === "127.0.0.1"
+      hostname === "127.0.0.1" ||
+      hostname.endsWith(".vercel.app") ||
+      hostname === "vercel.app"
     ) {
       return true;
     }
@@ -267,7 +275,7 @@ export async function middleware(request: NextRequest) {
 
   // A. CORS Preflight Handling (OPTIONS)
   if (request.method === "OPTIONS") {
-    if (!isTrustedOrigin(origin)) {
+    if (!isTrustedOrigin(origin, request.url)) {
       return applySecurityHeaders(new NextResponse(null, { status: 403 }));
     }
     const preflight = new NextResponse(null, { status: 204 });
@@ -285,7 +293,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // B. CORS & Origin Pinning on /api/* endpoints
-  if (pathname.startsWith("/api/") && origin && !isTrustedOrigin(origin)) {
+  if (pathname.startsWith("/api/") && origin && !isTrustedOrigin(origin, request.url)) {
     const forbiddenDetails = {
       type: "https://vascflow.hospital.lan/errors/cors-forbidden",
       title: "Forbidden Origin",
@@ -325,6 +333,7 @@ export async function middleware(request: NextRequest) {
   const isAuthRead =
     pathname === "/api/auth/session" ||
     pathname === "/api/auth/csrf" ||
+    pathname === "/api/auth/login" ||
     pathname === "/api/auth/providers";
 
   const matchedRule = isAuthRead

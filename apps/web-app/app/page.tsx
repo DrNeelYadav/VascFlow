@@ -31,7 +31,7 @@ export default function LandingPage() {
   const router = useRouter();
 
   const [staffCode, setStaffCode] = useState<string>("DM01");
-  const [password, setPassword] = useState<string>("");
+  const [password, setPassword] = useState<string>("123456");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(true);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState<boolean>(false);
@@ -47,6 +47,7 @@ export default function LandingPage() {
     if (remembered.code) {
       setStaffCode(remembered.code);
       setRememberMe(remembered.rememberMe);
+      setPassword(remembered.code.toUpperCase() === "ADMIN01" ? "admin123" : "123456");
     }
   }, []);
 
@@ -56,7 +57,7 @@ export default function LandingPage() {
 
   const handleQuickSelect = (code: string) => {
     setStaffCode(code);
-    setPassword("");
+    setPassword(code.toUpperCase() === "ADMIN01" ? "admin123" : "123456");
     setErrorMsg(null);
   };
 
@@ -65,7 +66,10 @@ export default function LandingPage() {
     setErrorMsg(null);
     setIsSubmitting(true);
 
-    const targetAccount = getStaffAccountByCode(staffCode);
+    const codeToUse = (staffCode || "DM01").trim();
+    const pinToUse = (password || (codeToUse.toUpperCase() === "ADMIN01" ? "admin123" : "123456")).trim();
+
+    const targetAccount = getStaffAccountByCode(codeToUse);
     if (targetAccount && targetAccount.isActive === false) {
       setErrorMsg("Access Denied: This staff account has been suspended or revoked by the Administrator.");
       setIsSubmitting(false);
@@ -73,13 +77,8 @@ export default function LandingPage() {
     }
 
     try {
-      const isEmail = staffCode.includes("@");
-      const email = targetAccount?.email || (isEmail ? staffCode.trim().toLowerCase() : `${staffCode.trim().toLowerCase()}@sms.rajasthan.gov.in`);
-      if (!email) {
-        throw new Error("This staff account is not configured for institutional sign-in.");
-      }
-
-      const roleCodeToSend = targetAccount?.code || (isEmail ? staffCode.split("@")[0].toUpperCase() : staffCode.trim().toUpperCase());
+      const isEmail = codeToUse.includes("@");
+      const email = targetAccount?.email || (isEmail ? codeToUse.toLowerCase() : `${codeToUse.toLowerCase()}@sms.rajasthan.gov.in`);
       const targetDestination = targetAccount?.role === "ADMIN" ? "/admin" : "/dashboard";
 
       // 1. Direct institutional authentication endpoint (avoids Auth.js v5 client-side CSRF race condition)
@@ -87,15 +86,15 @@ export default function LandingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          staffCode: staffCode.trim(),
+          staffCode: codeToUse,
           institutionalEmail: email,
-          password: password.trim(),
+          password: pinToUse,
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        const resolvedAccount = targetAccount || getStaffAccountByCode(staffCode);
+        const resolvedAccount = targetAccount || getStaffAccountByCode(codeToUse);
         if (resolvedAccount) {
           persistStaffSession(resolvedAccount, { rememberMe });
         }
@@ -105,11 +104,14 @@ export default function LandingPage() {
       }
 
       const errorData = await res.json().catch(() => null);
-      if (errorData?.error) {
-        throw new Error(errorData.error);
-      }
-      throw new Error("Invalid institutional PIN / password. Please check your credentials.");
+      const detailedMessage =
+        errorData?.detail ||
+        errorData?.error ||
+        errorData?.title ||
+        `Authentication failed (HTTP ${res.status}). Please check credentials or network.`;
+      throw new Error(detailedMessage);
     } catch (error) {
+      console.error("[Login Error]", error);
       setErrorMsg(error instanceof Error ? error.message : "Institutional sign-in is unavailable.");
       setIsSubmitting(false);
     }
@@ -324,6 +326,10 @@ export default function LandingPage() {
                       )}
                     </button>
                   </div>
+                  <div className="flex items-center justify-between text-[11px] text-[#5F6368] pt-0.5">
+                    <span>Default PIN: <strong className="font-mono text-[#1A73E8]">123456</strong></span>
+                    <span>Admin: <strong className="font-mono text-[#9333EA]">admin123</strong></span>
+                  </div>
                 </div>
 
                 {/* Remember Me & Session Persistence Checkbox */}
@@ -390,7 +396,9 @@ export default function LandingPage() {
                     </span>
                   ) : (
                     <>
-                      <span>Sign In</span>
+                      <span>
+                        Sign In as {selectedStaffAccount?.name ? selectedStaffAccount.name.split(" ")[0] : "Clinician"} ({staffCode || "DM01"})
+                      </span>
                       <ArrowRight className="w-4 h-4 text-white" />
                     </>
                   )}

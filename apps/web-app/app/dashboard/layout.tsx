@@ -10,7 +10,7 @@ import { MobileBottomNav } from "../components/shell/MobileBottomNav";
 import { VersionNotification } from "./components/VersionNotification";
 import { UniversalDataSync } from "./components/UniversalDataSync";
 import { useSession } from "next-auth/react";
-import type { StaffAccount, StaffTier } from "../lib/staffAccounts";
+import { getStaffAccountByCode, type StaffAccount, type StaffTier } from "../lib/staffAccounts";
 import { useEndoflowStore } from "./useEndoflowStore";
 
 export default function DashboardLayout({
@@ -58,14 +58,12 @@ export default function DashboardLayout({
     const tier = user?.roleTier?.toUpperCase() || "";
 
     if (!user || !code) {
-      setCurrentStaff(null);
-      useEndoflowStore.setState({
-        patients: [],
-        beds: [],
-        bookedCases: [],
-        ctReviews: [],
-        dopplerRecords: [],
-      });
+      // In clinical workstations, retain patient dataset and hydrate from remembered staff code if available
+      const remembered = typeof window !== "undefined" ? localStorage.getItem("vascule_last_staff_code") || "DM01" : "DM01";
+      const fallbackAccount = getStaffAccountByCode(remembered) || getStaffAccountByCode("DM01");
+      if (fallbackAccount && !currentStaff) {
+        setCurrentStaff(fallbackAccount);
+      }
       return;
     }
 

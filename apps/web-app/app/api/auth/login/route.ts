@@ -74,10 +74,11 @@ export async function POST(request: Request) {
       process.env.AUTH_SECRET ||
       "vascflow-production-secret-hospital-key-2026";
 
-    const isSecure = request.url.startsWith("https://");
-    const cookieName = isSecure
-      ? "__Secure-authjs.session-token"
-      : "authjs.session-token";
+    const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0].trim();
+    const isSecure =
+      process.env.NODE_ENV === "production" ||
+      request.url.startsWith("https://") ||
+      forwardedProto === "https";
 
     const tokenPayload = {
       id: targetAccount.code,
@@ -91,10 +92,16 @@ export async function POST(request: Request) {
       sub: targetAccount.code,
     };
 
-    const sessionToken = await encode({
+    const sessionTokenSecure = await encode({
       token: tokenPayload,
       secret,
-      salt: cookieName,
+      salt: "__Secure-authjs.session-token",
+    });
+
+    const sessionTokenStandard = await encode({
+      token: tokenPayload,
+      secret,
+      salt: "authjs.session-token",
     });
 
     const targetDestination = targetAccount.role === "ADMIN" ? "/admin" : "/dashboard";
@@ -114,19 +121,19 @@ export async function POST(request: Request) {
       redirectTo: targetDestination,
     });
 
-    // Set standard session cookies for Auth.js and NextAuth
     const cookieOptions = {
       httpOnly: true,
       sameSite: "lax" as const,
       path: "/",
-      secure: isSecure,
       maxAge: 24 * 60 * 60, // 24 hours
     };
 
-    response.cookies.set(cookieName, sessionToken, cookieOptions);
-    if (!isSecure) {
-      response.cookies.set("next-auth.session-token", sessionToken, cookieOptions);
+    if (isSecure) {
+      response.cookies.set("__Secure-authjs.session-token", sessionTokenSecure, { ...cookieOptions, secure: true });
+      response.cookies.set("__Secure-next-auth.session-token", sessionTokenSecure, { ...cookieOptions, secure: true });
     }
+    response.cookies.set("authjs.session-token", sessionTokenStandard, { ...cookieOptions, secure: false });
+    response.cookies.set("next-auth.session-token", sessionTokenStandard, { ...cookieOptions, secure: false });
 
     return response;
   } catch (err: any) {

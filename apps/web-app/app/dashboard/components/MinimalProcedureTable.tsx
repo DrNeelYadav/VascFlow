@@ -61,7 +61,7 @@ export function MinimalProcedureTable({ cases, onOpenCase }: MinimalProcedureTab
 
   return (
     <div className="overflow-x-auto border border-slate-200 rounded-lg bg-white dark:border-slate-800 dark:bg-slate-950">
-      <table className="w-full border-collapse text-left text-[12px]">
+      <table className="w-full border-collapse text-left text-xs">
         <thead>
           <tr className="h-9 border-b border-slate-200 bg-slate-50/75 text-slate-500 dark:border-slate-800 dark:bg-slate-900/50">
             <th className="py-1.5 pl-4 pr-2 font-medium">Time</th>
@@ -122,7 +122,7 @@ export function MinimalProcedureTable({ cases, onOpenCase }: MinimalProcedureTab
                   </td>
                   <td className="px-2.5 py-1.5 text-center whitespace-nowrap">
                     <span
-                      className={`inline-block rounded border px-2 py-0.5 text-[11px] font-medium ${statusStyles[item.status]}`}
+                      className={`inline-block rounded border px-2 py-0.5 text-xs font-medium ${statusStyles[item.status]}`}
                     >
                       {item.status}
                     </span>

@@ -168,18 +168,18 @@ export function BookingChart({
   let cumulativeOffset = 0;
 
   return (
-    <div className="rounded-xl border border-[#DADCE0] bg-white p-4 sm:p-5 shadow-sm">
+    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#DADCE0] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F1F3F4] text-[#1A73E8]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-blue-600">
             <BarChart3 className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-[#202124] tracking-tight">
+            <h2 className="text-base font-semibold text-slate-900 tracking-tight">
               Cath-Lab Booking &amp; Capacity Overview
             </h2>
-            <p className="text-xs text-[#5F6368]">
+            <p className="text-xs text-slate-500">
               Operating slots 08:00 – 17:00 &bull; Dual-Suite schedule, utilization &amp; modality distribution
             </p>
           </div>
@@ -187,16 +187,16 @@ export function BookingChart({
 
         {/* Quick Capacity Pills */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#DADCE0] bg-[#F8F9FA] px-3 py-1 text-[#3C4043]">
-            <span className="h-2 w-2 rounded-full bg-[#1A73E8]" />
-            <span>Cath Lab (Philips Azurion): <strong className="font-semibold text-[#202124]">{azurionUtilPct}%</strong> ({azurionCases.length} slots)</span>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-700">
+            <span className="h-2 w-2 rounded-full bg-blue-600" />
+            <span>Cath Lab (Philips Azurion): <strong className="font-semibold text-slate-900">{azurionUtilPct}%</strong> ({azurionCases.length} slots)</span>
           </div>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#DADCE0] bg-[#F8F9FA] px-3 py-1 text-[#3C4043]">
-            <span className="h-2 w-2 rounded-full bg-[#EA4335]" />
-            <span>CT Suite: <strong className="font-semibold text-[#202124]">{ctUtilPct}%</strong> ({ctCases.length} slots)</span>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-700">
+            <span className="h-2 w-2 rounded-full bg-rose-600" />
+            <span>CT Suite: <strong className="font-semibold text-slate-900">{ctUtilPct}%</strong> ({ctCases.length} slots)</span>
           </div>
-          <div className="inline-flex items-center gap-1 rounded-full border border-[#DADCE0] bg-white px-2.5 py-1 text-[#5F6368]">
-            <Clock className="h-3 w-3 text-[#5F6368]" />
+          <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-slate-500">
+            <Clock className="h-3 w-3 text-slate-500" />
             <span>15m Turnover Buffer</span>
           </div>
         </div>
@@ -208,10 +208,10 @@ export function BookingChart({
         <div className="xl:col-span-8 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#5F6368]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Hourly Room Allocation (08:00 – 17:00)
               </span>
-              <span className="hidden sm:inline text-[11px] text-[#5F6368]">
+              <span className="hidden sm:inline text-xs text-slate-500">
                 Hover procedure blocks for operator &amp; case details
               </span>
             </div>
@@ -219,10 +219,10 @@ export function BookingChart({
             {/* Mobile View: Room Allocation Cards (Zero Horizontal Scroll) */}
             <div className="block md:hidden space-y-3 pb-2">
               {/* Cath Lab Azurion */}
-              <div className="rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-3">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-xs text-[#202124]">Philips Azurion Cath Lab</span>
-                  <span className="text-[10px] font-mono text-[#1A73E8] font-semibold bg-[#E8F0FE] px-2 py-0.5 rounded">
+                  <span className="font-bold text-xs text-slate-900">Philips Azurion Cath Lab</span>
+                  <span className="text-[10px] font-mono text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded">
                     {azurionUtilPct}% &bull; {azurionMinutes}m
                   </span>
                 </div>
@@ -231,13 +231,13 @@ export function BookingChart({
                     <div
                       key={`mob-az-${entry.caseId}`}
                       onClick={() => onSelectCase?.(entry.caseId)}
-                      className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-[#E0E0E0] text-xs cursor-pointer active:bg-blue-50"
+                      className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-slate-200 text-xs cursor-pointer active:bg-blue-50"
                     >
                       <div className="min-w-0">
-                        <div className="font-semibold text-[#202124] truncate">{entry.procedureName}</div>
-                        <div className="text-[10px] text-[#5F6368]">{entry.patientName} &bull; CR: {entry.crNumber}</div>
+                        <div className="font-semibold text-slate-900 truncate">{entry.procedureName}</div>
+                        <div className="text-[10px] text-slate-500">{entry.patientName} &bull; CR: {entry.crNumber}</div>
                       </div>
-                      <span className="shrink-0 font-mono text-[10px] font-semibold text-[#174EA6] bg-[#E8F0FE] px-1.5 py-0.5 rounded">
+                      <span className="shrink-0 font-mono text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
                         {entry.plannedTime}
                       </span>
                     </div>
@@ -246,10 +246,10 @@ export function BookingChart({
               </div>
 
               {/* CT Suite */}
-              <div className="rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-3">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-xs text-[#202124]">CT Guided Suite</span>
-                  <span className="text-[10px] font-mono text-[#C5221F] font-semibold bg-[#FCE8E6] px-2 py-0.5 rounded">
+                  <span className="font-bold text-xs text-slate-900">CT Guided Suite</span>
+                  <span className="text-[10px] font-mono text-rose-700 font-semibold bg-rose-50 px-2 py-0.5 rounded">
                     {ctUtilPct}% &bull; {ctMinutes}m
                   </span>
                 </div>
@@ -258,13 +258,13 @@ export function BookingChart({
                     <div
                       key={`mob-ct-${entry.caseId}`}
                       onClick={() => onSelectCase?.(entry.caseId)}
-                      className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-[#E0E0E0] text-xs cursor-pointer active:bg-red-50"
+                      className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-slate-200 text-xs cursor-pointer active:bg-red-50"
                     >
                       <div className="min-w-0">
-                        <div className="font-semibold text-[#202124] truncate">{entry.procedureName}</div>
-                        <div className="text-[10px] text-[#5F6368]">{entry.patientName} &bull; CR: {entry.crNumber}</div>
+                        <div className="font-semibold text-slate-900 truncate">{entry.procedureName}</div>
+                        <div className="text-[10px] text-slate-500">{entry.patientName} &bull; CR: {entry.crNumber}</div>
                       </div>
-                      <span className="shrink-0 font-mono text-[10px] font-semibold text-[#C5221F] bg-[#FCE8E6] px-1.5 py-0.5 rounded">
+                      <span className="shrink-0 font-mono text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded">
                         {entry.plannedTime}
                       </span>
                     </div>
@@ -274,10 +274,10 @@ export function BookingChart({
 
               {/* Department Procedure Suites */}
               {departmentRoomCases.length > 0 && (
-                <div className="rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-3">
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-xs text-[#202124]">Procedure Suites</span>
-                    <span className="text-[10px] font-mono text-[#137333] font-semibold bg-[#E6F4EA] px-2 py-0.5 rounded">
+                    <span className="font-bold text-xs text-slate-900">Procedure Suites</span>
+                    <span className="text-[10px] font-mono text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
                       {departmentRoomCases.length} cases
                     </span>
                   </div>
@@ -286,13 +286,13 @@ export function BookingChart({
                       <div
                         key={`mob-dept-${entry.caseId}`}
                         onClick={() => onSelectCase?.(entry.caseId)}
-                        className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-[#E0E0E0] text-xs cursor-pointer active:bg-green-50"
+                        className="flex items-center justify-between gap-2 p-2 rounded bg-white border border-slate-200 text-xs cursor-pointer active:bg-green-50"
                       >
                         <div className="min-w-0">
-                          <div className="font-semibold text-[#202124] truncate">{entry.procedureName}</div>
-                          <div className="text-[10px] text-[#5F6368]">{entry.patientName} &bull; {entry.room || "Room"}</div>
+                          <div className="font-semibold text-slate-900 truncate">{entry.procedureName}</div>
+                          <div className="text-[10px] text-slate-500">{entry.patientName} &bull; {entry.room || "Room"}</div>
                         </div>
-                        <span className="shrink-0 font-mono text-[10px] font-semibold text-[#137333] bg-[#E6F4EA] px-1.5 py-0.5 rounded">
+                        <span className="shrink-0 font-mono text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
                           {entry.plannedTime}
                         </span>
                       </div>
@@ -306,7 +306,7 @@ export function BookingChart({
             <div className="hidden md:block overflow-x-auto pb-2">
               <div className="min-w-[640px]">
                 {/* Time Ruler */}
-                <div className="grid grid-cols-9 border-b border-[#DADCE0] pb-1 text-[11px] font-mono text-[#5F6368]">
+                <div className="grid grid-cols-1 sm:grid-cols-9 border-b border-slate-200 pb-1 text-xs font-mono text-slate-500">
                   {HOUR_MARKS.slice(0, 9).map((hr) => (
                     <div key={hr} className="text-left pl-1">
                       {formatHourLabel(hr)}
@@ -320,23 +320,23 @@ export function BookingChart({
                   <div>
                     <div className="flex items-center justify-between mb-1.5 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-[#202124]">Cath Lab (Philips Azurion)</span>
-                        <span className="rounded bg-[#E8F0FE] px-1.5 py-0.5 text-[10px] font-semibold text-[#1A73E8]">
+                        <span className="font-semibold text-slate-900">Cath Lab (Philips Azurion)</span>
+                        <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-blue-600">
                           Biplane Neuro / Vascular
                         </span>
                       </div>
-                      <span className="text-[11px] text-[#5F6368] font-mono">
+                      <span className="text-xs text-slate-500 font-mono">
                         {azurionMinutes} min ({azurionUtilPct}% capacity)
                       </span>
                     </div>
 
-                    <div className="relative h-12 w-full rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-1">
+                    <div className="relative h-12 w-full rounded-lg border border-slate-200 bg-slate-50 p-1">
                       {/* Hourly vertical guide lines */}
-                      <div className="absolute inset-0 grid grid-cols-9 pointer-events-none">
+                      <div className="absolute inset-0 grid grid-cols-1 sm:grid-cols-9 pointer-events-none">
                         {Array.from({ length: 9 }).map((_, idx) => (
                           <div
                             key={idx}
-                            className={`h-full border-r border-[#E5E7EB] ${idx === 8 ? "border-r-0" : ""}`}
+                            className={`h-full border-r border-slate-200 ${idx === 8 ? "border-r-0" : ""}`}
                           />
                         ))}
                       </div>
@@ -358,7 +358,7 @@ export function BookingChart({
                             onClick={() => onSelectCase?.(entry.caseId)}
                             className={`absolute top-1 bottom-1 z-10 flex flex-col justify-center rounded px-2 cursor-pointer transition-all border shadow-2xs ${
                               isHovered
-                                ? "ring-2 ring-[#1A73E8] shadow-md z-20 scale-[1.02]"
+                                ? "ring-2 ring-blue-600 shadow-md z-20 scale-[1.02]"
                                 : ""
                             }`}
                             style={{
@@ -376,7 +376,7 @@ export function BookingChart({
                                 {entry.procedureName.split(" ")[0]} &bull; {entry.patientName.split(" ")[0]}
                               </span>
                               <span
-                                className="shrink-0 text-[9px] font-mono font-semibold"
+                                className="shrink-0 text-[10px] font-mono font-semibold"
                                 style={{ color: modConfig.textDark }}
                               >
                                 {entry.plannedTime.split(" ")[0]}
@@ -392,23 +392,23 @@ export function BookingChart({
                   <div>
                     <div className="flex items-center justify-between mb-1.5 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-[#202124]">CT Suite</span>
-                        <span className="rounded bg-[#FCE8E6] px-1.5 py-0.5 text-[10px] font-semibold text-[#C5221F]">
+                        <span className="font-semibold text-slate-900">CT Suite</span>
+                        <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700">
                           CT Fluoroscopy &amp; Cross-Sectional Guidance
                         </span>
                       </div>
-                      <span className="text-[11px] text-[#5F6368] font-mono">
+                      <span className="text-xs text-slate-500 font-mono">
                         {ctMinutes} min ({ctUtilPct}% capacity)
                       </span>
                     </div>
 
-                    <div className="relative h-12 w-full rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-1">
+                    <div className="relative h-12 w-full rounded-lg border border-slate-200 bg-slate-50 p-1">
                       {/* Hourly vertical guide lines */}
-                      <div className="absolute inset-0 grid grid-cols-9 pointer-events-none">
+                      <div className="absolute inset-0 grid grid-cols-1 sm:grid-cols-9 pointer-events-none">
                         {Array.from({ length: 9 }).map((_, idx) => (
                           <div
                             key={idx}
-                            className={`h-full border-r border-[#E5E7EB] ${idx === 8 ? "border-r-0" : ""}`}
+                            className={`h-full border-r border-slate-200 ${idx === 8 ? "border-r-0" : ""}`}
                           />
                         ))}
                       </div>
@@ -430,7 +430,7 @@ export function BookingChart({
                             onClick={() => onSelectCase?.(entry.caseId)}
                             className={`absolute top-1 bottom-1 z-10 flex flex-col justify-center rounded px-2 cursor-pointer transition-all border shadow-2xs ${
                               isHovered
-                                ? "ring-2 ring-[#EA4335] shadow-md z-20 scale-[1.02]"
+                                ? "ring-2 ring-rose-600 shadow-md z-20 scale-[1.02]"
                                 : ""
                             }`}
                             style={{
@@ -448,7 +448,7 @@ export function BookingChart({
                                 {entry.procedureName.split(" ")[0]} &bull; {entry.patientName.split(" ")[0]}
                               </span>
                               <span
-                                className="shrink-0 text-[9px] font-mono font-semibold"
+                                className="shrink-0 text-[10px] font-mono font-semibold"
                                 style={{ color: modConfig.textDark }}
                               >
                                 {entry.plannedTime.split(" ")[0]}
@@ -465,22 +465,22 @@ export function BookingChart({
                     <div>
                       <div className="flex items-center justify-between mb-1.5 text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-[#202124]">Department Procedure Suites</span>
-                          <span className="rounded bg-[#E6F4EA] px-1.5 py-0.5 text-[10px] font-semibold text-[#137333]">
+                          <span className="font-semibold text-slate-900">Department Procedure Suites</span>
+                          <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
                             PTBD &bull; PCD &bull; Biopsy &bull; US Review &bull; MSK USG &bull; FNAC
                           </span>
                         </div>
-                        <span className="text-[11px] text-[#5F6368] font-mono">
+                        <span className="text-xs text-slate-500 font-mono">
                           {departmentRoomCases.length} scheduled procedures
                         </span>
                       </div>
 
-                      <div className="relative h-12 w-full rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-1">
-                        <div className="absolute inset-0 grid grid-cols-9 pointer-events-none">
+                      <div className="relative h-12 w-full rounded-lg border border-slate-200 bg-slate-50 p-1">
+                        <div className="absolute inset-0 grid grid-cols-1 sm:grid-cols-9 pointer-events-none">
                           {Array.from({ length: 9 }).map((_, idx) => (
                             <div
                               key={idx}
-                              className={`h-full border-r border-[#E5E7EB] ${idx === 8 ? "border-r-0" : ""}`}
+                              className={`h-full border-r border-slate-200 ${idx === 8 ? "border-r-0" : ""}`}
                             />
                           ))}
                         </div>
@@ -501,7 +501,7 @@ export function BookingChart({
                               onClick={() => onSelectCase?.(entry.caseId)}
                               className={`absolute top-1 bottom-1 z-10 flex flex-col justify-center rounded px-2 cursor-pointer transition-all border shadow-2xs ${
                                 isHovered
-                                  ? "ring-2 ring-[#34A853] shadow-md z-20 scale-[1.02]"
+                                  ? "ring-2 ring-emerald-600 shadow-md z-20 scale-[1.02]"
                                   : ""
                               }`}
                               style={{
@@ -519,7 +519,7 @@ export function BookingChart({
                                   {entry.room || "Room"} &bull; {entry.patientName.split(" ")[0]}
                                 </span>
                                 <span
-                                  className="shrink-0 text-[9px] font-mono font-semibold"
+                                  className="shrink-0 text-[10px] font-mono font-semibold"
                                   style={{ color: modConfig.textDark }}
                                 >
                                   {entry.plannedTime.split(" ")[0]}
@@ -537,28 +537,28 @@ export function BookingChart({
           </div>
 
           {/* Interactive Inspection Card when hovering */}
-          <div className="mt-3 rounded-lg border border-[#DADCE0] bg-[#F8F9FA] px-3 py-2 text-xs transition-all min-h-[38px] flex items-center justify-between">
+          <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs transition-all min-h-[38px] flex items-center justify-between">
             {activeHoveredCase ? (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-                <span className="font-semibold text-[#202124]">
+                <span className="font-semibold text-slate-900">
                   {activeHoveredCase.patientName}
                 </span>
-                <span className="text-[#5F6368] font-mono text-[11px]">
+                <span className="text-slate-500 font-mono text-xs">
                   CR: {activeHoveredCase.crNumber}
                 </span>
-                <span className="text-[#202124] font-medium truncate max-w-[280px]">
+                <span className="text-slate-900 font-medium truncate max-w-[280px]">
                   {activeHoveredCase.procedureName}
                 </span>
-                <span className="text-[#5F6368] text-[11px]">
+                <span className="text-slate-500 text-xs">
                   {activeHoveredCase.operatorResident}
                 </span>
-                <span className="rounded bg-white border border-[#DADCE0] px-2 py-0.5 font-mono text-[10px] font-semibold text-[#3C4043]">
+                <span className="rounded bg-white border border-slate-200 px-2 py-0.5 font-mono text-[10px] font-semibold text-slate-700">
                   {activeHoveredCase.plannedTime} ({activeHoveredCase.durationMinutes || 60}m)
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 text-[#5F6368] text-[11px]">
-                <Info className="h-3.5 w-3.5 text-[#1A73E8]" />
+              <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+                <Info className="h-3.5 w-3.5 text-blue-600" />
                 <span>Move cursor over any timeline slot to inspect patient, planned operator, room and duration.</span>
               </div>
             )}
@@ -566,13 +566,13 @@ export function BookingChart({
         </div>
 
         {/* Right: Procedure & Modality Distribution */}
-        <div className="xl:col-span-4 flex flex-col justify-between rounded-xl border border-[#DADCE0] bg-[#F8F9FA] p-3.5">
+        <div className="xl:col-span-4 flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50 p-3.5">
           <div>
-            <div className="flex items-center justify-between border-b border-[#DADCE0] pb-2 mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#5F6368]">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Modality Distribution
               </span>
-              <span className="text-[11px] font-medium text-[#1A73E8]">
+              <span className="text-xs font-medium text-blue-600">
                 {cases.length} Bookings Total
               </span>
             </div>
@@ -624,24 +624,24 @@ export function BookingChart({
 
                 {/* Donut Center text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-lg font-bold text-[#202124] leading-tight">
+                  <span className="text-lg font-bold text-slate-900 leading-tight">
                     {cases.length}
                   </span>
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-[#5F6368]">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
                     Cases
                   </span>
                 </div>
               </div>
 
               {/* Modality Key Metrics Overview */}
-              <div className="text-xs text-[#5F6368] space-y-1">
+              <div className="text-xs text-slate-500 space-y-1">
                 <div>
-                  <span className="text-[10px] uppercase font-semibold text-[#70757A]">Peak Load:</span>
-                  <div className="font-semibold text-[#202124]">11:00 – 14:00</div>
+                  <span className="text-[10px] uppercase font-semibold text-slate-500">Peak Load:</span>
+                  <div className="font-semibold text-slate-900">11:00 – 14:00</div>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase font-semibold text-[#70757A]">Active Rooms:</span>
-                  <div className="font-semibold text-[#202124]">Azurion, CT Suite, PTBD, Biopsy, FNAC</div>
+                  <span className="text-[10px] uppercase font-semibold text-slate-500">Active Rooms:</span>
+                  <div className="font-semibold text-slate-900">Azurion, CT Suite, PTBD, Biopsy, FNAC</div>
                 </div>
               </div>
             </div>
@@ -651,7 +651,7 @@ export function BookingChart({
               {modalityStats.map((item) => (
                 <div
                   key={item.key}
-                  className="rounded-lg border border-[#DADCE0] bg-white p-2 text-xs shadow-2xs hover:border-[#202124] transition-colors"
+                  className="rounded-lg border border-slate-200 bg-white p-2 text-xs shadow-2xs hover:border-slate-900 transition-colors"
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
@@ -659,23 +659,23 @@ export function BookingChart({
                         className="h-2.5 w-2.5 rounded-full shrink-0"
                         style={{ backgroundColor: item.config.color }}
                       />
-                      <span className="font-bold text-[#202124]">
+                      <span className="font-bold text-slate-900">
                         {item.key}
                       </span>
-                      <span className="text-[11px] text-[#5F6368] truncate max-w-[130px]">
+                      <span className="text-xs text-slate-500 truncate max-w-[130px]">
                         {item.config.description}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                      <span className="font-semibold text-[#202124]">
+                    <div className="flex items-center gap-1.5 font-mono text-xs">
+                      <span className="font-semibold text-slate-900">
                         {item.count}
                       </span>
-                      <span className="text-[#5F6368]">({item.percentage}%)</span>
+                      <span className="text-slate-500">({item.percentage}%)</span>
                     </div>
                   </div>
 
                   {/* Horizontal Progress Bar */}
-                  <div className="h-1.5 w-full rounded-full bg-[#F1F3F4] overflow-hidden">
+                  <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
@@ -692,7 +692,7 @@ export function BookingChart({
       </div>
 
       {/* Light subtle footer attribution */}
-      <div className="text-center pt-4 pb-1 text-xs text-zinc-400 print:hidden select-none border-t border-[#DADCE0] mt-4">
+      <div className="text-center pt-4 pb-1 text-xs text-zinc-400 print:hidden select-none border-t border-slate-200 mt-4">
         Made by Dr. Neel Yadav
       </div>
     </div>

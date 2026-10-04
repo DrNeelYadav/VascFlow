@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
                 entityId: d.entityId,
                 staffId: d.staffId,
                 ipAddress: d.ipAddress || "127.0.0.1",
-                userAgent: d.userAgent || "VascFlow-Client",
+                userAgent: d.userAgent || "EndoFlow-Client",
                 detailsJson: d.detailsJson,
                 timestamp: new Date(d.timestamp || Date.now()),
               });
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
             entityId: d.entityId,
             staffId: d.staffId,
             ipAddress: d.ipAddress || "127.0.0.1",
-            userAgent: d.userAgent || "VascFlow-Client",
+            userAgent: d.userAgent || "EndoFlow-Client",
             timestamp: d.timestamp || new Date().toISOString(),
             tamperVerified: isVerified,
             status: isVerified ? "VERIFIED_TAMPER_PROOF" : "UNVERIFIED",

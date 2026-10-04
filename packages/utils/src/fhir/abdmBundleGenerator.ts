@@ -120,7 +120,9 @@ export function generateDiagnosticReportBundle(caseData: IrCaseClinicalData): Fh
         : []),
       { system: 'https://vascflow.org/mrn', value: caseData.patientId || caseData.caseId },
     ],
-    name: [{ text: caseData.patientName }],
+    // Omitted entirely when absent. A placeholder string here would be
+    // ingested downstream as a real patient identity.
+    name: caseData.patientName ? [{ text: caseData.patientName }] : [],
     gender: caseData.gender || 'unknown',
   };
 
@@ -136,8 +138,10 @@ export function generateDiagnosticReportBundle(caseData: IrCaseClinicalData): Fh
 
   // 3. Procedure Resource
   const snomed = caseData.snomedCode
-    ? { code: caseData.snomedCode, display: caseData.procedureName }
-    : resolveSnomedCode(caseData.procedureName);
+    ? { code: caseData.snomedCode, display: caseData.procedureName ?? "IR Procedure" }
+    : caseData.procedureName
+  ? resolveSnomedCode(caseData.procedureName)
+  : { code: "38104008", display: "Interventional radiology procedure" };
 
   const icd = caseData.icdCode
     ? { code: caseData.icdCode, display: caseData.diagnosis || 'Interventional indication' }
@@ -158,9 +162,12 @@ export function generateDiagnosticReportBundle(caseData: IrCaseClinicalData): Fh
           display: snomed.display,
         },
       ],
-      text: caseData.procedureName,
+      text: caseData.procedureName ?? "Interventional Radiology Procedure",
     },
-    subject: { reference: `Patient/${patientId}`, display: caseData.patientName },
+    subject: {
+      reference: `Patient/${patientId}`,
+      ...(caseData.patientName ? { display: caseData.patientName } : {}),
+    },
     performedDateTime: timestamp,
     performer: [
       {
@@ -309,16 +316,23 @@ export function generateDiagnosticReportBundle(caseData: IrCaseClinicalData): Fh
           display: LOINC_CODES.RADIOLOGY_REPORT.display,
         },
       ],
-      text: `${caseData.procedureName} Interventional Report`,
+      text: caseData.procedureName
+      ? `${caseData.procedureName} Interventional Report`
+      : "Interventional Radiology Report",
     },
-    subject: { reference: `Patient/${patientId}`, display: caseData.patientName },
+    subject: {
+      reference: `Patient/${patientId}`,
+      ...(caseData.patientName ? { display: caseData.patientName } : {}),
+    },
     effectiveDateTime: timestamp,
     issued: timestamp,
     performer: [{ reference: `Practitioner/${practitionerId}` }],
     result: observationRefs.length > 0 ? observationRefs : undefined,
-    conclusion:
-      caseData.conclusion ||
-      `${caseData.procedureName} completed successfully without immediate adverse technical events.`,
+    // Never auto-written. The previous fallback asserted a successful,
+    // complication-free outcome for every case that lacked a conclusion, which
+    // is a fabricated clinical assertion in a compliance payload. Absent
+    // conclusion means the resource carries none.
+    conclusion: caseData.conclusion,
     conclusionCode: [
       {
         coding: [
@@ -350,10 +364,15 @@ export function generateDiagnosticReportBundle(caseData: IrCaseClinicalData): Fh
       ],
       text: 'Interventional Radiology Report',
     },
-    subject: { reference: `Patient/${patientId}`, display: caseData.patientName },
+    subject: {
+      reference: `Patient/${patientId}`,
+      ...(caseData.patientName ? { display: caseData.patientName } : {}),
+    },
     date: timestamp,
     author: [{ reference: `Practitioner/${practitionerId}`, display: caseData.operatorName || 'Interventional Radiologist' }],
-    title: `Interventional Radiology Report - ${caseData.procedureName}`,
+    title: caseData.procedureName
+      ? `Interventional Radiology Report - ${caseData.procedureName}`
+      : "Interventional Radiology Report",
     section: [
       {
         title: 'Procedure Details',

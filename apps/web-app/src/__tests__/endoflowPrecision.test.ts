@@ -28,15 +28,22 @@ describe("Phase 19: Authentic EndoFlow Clinical Workflow & Security (Web-App Sui
       expect(state.beds.every((b) => b.status === "vacant")).toBe(true);
     });
 
-    it("loads decoupled demo seed data on demand via loadDemoSeedData", () => {
-      useEndoflowStore.getState().loadDemoSeedData();
+    it("carries no fabricated patient records on start-up", () => {
+      // Regression guard. The store previously exposed loadDemoSeedData(), which
+      // injected eight invented patients (with invented CR numbers and treating
+      // doctors) into the clinical worklist. Fabricated records must not be
+      // reachable: a clinician has to see an empty list, never a plausible lie.
       const state = useEndoflowStore.getState();
-      const occupied = state.beds.filter((b) => b.status === "occupied");
-      expect(occupied.length).toBe(2);
-      expect(occupied.some((b) => b.ptName === "Lakshmi")).toBe(true);
-      expect(occupied.some((b) => b.ptName === "Roshan")).toBe(true);
-      expect(state.patients.length).toBe(8);
-      expect(state.ctReviews.length).toBe(3);
+      expect(state.patients.length).toBe(0);
+      expect(state.ctReviews.length).toBe(0);
+      expect(state.bookedCases.length).toBe(0);
+      expect(state.dopplerRecords.length).toBe(0);
+      expect(state.beds.every((b) => b.status === "vacant")).toBe(true);
+      // The action itself is gone, not merely unused.
+      expect(
+        (useEndoflowStore.getState() as unknown as Record<string, unknown>)
+          .loadDemoSeedData
+      ).toBeUndefined();
     });
   });
 
@@ -295,8 +302,11 @@ describe("Phase 19: Authentic EndoFlow Clinical Workflow & Security (Web-App Sui
 
     it("resets to clean state via resetToDefaultPatients", () => {
       const store = useEndoflowStore.getState();
-      store.loadDemoSeedData();
-      expect(useEndoflowStore.getState().patients.length).toBe(8);
+      // Dirty the store through a real write path, then reset.
+      store.setPatients([
+        { ...store.patients[0], id: "X1", name: "Placeholder" } as never,
+      ]);
+      expect(useEndoflowStore.getState().patients.length).toBe(1);
 
       store.resetToDefaultPatients();
       const cleanState = useEndoflowStore.getState();

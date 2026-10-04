@@ -1,0 +1,59 @@
+/* ============================================================================
+ * ENDOFLOW ENTERPRISE DESIGN TOKENS (VENUS, SHADCN, RADIX UI COMPACT)
+ * High-density Interventional Radiology workstation tokens for Light & Dark mode
+ * ============================================================================ */
+
+:root {
+  /* Surface Tokens (Light Mode - Outpatient Clinic) */
+  --surface-canvas: #F8FAFC;       /* Slate 50 */
+  --surface-card: #FFFFFF;         /* White */
+  --surface-subtle: #F1F5F9;       /* Slate 100 */
+  --surface-hover: #E2E8F0;        /* Slate 200 */
+  
+  /* Typography Tokens */
+  --text-primary: #0F172A;         /* Slate 900 */
+  --text-secondary: #475569;       /* Slate 600 */
+  --text-muted: #94A3B8;           /* Slate 400 */
+  
+  /* Tactile High-Contrast Borders */
+  --border-subtle: #E2E8F0;        /* Slate 200 */
+  --border-contrast: #CBD5E1;      /* Slate 300 */
+  --border-strong: #94A3B8;        /* Slate 400 */
+  
+  /* Clinical Status */
+  --clinical-blue: #2563EB;
+  --clinical-emerald: #059669;
+  --clinical-amber: #D97706;
+  --clinical-rose: #DC2626;
+  
+  /* Compact Control Dimensions */
+  --height-button-sm: 28px;
+  --height-button-md: 32px;
+  --height-input: 32px;
+  --height-table-row: 32px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+}
+
+.dark {
+  /* Surface Tokens (Dark Room Mode - Angiosuite / Fluoroscopy) */
+  --surface-canvas: #090D16;       /* Deep Slate-Black */
+  --surface-card: #0F172A;         /* Slate 900 */
+  --surface-subtle: #1E293B;       /* Slate 800 */
+  --surface-hover: #334155;        /* Slate 700 */
+  
+  /* Typography Tokens */
+  --text-primary: #F8FAFC;         /* Slate 50 */
+  --text-secondary: #CBD5E1;       /* Slate 300 */
+  --text-muted: #64748B;           /* Slate 500 */
+  
+  /* Dark Tactile High-Contrast Borders */
+  --border-subtle: #1E293B;        /* Slate 800 */
+  --border-contrast: #334155;      /* Slate 700 */
+  --border-strong: #475569;        /* Slate 600 */
+  
+  --clinical-blue: #3B82F6;
+  --clinical-emerald: #10B981;
+  --clinical-amber: #F59E0B;
+  --clinical-rose: #EF4444;
+}

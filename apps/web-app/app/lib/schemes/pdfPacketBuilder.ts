@@ -257,7 +257,7 @@ export function buildPreAuthDossierPdf(input: PreAuthDossierInput): GeneratedPac
 
   // Footer of Page 1
   p1StreamLines.push("0.5 0.5 0.5 rg");
-  p1StreamLines.push("BT /F1 8 Tf 40 40 Td (Page 1 of 2  |  SMS Medical College & Attached Hospitals, Jaipur  |  VascFlow Clinical RIS) Tj ET");
+  p1StreamLines.push("BT /F1 8 Tf 40 40 Td (Page 1 of 2  |  SMS Medical College & Attached Hospitals, Jaipur  |  EndoFlow Clinical RIS) Tj ET");
 
   const p1Content = p1StreamLines.join("\n");
   const p1StreamObjId = addObject(`<< /Length ${p1Content.length} >>\nstream\n${p1Content}\nendstream`);

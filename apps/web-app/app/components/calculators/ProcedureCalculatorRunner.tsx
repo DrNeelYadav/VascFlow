@@ -1144,31 +1144,31 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
       : 'bg-emerald-50 border-emerald-300 text-emerald-800';
 
   return (
-    <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 shadow-xs space-y-4">
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-4">
       {/* Title & Guidelines Header */}
-      <div className="flex items-start justify-between flex-wrap gap-2 pb-3 border-b border-[#DADCE0]">
+      <div className="flex items-start justify-between flex-wrap gap-2 pb-3 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="p-1.5 rounded-lg bg-[#E8F0FE] text-[#1A73E8]">
+            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
               <Calculator className="w-4 h-4" />
             </span>
-            <h3 className="text-sm font-bold text-[#202124]">{meta.name}</h3>
-            <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F1F3F4] text-[#5F6368] border border-[#DADCE0]">
+            <h3 className="text-sm font-bold text-slate-900">{meta.name}</h3>
+            <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-500 border border-slate-200">
               {meta.system}
             </span>
           </div>
-          <p className="text-xs text-[#5F6368] mt-1 flex items-center gap-1.5">
-            <BookOpen className="w-3.5 h-3.5 text-[#1A73E8]" />
+          <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
+            <BookOpen className="w-3.5 h-3.5 text-blue-600" />
             <span><b>Guideline:</b> {meta.guidelineAuthority}</span>
-            <span className="text-[#DADCE0]">•</span>
-            <span className="font-mono text-[11px] text-[#3C4043]">{meta.formulaDescription}</span>
+            <span className="text-slate-200">•</span>
+            <span className="font-mono text-[11px] text-slate-700">{meta.formulaDescription}</span>
           </p>
         </div>
 
         {showProtocolLink && (
           <button
             onClick={() => router.push('/dashboard/protocols')}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[#DADCE0] bg-white hover:bg-[#F8F9FA] text-[11px] font-semibold text-[#1A73E8] transition shadow-xs"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-semibold text-blue-600 transition shadow-xs"
             title={`View Protocol: ${meta.protocolName}`}
           >
             <span>Protocol: {meta.protocolName}</span>
@@ -1182,23 +1182,23 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'rotterdam_bcs' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Bilirubin (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Bilirubin (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={bcsBili}
                 onChange={(e) => setBcsBili(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">PT / INR</label>
+              <label className="text-slate-500 block mb-1 font-medium">PT / INR</label>
               <input
                 type="number"
                 step="0.1"
                 value={bcsInr}
                 onChange={(e) => setBcsInr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div className="flex items-center gap-2 pt-6">
@@ -1207,9 +1207,9 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 id="bcsEnceph"
                 checked={bcsEnceph}
                 onChange={(e) => setBcsEnceph(e.target.checked)}
-                className="rounded border-[#DADCE0] text-[#1A73E8]"
+                className="rounded border-slate-200 text-blue-600"
               />
-              <label htmlFor="bcsEnceph" className="text-xs text-[#202124] font-medium cursor-pointer">
+              <label htmlFor="bcsEnceph" className="text-xs text-slate-900 font-medium cursor-pointer">
                 Encephalopathy
               </label>
             </div>
@@ -1219,9 +1219,9 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 id="bcsAscites"
                 checked={bcsAscites}
                 onChange={(e) => setBcsAscites(e.target.checked)}
-                className="rounded border-[#DADCE0] text-[#1A73E8]"
+                className="rounded border-slate-200 text-blue-600"
               />
-              <label htmlFor="bcsAscites" className="text-xs text-[#202124] font-medium cursor-pointer">
+              <label htmlFor="bcsAscites" className="text-xs text-slate-900 font-medium cursor-pointer">
                 Severe Ascites
               </label>
             </div>
@@ -1231,40 +1231,40 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'clichy_bcs' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Age (Years)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Age (Years)</label>
               <input
                 type="number"
                 value={clichyAge}
                 onChange={(e) => setClichyAge(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Bilirubin (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Bilirubin (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={clichyBili}
                 onChange={(e) => setClichyBili(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Creatinine (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Creatinine (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={clichyCr}
                 onChange={(e) => setClichyCr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Ascites Grade</label>
+              <label className="text-slate-500 block mb-1 font-medium">Ascites Grade</label>
               <select
                 value={clichyAscites}
                 onChange={(e) => setClichyAscites(e.target.value as any)}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
               >
                 <option value="none">None (0)</option>
                 <option value="controlled">Controlled (1)</option>
@@ -1277,21 +1277,21 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'caudate_right_lobe_ratio' && (
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Caudate Lobe Transverse Width (mm)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Caudate Lobe Transverse Width (mm)</label>
               <input
                 type="number"
                 value={crlCaudate}
                 onChange={(e) => setCrlCaudate(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Right Lobe Transverse Width (mm)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Right Lobe Transverse Width (mm)</label>
               <input
                 type="number"
                 value={crlRight}
                 onChange={(e) => setCrlRight(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -1300,30 +1300,30 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'fick_shunt_pavm' && (
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Arterial O2 Saturation SaO2 (%)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Arterial O2 Saturation SaO2 (%)</label>
               <input
                 type="number"
                 value={fickSaO2}
                 onChange={(e) => setFickSaO2(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Mixed Venous Sat SvO2 (%)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Mixed Venous Sat SvO2 (%)</label>
               <input
                 type="number"
                 value={fickSvO2}
                 onChange={(e) => setFickSvO2(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Pulm Vein Sat SpvO2 (%)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Pulm Vein Sat SpvO2 (%)</label>
               <input
                 type="number"
                 value={fickSpvO2}
                 onChange={(e) => setFickSpvO2(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -1332,21 +1332,21 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'hvpg_portal_htn' && (
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Wedged Hepatic Venous Pressure WHVP (mmHg)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Wedged Hepatic Venous Pressure WHVP (mmHg)</label>
               <input
                 type="number"
                 value={hvpgWhvp}
                 onChange={(e) => setHvpgWhvp(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Free Hepatic Venous Pressure FHVP / IVC (mmHg)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Free Hepatic Venous Pressure FHVP / IVC (mmHg)</label>
               <input
                 type="number"
                 value={hvpgFhvp}
                 onChange={(e) => setHvpgFhvp(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -1355,41 +1355,41 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'ptbd_decompression' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Daily Bile Output (mL/24h)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Daily Bile Output (mL/24h)</label>
               <input
                 type="number"
                 value={ptbdOutput}
                 onChange={(e) => setPtbdOutput(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Baseline Bilirubin (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Baseline Bilirubin (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={ptbdBaseBili}
                 onChange={(e) => setPtbdBaseBili(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Current Bilirubin (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Current Bilirubin (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={ptbdCurrBili}
                 onChange={(e) => setPtbdCurrBili(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Days Post-PTBD</label>
+              <label className="text-slate-500 block mb-1 font-medium">Days Post-PTBD</label>
               <input
                 type="number"
                 value={ptbdDays}
                 onChange={(e) => setPtbdDays(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -1397,11 +1397,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'rutherford_pad' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">Select Clinical Presentation Category (0-6)</label>
+            <label className="text-slate-500 block mb-1 font-medium">Select Clinical Presentation Category (0-6)</label>
             <select
               value={rutherfordCat}
               onChange={(e) => setRutherfordCat(Number(e.target.value))}
-              className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs"
+              className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs"
             >
               <option value={0}>Category 0: Asymptomatic; no hemodynamically significant occlusive disease</option>
               <option value={1}>Category 1: Mild claudication; completes treadmill exercise</option>
@@ -1417,30 +1417,30 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'abi_tbi_pad' && (
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Ankle Systolic BP (mmHg)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Ankle Systolic BP (mmHg)</label>
               <input
                 type="number"
                 value={abiAnkle}
                 onChange={(e) => setAbiAnkle(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Brachial Systolic BP (mmHg)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Brachial Systolic BP (mmHg)</label>
               <input
                 type="number"
                 value={abiBrachial}
                 onChange={(e) => setAbiBrachial(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Great Toe BP (mmHg, Opt)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Great Toe BP (mmHg, Opt)</label>
               <input
                 type="number"
                 value={abiToe}
                 onChange={(e) => setAbiToe(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -1448,11 +1448,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'fontaine_pad' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">Fontaine Clinical Stage</label>
+            <label className="text-slate-500 block mb-1 font-medium">Fontaine Clinical Stage</label>
             <select
               value={fontaineStage}
               onChange={(e) => setFontaineStage(e.target.value as any)}
-              className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs"
+              className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs"
             >
               <option value="I">Stage I: Asymptomatic / subclinical stenosis</option>
               <option value="IIa">Stage IIa: Mild claudication (walking distance &gt; 200 meters)</option>
@@ -1511,25 +1511,25 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'villalta_pts' && (
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Symptoms Subscore (0-15)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Symptoms Subscore (0-15)</label>
               <input
                 type="number"
                 min="0"
                 max="15"
                 value={villaltaSymptoms}
                 onChange={(e) => setVillaltaSymptoms(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Signs Subscore (0-18)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Signs Subscore (0-18)</label>
               <input
                 type="number"
                 min="0"
                 max="18"
                 value={villaltaSigns}
                 onChange={(e) => setVillaltaSigns(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div className="flex items-center gap-2 pt-6">
@@ -1548,11 +1548,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'ceap_varicose' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">Select CEAP Clinical Class</label>
+            <label className="text-slate-500 block mb-1 font-medium">Select CEAP Clinical Class</label>
             <select
               value={ceapClass}
               onChange={(e) => setCeapClass(e.target.value as any)}
-              className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs"
+              className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs"
             >
               <option value="C0">C0: No visible or palpable signs of venous disease</option>
               <option value="C1">C1: Telangiectasias or reticular veins (&lt; 3 mm)</option>
@@ -1599,12 +1599,12 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
               </label>
             </div>
             <div className="w-48">
-              <label className="text-[#5F6368] block mb-1 font-medium">Heart Rate (bpm)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Heart Rate (bpm)</label>
               <input
                 type="number"
                 value={genHr}
                 onChange={(e) => setGenHr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -1642,42 +1642,42 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'fibroid_volume_uae' && (
           <div className="grid grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Length (cm)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Length (cm)</label>
               <input
                 type="number"
                 step="0.1"
                 value={fibL}
                 onChange={(e) => setFibL(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Width (cm)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Width (cm)</label>
               <input
                 type="number"
                 step="0.1"
                 value={fibW}
                 onChange={(e) => setFibW(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Depth (cm)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Depth (cm)</label>
               <input
                 type="number"
                 step="0.1"
                 value={fibD}
                 onChange={(e) => setFibD(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Prior Vol (cm³, Opt)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Prior Vol (cm³, Opt)</label>
               <input
                 type="number"
                 value={fibPrior}
                 onChange={(e) => setFibPrior(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -1687,36 +1687,36 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-2 text-xs">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div>
-                <label className="text-[#5F6368] block mb-1">Incomplete Empty (0-5)</label>
-                <input type="number" min="0" max="5" value={ipssEmpty} onChange={(e) => setIpssEmpty(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Incomplete Empty (0-5)</label>
+                <input type="number" min="0" max="5" value={ipssEmpty} onChange={(e) => setIpssEmpty(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Frequency (0-5)</label>
-                <input type="number" min="0" max="5" value={ipssFreq} onChange={(e) => setIpssFreq(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Frequency (0-5)</label>
+                <input type="number" min="0" max="5" value={ipssFreq} onChange={(e) => setIpssFreq(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Intermittency (0-5)</label>
-                <input type="number" min="0" max="5" value={ipssInter} onChange={(e) => setIpssInter(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Intermittency (0-5)</label>
+                <input type="number" min="0" max="5" value={ipssInter} onChange={(e) => setIpssInter(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Urgency (0-5)</label>
-                <input type="number" min="0" max="5" value={ipssUrg} onChange={(e) => setIpssUrg(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Urgency (0-5)</label>
+                <input type="number" min="0" max="5" value={ipssUrg} onChange={(e) => setIpssUrg(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Weak Stream (0-5)</label>
-                <input type="number" min="0" max="5" value={ipssWeak} onChange={(e) => setIpssWeak(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Weak Stream (0-5)</label>
+                <input type="number" min="0" max="5" value={ipssWeak} onChange={(e) => setIpssWeak(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Straining (0-5)</label>
-                <input type="number" min="0" max="5" value={ipssStrain} onChange={(e) => setIpssStrain(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Straining (0-5)</label>
+                <input type="number" min="0" max="5" value={ipssStrain} onChange={(e) => setIpssStrain(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Nocturia (0-5)</label>
-                <input type="number" min="0" max="5" value={ipssNoct} onChange={(e) => setIpssNoct(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Nocturia (0-5)</label>
+                <input type="number" min="0" max="5" value={ipssNoct} onChange={(e) => setIpssNoct(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-semibold text-[#1A73E8]">QoL Index (0-6)</label>
-                <input type="number" min="0" max="6" value={ipssQol} onChange={(e) => setIpssQol(Number(e.target.value))} className="w-full px-2 py-1 border border-[#1A73E8] rounded font-mono font-bold" />
+                <label className="text-slate-500 block mb-1 font-semibold text-blue-600">QoL Index (0-6)</label>
+                <input type="number" min="0" max="6" value={ipssQol} onChange={(e) => setIpssQol(Number(e.target.value))} className="w-full px-2 py-1 border border-blue-600 rounded font-mono font-bold" />
               </div>
             </div>
           </div>
@@ -1725,20 +1725,20 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'prostate_volume_pae' && (
           <div className="grid grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Width (cm)</label>
-              <input type="number" step="0.1" value={pvW} onChange={(e) => setPvW(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Width (cm)</label>
+              <input type="number" step="0.1" value={pvW} onChange={(e) => setPvW(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Height (cm)</label>
-              <input type="number" step="0.1" value={pvH} onChange={(e) => setPvH(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Height (cm)</label>
+              <input type="number" step="0.1" value={pvH} onChange={(e) => setPvH(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Length (cm)</label>
-              <input type="number" step="0.1" value={pvL} onChange={(e) => setPvL(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Length (cm)</label>
+              <input type="number" step="0.1" value={pvL} onChange={(e) => setPvL(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Serum PSA (ng/mL)</label>
-              <input type="number" step="0.1" value={pvPsa} onChange={(e) => setPvPsa(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Serum PSA (ng/mL)</label>
+              <input type="number" step="0.1" value={pvPsa} onChange={(e) => setPvPsa(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
           </div>
         )}
@@ -1746,23 +1746,23 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'nascet_carotid' && (
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Residual Lumen (mm)</label>
-              <input type="number" step="0.1" value={nascetLumen} onChange={(e) => setNascetLumen(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Residual Lumen (mm)</label>
+              <input type="number" step="0.1" value={nascetLumen} onChange={(e) => setNascetLumen(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Distal Normal ICA (mm)</label>
-              <input type="number" step="0.1" value={nascetDistal} onChange={(e) => setNascetDistal(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Distal Normal ICA (mm)</label>
+              <input type="number" step="0.1" value={nascetDistal} onChange={(e) => setNascetDistal(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Original Bulb (mm, Opt)</label>
-              <input type="number" step="0.1" value={nascetBulb} onChange={(e) => setNascetBulb(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Original Bulb (mm, Opt)</label>
+              <input type="number" step="0.1" value={nascetBulb} onChange={(e) => setNascetBulb(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
           </div>
         )}
 
         {calculatorId === 'aspects_stroke' && (
           <div className="space-y-1 text-xs">
-            <span className="text-[#5F6368] block font-medium">Select Hypodense MCA Regions (Deducts 1 pt each from 10):</span>
+            <span className="text-slate-500 block font-medium">Select Hypodense MCA Regions (Deducts 1 pt each from 10):</span>
             <div className="grid grid-cols-5 gap-2 pt-1">
               <label className="flex items-center gap-1.5"><input type="checkbox" checked={aspCaud} onChange={(e) => setAspCaud(e.target.checked)} /><span>Caudate</span></label>
               <label className="flex items-center gap-1.5"><input type="checkbox" checked={aspLent} onChange={(e) => setAspLent(e.target.checked)} /><span>Lentiform</span></label>
@@ -1780,18 +1780,18 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'nihss_short' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">NIHSS Score (0 to 42 points)</label>
+            <label className="text-slate-500 block mb-1 font-medium">NIHSS Score (0 to 42 points)</label>
             <div className="flex items-center gap-3">
               <input type="range" min="0" max="42" value={nihssScore} onChange={(e) => setNihssScore(Number(e.target.value))} className="w-full" />
-              <span className="font-mono font-bold text-base text-[#1A73E8] w-10 text-right">{nihssScore}</span>
+              <span className="font-mono font-bold text-base text-blue-600 w-10 text-right">{nihssScore}</span>
             </div>
           </div>
         )}
 
         {calculatorId === 'hunt_hess_sah' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">Select Clinical Severity Grade</label>
-            <select value={hhGrade} onChange={(e) => setHhGrade(Number(e.target.value))} className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg">
+            <label className="text-slate-500 block mb-1 font-medium">Select Clinical Severity Grade</label>
+            <select value={hhGrade} onChange={(e) => setHhGrade(Number(e.target.value))} className="w-full px-2.5 py-2 border border-slate-200 rounded-lg">
               <option value={1}>Grade 1: Asymptomatic or mild headache, slight nuchal rigidity</option>
               <option value={2}>Grade 2: Moderate/severe headache, stiff neck, cranial nerve palsy</option>
               <option value={3}>Grade 3: Drowsiness, confusion, or mild focal deficit</option>
@@ -1803,8 +1803,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'modified_fisher_sah' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">Select Modified Fisher CT Grade</label>
-            <select value={mfGrade} onChange={(e) => setMfGrade(Number(e.target.value))} className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg">
+            <label className="text-slate-500 block mb-1 font-medium">Select Modified Fisher CT Grade</label>
+            <select value={mfGrade} onChange={(e) => setMfGrade(Number(e.target.value))} className="w-full px-2.5 py-2 border border-slate-200 rounded-lg">
               <option value={1}>Grade 1: Focal or diffuse thin SAH (&lt; 1 mm), no IVH</option>
               <option value={2}>Grade 2: Focal or diffuse thin SAH (&lt; 1 mm), with bilateral IVH</option>
               <option value={3}>Grade 3: Thick cisternal SAH (≥ 1 mm), no IVH</option>
@@ -1815,8 +1815,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'markwalder_csdh' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">Select Markwalder Clinical Grade</label>
-            <select value={mwGrade} onChange={(e) => setMwGrade(Number(e.target.value))} className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg">
+            <label className="text-slate-500 block mb-1 font-medium">Select Markwalder Clinical Grade</label>
+            <select value={mwGrade} onChange={(e) => setMwGrade(Number(e.target.value))} className="w-full px-2.5 py-2 border border-slate-200 rounded-lg">
               <option value={0}>Grade 0: Neurologically intact, asymptomatic</option>
               <option value={1}>Grade 1: Alert, oriented; mild symptoms (headache, unsteady gait)</option>
               <option value={2}>Grade 2: Drowsy or disoriented with focal signs</option>
@@ -1828,8 +1828,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'schobinger_avm' && (
           <div className="text-xs">
-            <label className="text-[#5F6368] block mb-1 font-medium">Select Schobinger AVM Evolution Stage</label>
-            <select value={schobStage} onChange={(e) => setSchobStage(Number(e.target.value))} className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg">
+            <label className="text-slate-500 block mb-1 font-medium">Select Schobinger AVM Evolution Stage</label>
+            <select value={schobStage} onChange={(e) => setSchobStage(Number(e.target.value))} className="w-full px-2.5 py-2 border border-slate-200 rounded-lg">
               <option value={1}>Stage I (Quiescence): Warm macule, AV shunt on Doppler; asymptomatic</option>
               <option value={2}>Stage II (Expansion): Pulsations, thrill, bruit, tortuous veins</option>
               <option value={3}>Stage III (Destruction): Ulceration, bleeding, persistent pain, necrosis</option>
@@ -1841,32 +1841,32 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'rockall_bleeding' && (
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Age</label>
-              <select value={rockAge} onChange={(e) => setRockAge(e.target.value as any)} className="w-full px-2 py-1.5 border border-[#DADCE0] rounded-lg">
+              <label className="text-slate-500 block mb-1 font-medium">Age</label>
+              <select value={rockAge} onChange={(e) => setRockAge(e.target.value as any)} className="w-full px-2 py-1.5 border border-slate-200 rounded-lg">
                 <option value="<60">&lt; 60 Years (0 pts)</option>
                 <option value="60-79">60-79 Years (1 pt)</option>
                 <option value=">=80">≥ 80 Years (2 pts)</option>
               </select>
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Hemodynamic Shock</label>
-              <select value={rockShock} onChange={(e) => setRockShock(e.target.value as any)} className="w-full px-2 py-1.5 border border-[#DADCE0] rounded-lg">
+              <label className="text-slate-500 block mb-1 font-medium">Hemodynamic Shock</label>
+              <select value={rockShock} onChange={(e) => setRockShock(e.target.value as any)} className="w-full px-2 py-1.5 border border-slate-200 rounded-lg">
                 <option value="none">No shock (BP ≥ 100, HR &lt; 100) (0 pts)</option>
                 <option value="tachycardia">Tachycardia (HR ≥ 100, BP ≥ 100) (1 pt)</option>
                 <option value="hypotension">Hypotension (SBP &lt; 100 mmHg) (2 pts)</option>
               </select>
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Comorbidities</label>
-              <select value={rockComorb} onChange={(e) => setRockComorb(e.target.value as any)} className="w-full px-2 py-1.5 border border-[#DADCE0] rounded-lg">
+              <label className="text-slate-500 block mb-1 font-medium">Comorbidities</label>
+              <select value={rockComorb} onChange={(e) => setRockComorb(e.target.value as any)} className="w-full px-2 py-1.5 border border-slate-200 rounded-lg">
                 <option value="none">None (0 pts)</option>
                 <option value="cad_chf_major">CAD / CHF / Major morbidity (2 pts)</option>
                 <option value="renal_liver_malig">Renal / Liver failure / Malignancy (3 pts)</option>
               </select>
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Endoscopic Stigmata</label>
-              <select value={rockStigmata} onChange={(e) => setRockStigmata(e.target.value as any)} className="w-full px-2 py-1.5 border border-[#DADCE0] rounded-lg">
+              <label className="text-slate-500 block mb-1 font-medium">Endoscopic Stigmata</label>
+              <select value={rockStigmata} onChange={(e) => setRockStigmata(e.target.value as any)} className="w-full px-2 py-1.5 border border-slate-200 rounded-lg">
                 <option value="clean_base">Clean base / flat spot (0 pts)</option>
                 <option value="blood_clot">Blood in stomach / clot (1 pt)</option>
                 <option value="active_spurting">Active arterial spurting (2 pts)</option>
@@ -1879,20 +1879,20 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-2 text-xs">
             <div className="grid grid-cols-4 gap-2">
               <div>
-                <label className="text-[#5F6368] block mb-1">BUN (mg/dL)</label>
-                <input type="number" value={gbsBun} onChange={(e) => setGbsBun(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">BUN (mg/dL)</label>
+                <input type="number" value={gbsBun} onChange={(e) => setGbsBun(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Hb (g/dL)</label>
-                <input type="number" step="0.1" value={gbsHb} onChange={(e) => setGbsHb(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Hb (g/dL)</label>
+                <input type="number" step="0.1" value={gbsHb} onChange={(e) => setGbsHb(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Systolic BP</label>
-                <input type="number" value={gbsSbp} onChange={(e) => setGbsSbp(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Systolic BP</label>
+                <input type="number" value={gbsSbp} onChange={(e) => setGbsSbp(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Pulse (bpm)</label>
-                <input type="number" value={gbsPulse} onChange={(e) => setGbsPulse(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Pulse (bpm)</label>
+                <input type="number" value={gbsPulse} onChange={(e) => setGbsPulse(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
             </div>
             <div className="grid grid-cols-4 gap-2 pt-1">
@@ -1908,29 +1908,29 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-2 text-xs">
             <div className="grid grid-cols-4 gap-2">
               <div>
-                <label className="text-[#5F6368] block mb-1">Age</label>
-                <input type="number" value={oakAge} onChange={(e) => setOakAge(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Age</label>
+                <input type="number" value={oakAge} onChange={(e) => setOakAge(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Sex</label>
-                <select value={oakSex} onChange={(e) => setOakSex(e.target.value as any)} className="w-full px-2 py-1 border border-[#DADCE0] rounded">
+                <label className="text-slate-500 block mb-1">Sex</label>
+                <select value={oakSex} onChange={(e) => setOakSex(e.target.value as any)} className="w-full px-2 py-1 border border-slate-200 rounded">
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Heart Rate</label>
-                <input type="number" value={oakHr} onChange={(e) => setOakHr(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Heart Rate</label>
+                <input type="number" value={oakHr} onChange={(e) => setOakHr(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1">Systolic BP</label>
-                <input type="number" value={oakSbp} onChange={(e) => setOakSbp(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Systolic BP</label>
+                <input type="number" value={oakSbp} onChange={(e) => setOakSbp(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-2 pt-1">
               <div>
-                <label className="text-[#5F6368] block mb-1">Hemoglobin (g/dL)</label>
-                <input type="number" step="0.1" value={oakHb} onChange={(e) => setOakHb(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded font-mono" />
+                <label className="text-slate-500 block mb-1">Hemoglobin (g/dL)</label>
+                <input type="number" step="0.1" value={oakHb} onChange={(e) => setOakHb(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded font-mono" />
               </div>
               <label className="flex items-center gap-1.5 pt-5"><input type="checkbox" checked={oakPrior} onChange={(e) => setOakPrior(e.target.checked)} /><span>Prior LGIB (+1)</span></label>
               <label className="flex items-center gap-1.5 pt-5"><input type="checkbox" checked={oakDre} onChange={(e) => setOakDre(e.target.checked)} /><span>DRE Blood (+1)</span></label>
@@ -1941,24 +1941,24 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'sir_coagulation_risk' && (
           <div className="grid grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Procedure Risk Tier</label>
-              <select value={sirCat} onChange={(e) => setSirCat(Number(e.target.value) as any)} className="w-full px-2 py-1.5 border border-[#DADCE0] rounded-lg">
+              <label className="text-slate-500 block mb-1 font-medium">Procedure Risk Tier</label>
+              <select value={sirCat} onChange={(e) => setSirCat(Number(e.target.value) as any)} className="w-full px-2 py-1.5 border border-slate-200 rounded-lg">
                 <option value={1}>Category 1 (Low Risk)</option>
                 <option value={2}>Category 2 (Moderate)</option>
                 <option value={3}>Category 3 (High Risk)</option>
               </select>
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Platelets (/µL)</label>
-              <input type="number" step="5000" value={sirPlt} onChange={(e) => setSirPlt(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Platelets (/µL)</label>
+              <input type="number" step="5000" value={sirPlt} onChange={(e) => setSirPlt(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">PT / INR</label>
-              <input type="number" step="0.1" value={sirInr} onChange={(e) => setSirInr(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">PT / INR</label>
+              <input type="number" step="0.1" value={sirInr} onChange={(e) => setSirInr(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">aPTT (Seconds)</label>
-              <input type="number" value={sirAptt} onChange={(e) => setSirAptt(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">aPTT (Seconds)</label>
+              <input type="number" value={sirAptt} onChange={(e) => setSirAptt(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
           </div>
         )}
@@ -1966,20 +1966,20 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'ablation_margin_a0a1' && (
           <div className="grid grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Tumor Max Diam (mm)</label>
-              <input type="number" value={abTumorD} onChange={(e) => setAbTumorD(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Tumor Max Diam (mm)</label>
+              <input type="number" value={abTumorD} onChange={(e) => setAbTumorD(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Ablation Transverse (mm)</label>
-              <input type="number" value={abZoneTrans} onChange={(e) => setAbZoneTrans(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Ablation Transverse (mm)</label>
+              <input type="number" value={abZoneTrans} onChange={(e) => setAbZoneTrans(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Ablation Long (mm)</label>
-              <input type="number" value={abZoneLong} onChange={(e) => setAbZoneLong(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Ablation Long (mm)</label>
+              <input type="number" value={abZoneLong} onChange={(e) => setAbZoneLong(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Measured Margin (mm)</label>
-              <input type="number" step="0.5" value={abMinMargin} onChange={(e) => setAbMinMargin(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono font-bold" />
+              <label className="text-slate-500 block mb-1 font-medium">Measured Margin (mm)</label>
+              <input type="number" step="0.5" value={abMinMargin} onChange={(e) => setAbMinMargin(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono font-bold" />
             </div>
           </div>
         )}
@@ -1987,16 +1987,16 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'womac_gae' && (
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Pain Subscore (0-20)</label>
-              <input type="number" min="0" max="20" value={womPain} onChange={(e) => setWomPain(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Pain Subscore (0-20)</label>
+              <input type="number" min="0" max="20" value={womPain} onChange={(e) => setWomPain(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Stiffness (0-8)</label>
-              <input type="number" min="0" max="8" value={womStiff} onChange={(e) => setWomStiff(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Stiffness (0-8)</label>
+              <input type="number" min="0" max="8" value={womStiff} onChange={(e) => setWomStiff(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Physical Function (0-68)</label>
-              <input type="number" min="0" max="68" value={womFunc} onChange={(e) => setWomFunc(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Physical Function (0-68)</label>
+              <input type="number" min="0" max="68" value={womFunc} onChange={(e) => setWomFunc(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
           </div>
         )}
@@ -2004,40 +2004,40 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'cigarroa_macd' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Patient Weight (kg)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Patient Weight (kg)</label>
               <input
                 type="number"
                 value={macdWeight}
                 onChange={(e) => setMacdWeight(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Serum Creatinine (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Serum Creatinine (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={macdCr}
                 onChange={(e) => setMacdCr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Contrast Administered (mL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Contrast Administered (mL)</label>
               <input
                 type="number"
                 value={macdContrast}
                 onChange={(e) => setMacdContrast(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono font-bold"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono font-bold"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">eGFR (mL/min/1.73m²)</label>
+              <label className="text-slate-500 block mb-1 font-medium">eGFR (mL/min/1.73m²)</label>
               <input
                 type="number"
                 value={macdEgfr}
                 onChange={(e) => setMacdEgfr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
           </div>
@@ -2046,52 +2046,52 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'meld3_score' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Bilirubin (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Bilirubin (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={meldBili}
                 onChange={(e) => setMeldBili(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Creatinine (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Creatinine (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={meldCr}
                 onChange={(e) => setMeldCr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">INR</label>
+              <label className="text-slate-500 block mb-1 font-medium">INR</label>
               <input
                 type="number"
                 step="0.1"
                 value={meldInr}
                 onChange={(e) => setMeldInr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Serum Sodium (mEq/L)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Serum Sodium (mEq/L)</label>
               <input
                 type="number"
                 value={meldNa}
                 onChange={(e) => setMeldNa(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Albumin (g/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Albumin (g/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={meldAlb}
                 onChange={(e) => setMeldAlb(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div className="flex items-center gap-2 pt-6">
@@ -2100,9 +2100,9 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 id="meldFemale"
                 checked={meldFemale}
                 onChange={(e) => setMeldFemale(e.target.checked)}
-                className="rounded border-[#DADCE0] text-[#1A73E8]"
+                className="rounded border-slate-200 text-blue-600"
               />
-              <label htmlFor="meldFemale" className="text-xs text-[#202124] font-medium cursor-pointer">
+              <label htmlFor="meldFemale" className="text-xs text-slate-900 font-medium cursor-pointer">
                 Female Sex (+1.33 adjustment)
               </label>
             </div>
@@ -2112,41 +2112,41 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'child_pugh_albi' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Total Bilirubin (mg/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Total Bilirubin (mg/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={cpBili}
                 onChange={(e) => setCpBili(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Serum Albumin (g/dL)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Serum Albumin (g/dL)</label>
               <input
                 type="number"
                 step="0.1"
                 value={cpAlb}
                 onChange={(e) => setCpAlb(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">INR</label>
+              <label className="text-slate-500 block mb-1 font-medium">INR</label>
               <input
                 type="number"
                 step="0.1"
                 value={cpInr}
                 onChange={(e) => setCpInr(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Ascites</label>
+              <label className="text-slate-500 block mb-1 font-medium">Ascites</label>
               <select
                 value={cpAscites}
                 onChange={(e) => setCpAscites(Number(e.target.value) as 1 | 2 | 3)}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
               >
                 <option value={1}>None (1 pt)</option>
                 <option value={2}>Mild / Controlled (2 pts)</option>
@@ -2154,11 +2154,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label className="text-[#5F6368] block mb-1 font-medium">Hepatic Encephalopathy</label>
+              <label className="text-slate-500 block mb-1 font-medium">Hepatic Encephalopathy</label>
               <select
                 value={cpEnceph}
                 onChange={(e) => setCpEnceph(Number(e.target.value) as 1 | 2 | 3)}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
               >
                 <option value={1}>None (1 pt)</option>
                 <option value={2}>Grade 1-2 (Mild Confusion/Tremor) (2 pts)</option>
@@ -2171,31 +2171,31 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'bclc_staging' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Tumor Nodules Count</label>
+              <label className="text-slate-500 block mb-1 font-medium">Tumor Nodules Count</label>
               <input
                 type="number"
                 min="1"
                 value={bclcTumors}
                 onChange={(e) => setBclcTumors(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Max Tumor Diameter (cm)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Max Tumor Diameter (cm)</label>
               <input
                 type="number"
                 step="0.5"
                 value={bclcSize}
                 onChange={(e) => setBclcSize(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono"
               />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Child-Pugh Class</label>
+              <label className="text-slate-500 block mb-1 font-medium">Child-Pugh Class</label>
               <select
                 value={bclcCpClass}
                 onChange={(e) => setBclcCpClass(e.target.value as 'A' | 'B' | 'C')}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
               >
                 <option value="A">Class A (Preserved Reserve)</option>
                 <option value="B">Class B (Moderately Compromised)</option>
@@ -2203,11 +2203,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
               </select>
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">ECOG Performance Status</label>
+              <label className="text-slate-500 block mb-1 font-medium">ECOG Performance Status</label>
               <select
                 value={bclcEcog}
                 onChange={(e) => setBclcEcog(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs"
+                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs"
               >
                 <option value={0}>0 - Fully Active</option>
                 <option value={1}>1 - Restricted Strenuous Activity</option>
@@ -2221,9 +2221,9 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 id="bclcVasc"
                 checked={bclcVasc}
                 onChange={(e) => setBclcVasc(e.target.checked)}
-                className="rounded border-[#DADCE0] text-[#1A73E8]"
+                className="rounded border-slate-200 text-blue-600"
               />
-              <label htmlFor="bclcVasc" className="text-xs text-[#202124] font-medium cursor-pointer">
+              <label htmlFor="bclcVasc" className="text-xs text-slate-900 font-medium cursor-pointer">
                 Macrovascular Portal Invasion
               </label>
             </div>
@@ -2233,9 +2233,9 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 id="bclcExtra"
                 checked={bclcExtra}
                 onChange={(e) => setBclcExtra(e.target.checked)}
-                className="rounded border-[#DADCE0] text-[#1A73E8]"
+                className="rounded border-slate-200 text-blue-600"
               />
-              <label htmlFor="bclcExtra" className="text-xs text-[#202124] font-medium cursor-pointer">
+              <label htmlFor="bclcExtra" className="text-xs text-slate-900 font-medium cursor-pointer">
                 Extrahepatic Metastasis
               </label>
             </div>
@@ -2245,28 +2245,28 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'flr_kgr_pve' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Pre-PVE FLR Volume (mL)</label>
-              <input type="number" value={flrPreVol} onChange={(e) => setFlrPreVol(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Pre-PVE FLR Volume (mL)</label>
+              <input type="number" value={flrPreVol} onChange={(e) => setFlrPreVol(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Post-PVE FLR Volume (mL)</label>
-              <input type="number" value={flrPostVol} onChange={(e) => setFlrPostVol(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono font-bold" />
+              <label className="text-slate-500 block mb-1 font-medium">Post-PVE FLR Volume (mL)</label>
+              <input type="number" value={flrPostVol} onChange={(e) => setFlrPostVol(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono font-bold" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Elapsed Time (Weeks)</label>
-              <input type="number" step="0.5" value={flrWeeks} onChange={(e) => setFlrWeeks(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Elapsed Time (Weeks)</label>
+              <input type="number" step="0.5" value={flrWeeks} onChange={(e) => setFlrWeeks(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Patient Weight (kg)</label>
-              <input type="number" value={flrWeight} onChange={(e) => setFlrWeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Patient Weight (kg)</label>
+              <input type="number" value={flrWeight} onChange={(e) => setFlrWeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Patient Height (cm)</label>
-              <input type="number" value={flrHeight} onChange={(e) => setFlrHeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Patient Height (cm)</label>
+              <input type="number" value={flrHeight} onChange={(e) => setFlrHeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Liver Background Condition</label>
-              <select value={flrBackground} onChange={(e) => setFlrBackground(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+              <label className="text-slate-500 block mb-1 font-medium">Liver Background Condition</label>
+              <select value={flrBackground} onChange={(e) => setFlrBackground(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                 <option value="normal">Normal Liver (Target ≥ 20%)</option>
                 <option value="steatosis_chemo">Post-Chemo / Steatosis (Target ≥ 30%)</option>
                 <option value="cirrhosis">Cirrhosis / Fibrosis (Target ≥ 40%)</option>
@@ -2278,24 +2278,24 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'y90_partition_dosimetry' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Administered Activity (GBq)</label>
-              <input type="number" step="0.1" value={y90Gbq} onChange={(e) => setY90Gbq(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono font-bold" />
+              <label className="text-slate-500 block mb-1 font-medium">Administered Activity (GBq)</label>
+              <input type="number" step="0.1" value={y90Gbq} onChange={(e) => setY90Gbq(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono font-bold" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Lung Shunt Fraction LSF (%)</label>
-              <input type="number" step="0.5" value={y90Lsf} onChange={(e) => setY90Lsf(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Lung Shunt Fraction LSF (%)</label>
+              <input type="number" step="0.5" value={y90Lsf} onChange={(e) => setY90Lsf(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Tumor-to-Normal Ratio (T/N)</label>
-              <input type="number" step="0.1" value={y90TnRatio} onChange={(e) => setY90TnRatio(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Tumor-to-Normal Ratio (T/N)</label>
+              <input type="number" step="0.1" value={y90TnRatio} onChange={(e) => setY90TnRatio(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Target Lobe/Liver Mass (kg)</label>
-              <input type="number" step="0.1" value={y90LiverMass} onChange={(e) => setY90LiverMass(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Target Lobe/Liver Mass (kg)</label>
+              <input type="number" step="0.1" value={y90LiverMass} onChange={(e) => setY90LiverMass(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Tumor Mass (kg)</label>
-              <input type="number" step="0.05" value={y90TumorMass} onChange={(e) => setY90TumorMass(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Tumor Mass (kg)</label>
+              <input type="number" step="0.05" value={y90TumorMass} onChange={(e) => setY90TumorMass(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
           </div>
         )}
@@ -2303,18 +2303,18 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'spetzler_martin_avm' && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">AVM Nidus Max Diameter (cm)</label>
-              <input type="number" step="0.1" value={smSize} onChange={(e) => setSmSize(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono font-bold" />
+              <label className="text-slate-500 block mb-1 font-medium">AVM Nidus Max Diameter (cm)</label>
+              <input type="number" step="0.1" value={smSize} onChange={(e) => setSmSize(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono font-bold" />
             </div>
             <div className="flex items-center gap-2 pt-6">
-              <input type="checkbox" id="smEloquent" checked={smEloquent} onChange={(e) => setSmEloquent(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
-              <label htmlFor="smEloquent" className="text-xs text-[#202124] font-medium cursor-pointer">
+              <input type="checkbox" id="smEloquent" checked={smEloquent} onChange={(e) => setSmEloquent(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
+              <label htmlFor="smEloquent" className="text-xs text-slate-900 font-medium cursor-pointer">
                 Eloquent Cortex / Deep Nuclei (1 pt)
               </label>
             </div>
             <div className="flex items-center gap-2 pt-6">
-              <input type="checkbox" id="smDeepDrain" checked={smDeepDrain} onChange={(e) => setSmDeepDrain(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
-              <label htmlFor="smDeepDrain" className="text-xs text-[#202124] font-medium cursor-pointer">
+              <input type="checkbox" id="smDeepDrain" checked={smDeepDrain} onChange={(e) => setSmDeepDrain(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
+              <label htmlFor="smDeepDrain" className="text-xs text-slate-900 font-medium cursor-pointer">
                 Deep Venous Drainage (1 pt)
               </label>
             </div>
@@ -2324,16 +2324,16 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'aortic_size_index_asi' && (
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Max Aortic Diameter (cm)</label>
-              <input type="number" step="0.1" value={asiDiameter} onChange={(e) => setAsiDiameter(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono font-bold" />
+              <label className="text-slate-500 block mb-1 font-medium">Max Aortic Diameter (cm)</label>
+              <input type="number" step="0.1" value={asiDiameter} onChange={(e) => setAsiDiameter(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono font-bold" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Patient Weight (kg)</label>
-              <input type="number" value={asiWeight} onChange={(e) => setAsiWeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Patient Weight (kg)</label>
+              <input type="number" value={asiWeight} onChange={(e) => setAsiWeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Patient Height (cm)</label>
-              <input type="number" value={asiHeight} onChange={(e) => setAsiHeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Patient Height (cm)</label>
+              <input type="number" value={asiHeight} onChange={(e) => setAsiHeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
           </div>
         )}
@@ -2341,16 +2341,16 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'renal_resistive_index' && (
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Renal PSV (cm/s)</label>
-              <input type="number" value={rriPsv} onChange={(e) => setRriPsv(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono font-bold" />
+              <label className="text-slate-500 block mb-1 font-medium">Renal PSV (cm/s)</label>
+              <input type="number" value={rriPsv} onChange={(e) => setRriPsv(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono font-bold" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Renal EDV (cm/s)</label>
-              <input type="number" value={rriEdv} onChange={(e) => setRriEdv(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Renal EDV (cm/s)</label>
+              <input type="number" value={rriEdv} onChange={(e) => setRriEdv(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Suprarenal Aortic PSV (cm/s)</label>
-              <input type="number" value={rriAorta} onChange={(e) => setRriAorta(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs font-mono" />
+              <label className="text-slate-500 block mb-1 font-medium">Suprarenal Aortic PSV (cm/s)</label>
+              <input type="number" value={rriAorta} onChange={(e) => setRriAorta(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-mono" />
             </div>
           </div>
         )}
@@ -2359,8 +2359,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Age Group</label>
-                <select value={capAge} onChange={(e) => setCapAge(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Age Group</label>
+                <select value={capAge} onChange={(e) => setCapAge(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="<41">&lt; 41 Years (0 pts)</option>
                   <option value="41-60">41 - 60 Years (1 pt)</option>
                   <option value="61-74">61 - 74 Years (2 pts)</option>
@@ -2370,31 +2370,31 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={capSurg} onChange={(e) => setCapSurg(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={capSurg} onChange={(e) => setCapSurg(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Major Surgery / Trauma (2 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={capCvc} onChange={(e) => setCapCvc(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={capCvc} onChange={(e) => setCapCvc(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Central Venous Catheter (2 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={capMalig} onChange={(e) => setCapMalig(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={capMalig} onChange={(e) => setCapMalig(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Active Malignancy (3 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={capPriorVte} onChange={(e) => setCapPriorVte(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={capPriorVte} onChange={(e) => setCapPriorVte(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Prior DVT / PE History (3 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={capThrombophilia} onChange={(e) => setCapThrombophilia(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={capThrombophilia} onChange={(e) => setCapThrombophilia(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Known Thrombophilia (3 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={capBedridden} onChange={(e) => setCapBedridden(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={capBedridden} onChange={(e) => setCapBedridden(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Bedridden &gt; 72 Hours (3 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={capVaricose} onChange={(e) => setCapVaricose(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={capVaricose} onChange={(e) => setCapVaricose(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Varicose Veins / Edema (1 pt)</span>
               </label>
             </div>
@@ -2404,31 +2404,31 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'has_bled_score' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={hbHt} onChange={(e) => setHbHt(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+              <input type="checkbox" checked={hbHt} onChange={(e) => setHbHt(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
               <span>Hypertension (SBP &gt; 160)</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={hbRenalLiv} onChange={(e) => setHbRenalLiv(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+              <input type="checkbox" checked={hbRenalLiv} onChange={(e) => setHbRenalLiv(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
               <span>Abnormal Renal / Liver Function</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={hbStroke} onChange={(e) => setHbStroke(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+              <input type="checkbox" checked={hbStroke} onChange={(e) => setHbStroke(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
               <span>Prior Stroke History</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={hbBleed} onChange={(e) => setHbBleed(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+              <input type="checkbox" checked={hbBleed} onChange={(e) => setHbBleed(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
               <span>Bleeding History / Anemia</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={hbInr} onChange={(e) => setHbInr(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+              <input type="checkbox" checked={hbInr} onChange={(e) => setHbInr(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
               <span>Labile INR / Anticoagulated</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={hbAge65} onChange={(e) => setHbAge65(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+              <input type="checkbox" checked={hbAge65} onChange={(e) => setHbAge65(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
               <span>Elderly (Age &gt; 65 Years)</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={hbDrugs} onChange={(e) => setHbDrugs(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+              <input type="checkbox" checked={hbDrugs} onChange={(e) => setHbDrugs(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
               <span>Antiplatelets / NSAIDs / Alcohol</span>
             </label>
           </div>
@@ -2438,16 +2438,16 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Palliative Performance Scale (PPS %)</label>
-                <select value={ppiPps} onChange={(e) => setPpiPps(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Palliative Performance Scale (PPS %)</label>
+                <select value={ppiPps} onChange={(e) => setPpiPps(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value={10}>10 - 20% (Bedbound, total assistance) (4.0 pts)</option>
                   <option value={40}>30 - 50% (Mainly bed/chair, moderate assist) (2.5 pts)</option>
                   <option value={70}>≥ 60% (Ambulatory, mainly independent) (0 pts)</option>
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Oral Intake</label>
-                <select value={ppiIntake} onChange={(e) => setPpiIntake(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Oral Intake</label>
+                <select value={ppiIntake} onChange={(e) => setPpiIntake(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="normal">Normal (0 pts)</option>
                   <option value="reduced">Reduced (small sips/bites) (1.0 pt)</option>
                   <option value="severely_reduced">Severely Reduced / Minimal (2.5 pts)</option>
@@ -2456,15 +2456,15 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
             </div>
             <div className="grid grid-cols-3 gap-2 pt-1">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={ppiEdema} onChange={(e) => setPpiEdema(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={ppiEdema} onChange={(e) => setPpiEdema(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Peripheral / Body Edema (1.0 pt)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={ppiDyspnea} onChange={(e) => setPpiDyspnea(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={ppiDyspnea} onChange={(e) => setPpiDyspnea(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Dyspnea at Rest (2.5 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={ppiDelirium} onChange={(e) => setPpiDelirium(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={ppiDelirium} onChange={(e) => setPpiDelirium(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Delirium / Acute Confusion (4.0 pts)</span>
               </label>
             </div>
@@ -2475,8 +2475,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">W - Wound Grade</label>
-                <select value={wifiWound} onChange={(e) => setWifiWound(Number(e.target.value) as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">W - Wound Grade</label>
+                <select value={wifiWound} onChange={(e) => setWifiWound(Number(e.target.value) as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value={0}>Grade 0: No ulcer / Ischemic rest pain only</option>
                   <option value={1}>Grade 1: Small shallow ulcer, distal leg/foot, no gangrene</option>
                   <option value={2}>Grade 2: Deep ulcer, exposed bone/tendon or toe gangrene</option>
@@ -2484,8 +2484,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">I - Ischemia Grade (ABI / TP)</label>
-                <select value={wifiIschemia} onChange={(e) => setWifiIschemia(Number(e.target.value) as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">I - Ischemia Grade (ABI / TP)</label>
+                <select value={wifiIschemia} onChange={(e) => setWifiIschemia(Number(e.target.value) as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value={0}>Grade 0: ABI ≥ 0.80 / TP ≥ 60 mmHg (No ischemia)</option>
                   <option value={1}>Grade 1: ABI 0.60 - 0.79 / TP 40 - 59 mmHg (Mild)</option>
                   <option value={2}>Grade 2: ABI 0.40 - 0.59 / TP 30 - 39 mmHg (Moderate)</option>
@@ -2493,8 +2493,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">fI - Foot Infection Grade</label>
-                <select value={wifiInfection} onChange={(e) => setWifiInfection(Number(e.target.value) as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">fI - Foot Infection Grade</label>
+                <select value={wifiInfection} onChange={(e) => setWifiInfection(Number(e.target.value) as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value={0}>Grade 0: No infection / Uninfected</option>
                   <option value={1}>Grade 1: Mild: Local infection ≤ 2 cm cellulitis</option>
                   <option value={2}>Grade 2: Moderate: Cellulitis &gt; 2 cm / Osteomyelitis</option>
@@ -2509,8 +2509,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Anatomical Location</label>
-                <select value={sinsLoc} onChange={(e) => setSinsLoc(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Anatomical Location</label>
+                <select value={sinsLoc} onChange={(e) => setSinsLoc(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="junctional">Junctional (C1-2, C7-T2, T11-L1, S1) (3 pts)</option>
                   <option value="mobile">Mobile Spine (C3-C6, L2-L4) (2 pts)</option>
                   <option value="semi_rigid">Semi-Rigid (T3-T10) (1 pt)</option>
@@ -2518,32 +2518,32 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Pain Characteristic</label>
-                <select value={sinsPain} onChange={(e) => setSinsPain(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Pain Characteristic</label>
+                <select value={sinsPain} onChange={(e) => setSinsPain(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="mechanical">Mechanical (relieved by recumbency) (3 pts)</option>
                   <option value="occasional">Occasional / Constant non-mechanical (1 pt)</option>
                   <option value="painless">Painless lesion (0 pts)</option>
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Bone Lesion Type</label>
-                <select value={sinsBone} onChange={(e) => setSinsBone(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Bone Lesion Type</label>
+                <select value={sinsBone} onChange={(e) => setSinsBone(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="lytic">Lytic (2 pts)</option>
                   <option value="mixed">Mixed (1 pt)</option>
                   <option value="blastic">Blastic / Sclerotic (0 pts)</option>
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Spinal Alignment</label>
-                <select value={sinsAlign} onChange={(e) => setSinsAlign(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Spinal Alignment</label>
+                <select value={sinsAlign} onChange={(e) => setSinsAlign(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="subluxation">Subluxation / Translation (4 pts)</option>
                   <option value="deformity">De novo deformity (Kyphosis/Scoliosis) (2 pts)</option>
                   <option value="normal">Normal alignment (0 pts)</option>
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Vertebral Body Collapse</label>
-                <select value={sinsColl} onChange={(e) => setSinsColl(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Vertebral Body Collapse</label>
+                <select value={sinsColl} onChange={(e) => setSinsColl(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="gt50">&gt; 50% Body Collapse (3 pts)</option>
                   <option value="lt50">&lt; 50% Body Collapse (2 pts)</option>
                   <option value="none_gt50_involvement">No collapse but &gt;50% body involved (1 pt)</option>
@@ -2551,8 +2551,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Posterolateral Element Involvement</label>
-                <select value={sinsPost} onChange={(e) => setSinsPost(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">Posterolateral Element Involvement</label>
+                <select value={sinsPost} onChange={(e) => setSinsPost(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="bilateral">Bilateral (Pedicles/Facet/Costovertebral) (3 pts)</option>
                   <option value="unilateral">Unilateral (1 pt)</option>
                   <option value="none">None (0 pts)</option>
@@ -2564,22 +2564,22 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'bova_pe_score' && (
           <div className="space-y-3 text-xs">
-            <p className="text-[#5F6368]">Select all clinical indicators present on admission:</p>
+            <p className="text-slate-500">Select all clinical indicators present on admission:</p>
             <div className="grid grid-cols-2 gap-2">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={bovaRv} onChange={(e) => setBovaRv(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={bovaRv} onChange={(e) => setBovaRv(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>RV Dysfunction on Echo/CT (RV/LV ≥ 0.9) (+2 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={bovaTrop} onChange={(e) => setBovaTrop(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={bovaTrop} onChange={(e) => setBovaTrop(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Elevated Cardiac Troponin I or T (+2 pts)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={bovaHr} onChange={(e) => setBovaHr(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={bovaHr} onChange={(e) => setBovaHr(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Heart Rate ≥ 110 bpm (+1 pt)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={bovaBp} onChange={(e) => setBovaBp(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={bovaBp} onChange={(e) => setBovaBp(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Systolic BP 90 - 100 mmHg (+2 pts)</span>
               </label>
             </div>
@@ -2590,8 +2590,8 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">WHO Ultrasound Morphology Stage</label>
-                <select value={whoStage} onChange={(e) => setWhoStage(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs">
+                <label className="text-slate-500 block mb-1 font-medium">WHO Ultrasound Morphology Stage</label>
+                <select value={whoStage} onChange={(e) => setWhoStage(e.target.value as any)} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs">
                   <option value="CE1">CE1: Active unilocular fluid cyst with hydatid sand (Ideal PAIR)</option>
                   <option value="CE2">CE2: Active multivesicular / honeycomb cyst (MoCAT / Catheter)</option>
                   <option value="CE3a">CE3a: Transitional detached endocyst (Water-lily sign) (PAIR)</option>
@@ -2601,12 +2601,12 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Cyst Maximum Diameter (cm)</label>
-                <input type="number" step="0.5" value={whoDiam} onChange={(e) => setWhoDiam(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Cyst Maximum Diameter (cm)</label>
+                <input type="number" step="0.5" value={whoDiam} onChange={(e) => setWhoDiam(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
             </div>
             <label className="flex items-center gap-2 cursor-pointer pt-1 text-rose-700 font-semibold">
-              <input type="checkbox" checked={whoFistula} onChange={(e) => setWhoFistula(e.target.checked)} className="rounded border-[#DADCE0] text-rose-600" />
+              <input type="checkbox" checked={whoFistula} onChange={(e) => setWhoFistula(e.target.checked)} className="rounded border-slate-200 text-rose-600" />
               <span>Cystobiliary Fistula / Biliary Communication (Absolute Contraindication to Scolicides)</span>
             </label>
           </div>
@@ -2614,26 +2614,26 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
 
         {calculatorId === 'tg18_cholecystitis' && (
           <div className="space-y-3 text-xs">
-            <p className="text-[#5F6368]">Select clinical criteria to triage between PTGBD vs Lap Cholecystectomy:</p>
+            <p className="text-slate-500">Select clinical criteria to triage between PTGBD vs Lap Cholecystectomy:</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <label className="flex items-center gap-2 cursor-pointer font-medium text-rose-800">
-                <input type="checkbox" checked={tg18Organ} onChange={(e) => setTg18Organ(e.target.checked)} className="rounded border-[#DADCE0] text-rose-600" />
+                <input type="checkbox" checked={tg18Organ} onChange={(e) => setTg18Organ(e.target.checked)} className="rounded border-slate-200 text-rose-600" />
                 <span>Grade III: Organ Dysfunction (Inotropic support, Cr&gt;2, PaO2/FiO2&lt;300, INR&gt;1.5, Plt&lt;100k)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={tg18Inflam} onChange={(e) => setTg18Inflam(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={tg18Inflam} onChange={(e) => setTg18Inflam(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Marked Local Inflammation (Gangrene, Abscess, Emphysema)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={tg18Wbc} onChange={(e) => setTg18Wbc(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={tg18Wbc} onChange={(e) => setTg18Wbc(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>WBC &gt; 18,000 / µL or Palpable Tender RUQ Mass</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={tg18Duration} onChange={(e) => setTg18Duration(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={tg18Duration} onChange={(e) => setTg18Duration(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Symptom Duration &gt; 72 Hours</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer sm:col-span-2 text-amber-800 font-medium">
-                <input type="checkbox" checked={tg18HighRisk} onChange={(e) => setTg18HighRisk(e.target.checked)} className="rounded border-[#DADCE0] text-amber-600" />
+                <input type="checkbox" checked={tg18HighRisk} onChange={(e) => setTg18HighRisk(e.target.checked)} className="rounded border-slate-200 text-amber-600" />
                 <span>High Surgical Risk / CCI ≥ 4 / ASA ≥ 3 (Unfit for General Anesthesia)</span>
               </label>
             </div>
@@ -2643,44 +2643,44 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'thyroid_vrr_volume' && (
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2 p-2.5 rounded-lg border border-[#DADCE0] bg-gray-50/50">
-                <div className="font-semibold text-[#202124]">Baseline Ultrasound (cm)</div>
+              <div className="space-y-2 p-2.5 rounded-lg border border-slate-200 bg-gray-50/50">
+                <div className="font-semibold text-slate-900">Baseline Ultrasound (cm)</div>
                 <div className="grid grid-cols-3 gap-1.5">
                   <div>
-                    <label className="text-[#5F6368] block text-[10px]">Length</label>
-                    <input type="number" step="0.1" value={thInitL} onChange={(e) => setThInitL(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded text-xs" />
+                    <label className="text-slate-500 block text-[10px]">Length</label>
+                    <input type="number" step="0.1" value={thInitL} onChange={(e) => setThInitL(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded text-xs" />
                   </div>
                   <div>
-                    <label className="text-[#5F6368] block text-[10px]">Width</label>
-                    <input type="number" step="0.1" value={thInitW} onChange={(e) => setThInitW(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded text-xs" />
+                    <label className="text-slate-500 block text-[10px]">Width</label>
+                    <input type="number" step="0.1" value={thInitW} onChange={(e) => setThInitW(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded text-xs" />
                   </div>
                   <div>
-                    <label className="text-[#5F6368] block text-[10px]">Depth</label>
-                    <input type="number" step="0.1" value={thInitD} onChange={(e) => setThInitD(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded text-xs" />
+                    <label className="text-slate-500 block text-[10px]">Depth</label>
+                    <input type="number" step="0.1" value={thInitD} onChange={(e) => setThInitD(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded text-xs" />
                   </div>
                 </div>
               </div>
-              <div className="space-y-2 p-2.5 rounded-lg border border-[#DADCE0] bg-gray-50/50">
-                <div className="font-semibold text-[#202124]">Post-Ablation Follow-Up (cm)</div>
+              <div className="space-y-2 p-2.5 rounded-lg border border-slate-200 bg-gray-50/50">
+                <div className="font-semibold text-slate-900">Post-Ablation Follow-Up (cm)</div>
                 <div className="grid grid-cols-3 gap-1.5">
                   <div>
-                    <label className="text-[#5F6368] block text-[10px]">Length</label>
-                    <input type="number" step="0.1" value={thPostL} onChange={(e) => setThPostL(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded text-xs" />
+                    <label className="text-slate-500 block text-[10px]">Length</label>
+                    <input type="number" step="0.1" value={thPostL} onChange={(e) => setThPostL(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded text-xs" />
                   </div>
                   <div>
-                    <label className="text-[#5F6368] block text-[10px]">Width</label>
-                    <input type="number" step="0.1" value={thPostW} onChange={(e) => setThPostW(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded text-xs" />
+                    <label className="text-slate-500 block text-[10px]">Width</label>
+                    <input type="number" step="0.1" value={thPostW} onChange={(e) => setThPostW(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded text-xs" />
                   </div>
                   <div>
-                    <label className="text-[#5F6368] block text-[10px]">Depth</label>
-                    <input type="number" step="0.1" value={thPostD} onChange={(e) => setThPostD(Number(e.target.value))} className="w-full px-2 py-1 border border-[#DADCE0] rounded text-xs" />
+                    <label className="text-slate-500 block text-[10px]">Depth</label>
+                    <input type="number" step="0.1" value={thPostD} onChange={(e) => setThPostD(Number(e.target.value))} className="w-full px-2 py-1 border border-slate-200 rounded text-xs" />
                   </div>
                 </div>
               </div>
             </div>
             <div className="w-48">
-              <label className="text-[#5F6368] block mb-1 font-medium">Follow-Up Duration (Months)</label>
-              <input type="number" value={thMonths} onChange={(e) => setThMonths(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+              <label className="text-slate-500 block mb-1 font-medium">Follow-Up Duration (Months)</label>
+              <input type="number" value={thMonths} onChange={(e) => setThMonths(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
             </div>
           </div>
         )}
@@ -2689,20 +2689,20 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Heart Rate (bpm)</label>
-                <input type="number" value={siHr} onChange={(e) => setSiHr(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Heart Rate (bpm)</label>
+                <input type="number" value={siHr} onChange={(e) => setSiHr(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Systolic BP (mmHg)</label>
-                <input type="number" value={siSbp} onChange={(e) => setSiSbp(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Systolic BP (mmHg)</label>
+                <input type="number" value={siSbp} onChange={(e) => setSiSbp(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Patient Age (Years)</label>
-                <input type="number" value={siAge} onChange={(e) => setSiAge(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Patient Age (Years)</label>
+                <input type="number" value={siAge} onChange={(e) => setSiAge(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Glasgow Coma Scale (3-15)</label>
-                <input type="number" min="3" max="15" value={siGcs} onChange={(e) => setSiGcs(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Glasgow Coma Scale (3-15)</label>
+                <input type="number" min="3" max="15" value={siGcs} onChange={(e) => setSiGcs(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
             </div>
           </div>
@@ -2712,26 +2712,26 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Daily Chyle Output (mL/24h)</label>
-                <input type="number" step="50" value={chyOutput} onChange={(e) => setChyOutput(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Daily Chyle Output (mL/24h)</label>
+                <input type="number" step="50" value={chyOutput} onChange={(e) => setChyOutput(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Body Weight (kg)</label>
-                <input type="number" step="1" value={chyWeight} onChange={(e) => setChyWeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Body Weight (kg)</label>
+                <input type="number" step="1" value={chyWeight} onChange={(e) => setChyWeight(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Pleural Fluid Triglycerides (mg/dL)</label>
-                <input type="number" step="10" value={chyTrig} onChange={(e) => setChyTrig(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Pleural Fluid Triglycerides (mg/dL)</label>
+                <input type="number" step="10" value={chyTrig} onChange={(e) => setChyTrig(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 pt-1">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Days Post-Surgical / Injury</label>
-                <input type="number" value={chyDays} onChange={(e) => setChyDays(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Days Post-Surgical / Injury</label>
+                <input type="number" value={chyDays} onChange={(e) => setChyDays(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div className="flex items-end pb-2">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={chyChylo} onChange={(e) => setChyChylo(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                  <input type="checkbox" checked={chyChylo} onChange={(e) => setChyChylo(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                   <span>Chylomicrons Present on Lipoprotein Electrophoresis</span>
                 </label>
               </div>
@@ -2743,31 +2743,31 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Bilirubin (mg/dL)</label>
-                <input type="number" step="0.1" value={bcsCompBili} onChange={(e) => setBcsCompBili(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Bilirubin (mg/dL)</label>
+                <input type="number" step="0.1" value={bcsCompBili} onChange={(e) => setBcsCompBili(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">INR</label>
-                <input type="number" step="0.1" value={bcsCompInr} onChange={(e) => setBcsCompInr(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">INR</label>
+                <input type="number" step="0.1" value={bcsCompInr} onChange={(e) => setBcsCompInr(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Caudate / Right Lobe Ratio</label>
-                <input type="number" step="0.01" value={bcsCompCrl} onChange={(e) => setBcsCompCrl(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs" />
+                <label className="text-slate-500 block mb-1 font-medium">Caudate / Right Lobe Ratio</label>
+                <input type="number" step="0.01" value={bcsCompCrl} onChange={(e) => setBcsCompCrl(Number(e.target.value))} className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs" />
               </div>
               <div className="flex items-end pb-2">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={bcsCompWeb} onChange={(e) => setBcsCompWeb(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                  <input type="checkbox" checked={bcsCompWeb} onChange={(e) => setBcsCompWeb(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                   <span>IVC Membranous Web</span>
                 </label>
               </div>
             </div>
             <div className="flex gap-4 pt-1">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={bcsCompAscites} onChange={(e) => setBcsCompAscites(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={bcsCompAscites} onChange={(e) => setBcsCompAscites(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Refractory / Tense Ascites</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={bcsCompEnceph} onChange={(e) => setBcsCompEnceph(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={bcsCompEnceph} onChange={(e) => setBcsCompEnceph(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Hepatic Encephalopathy</span>
               </label>
             </div>
@@ -2777,11 +2777,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'michels_hepatic_anatomy' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Select Hepatic Arterial Branching Pattern (Michels / Hiatt Variant)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Select Hepatic Arterial Branching Pattern (Michels / Hiatt Variant)</label>
               <select
                 value={michelsVariantKey}
                 onChange={(e) => setMichelsVariantKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(MICHELS_HIATT_VARIANTS).map(([key, v]) => (
                   <option key={key} value={key}>
@@ -2800,11 +2800,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Target MMA Convexity Branch</label>
+                <label className="text-slate-500 block mb-1 font-medium">Target MMA Convexity Branch</label>
                 <select
                   value={mmaBranch}
                   onChange={(e) => setMmaBranch(e.target.value as any)}
-                  className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium"
+                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white font-medium"
                 >
                   <option value="both">Both Anterior (Frontal) & Posterior (Parietal) Branches</option>
                   <option value="anterior">Anterior (Frontal) Branch Only</option>
@@ -2813,11 +2813,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Clinical Indication</label>
+                <label className="text-slate-500 block mb-1 font-medium">Clinical Indication</label>
                 <select
                   value={mmaDisease}
                   onChange={(e) => setMmaDisease(e.target.value as any)}
-                  className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium"
+                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white font-medium"
                 >
                   <option value="csdh">Chronic Subdural Hematoma (CSDH)</option>
                   <option value="meningioma">Pre-operative Meningioma Embolization</option>
@@ -2835,11 +2835,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Subclavian / Axillary Occlusion Site</label>
+                <label className="text-slate-500 block mb-1 font-medium">Subclavian / Axillary Occlusion Site</label>
                 <select
                   value={scapOcclusion}
                   onChange={(e) => setScapOcclusion(e.target.value as any)}
-                  className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium"
+                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white font-medium"
                 >
                   <option value="pre_vertebral">Pre-Vertebral (1st Part Subclavian - Classic Steal)</option>
                   <option value="post_vertebral">Post-Vertebral (2nd/3rd Part Subclavian)</option>
@@ -2848,11 +2848,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
                 </select>
               </div>
               <div>
-                <label className="text-[#5F6368] block mb-1 font-medium">Vertebrobasilar Steal Severity (Doppler / Angio)</label>
+                <label className="text-slate-500 block mb-1 font-medium">Vertebrobasilar Steal Severity (Doppler / Angio)</label>
                 <select
                   value={scapStealGrade}
                   onChange={(e) => setScapStealGrade(e.target.value as any)}
-                  className="w-full px-2.5 py-1.5 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium"
+                  className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white font-medium"
                 >
                   <option value="grade0">None (Antegrade Vertebral Flow)</option>
                   <option value="grade1">Grade I (Latent - Mid-Systolic Deceleration / Bunny Rabbit)</option>
@@ -2867,11 +2867,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'mesenteric_collaterals_sma' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Select Mesenteric Collateral Arcade / Anatomical Conduit</label>
+              <label className="text-slate-500 block mb-1 font-medium">Select Mesenteric Collateral Arcade / Anatomical Conduit</label>
               <select
                 value={mesCollateralKey}
                 onChange={(e) => setMesCollateralKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(MESENTERIC_COLLATERALS).map(([key, c]) => (
                   <option key={key} value={key}>
@@ -2889,11 +2889,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'bismuth_corlette_biliary' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Bismuth-Corlette Stricture Level (Cholangiography / MRCP)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Bismuth-Corlette Stricture Level (Cholangiography / MRCP)</label>
               <select
                 value={bismuthTypeKey}
                 onChange={(e) => setBismuthTypeKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(BISMUTH_TYPES).map(([key, b]) => (
                   <option key={key} value={key}>
@@ -2911,11 +2911,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'aortic_dissection_stanford_debakey' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Aortic Dissection Classification Tier</label>
+              <label className="text-slate-500 block mb-1 font-medium">Aortic Dissection Classification Tier</label>
               <select
                 value={dissectionKey}
                 onChange={(e) => setDissectionKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(DISSECTION_TYPES).map(([key, d]) => (
                   <option key={key} value={key}>
@@ -2926,11 +2926,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
             </div>
             <div className="flex gap-4 pt-1">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={dissectionMalperfusion} onChange={(e) => setDissectionMalperfusion(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={dissectionMalperfusion} onChange={(e) => setDissectionMalperfusion(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Malperfusion Syndrome (Visceral / Renal / Extremity Ischemia)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={dissectionRefractoryPain} onChange={(e) => setDissectionRefractoryPain(e.target.checked)} className="rounded border-[#DADCE0] text-[#1A73E8]" />
+                <input type="checkbox" checked={dissectionRefractoryPain} onChange={(e) => setDissectionRefractoryPain(e.target.checked)} className="rounded border-slate-200 text-blue-600" />
                 <span>Refractory Pain / Resistant HTN</span>
               </label>
             </div>
@@ -2940,11 +2940,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'pae_de_assis_anatomy' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">De Assis Prostatic Artery Origin Pattern (Angiography / CBCT)</label>
+              <label className="text-slate-500 block mb-1 font-medium">De Assis Prostatic Artery Origin Pattern (Angiography / CBCT)</label>
               <select
                 value={paeVariantKey}
                 onChange={(e) => setPaeVariantKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(DE_ASSIS_PAE_TYPES).map(([key, p]) => (
                   <option key={key} value={key}>
@@ -2962,11 +2962,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'sarin_gastric_varices' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Sarin Gastric Varices Type (Endoscopy / Contrast CT)</label>
+              <label className="text-slate-500 block mb-1 font-medium">Sarin Gastric Varices Type (Endoscopy / Contrast CT)</label>
               <select
                 value={sarinKey}
                 onChange={(e) => setSarinKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(SARIN_VARICES_TYPES).map(([key, s]) => (
                   <option key={key} value={key}>
@@ -2984,11 +2984,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'forrest_peptic_ulcer' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Forrest Endoscopic Stigmata of Recent Hemorrhage</label>
+              <label className="text-slate-500 block mb-1 font-medium">Forrest Endoscopic Stigmata of Recent Hemorrhage</label>
               <select
                 value={forrestKey}
                 onChange={(e) => setForrestKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(FORREST_TYPES).map(([key, f]) => (
                   <option key={key} value={key}>
@@ -3006,11 +3006,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'sarteschi_varicocele_grading' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Sarteschi / Dubin-Amelar Varicocele Stage</label>
+              <label className="text-slate-500 block mb-1 font-medium">Sarteschi / Dubin-Amelar Varicocele Stage</label>
               <select
                 value={varicoceleKey}
                 onChange={(e) => setVaricoceleKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(SARTESCHI_VARICOCELE_GRADES).map(([key, v]) => (
                   <option key={key} value={key}>
@@ -3028,11 +3028,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'cognard_borden_davf' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Cognard / Borden dAVF Drainage Pattern</label>
+              <label className="text-slate-500 block mb-1 font-medium">Cognard / Borden dAVF Drainage Pattern</label>
               <select
                 value={cognardKey}
                 onChange={(e) => setCognardKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(COGNARD_DAVF_TYPES).map(([key, c]) => (
                   <option key={key} value={key}>
@@ -3050,11 +3050,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'ishimaru_aortic_zones' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Ishimaru Proximal Aortic Arch Landing Zone</label>
+              <label className="text-slate-500 block mb-1 font-medium">Ishimaru Proximal Aortic Arch Landing Zone</label>
               <select
                 value={ishimaruKey}
                 onChange={(e) => setIshimaruKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(ISHIMARU_AORTIC_ZONES).map(([key, z]) => (
                   <option key={key} value={key}>
@@ -3072,11 +3072,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'crawford_taaa_extent' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Crawford-Safi Thoracoabdominal Aneurysm (TAAA) Extent</label>
+              <label className="text-slate-500 block mb-1 font-medium">Crawford-Safi Thoracoabdominal Aneurysm (TAAA) Extent</label>
               <select
                 value={crawfordKey}
                 onChange={(e) => setCrawfordKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(CRAWFORD_TAAA_EXTENTS).map(([key, c]) => (
                   <option key={key} value={key}>
@@ -3094,11 +3094,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'strasberg_biliary_injury' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Strasberg / Bismuth Iatrogenic Bile Duct Injury Type</label>
+              <label className="text-slate-500 block mb-1 font-medium">Strasberg / Bismuth Iatrogenic Bile Duct Injury Type</label>
               <select
                 value={strasbergKey}
                 onChange={(e) => setStrasbergKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(STRASBERG_BILIARY_TYPES).map(([key, s]) => (
                   <option key={key} value={key}>
@@ -3116,11 +3116,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'wses_solid_organ_trauma' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">WSES / AAST Solid Organ Trauma Grading (Liver, Spleen, Kidney)</label>
+              <label className="text-slate-500 block mb-1 font-medium">WSES / AAST Solid Organ Trauma Grading (Liver, Spleen, Kidney)</label>
               <select
                 value={wsesKey}
                 onChange={(e) => setWsesKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(WSES_ORGAN_INJURY_GRADES).map(([key, w]) => (
                   <option key={key} value={key}>
@@ -3138,11 +3138,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'pvtt_cheng_vp_stage' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">PVTT Japanese / Cheng Portal Vein Tumor Thrombus Extent</label>
+              <label className="text-slate-500 block mb-1 font-medium">PVTT Japanese / Cheng Portal Vein Tumor Thrombus Extent</label>
               <select
                 value={pvttKey}
                 onChange={(e) => setPvttKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(PVTT_VP_STAGES).map(([key, p]) => (
                   <option key={key} value={key}>
@@ -3160,11 +3160,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'graves_renal_segmental' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Graves Renal Segmental Artery Target</label>
+              <label className="text-slate-500 block mb-1 font-medium">Graves Renal Segmental Artery Target</label>
               <select
                 value={gravesKey}
                 onChange={(e) => setGravesKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(GRAVES_RENAL_SEGMENTS).map(([key, g]) => (
                   <option key={key} value={key}>
@@ -3182,11 +3182,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'lasjaunias_dangerous_connections' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">Lasjaunias Dangerous Craniofacial Anastomosis Pathway</label>
+              <label className="text-slate-500 block mb-1 font-medium">Lasjaunias Dangerous Craniofacial Anastomosis Pathway</label>
               <select
                 value={lasjauniasKey}
                 onChange={(e) => setLasjauniasKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(LASJAUNIAS_CONNECTIONS).map(([key, l]) => (
                   <option key={key} value={key}>
@@ -3204,11 +3204,11 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
         {calculatorId === 'doqi_avf_stenosis_maturation' && (
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-[#5F6368] block mb-1 font-medium">KDOQI Dialysis AVF Parameter & Stenosis Site</label>
+              <label className="text-slate-500 block mb-1 font-medium">KDOQI Dialysis AVF Parameter & Stenosis Site</label>
               <select
                 value={doqiKey}
                 onChange={(e) => setDoqiKey(e.target.value)}
-                className="w-full px-2.5 py-2 border border-[#DADCE0] rounded-lg text-xs bg-white font-medium text-[#202124]"
+                className="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs bg-white font-medium text-slate-900"
               >
                 {Object.entries(DOQI_AVF_CRITERIA).map(([key, d]) => (
                   <option key={key} value={key}>
@@ -3251,7 +3251,7 @@ export const ProcedureCalculatorRunner: React.FC<Props> = ({
           <div className="pt-2 border-t border-current/15 grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] font-mono">
             {Object.entries(res.details).map(([key, val]) => (
               <div key={key} className="bg-white/60 px-2 py-1 rounded border border-current/10">
-                <span className="text-[#5F6368] block text-[10px] uppercase">{key}:</span>
+                <span className="text-slate-500 block text-[10px] uppercase">{key}:</span>
                 <span className="font-bold">{String(val)}</span>
               </div>
             ))}

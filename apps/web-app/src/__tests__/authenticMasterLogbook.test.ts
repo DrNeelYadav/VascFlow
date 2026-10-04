@@ -27,8 +27,8 @@ describe("Authentic Cath-Lab Master Dataset & Logbook Verification", () => {
     });
   });
 
-  it("verifies PARSED_ALL_DSA_CASES contains 997 cases across multiple recorded years", () => {
-    expect(PARSED_ALL_DSA_CASES.length).toBe(997);
+  it("verifies PARSED_ALL_DSA_CASES contains 1090 cases across multiple recorded years", () => {
+    expect(PARSED_ALL_DSA_CASES.length).toBe(1090);
     const years = new Set(PARSED_ALL_DSA_CASES.map((c) => c.year));
     expect(years.has(2023)).toBe(true);
     expect(years.has(2024)).toBe(true);

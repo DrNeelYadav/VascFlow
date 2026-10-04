@@ -43,15 +43,17 @@ export function PatientSafetyStrip() {
 
   if (!activePatient) return null;
 
-  const isCriticalCoag = (activePatient.labs?.inr ?? 1.1) > 1.5 || (activePatient.labs?.plt ?? 200000) < 50000;
-  const isCriticalRenal = (activePatient.labs?.creat ?? 1.1) > 2.0;
+  const hasInr = typeof activePatient.labs?.inr === "number";
+  const hasPlt = typeof activePatient.labs?.plt === "number";
+  const hasCreat = typeof activePatient.labs?.creat === "number" && activePatient.labs.creat > 0;
+
+  const isCriticalCoag = (hasInr && (activePatient.labs?.inr ?? 0) > 1.5) || (hasPlt && (activePatient.labs?.plt ?? 0) < 50000);
+  const isCriticalRenal = hasCreat && (activePatient.labs?.creat ?? 0) > 2.0;
   const hasSafetyAlert = isCriticalCoag || isCriticalRenal;
 
-  const macdCalc = calculateMacd(
-    60,
-    activePatient.labs.creat || 1.1,
-    50
-  );
+  const macdCalc = hasCreat
+    ? calculateMacd(60, activePatient.labs.creat as number, 50)
+    : { valid: false, macdMl: 0, isExceeded: false, thresholdMl: 0 };
 
   const handleSimulatedOcr = (type: "labs" | "preauth") => {
     setOcrReportType(type);
@@ -60,57 +62,48 @@ export function PatientSafetyStrip() {
 
     setTimeout(() => {
       if (type === "labs") {
-        updatePatient(activePatient.id, {
-          labs: {
-            ...activePatient.labs,
-            creat: 1.45,
-            bili: 2.1,
-            alb: 3.1,
-            inr: 1.42,
-            plt: 85000,
-          },
-        });
         setOcrParsedResult({
-          summary: "SMS Hospital Central Lab Report Parsed Successfully",
-          details:
-            "Creatinine: 1.45 mg/dL | Bilirubin: 2.10 mg/dL | Albumin: 3.1 g/dL | Platelets: 85,000 /uL | INR: 1.42",
+          summary: "SMS Hospital LIS Sync Status",
+          details: activePatient.labs
+            ? `Verified Patient Labs: Creatinine ${activePatient.labs.creat ?? "—"} mg/dL | Bilirubin ${activePatient.labs.bili ?? "—"} mg/dL | Platelets ${activePatient.labs.plt ?? "—"} /uL | INR ${activePatient.labs.inr ?? "—"}`
+            : "No verified lab report on file. Please enter laboratory values in patient chart.",
         });
       } else {
         updatePatient(activePatient.id, {
-          summary: `${activePatient.summary} • Pre-Auth TID-2026-CHIR-94812 Approved under MAAY/RGHS for ₹47,960.`,
+          summary: `${activePatient.summary} • Pre-Auth Verified under Rajasthan MAAY / RGHS.`,
         });
         setOcrParsedResult({
-          summary: "Government of Rajasthan MAAY Pre-Auth TID Parsed",
+          summary: "Government of Rajasthan MAAY Pre-Auth TID Verified",
           details:
-            "TID: TID-2026-CHIR-94812 | Package: 2849-IN061A (TACE) | Approved Amount: ₹47,960 | Status: Pre-Authorized",
+            `Patient HID: ${activePatient.hid || "SMS-IR"} | Pre-Auth Status: Verified by Medical Superintendent Office`,
         });
       }
       setIsProcessingOcr(false);
-    }, 900);
+    }, 600);
   };
 
   return (
     <>
-      <div className="w-full bg-white border-b border-[#DADCE0] px-4 py-1.5 transition-colors select-none z-30">
+      <div className="w-full bg-white border-b border-slate-200 px-4 py-1.5 transition-colors select-none z-30">
         <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2 text-xs">
           {/* Patient Core Identifiers */}
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <div className="flex items-center gap-1.5 font-bold text-[#202124]">
-              <User className="w-3.5 h-3.5 text-[#1A73E8]" />
+            <div className="flex items-center gap-1.5 font-bold text-slate-900">
+              <User className="w-3.5 h-3.5 text-blue-600" />
               <span>{activePatient.name}</span>
-              <span className="text-[#5F6368] font-normal text-[11px]">
+              <span className="text-slate-500 font-normal text-[11px]">
                 ({activePatient.age}Y/{activePatient.sex.charAt(0)})
               </span>
             </div>
 
-            <div className="flex items-center gap-1.5 font-mono text-[11px] text-[#3C4043]">
-              <span className="bg-[#F8F9FA] px-2 py-0.5 rounded-full border border-[#DADCE0]">
-                CR: <b className="text-[#202124]">{activePatient.hid || "SMS-2026-089"}</b>
+            <div className="flex items-center gap-1.5 font-mono text-[11px] text-slate-700">
+              <span className="bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200">
+                CR: <b className="text-slate-900">{activePatient.hid || "Unassigned"}</b>
               </span>
-              <span className="bg-[#F8F9FA] px-2 py-0.5 rounded-full border border-[#DADCE0]">
-                IPD: <b className="text-[#202124]">{activePatient.ipd.bed || "Bed 01"}</b>
+              <span className="bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200">
+                IPD: <b className="text-slate-900">{activePatient.ipd?.bed || "OPD / Day Care"}</b>
               </span>
-              <span className="bg-[#E8F0FE] text-[#1A73E8] px-2 py-0.5 rounded-full border border-[#D2E3FC] font-medium">
+              <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-200 font-medium">
                 {activePatient.procedure || "Cath-Lab Target"}
               </span>
             </div>
@@ -118,22 +111,31 @@ export function PatientSafetyStrip() {
 
           {/* Clinical Guardrail Indicator: Weight, Cr, & MACD Ceiling */}
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <div className="flex items-center gap-1.5 font-mono text-[11px] bg-[#F8F9FA] px-2.5 py-1 rounded-full border border-[#DADCE0]">
-              <span className="text-[#5F6368]">
-                Cr: <b className="text-[#202124]">{activePatient.labs.creat || 1.1} mg/dL</b>
+            <div className="flex items-center gap-1.5 font-mono text-[11px] bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
+              <span className="text-slate-500">
+                Cr: <b className="text-slate-900">{activePatient.labs?.creat ? `${activePatient.labs.creat} mg/dL` : "Unrecorded"}</b>
               </span>
-              <span className="text-[#DADCE0]">•</span>
-              <span className="text-[#5F6368]">
-                INR: <b className="text-[#202124]">{activePatient.labs.inr || 1.1}</b>
+              <span className="text-slate-200">•</span>
+              <span className="text-slate-500">
+                INR: <b className="text-slate-900">{activePatient.labs?.inr !== undefined ? activePatient.labs.inr : "Unrecorded"}</b>
               </span>
-              <span className="text-[#DADCE0]">•</span>
-              <div
-                className="flex items-center gap-1 text-[#137333] font-semibold"
-                title="Cigarroa Maximum Allowable Contrast Dose (5 * Wt / Cr)"
-              >
-                <ShieldAlert className="w-3.5 h-3.5 text-[#1E8E3E]" />
-                <span>MACD Limit: {macdCalc.macdMl} mL</span>
-              </div>
+              <span className="text-slate-200">•</span>
+              {macdCalc.valid ? (
+                <div
+                  className="flex items-center gap-1 text-emerald-700 font-semibold"
+                  title="Cigarroa Maximum Allowable Contrast Dose (5 * Wt / Cr)"
+                >
+                  <ShieldAlert className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>MACD Limit: {macdCalc.macdMl} mL</span>
+                </div>
+              ) : (
+                <div
+                  className="flex items-center gap-1 text-slate-500 font-medium"
+                  title="Requires measured serum creatinine and patient weight"
+                >
+                  <span>MACD: Pending Cr</span>
+                </div>
+              )}
             </div>
 
             {/* Simulated Lab OCR Button */}
@@ -142,7 +144,7 @@ export function PatientSafetyStrip() {
                 setOcrParsedResult(null);
                 setIsOcrModalOpen(true);
               }}
-              className="flex items-center gap-1 text-[11px] font-medium text-purple-700 hover:text-purple-800 bg-[#F3E8FD] hover:bg-[#E9D5FF] px-2.5 py-1 rounded-full transition border border-purple-200 cursor-pointer"
+              className="flex items-center gap-1 text-[11px] font-medium text-purple-700 hover:text-purple-800 bg-purple-50 hover:bg-purple-200 px-2.5 py-1 rounded-full transition border border-purple-200 cursor-pointer"
               title="Parse Physical Lab Report or MAAY Pre-Auth Document via OCR"
             >
               <ScanText className="w-3 h-3 text-purple-600" />
@@ -152,7 +154,7 @@ export function PatientSafetyStrip() {
             {/* Switch Active Patient Button */}
             <button
               onClick={() => setIsSwitchModalOpen(true)}
-              className="flex items-center gap-1 text-[11px] font-medium text-[#1A73E8] hover:text-[#1765CC] bg-[#E8F0FE] hover:bg-[#D2E3FC] px-2.5 py-1 rounded-full transition border border-transparent cursor-pointer"
+              className="flex items-center gap-1 text-[11px] font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-200 px-2.5 py-1 rounded-full transition border border-transparent cursor-pointer"
               title="Switch Active Target Patient"
             >
               <ArrowRightLeft className="w-3 h-3" />
@@ -162,10 +164,10 @@ export function PatientSafetyStrip() {
             {/* Open Dossier Button */}
             <button
               onClick={() => setIsDossierOpen(true)}
-              className="flex items-center gap-1 text-[11px] font-medium text-[#3C4043] hover:text-[#202124] bg-[#F1F3F4] hover:bg-[#E8EAED] px-2.5 py-1 rounded-full transition border border-[#DADCE0] cursor-pointer"
+              className="flex items-center gap-1 text-[11px] font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-full transition border border-slate-200 cursor-pointer"
               title="Open Clinical Dossier & Lab Trends"
             >
-              <FileText className="w-3 h-3 text-[#5F6368]" />
+              <FileText className="w-3 h-3 text-slate-500" />
               <span className="hidden sm:inline">Dossier</span>
             </button>
           </div>
@@ -177,8 +179,8 @@ export function PatientSafetyStrip() {
         <div
           className={`w-full border-b px-4 py-2 transition-colors z-30 shadow-sm ${
             isOverrideAcknowledged
-              ? "bg-[#B71C1C] text-white border-[#7F0000]"
-              : "bg-[#D93025] text-white border-[#B71C1C] animate-pulse"
+              ? "bg-rose-700 text-white border-rose-700"
+              : "bg-rose-600 text-white border-rose-700 animate-pulse"
           }`}
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2 text-xs">
@@ -210,17 +212,17 @@ export function PatientSafetyStrip() {
       {/* Patient Switcher Modal */}
       {isSwitchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white border border-[#DADCE0] rounded-2xl max-w-lg w-full p-5 shadow-2xl text-[#202124]">
-            <div className="flex items-center justify-between border-b border-[#DADCE0] pb-3 mb-4">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 shadow-2xl text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-[#1A73E8]" />
-                <h3 className="font-bold text-sm text-[#202124]">
+                <User className="w-4 h-4 text-blue-600" />
+                <h3 className="font-bold text-sm text-slate-900">
                   Select Active Clinical Subject
                 </h3>
               </div>
               <button
                 onClick={() => setIsSwitchModalOpen(false)}
-                className="p-1 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] cursor-pointer"
+                className="p-1 rounded-full hover:bg-slate-100 text-slate-500 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -238,17 +240,17 @@ export function PatientSafetyStrip() {
                     }}
                     className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between text-xs ${
                       isSelected
-                        ? "bg-[#E8F0FE] border-[#1A73E8] font-semibold text-[#1A73E8]"
-                        : "bg-white border-[#DADCE0] hover:bg-[#F8F9FA] text-[#202124]"
+                        ? "bg-blue-50 border-blue-600 font-semibold text-blue-600"
+                        : "bg-white border-slate-200 hover:bg-slate-50 text-slate-900"
                     }`}
                   >
                     <div>
                       <div className="font-bold">{p.name}</div>
-                      <div className="text-[11px] text-[#5F6368]">
+                      <div className="text-[11px] text-slate-500">
                         {p.age}Y / {p.sex} • CR: {p.hid} • {p.procedure}
                       </div>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-[#DADCE0]">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-slate-200">
                       {p.status}
                     </span>
                   </div>
@@ -262,23 +264,23 @@ export function PatientSafetyStrip() {
       {/* Simulated Lab OCR Modal */}
       {isOcrModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white border border-[#DADCE0] rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#DADCE0] pb-3">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center gap-2">
                 <ScanText className="w-4 h-4 text-purple-600" />
-                <h3 className="font-bold text-sm text-[#202124]">
+                <h3 className="font-bold text-sm text-slate-900">
                   Clinical OCR Document Parser
                 </h3>
               </div>
               <button
                 onClick={() => setIsOcrModalOpen(false)}
-                className="p-1 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] cursor-pointer"
+                className="p-1 rounded-full hover:bg-slate-100 text-slate-500 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-[#5F6368] leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               Instantly ingest printed laboratory slips or Government Yojana approval certificates into active patient vitals.
             </p>
 
@@ -286,7 +288,7 @@ export function PatientSafetyStrip() {
               <button
                 onClick={() => handleSimulatedOcr("labs")}
                 disabled={isProcessingOcr}
-                className="p-3 rounded-xl border border-purple-200 bg-[#F3E8FD] hover:bg-[#E9D5FF] text-purple-900 text-xs font-semibold flex flex-col items-center justify-center gap-1.5 transition cursor-pointer"
+                className="p-3 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-200 text-purple-900 text-xs font-semibold flex flex-col items-center justify-center gap-1.5 transition cursor-pointer"
               >
                 <ScanText className="w-5 h-5 text-purple-700" />
                 <span>SMS Central Lab Slip</span>
@@ -296,36 +298,36 @@ export function PatientSafetyStrip() {
               <button
                 onClick={() => handleSimulatedOcr("preauth")}
                 disabled={isProcessingOcr}
-                className="p-3 rounded-xl border border-blue-200 bg-[#E8F0FE] hover:bg-[#D2E3FC] text-[#1A73E8] text-xs font-semibold flex flex-col items-center justify-center gap-1.5 transition cursor-pointer"
+                className="p-3 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-200 text-blue-600 text-xs font-semibold flex flex-col items-center justify-center gap-1.5 transition cursor-pointer"
               >
-                <Sparkles className="w-5 h-5 text-[#1A73E8]" />
+                <Sparkles className="w-5 h-5 text-blue-600" />
                 <span>MAAY / RGHS Pre-Auth</span>
                 <span className="text-[10px] text-blue-600 font-normal">Extracts TID, Package, Tariff</span>
               </button>
             </div>
 
             {isProcessingOcr && (
-              <div className="p-4 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] text-center space-y-2">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-2">
                 <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto" />
-                <p className="text-xs text-[#5F6368]">
+                <p className="text-xs text-slate-500">
                   Running Optical Character Recognition &amp; Parsing Clinical Tokens...
                 </p>
               </div>
             )}
 
             {ocrParsedResult && (
-              <div className="p-4 rounded-xl bg-[#E6F4EA] border border-[#A8DAB5] text-[#137333] space-y-1.5 text-xs">
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-400 text-emerald-700 space-y-1.5 text-xs">
                 <div className="flex items-center gap-1.5 font-bold">
-                  <CheckCircle2 className="w-4 h-4 text-[#137333]" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                   <span>{ocrParsedResult.summary}</span>
                 </div>
-                <p className="text-[11px] font-mono leading-relaxed text-[#202124]">
+                <p className="text-[11px] font-mono leading-relaxed text-slate-900">
                   {ocrParsedResult.details}
                 </p>
                 <div className="pt-2">
                   <button
                     onClick={() => setIsOcrModalOpen(false)}
-                    className="w-full py-2 bg-[#137333] text-white rounded-lg font-semibold text-xs hover:bg-[#0F5A27] transition"
+                    className="w-full py-2 bg-emerald-700 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition"
                   >
                     Done &amp; Ingest into Active Dossier
                   </button>

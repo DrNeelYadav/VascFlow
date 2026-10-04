@@ -9,8 +9,11 @@
     "start": "next start",
     "lint": "next lint"
   },
-
   "dependencies": {
+    "@cornerstonejs/core": "^5.11.4",
+    "@cornerstonejs/dicom-image-loader": "^5.11.4",
+    "@cornerstonejs/metadata": "^5.11.4",
+    "@cornerstonejs/tools": "^5.11.4",
     "@tanstack/react-query": "^5.66.0",
     "@tanstack/react-virtual": "^3.13.0",
     "@vascule/db": "*",

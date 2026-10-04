@@ -58,7 +58,7 @@ export function EndoFlowLogo({
         <div className="flex items-center gap-1.5 leading-none">
           <span
             className={`font-heading font-extrabold tracking-tight ${
-              isLightText ? "text-white" : "text-[#202124]"
+              isLightText ? "text-white" : "text-slate-900"
             } ${textSizes[size]}`}
           >
             EndoFlow
@@ -67,7 +67,7 @@ export function EndoFlowLogo({
         {showSubtitle && (
           <span
             className={`${subtitleSizes[size]} font-mono tracking-wider uppercase mt-0.5 ${
-              isLightText ? "text-[#9AA0A6]" : "text-[#5F6368]"
+              isLightText ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Interventional Radiology

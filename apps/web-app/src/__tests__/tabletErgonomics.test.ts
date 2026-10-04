@@ -57,8 +57,10 @@ describe("Tablet Viewport Ergonomics & Touch Target Specifications", () => {
         expect(html).toContain(vessel);
       }
 
-      // Check min-h-[44px] and touch-manipulation classes on the buttons
-      expect(html).toContain("min-h-[44px]");
+      // Check a 44px min-height and touch-manipulation on the buttons. The 44px
+      // target may be spelled as the Tailwind step min-h-11 (2.75rem) or the
+      // equivalent arbitrary value; assert the target, not the spelling.
+      expect(html).toMatch(/min-h-(?:11|\[44px\])/);
       expect(html).toContain("touch-manipulation");
     });
   });
@@ -75,8 +77,8 @@ describe("Tablet Viewport Ergonomics & Touch Target Specifications", () => {
 
       expect(html).toContain("New Case");
       expect(html).toContain("Export");
-      expect(html).toContain("min-h-[44px]");
-      expect(html).toContain("min-w-[44px]");
+      expect(html).toMatch(/min-h-(?:11|\[44px\])/);
+      expect(html).toMatch(/min-w-(?:11|\[44px\])/);
       expect(html).toContain("touch-manipulation");
     });
   });
@@ -89,8 +91,9 @@ describe("Tablet Viewport Ergonomics & Touch Target Specifications", () => {
       );
       const source = fs.readFileSync(filePath, "utf-8");
 
-      // Check 44px touch targets
-      expect(source).toMatch(/min-h-\[44px\]/);
+      // Check 44px touch targets (Tailwind step min-h-11 or the equivalent
+      // arbitrary value min-h-[44px]; both are 2.75rem / 44px)
+      expect(source).toMatch(/min-h-(?:11|\[44px\])/);
       expect(source).toMatch(/touch-manipulation/);
 
       // Check 10.5" / 12.9" tablet responsive split classes

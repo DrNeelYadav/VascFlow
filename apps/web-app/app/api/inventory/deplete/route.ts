@@ -237,7 +237,7 @@ export async function POST(request: NextRequest) {
     // Immutable Audit Trail Logging (SOC2 / HIPAA § 164.312(b))
     const clientIp =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
-    const userAgent = request.headers.get("user-agent") || "VascFlow-Inventory-Deplete/1.0";
+    const userAgent = request.headers.get("user-agent") || "EndoFlow-Inventory-Deplete/1.0";
 
     const auditEntry = await logAuditTrail({
       actorStaffId: actor,

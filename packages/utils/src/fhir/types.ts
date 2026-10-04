@@ -147,12 +147,19 @@ export interface FhirBundle extends FhirResourceBase {
 export interface IrCaseClinicalData {
   caseId: string;
   patientId: string;
-  patientName: string;
+  /**
+   * Optional on purpose. A DiagnosticReport may legitimately be generated
+   * without a name when the source record does not carry one; the generator
+   * omits the Patient.name element rather than substituting a placeholder,
+   * because a placeholder in an exchange payload reads as a real identity.
+   */
+  patientName?: string;
   abhaId?: string;
   uhid?: string;
   age?: number;
   gender?: 'male' | 'female' | 'other';
-  procedureName: string;
+  /** Optional for the same reason as patientName. */
+  procedureName?: string;
   snomedCode?: string;
   icdCode?: string;
   diagnosis?: string;

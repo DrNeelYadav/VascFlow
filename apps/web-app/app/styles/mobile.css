@@ -1,0 +1,109 @@
+/* ============================================================================
+ * ENDOFLOW ENTERPRISE DESIGN SYSTEM: MOBILE & MULTI-VIEWPORT ENGINE
+ * Precision tuning for Mobile (<640px), Half-View (640-1024px), and Tablet
+ * ============================================================================ */
+
+/* Touch Target Accessibility with Glove Support */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a[href],
+  select,
+  input[type="checkbox"] {
+    min-height: 38px;
+  }
+
+  /* Compact controls stay visually 28px but get touch padding */
+  .btn,
+  .input-compact,
+  .select-compact {
+    touch-action: manipulation;
+  }
+}
+
+/* ============================================================================
+ * 1. MOBILE VIEW (<640px): High-Density Handheld Clinical Workstation
+ * ============================================================================ */
+@media (max-width: 639px) {
+  /* Smaller, tighter icon bounds on mobile */
+  .btn svg,
+  button svg,
+  .nav-icon svg {
+    width: 0.8125rem !important; /* 13px */
+    height: 0.8125rem !important;
+  }
+
+  /* Mobile toolbar stacking */
+  .mobile-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  /* Safe right-padding on horizontal scroll so last element is NEVER cut off */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    padding-right: 1rem;
+    scrollbar-width: thin;
+  }
+
+  /* Full-width cards and drawers on mobile */
+  .mobile-full {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Safe area padding for mobile notch & home indicator bar */
+  .safe-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================================================
+ * 2. HALF-VIEW / SPLIT-SCREEN (640px - 1023px): PACS Side-by-Side Mode
+ * ============================================================================ */
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Prevent header toolbar overflow in split-screen */
+  .half-view-wrap {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Grid collapse to avoid clipping */
+  .half-view-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================================
+ * 3. MOMENTUM SMOOTH SCROLLING (Zero clipping across all devices)
+ * ============================================================================ */
+.overflow-x-auto,
+.overflow-y-auto,
+.overflow-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Precision slim scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}

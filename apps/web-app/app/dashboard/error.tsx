@@ -29,7 +29,7 @@ export default function DashboardError({
         <button
           type="button"
           onClick={() => reset()}
-          className="px-4 py-2 bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Reload Module</span>

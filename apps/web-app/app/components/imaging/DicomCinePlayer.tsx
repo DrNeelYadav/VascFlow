@@ -410,7 +410,7 @@ export function DicomCinePlayer({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`relative flex flex-col bg-[#0A0E17] text-slate-100 rounded-2xl overflow-hidden shadow-2xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500/50 select-none ${
+      className={`relative flex flex-col bg-slate-950 text-slate-100 rounded-2xl overflow-hidden shadow-2xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500/50 select-none ${
         isFullscreen ? "fixed inset-0 z-50 rounded-none w-screen h-screen" : "w-full"
       } ${className}`}
       style={{
@@ -427,7 +427,7 @@ export function DicomCinePlayer({
       />
 
       {/* VIEWPORT AREA */}
-      <div className="relative flex-1 min-h-[380px] sm:min-h-[460px] lg:min-h-[520px] bg-black flex items-center justify-center overflow-hidden cursor-crosshair">
+      <div className="relative flex-1 min-h-[280px] sm:min-h-[460px] lg:min-h-[520px] bg-black flex items-center justify-center overflow-hidden cursor-crosshair">
         {/* Video Element */}
         {activeSrc ? (
           <video
@@ -525,14 +525,14 @@ export function DicomCinePlayer({
               {/* Top-Left: Modality & Patient ID */}
               <div className="flex flex-col gap-1 items-start">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-400 border border-sky-500/40 text-[11px] font-bold font-mono tracking-wide shadow-xs">
+                  <span className="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-400 border border-sky-500/40 text-xs font-bold font-mono tracking-wide shadow-xs">
                     {modalityBadgeText}
                   </span>
-                  <span className="px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-md text-slate-300 border border-slate-700/60 text-[11px] font-mono font-medium">
+                  <span className="px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-md text-slate-300 border border-slate-700/60 text-xs font-mono font-medium">
                     {patientId}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-sans px-1">
+                <div className="flex items-center gap-1.5 text-xs text-slate-400 font-sans px-1">
                   <span className="font-semibold text-slate-200">{patientName}</span>
                   <span>•</span>
                   <span className="text-[10px] text-emerald-400 font-medium bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-800/40">
@@ -544,13 +544,13 @@ export function DicomCinePlayer({
               {/* Top-Right: Series info, FPS & Display Tool Toggles */}
               <div className="flex flex-col items-end gap-1.5 pointer-events-auto">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-md text-slate-300 border border-slate-700/60 text-[11px] font-mono">
+                  <span className="px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-md text-slate-300 border border-slate-700/60 text-xs font-mono">
                     {frameRate.toFixed(1)} FPS
                   </span>
                   <button
                     type="button"
                     onClick={() => setInvertLut((v) => !v)}
-                    className={`px-2 py-0.5 rounded-md text-[11px] font-medium border transition-colors cursor-pointer flex items-center gap-1 ${
+                    className={`px-2 py-0.5 rounded-md text-xs font-medium border transition-colors cursor-pointer flex items-center gap-1 ${
                       invertLut
                         ? "bg-amber-500/20 text-amber-300 border-amber-500/50"
                         : "bg-slate-900/80 text-slate-400 hover:text-slate-200 border-slate-800"
@@ -563,7 +563,7 @@ export function DicomCinePlayer({
                   <button
                     type="button"
                     onClick={() => setHighContrast((v) => !v)}
-                    className={`px-2 py-0.5 rounded-md text-[11px] font-medium border transition-colors cursor-pointer flex items-center gap-1 ${
+                    className={`px-2 py-0.5 rounded-md text-xs font-medium border transition-colors cursor-pointer flex items-center gap-1 ${
                       highContrast
                         ? "bg-sky-500/20 text-sky-300 border-sky-500/50"
                         : "bg-slate-900/80 text-slate-400 hover:text-slate-200 border-slate-800"
@@ -574,7 +574,7 @@ export function DicomCinePlayer({
                     <span>Vasc Boost</span>
                   </button>
                 </div>
-                <div className="text-right text-[11px] font-mono text-slate-400 max-w-[280px] truncate">
+                <div className="text-right text-xs font-mono text-slate-400 max-w-[280px] truncate">
                   {seriesDescription}
                 </div>
               </div>
@@ -613,10 +613,10 @@ export function DicomCinePlayer({
       </div>
 
       {/* CONTROLS DOCK */}
-      <div className="p-3 sm:p-4 bg-[#0F172A] border-t border-slate-800/90 flex flex-col gap-2.5">
+      <div className="p-3 sm:p-4 bg-slate-900 border-t border-slate-800/90 flex flex-col gap-2.5">
         {/* TIMELINE SCRUBBER SLIDER */}
         <div className="flex items-center gap-3">
-          <span className="text-[11px] font-mono text-slate-400 shrink-0 min-w-[65px]">
+          <span className="text-xs font-mono text-slate-400 shrink-0 min-w-[65px]">
             {frameLabel} {currentFrame}/{totalFrames}
           </span>
 
@@ -640,7 +640,7 @@ export function DicomCinePlayer({
             />
           </div>
 
-          <span className="text-[11px] font-mono text-slate-400 shrink-0 min-w-[36px] text-right">
+          <span className="text-xs font-mono text-slate-400 shrink-0 min-w-[36px] text-right">
             {percentage}%
           </span>
         </div>
@@ -728,7 +728,7 @@ export function DicomCinePlayer({
               title="Toggle Loop Playback"
             >
               <Repeat className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-[11px]">Loop</span>
+              <span className="hidden sm:inline text-xs">Loop</span>
             </button>
 
             {/* Playback Speed selector */}
@@ -738,7 +738,7 @@ export function DicomCinePlayer({
                   key={rate}
                   type="button"
                   onClick={() => handleSpeedChange(rate)}
-                  className={`px-1.5 sm:px-2 py-0.5 rounded text-[11px] font-mono transition-colors cursor-pointer ${
+                  className={`px-1.5 sm:px-2 py-0.5 rounded text-xs font-mono transition-colors cursor-pointer ${
                     playbackSpeed === rate
                       ? "bg-sky-500 text-slate-950 font-bold"
                       : "text-slate-400 hover:text-slate-200"
@@ -760,7 +760,7 @@ export function DicomCinePlayer({
               title="Load Local Cine MP4"
             >
               <Upload className="w-3.5 h-3.5" />
-              <span className="hidden md:inline text-[11px]">Open File</span>
+              <span className="hidden md:inline text-xs">Open File</span>
             </button>
 
             <button
@@ -836,7 +836,7 @@ export function DicomCinePlayer({
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-400 font-sans leading-relaxed border-t border-slate-800/80 pt-2">
+            <p className="text-xs text-slate-400 font-sans leading-relaxed border-t border-slate-800/80 pt-2">
               Tip: While hovering over the viewport, turning the mouse wheel will scroll slices frame-by-frame without scrolling the page.
             </p>
           </div>

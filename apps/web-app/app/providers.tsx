@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
+import { getQueryClient } from "./lib/queryClient";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -13,19 +14,7 @@ export interface ProvidersProps {
  * Maintains an isolated query cache and provides the verified Auth.js session.
  */
 export function Providers({ children }: ProvidersProps) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000, // 1 minute standard cache freshness
-            gcTime: 5 * 60 * 1000, // 5 minutes garbage collection window
-            retry: 2,
-            refetchOnWindowFocus: false, // Critical for surgical workstations to prevent disruptive updates
-          },
-        },
-      })
-  );
+  const [queryClient] = useState(() => getQueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>

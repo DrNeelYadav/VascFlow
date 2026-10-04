@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     // 2. Audit Trail Logging (SOC2 / HIPAA § 164.312(b))
     const clientIp =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
-    const userAgent = request.headers.get("user-agent") || "VascFlow-Registry-Export/1.0";
+    const userAgent = request.headers.get("user-agent") || "EndoFlow-Registry-Export/1.0";
 
     await logAuditTrail({
       actorStaffId: actor,

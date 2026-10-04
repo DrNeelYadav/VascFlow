@@ -21,6 +21,61 @@
       "import": "./src/card.tsx",
       "default": "./src/card.tsx"
     },
+    "./badge": {
+      "types": "./src/badge.tsx",
+      "import": "./src/badge.tsx",
+      "default": "./src/badge.tsx"
+    },
+    "./data-table": {
+      "types": "./src/data-table.tsx",
+      "import": "./src/data-table.tsx",
+      "default": "./src/data-table.tsx"
+    },
+    "./field": {
+      "types": "./src/field.tsx",
+      "import": "./src/field.tsx",
+      "default": "./src/field.tsx"
+    },
+    "./page-header": {
+      "types": "./src/page-header.tsx",
+      "import": "./src/page-header.tsx",
+      "default": "./src/page-header.tsx"
+    },
+    "./dialog": {
+      "types": "./src/dialog.tsx",
+      "import": "./src/dialog.tsx",
+      "default": "./src/dialog.tsx"
+    },
+    "./dropdown-menu": {
+      "types": "./src/dropdown-menu.tsx",
+      "import": "./src/dropdown-menu.tsx",
+      "default": "./src/dropdown-menu.tsx"
+    },
+    "./tabs": {
+      "types": "./src/tabs.tsx",
+      "import": "./src/tabs.tsx",
+      "default": "./src/tabs.tsx"
+    },
+    "./tooltip": {
+      "types": "./src/tooltip.tsx",
+      "import": "./src/tooltip.tsx",
+      "default": "./src/tooltip.tsx"
+    },
+    "./sheet": {
+      "types": "./src/sheet.tsx",
+      "import": "./src/sheet.tsx",
+      "default": "./src/sheet.tsx"
+    },
+    "./separator": {
+      "types": "./src/separator.tsx",
+      "import": "./src/separator.tsx",
+      "default": "./src/separator.tsx"
+    },
+    "./icons": {
+      "types": "./src/icons.tsx",
+      "import": "./src/icons.tsx",
+      "default": "./src/icons.tsx"
+    },
     "./utils": {
       "types": "./src/utils.ts",
       "import": "./src/utils.ts",

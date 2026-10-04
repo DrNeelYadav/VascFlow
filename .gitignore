@@ -65,4 +65,27 @@ tools/ir_bundler/_index/ocr_cache/
 tools/ir_bundler/_index/extract_checkpoint.json
 tools/ir_bundler/_index/fluoro_*/
 
+# Local Vercel / Firebase CLI state
+.vercel/
+.firebase/
+
+# Development screenshots. These are throwaway QA captures, not source, and
+# there are 18 of them sitting in the repository root.
+shot*.png
+screenshot*.png
+launchpad_screenshot*.png
+
+# Generated review artefacts
+AUDIT.md
+VascFlow-Audit.md
+
+# Extracted procedure datasets. Regenerable from the source documents via
+# tools/ir_bundler; 1 MB of derived JSON does not belong in version control.
+all_procedures_extracted.json
+ir_procedures_classifications_calculators_master.json
+
+# Local agent caches
+.agent/
+
+
 

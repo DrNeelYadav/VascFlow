@@ -1,0 +1,23 @@
+/* ============================================================================
+ * ENDOFLOW ENTERPRISE DESIGN SYSTEM: TYPOGRAPHY
+ * Optical Density & Tabular Numerals Discipline
+ * ============================================================================ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+}
+
+body {
+  letter-spacing: -0.011em;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
+}
+
+/* Tabular Numerals for Clinical Metrics */
+.tabular-nums,
+.font-mono,
+input[type="number"],
+input[type="date"] {
+  font-variant-numeric: tabular-nums;
+}

@@ -221,7 +221,7 @@ function CathLabFlowsheetContent() {
   };
 
   return (
-    <div className={isHudMode ? "bg-[#090A0F] text-slate-100 min-h-screen -m-6 p-6 space-y-6" : "space-y-6 pb-16"}>
+    <div className={isHudMode ? "bg-slate-950 text-slate-100 min-h-screen -m-6 p-6 space-y-6" : "space-y-6 pb-16"}>
       {/* Navigation Breadcrumb & Title */}
       <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b pb-4 ${isHudMode ? "border-zinc-800" : "border-slate-200"}`}>
         <div>
@@ -316,7 +316,7 @@ function CathLabFlowsheetContent() {
 
       {/* High-Contrast Angio-Suite HUD Telemetry Deck (Low-Light Cath Lab Display) */}
       {isHudMode && (
-        <div className="rounded-2xl border-2 border-amber-500/60 bg-[#000000] p-5 shadow-2xl space-y-4">
+        <div className="rounded-2xl border-2 border-amber-500/60 bg-slate-950 p-5 shadow-2xl space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-3">
             <div className="flex items-center gap-2.5">
               <span className="flex h-3 w-3 rounded-full bg-emerald-500 animate-ping" />
@@ -366,7 +366,7 @@ function CathLabFlowsheetContent() {
           )}
 
           {/* Giant Telemetry Readouts (Visible from 3 meters across table) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Fluoro Time & DAP */}
             <div className="rounded-xl border border-cyan-500/40 bg-zinc-950 p-4">
               <div className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">
@@ -489,7 +489,7 @@ function CathLabFlowsheetContent() {
           </div>
 
           {/* Physiological Parameters & Dynamic Adjusters */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-t lg:border-t-0 pt-3 lg:pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs border-t lg:border-t-0 pt-3 lg:pt-0">
             <div className="rounded-lg bg-slate-50 border p-2 text-center">
               <span className="text-[10px] uppercase font-bold text-slate-400">Pt Weight</span>
               <div className="flex items-center justify-center gap-1 mt-0.5">
@@ -532,7 +532,7 @@ function CathLabFlowsheetContent() {
       </div>
 
       {/* Real-Time Telemetry: Dynamic Hemodynamics with Direct Editing */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
             <span>Blood Pressure</span>

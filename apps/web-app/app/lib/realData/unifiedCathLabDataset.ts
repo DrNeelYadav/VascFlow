@@ -12,6 +12,7 @@ import {
   normalizeSmsCathLabDate,
 } from "./smsCathLabRealData";
 import { AUTHENTIC_SMS_MASTER_CASES } from "./smsMasterAnalysisCases";
+import { GOLD_STANDARD_1090_CASES } from "./goldStandard1090Cases";
 
 export type CathProcedureCategory =
   | "TACE"
@@ -230,8 +231,12 @@ function normalize2025Case(c: RealSmsPatientCase, index: number): UnifiedCathCas
   };
 }
 
-// Full parsed authentic datasets from 997 Master Cases
-export const PARSED_ALL_DSA_CASES: UnifiedCathCase[] = AUTHENTIC_SMS_MASTER_CASES.map((c, i) => normalize2025Case(c, i));
+// Full parsed authentic datasets from 1,090 Gold-Standard Master Cases
+const sourceCases = (GOLD_STANDARD_1090_CASES?.length > 0)
+  ? GOLD_STANDARD_1090_CASES
+  : AUTHENTIC_SMS_MASTER_CASES;
+
+export const PARSED_ALL_DSA_CASES: UnifiedCathCase[] = sourceCases.map((c, i) => normalize2025Case(c, i));
 
 // 2026 cases: authentic DSA cases for 2026
 export const PARSED_2026_CASES: UnifiedCathCase[] = PARSED_ALL_DSA_CASES.filter((c) => c.year === 2026);
@@ -239,7 +244,7 @@ export const PARSED_2026_CASES: UnifiedCathCase[] = PARSED_ALL_DSA_CASES.filter(
 // Specific 2025 subset
 export const PARSED_2025_CASES: UnifiedCathCase[] = PARSED_ALL_DSA_CASES.filter((c) => c.year === 2025);
 
-// Unified cath lab dataset across all recorded years (full authentic 997 case registry)
+// Unified cath lab dataset across all recorded years (full authentic 1,090 case registry)
 export const UNIFIED_CATH_LAB_DATASET: UnifiedCathCase[] = [
   ...PARSED_ALL_DSA_CASES,
 ];

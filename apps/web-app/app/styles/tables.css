@@ -1,0 +1,69 @@
+/* ============================================================================
+ * ENDOFLOW ENTERPRISE DESIGN SYSTEM: DATA TABLES
+ * Strict 32px rows, sticky headers, momentum scrolling, zero clipping
+ * ============================================================================ */
+
+@layer components {
+  .table-compact {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .table-compact thead th {
+    height: var(--table-row-height, 32px);
+    padding: 0.25rem 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #64748B);
+    background-color: #F8FAFC;
+    border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .dark .table-compact thead th {
+    background-color: #0B1120;
+    color: #94A3B8;
+    border-bottom-color: #1E293B;
+  }
+
+  .table-compact tbody td {
+    height: var(--table-row-height, 32px);
+    padding: 0.25rem 0.625rem;
+    border-bottom: 1px solid #F1F5F9;
+    font-variant-numeric: tabular-nums;
+    color: #1E293B;
+    white-space: nowrap;
+  }
+
+  .dark .table-compact tbody td {
+    border-bottom-color: #1E293B;
+    color: #E2E8F0;
+  }
+
+  .table-compact tbody tr:hover {
+    background-color: #F8FAFC;
+  }
+  .dark .table-compact tbody tr:hover {
+    background-color: #1E293B;
+  }
+
+  .card-compact {
+    background-color: var(--bg-surface, #FFFFFF);
+    border: 1px solid var(--border-subtle, #E2E8F0);
+    border-radius: 4px;
+  }
+
+  .dark .card-compact {
+    background-color: var(--bg-surface, #0F172A);
+    border-color: var(--border-subtle, #1E293B);
+  }
+}

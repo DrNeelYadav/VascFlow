@@ -39,20 +39,20 @@ import {
 } from "lucide-react";
 
 export const statusColorMap: Record<CaseStatus, string> = {
-  SCHEDULED: "bg-[#F1F3F4] text-[#3C4043] border-[#DADCE0]",
-  ADMITTED_PREPPED: "bg-[#E8F0FE] text-[#174EA6] border-[#1A73E8]/30",
-  IN_PROCEDURE: "bg-[#202124] text-white border-[#202124]",
-  POST_OP_HOLDING: "bg-[#FEF7E0] text-[#B06000] border-[#FBBC04]/40",
-  REPORT_DRAFTED: "bg-[#F1F3F4] text-[#3C4043] border-[#DADCE0]",
-  FINALIZED_SIGNED: "bg-[#E6F4EA] text-[#137333] border-[#34A853]/30",
-  DISCHARGED: "bg-[#F8F9FA] text-[#5F6368] border-[#DADCE0]",
+  SCHEDULED: "bg-slate-100 text-slate-700 border-slate-200",
+  ADMITTED_PREPPED: "bg-blue-50 text-blue-700 border-blue-600/30",
+  IN_PROCEDURE: "bg-slate-900 text-white border-slate-900",
+  POST_OP_HOLDING: "bg-amber-50 text-amber-700 border-amber-500/40",
+  REPORT_DRAFTED: "bg-slate-100 text-slate-700 border-slate-200",
+  FINALIZED_SIGNED: "bg-emerald-50 text-emerald-700 border-emerald-600/30",
+  DISCHARGED: "bg-slate-50 text-slate-500 border-slate-200",
 };
 
 const MODALITY_BADGE_STYLE: Record<string, { bg: string; text: string; border: string }> = {
-  XA: { bg: "bg-[#E8F0FE]", text: "text-[#174EA6]", border: "border-[#1A73E8]/30" },
-  CT: { bg: "bg-[#FCE8E6]", text: "text-[#C5221F]", border: "border-[#EA4335]/30" },
-  US: { bg: "bg-[#E6F4EA]", text: "text-[#137333]", border: "border-[#34A853]/30" },
-  ROSE: { bg: "bg-[#FEF7E0]", text: "text-[#B06000]", border: "border-[#FBBC04]/50" },
+  XA: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-600/30" },
+  CT: { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-600/30" },
+  US: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-600/30" },
+  ROSE: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-500/50" },
 };
 
 export interface WorklistTableProps {
@@ -177,12 +177,12 @@ export function WorklistTable({
   });
 
   return (
-    <div className="rounded-xl border border-[#DADCE0] bg-white shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
       {/* Mobile Card Stack (Phone View: 0 Horizontal Scroll) */}
-      <div className="block md:hidden divide-y divide-[#DADCE0]">
+      <div className="block md:hidden divide-y divide-slate-200">
         {filteredCases.length === 0 ? (
-          <div className="p-8 text-center text-[#5F6368]">
-            <AlertCircle className="mx-auto h-7 w-7 text-[#DADCE0] mb-2" />
+          <div className="p-8 text-center text-slate-500">
+            <AlertCircle className="mx-auto h-7 w-7 text-slate-200 mb-2" />
             No procedure cases matching current filter or search criteria.
           </div>
         ) : (
@@ -193,23 +193,23 @@ export function WorklistTable({
               <div
                 key={`mob-${entry.caseId}`}
                 className={`p-3.5 space-y-2.5 transition-colors ${
-                  entry.isStat ? "bg-[#FFF8F6] border-l-4 border-l-[#EA4335]" : "bg-white hover:bg-slate-50"
+                  entry.isStat ? "bg-rose-50 border-l-4 border-l-rose-600" : "bg-white hover:bg-slate-50"
                 }`}
               >
                 {/* Header Row: Time + Room + Modality + Status */}
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-[#202124]">
-                    <Clock className="h-3.5 w-3.5 text-[#5F6368] shrink-0" />
+                  <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-slate-900">
+                    <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                     <span>{entry.plannedTime}</span>
-                    <span className="text-[11px] text-[#5F6368] font-sans font-normal">
+                    <span className="text-xs text-slate-500 font-sans font-normal">
                       &bull; {entry.room || "Cath Lab 1"}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold border ${modStyle.bg} ${modStyle.text} ${modStyle.border}`}>
+                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${modStyle.bg} ${modStyle.text} ${modStyle.border}`}>
                       {modKey}
                     </span>
-                    <span className={`rounded-md border px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${statusColorMap[entry.status]}`}>
+                    <span className={`rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${statusColorMap[entry.status]}`}>
                       {entry.status.replace(/_/g, " ")}
                     </span>
                   </div>
@@ -218,46 +218,46 @@ export function WorklistTable({
                 {/* Patient Details & STAT Flag */}
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#202124]">{entry.patientName}</span>
+                    <span className="text-sm font-bold text-slate-900">{entry.patientName}</span>
                     {entry.isStat && (
-                      <span className="shrink-0 rounded bg-[#EA4335] text-white px-1.5 py-0.5 text-[9px] font-black tracking-wider uppercase animate-pulse">
+                      <span className="shrink-0 rounded bg-rose-600 text-white px-1.5 py-0.5 text-[10px] font-black tracking-wider uppercase animate-pulse">
                         STAT
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-[#5F6368] font-mono mt-0.5">CR: {entry.crNumber}</div>
+                  <div className="text-xs text-slate-500 font-mono mt-0.5">CR: {entry.crNumber}</div>
                   {entry.statIndication && (
-                    <div className="text-[10px] font-semibold text-[#C5221F] mt-0.5">
+                    <div className="text-[10px] font-semibold text-rose-700 mt-0.5">
                       ⚡ {entry.statIndication}
                     </div>
                   )}
                 </div>
 
                 {/* Procedure Title */}
-                <div className="text-xs font-semibold text-[#1A73E8]">
+                <div className="text-xs font-semibold text-blue-600">
                   {entry.procedureName}
                 </div>
 
                 {/* Clinical Team */}
-                <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#5F6368]">
-                  <span>Op: <strong className="text-[#202124]">{entry.operatorResident}</strong></span>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <span>Op: <strong className="text-slate-900">{entry.operatorResident}</strong></span>
                   <span>&bull;</span>
-                  <span>Cons: <strong className="text-[#202124]">{entry.supervisingConsultant}</strong></span>
+                  <span>Cons: <strong className="text-slate-900">{entry.supervisingConsultant}</strong></span>
                 </div>
 
                 {/* Safety Flags */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                   {entry.fastingConfirmed ? (
-                    <span className="inline-flex items-center gap-0.5 rounded bg-[#E6F4EA] px-1.5 py-0.5 text-[10px] font-semibold text-[#137333] border border-[#34A853]/30">
+                    <span className="inline-flex items-center gap-0.5 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-600/30">
                       <CheckCircle2 className="h-2.5 w-2.5" /> NPO Confirmed
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-0.5 rounded bg-[#FEF7E0] px-1.5 py-0.5 text-[10px] font-semibold text-[#B06000] border border-[#FBBC04]/50">
+                    <span className="inline-flex items-center gap-0.5 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 border border-amber-500/50">
                       NPO Pending
                     </span>
                   )}
                   {entry.contrastAllergy && (
-                    <span className="inline-flex items-center gap-0.5 rounded bg-[#FCE8E6] px-1.5 py-0.5 text-[10px] font-semibold text-[#C5221F] border border-[#EA4335]/30">
+                    <span className="inline-flex items-center gap-0.5 rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700 border border-rose-600/30">
                       <ShieldAlert className="h-2.5 w-2.5" /> Allergy Alert
                     </span>
                   )}
@@ -268,7 +268,7 @@ export function WorklistTable({
                   {entry.status === "SCHEDULED" && (
                     <button
                       onClick={() => handleOpenTransitionModal(entry, "ADMITTED_PREPPED")}
-                      className="flex-1 min-h-[36px] rounded-lg bg-[#1A73E8] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-[#1557B0] transition flex items-center justify-center cursor-pointer"
+                      className="flex-1 min-h-9 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-blue-700 transition flex items-center justify-center cursor-pointer"
                     >
                       Check In &amp; Prep
                     </button>
@@ -277,7 +277,7 @@ export function WorklistTable({
                   {entry.status === "ADMITTED_PREPPED" && (
                     <button
                       onClick={() => handleOpenTransitionModal(entry, "IN_PROCEDURE")}
-                      className="flex-1 min-h-[36px] rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition flex items-center justify-center cursor-pointer"
+                      className="flex-1 min-h-9 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition flex items-center justify-center cursor-pointer"
                     >
                       Start Lab
                     </button>
@@ -287,14 +287,14 @@ export function WorklistTable({
                     <>
                       <Link
                         href={`/dashboard/cath-lab-flowsheet?caseId=${entry.caseId}`}
-                        className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white hover:bg-black transition shadow-2xs"
+                        className="flex-1 min-h-9 inline-flex items-center justify-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-black transition shadow-2xs"
                       >
-                        <Activity className="h-3 w-3 text-[#34A853] animate-pulse" />
+                        <Activity className="h-3 w-3 text-emerald-600 animate-pulse" />
                         Flowsheet
                       </Link>
                       <button
                         onClick={() => handleOpenTransitionModal(entry, "POST_OP_HOLDING")}
-                        className="flex-1 min-h-[36px] rounded-lg border border-[#DADCE0] bg-white px-3 py-1.5 text-xs font-semibold text-[#3C4043] hover:bg-[#F1F3F4] transition flex items-center justify-center cursor-pointer"
+                        className="flex-1 min-h-9 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition flex items-center justify-center cursor-pointer"
                       >
                         Finish Cath
                       </button>
@@ -304,7 +304,7 @@ export function WorklistTable({
                   {entry.status === "POST_OP_HOLDING" && (
                     <Link
                       href={`/dashboard/reports/${entry.caseId}`}
-                      className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
+                      className="flex-1 min-h-9 inline-flex items-center justify-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
                     >
                       <FileText className="h-3 w-3" />
                       Dictate Report
@@ -314,9 +314,9 @@ export function WorklistTable({
                   {entry.status === "REPORT_DRAFTED" && (
                     <Link
                       href={`/dashboard/reports/${entry.caseId}`}
-                      className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg bg-[#202124] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
+                      className="flex-1 min-h-9 inline-flex items-center justify-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
                     >
-                      <ShieldAlert className="h-3 w-3 text-[#FBBC04]" />
+                      <ShieldAlert className="h-3 w-3 text-amber-500" />
                       Consultant Verify
                     </Link>
                   )}
@@ -325,14 +325,14 @@ export function WorklistTable({
                     <>
                       <Link
                         href={`/dashboard/reports/${entry.caseId}`}
-                        className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg border border-[#DADCE0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#3C4043] hover:bg-[#F1F3F4] transition"
+                        className="flex-1 min-h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
                       >
-                        <FileText className="h-3 w-3 text-[#5F6368]" />
+                        <FileText className="h-3 w-3 text-slate-500" />
                         View Report
                       </Link>
                       <button
                         onClick={() => handleOpenTransitionModal(entry, "DISCHARGED")}
-                        className="flex-1 min-h-[36px] rounded-lg bg-[#202124] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-black transition flex items-center justify-center cursor-pointer"
+                        className="flex-1 min-h-9 rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-black transition flex items-center justify-center cursor-pointer"
                       >
                         Discharge
                       </button>
@@ -342,7 +342,7 @@ export function WorklistTable({
                   {entry.status === "DISCHARGED" && (
                     <Link
                       href={`/dashboard/discharge`}
-                      className="flex-1 min-h-[36px] inline-flex items-center justify-center gap-1 rounded-lg border border-[#DADCE0] bg-[#F8F9FA] px-3 py-1.5 text-xs font-medium text-[#5F6368] hover:bg-[#F1F3F4] transition"
+                      className="flex-1 min-h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 transition"
                     >
                       <ExternalLink className="h-3 w-3" />
                       IHMS Summary
@@ -351,7 +351,7 @@ export function WorklistTable({
 
                   <Link
                     href={`/dashboard/consent?caseId=${entry.caseId}&procedure=${encodeURIComponent(entry.procedureName)}`}
-                    className="px-2.5 py-1.5 text-xs text-[#1A73E8] bg-blue-50 hover:bg-blue-100 rounded-lg transition"
+                    className="px-2.5 py-1.5 text-xs text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition"
                   >
                     Consent
                   </Link>
@@ -364,8 +364,8 @@ export function WorklistTable({
 
       {/* Desktop Worklist Table (Hidden on Mobile) */}
       <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-left text-xs text-[#202124]">
-          <thead className="bg-[#F8F9FA] text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] border-b border-[#DADCE0]">
+        <table className="w-full text-left text-xs text-slate-900">
+          <thead className="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
           <tr>
             <th className="px-3.5 py-2.5">Schedule</th>
             <th className="px-3.5 py-2.5">Patient / CR</th>
@@ -376,11 +376,11 @@ export function WorklistTable({
             <th className="px-3.5 py-2.5 text-right">Actions &amp; Direct Handoff</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#DADCE0]/70 font-normal">
+        <tbody className="divide-y divide-slate-200/70 font-normal">
           {filteredCases.length === 0 ? (
             <tr>
-              <td colSpan={7} className="px-4 py-12 text-center text-[#5F6368]">
-                <AlertCircle className="mx-auto h-7 w-7 text-[#DADCE0] mb-2" />
+              <td colSpan={7} className="px-4 py-12 text-center text-slate-500">
+                <AlertCircle className="mx-auto h-7 w-7 text-slate-200 mb-2" />
                 No procedure cases matching current filter or search criteria.
               </td>
             </tr>
@@ -395,21 +395,21 @@ export function WorklistTable({
                     <tr
                       className={`transition-colors cursor-context-menu ${
                         entry.isStat
-                          ? "bg-[#FFF8F6] hover:bg-[#FCE8E6]/60 border-l-4 border-l-[#EA4335]"
-                          : "hover:bg-[#F8F9FA]"
+                          ? "bg-rose-50 hover:bg-rose-50/60 border-l-4 border-l-rose-600"
+                          : "hover:bg-slate-50"
                       }`}
                       title="Right-click row for rapid clinical actions (Consent, Pre-Op Sheet, PACS, Calculators)"
                     >
                       {/* Schedule Time */}
                       <td className="px-3.5 py-2.5 font-mono tabular-nums whitespace-nowrap">
-                        <div className="flex items-center gap-1.5 font-medium text-[#202124]">
-                          <Clock className="h-3.5 w-3.5 text-[#5F6368] shrink-0" />
+                        <div className="flex items-center gap-1.5 font-medium text-slate-900">
+                          <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                           <span>{entry.plannedTime}</span>
                         </div>
-                        <div className="text-[10px] text-[#5F6368] font-sans flex items-center gap-1 mt-0.5">
+                        <div className="text-[10px] text-slate-500 font-sans flex items-center gap-1 mt-0.5">
                           <span className="font-medium">{entry.room || "Cath Lab 1"}</span>
                           {entry.durationMinutes && (
-                            <span className="text-[#70757A]">({entry.durationMinutes}m)</span>
+                            <span className="text-slate-500">({entry.durationMinutes}m)</span>
                           )}
                         </div>
                       </td>
@@ -417,20 +417,20 @@ export function WorklistTable({
                       {/* Patient Name & CR Number */}
                       <td className="px-3.5 py-2.5 min-w-[140px] max-w-[190px]">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-[#202124] truncate">
+                          <span className="font-semibold text-slate-900 truncate">
                             {entry.patientName}
                           </span>
                           {entry.isStat && (
-                            <span className="shrink-0 rounded bg-[#EA4335] text-white px-1.5 py-0.5 text-[9px] font-black tracking-wider uppercase animate-pulse">
+                            <span className="shrink-0 rounded bg-rose-600 text-white px-1.5 py-0.5 text-[10px] font-black tracking-wider uppercase animate-pulse">
                               STAT
                             </span>
                           )}
                         </div>
-                        <div className="font-mono text-[10px] text-[#5F6368] font-medium tabular-nums">
+                        <div className="font-mono text-[10px] text-slate-500 font-medium tabular-nums">
                           CR: {entry.crNumber}
                         </div>
                         {entry.statIndication && (
-                          <div className="text-[9px] font-semibold text-[#C5221F] truncate mt-0.5">
+                          <div className="text-[10px] font-semibold text-rose-700 truncate mt-0.5">
                             ⚡ {entry.statIndication}
                           </div>
                         )}
@@ -440,12 +440,12 @@ export function WorklistTable({
                       <td className="px-3.5 py-2.5 min-w-[200px] max-w-[270px]">
                         <div className="flex items-center gap-1.5 overflow-hidden">
                           <span
-                            className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold border ${modStyle.bg} ${modStyle.text} ${modStyle.border}`}
+                            className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold border ${modStyle.bg} ${modStyle.text} ${modStyle.border}`}
                           >
                             {modKey}
                           </span>
                           <span
-                            className="font-medium text-[#202124] truncate text-xs"
+                            className="font-medium text-slate-900 truncate text-xs"
                             title={entry.procedureName}
                           >
                             {entry.procedureName}
@@ -454,12 +454,12 @@ export function WorklistTable({
                       </td>
 
                       {/* Clinical Team */}
-                      <td className="px-3.5 py-2.5 min-w-[160px] max-w-[210px] text-[11px] leading-tight">
-                        <div className="text-[#202124] font-medium truncate" title={entry.operatorResident}>
-                          <span className="text-[#70757A] font-semibold">Op:</span> {entry.operatorResident}
+                      <td className="px-3.5 py-2.5 min-w-[160px] max-w-[210px] text-xs leading-tight">
+                        <div className="text-slate-900 font-medium truncate" title={entry.operatorResident}>
+                          <span className="text-slate-500 font-semibold">Op:</span> {entry.operatorResident}
                         </div>
-                        <div className="text-[#5F6368] truncate mt-0.5" title={entry.supervisingConsultant}>
-                          <span className="text-[#70757A] font-semibold">Cons:</span> {entry.supervisingConsultant}
+                        <div className="text-slate-500 truncate mt-0.5" title={entry.supervisingConsultant}>
+                          <span className="text-slate-500 font-semibold">Cons:</span> {entry.supervisingConsultant}
                         </div>
                       </td>
 
@@ -468,13 +468,13 @@ export function WorklistTable({
                         <div className="flex flex-wrap items-center gap-1">
                           {entry.fastingConfirmed ? (
                             <ClinicalTooltip content="Verified NPO: Minimum 6 hours solids, 2 hours clear fluids maintained.">
-                              <span className="inline-flex items-center gap-0.5 rounded bg-[#E6F4EA] px-1.5 py-0.5 text-[10px] font-semibold text-[#137333] border border-[#34A853]/30 cursor-help">
+                              <span className="inline-flex items-center gap-0.5 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-600/30 cursor-help">
                                 <CheckCircle2 className="h-2.5 w-2.5" /> NPO Confirmed
                               </span>
                             </ClinicalTooltip>
                           ) : (
                             <ClinicalTooltip content="Pending NPO verification: Ward nursing must confirm last oral intake before pre-medication.">
-                              <span className="inline-flex items-center gap-0.5 rounded bg-[#FEF7E0] px-1.5 py-0.5 text-[10px] font-semibold text-[#B06000] border border-[#FBBC04]/50 cursor-help">
+                              <span className="inline-flex items-center gap-0.5 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 border border-amber-500/50 cursor-help">
                                 NPO Pending
                               </span>
                             </ClinicalTooltip>
@@ -482,7 +482,7 @@ export function WorklistTable({
 
                           {entry.contrastAllergy && (
                             <ClinicalTooltip content="Severe/Moderate contrast allergy protocol required (Hydrocortisone 100mg IV + Pheniramine 22.75mg IV).">
-                              <span className="inline-flex items-center gap-0.5 rounded bg-[#FCE8E6] px-1.5 py-0.5 text-[10px] font-semibold text-[#C5221F] border border-[#EA4335]/30 cursor-help">
+                              <span className="inline-flex items-center gap-0.5 rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700 border border-rose-600/30 cursor-help">
                                 <ShieldAlert className="h-2.5 w-2.5" /> Allergy Alert
                               </span>
                             </ClinicalTooltip>
@@ -507,7 +507,7 @@ export function WorklistTable({
                           {entry.status === "SCHEDULED" && (
                             <button
                               onClick={() => handleOpenTransitionModal(entry, "ADMITTED_PREPPED")}
-                              className="rounded-lg bg-[#1A73E8] px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-[#1557B0] transition"
+                              className="rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-blue-700 transition"
                             >
                               Check In &amp; Prep
                             </button>
@@ -516,7 +516,7 @@ export function WorklistTable({
                           {entry.status === "ADMITTED_PREPPED" && (
                             <button
                               onClick={() => handleOpenTransitionModal(entry, "IN_PROCEDURE")}
-                              className="rounded-lg bg-[#202124] px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
+                              className="rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
                             >
                               Start Lab
                             </button>
@@ -526,14 +526,14 @@ export function WorklistTable({
                             <>
                               <Link
                                 href={`/dashboard/cath-lab-flowsheet?caseId=${entry.caseId}`}
-                                className="inline-flex items-center gap-1 rounded-lg bg-[#202124] px-2 py-1 text-xs font-semibold text-white hover:bg-black transition shadow-2xs"
+                                className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-2 py-1 text-xs font-semibold text-white hover:bg-black transition shadow-2xs"
                               >
-                                <Activity className="h-3 w-3 text-[#34A853] animate-pulse" />
+                                <Activity className="h-3 w-3 text-emerald-600 animate-pulse" />
                                 Flowsheet
                               </Link>
                               <button
                                 onClick={() => handleOpenTransitionModal(entry, "POST_OP_HOLDING")}
-                                className="rounded-lg border border-[#DADCE0] bg-white px-2 py-1 text-xs font-semibold text-[#3C4043] hover:bg-[#F1F3F4] transition"
+                                className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
                               >
                                 Finish Cath
                               </button>
@@ -543,7 +543,7 @@ export function WorklistTable({
                           {entry.status === "POST_OP_HOLDING" && (
                             <Link
                               href={`/dashboard/reports/${entry.caseId}`}
-                              className="inline-flex items-center gap-1 rounded-lg bg-[#202124] px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
+                              className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
                             >
                               <FileText className="h-3 w-3" />
                               Dictate Report
@@ -553,9 +553,9 @@ export function WorklistTable({
                           {entry.status === "REPORT_DRAFTED" && (
                             <Link
                               href={`/dashboard/reports/${entry.caseId}`}
-                              className="inline-flex items-center gap-1 rounded-lg bg-[#202124] px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
+                              className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-black transition"
                             >
-                              <ShieldAlert className="h-3 w-3 text-[#FBBC04]" />
+                              <ShieldAlert className="h-3 w-3 text-amber-500" />
                               Consultant Verify
                             </Link>
                           )}
@@ -564,14 +564,14 @@ export function WorklistTable({
                             <>
                               <Link
                                 href={`/dashboard/reports/${entry.caseId}`}
-                                className="inline-flex items-center gap-1 rounded-lg border border-[#DADCE0] bg-white px-2 py-1 text-xs font-semibold text-[#3C4043] hover:bg-[#F1F3F4] transition"
+                                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
                               >
-                                <FileText className="h-3 w-3 text-[#5F6368]" />
+                                <FileText className="h-3 w-3 text-slate-500" />
                                 View Report
                               </Link>
                               <button
                                 onClick={() => handleOpenTransitionModal(entry, "DISCHARGED")}
-                                className="rounded-lg bg-[#202124] px-2.5 py-1 text-xs font-semibold text-white hover:bg-black transition"
+                                className="rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-black transition"
                               >
                                 Discharge
                               </button>
@@ -581,7 +581,7 @@ export function WorklistTable({
                           {entry.status === "DISCHARGED" && (
                             <Link
                               href={`/dashboard/discharge`}
-                              className="inline-flex items-center gap-1 rounded-lg border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs font-medium text-[#5F6368] hover:bg-[#F1F3F4] transition"
+                              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 transition"
                             >
                               <ExternalLink className="h-3 w-3" />
                               IHMS Summary
@@ -593,39 +593,39 @@ export function WorklistTable({
                   </ContextMenuTrigger>
 
                   <ContextMenuContent className="w-64">
-                    <div className="px-2 py-1.5 text-[11px] font-medium text-[#5F6368] border-b border-[#DADCE0] mb-1">
-                      <span className="font-semibold text-[#202124]">{entry.patientName}</span> &bull; <span className="font-mono tabular-nums">{entry.crNumber}</span>
+                    <div className="px-2 py-1.5 text-xs font-medium text-slate-500 border-b border-slate-200 mb-1">
+                      <span className="font-semibold text-slate-900">{entry.patientName}</span> &bull; <span className="font-mono tabular-nums">{entry.crNumber}</span>
                     </div>
                     <ContextMenuItem onClick={() => router.push(`/dashboard/consent?caseId=${entry.caseId}&procedure=${encodeURIComponent(entry.procedureName)}`)}>
-                      <FileSignature className="w-3.5 h-3.5 mr-2 text-[#5F6368] shrink-0" />
+                      <FileSignature className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
                       <span>Print Bilingual Consent Form</span>
                     </ContextMenuItem>
                     <ContextMenuItem onClick={() => router.push(`/dashboard/consent?tab=PREPARATION&caseId=${entry.caseId}`)}>
-                      <ClipboardCheck className="w-3.5 h-3.5 mr-2 text-[#5F6368] shrink-0" />
+                      <ClipboardCheck className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
                       <span>Print Pre-Op Preparation Sheet</span>
                     </ContextMenuItem>
                     <ContextMenuSeparator />
                     <ContextMenuItem onClick={() => handleOpenTransitionModal(entry, "IN_PROCEDURE")}>
-                      <Activity className="w-3.5 h-3.5 mr-2 text-[#5F6368] shrink-0" />
+                      <Activity className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
                       <span>Mark In-Lab ({entry.room || "Cath Lab 1"})</span>
                     </ContextMenuItem>
                     {entry.status === "IN_PROCEDURE" && (
                       <ContextMenuItem onClick={() => router.push(`/dashboard/cath-lab-flowsheet?caseId=${entry.caseId}`)}>
-                        <Activity className="w-3.5 h-3.5 mr-2 text-[#5F6368] shrink-0" />
+                        <Activity className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
                         <span>Cath-Lab Flowsheet</span>
                       </ContextMenuItem>
                     )}
                     <ContextMenuItem onClick={() => router.push(`/dashboard/reports/${entry.caseId}`)}>
-                      <FileText className="w-3.5 h-3.5 mr-2 text-[#5F6368] shrink-0" />
+                      <FileText className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
                       <span>Dictate Synoptic Report</span>
                     </ContextMenuItem>
                     <ContextMenuSeparator />
                     <ContextMenuItem onClick={() => router.push(`/dashboard/imaging/STUDY-XA-2026-09142`)}>
-                      <Eye className="w-3.5 h-3.5 mr-2 text-[#5F6368] shrink-0" />
+                      <Eye className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
                       <span>View PACS DICOM Study</span>
                     </ContextMenuItem>
-                    <ContextMenuItem onClick={() => router.push(`/dashboard/calculators?calc=cigarroa&patient=${encodeURIComponent(entry.patientName)}`)}>
-                      <Calculator className="w-3.5 h-3.5 mr-2 text-[#5F6368] shrink-0" />
+                    <ContextMenuItem onClick={() => router.push(`/dashboard/protocols?calc=cigarroa`)}>
+                      <Calculator className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
                       <span>Quick Calculate Cigarroa MACD</span>
                     </ContextMenuItem>
                   </ContextMenuContent>

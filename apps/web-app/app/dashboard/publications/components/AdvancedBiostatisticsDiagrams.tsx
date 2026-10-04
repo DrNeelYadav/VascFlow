@@ -413,23 +413,23 @@ export function AdvancedBiostatisticsDiagrams({
   return (
     <div className="space-y-6">
       {/* Top Banner with Math Equations Indicator */}
-      <div className="bg-white rounded-2xl border border-[#DADCE0] p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span
               style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}
-              className="px-2.5 py-0.5 rounded-full text-[11px] font-bold border border-blue-200"
+              className="px-2.5 py-0.5 rounded-full text-[11px] font-bold border border-blue-200 dark:border-blue-800"
             >
               ADVANCED STATISTICAL DIAGRAMS &amp; MATHEMATICAL MODELING
             </span>
-            <span className="text-xs font-semibold text-[#5F6368]">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
               {paper.shortName} &bull; {paper.targetJournal.split("(")[0]}
             </span>
           </div>
-          <h2 className="text-lg font-bold text-[#202124] mt-1.5">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1.5">
             Biostatistical Models, Linear Correlations &amp; Forest Plots
           </h2>
-          <p className="text-xs text-[#5F6368] mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Literature-benchmarked diagrams generated dynamically from real cohort data ($N = {cases.length}$) as you enter data in the spreadsheet.
           </p>
         </div>
@@ -438,7 +438,7 @@ export function AdvancedBiostatisticsDiagrams({
           <button
             type="button"
             onClick={handlePrintPdfReport}
-            className="px-3.5 py-2 rounded-xl bg-[#202124] hover:bg-black text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-semibold border border-slate-900 transition flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>Print Statistical PDF</span>
@@ -447,14 +447,14 @@ export function AdvancedBiostatisticsDiagrams({
       </div>
 
       {/* Diagrams Navigation Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#DADCE0]">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-300 dark:border-slate-700">
         <button
           type="button"
           onClick={() => setActiveDiagramTab("benchmark-curve")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer border ${
             activeDiagramTab === "benchmark-curve"
-              ? "bg-[#1A73E8] text-white shadow-xs"
-              : "bg-white text-[#5F6368] hover:bg-gray-100"
+              ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700"
           }`}
         >
           <Activity className="w-3.5 h-3.5" />
@@ -464,10 +464,10 @@ export function AdvancedBiostatisticsDiagrams({
         <button
           type="button"
           onClick={() => setActiveDiagramTab("linear-regression")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer border ${
             activeDiagramTab === "linear-regression"
-              ? "bg-[#1A73E8] text-white shadow-xs"
-              : "bg-white text-[#5F6368] hover:bg-gray-100"
+              ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700"
           }`}
         >
           <TrendingUp className="w-3.5 h-3.5" />
@@ -477,10 +477,10 @@ export function AdvancedBiostatisticsDiagrams({
         <button
           type="button"
           onClick={() => setActiveDiagramTab("forest-plot")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer border ${
             activeDiagramTab === "forest-plot"
-              ? "bg-[#1A73E8] text-white shadow-xs"
-              : "bg-white text-[#5F6368] hover:bg-gray-100"
+              ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700"
           }`}
         >
           <BarChart2 className="w-3.5 h-3.5" />
@@ -490,10 +490,10 @@ export function AdvancedBiostatisticsDiagrams({
         <button
           type="button"
           onClick={() => setActiveDiagramTab("roc-curve")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer border ${
             activeDiagramTab === "roc-curve"
-              ? "bg-[#1A73E8] text-white shadow-xs"
-              : "bg-white text-[#5F6368] hover:bg-gray-100"
+              ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700"
           }`}
         >
           <Sliders className="w-3.5 h-3.5" />
@@ -503,10 +503,10 @@ export function AdvancedBiostatisticsDiagrams({
         <button
           type="button"
           onClick={() => setActiveDiagramTab("correlation-matrix")}
-          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer border ${
             activeDiagramTab === "correlation-matrix"
-              ? "bg-[#1A73E8] text-white shadow-xs"
-              : "bg-white text-[#5F6368] hover:bg-gray-100"
+              ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700"
           }`}
         >
           <PieChart className="w-3.5 h-3.5" />
@@ -518,13 +518,13 @@ export function AdvancedBiostatisticsDiagrams({
           TAB 1: PRIMARY BENCHMARK OUTCOME CURVE (KAPLAN-MEIER / TRAJECTORY)
           ========================================================================= */}
       {activeDiagramTab === "benchmark-curve" && (
-        <div className="bg-white rounded-2xl border border-[#DADCE0] p-6 shadow-xs space-y-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 p-6 shadow-xs space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100 dark:border-slate-700">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A73E8]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
                 {paper.targetJournal.split("(")[0]} Benchmark Metric
               </span>
-              <h3 className="text-base font-bold text-[#202124]">
+              <h3 className="text-base font-bold text-slate-900">
                 {paper.id === "paper-vapsa" && "Kaplan-Meier Freedom from Secondary Re-Bleeding Curve"}
                 {paper.id === "paper-varicose" && "Cumulative Venous Ulcer Healing Trajectory (CEAP C6)"}
                 {paper.id === "paper-biliary" && "Longitudinal Bilirubin Drop Kinetics & Survival Curve"}
@@ -532,13 +532,13 @@ export function AdvancedBiostatisticsDiagrams({
                 {paper.id === "paper-bae" && "1-Year Hemoptysis Recurrence-Free Survival (BAE vs BAE+NBSC)"}
                 {paper.id === "paper-dialysis" && "Primary & Assisted Circuit Patency Curves (12 Months)"}
               </h3>
-              <p className="text-xs text-[#5F6368] mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Exact biostatistical diagram methodology published in landmark international series.
               </p>
             </div>
 
             {/* Mathematical Model Equation */}
-            <div className="p-2.5 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] font-mono text-xs text-[#202124]">
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs text-slate-900">
               {paper.id === "paper-jna" ? (
                 <div>ΔEBL = 260 mL, p &lt; 0.001 (Mann-Whitney U Test)</div>
               ) : (
@@ -548,7 +548,7 @@ export function AdvancedBiostatisticsDiagrams({
           </div>
 
           {/* SVG Vector Render of the Curve */}
-          <div className="h-[320px] w-full bg-[#FAFAFC] rounded-xl border border-gray-200 p-4 relative flex items-center justify-center select-none">
+          <div className="h-[320px] w-full bg-slate-50 rounded-xl border border-gray-200 p-4 relative flex items-center justify-center select-none">
             <svg viewBox="0 0 700 280" className="w-full h-full">
               {/* Grid Lines */}
               <line x1="60" y1="20" x2="660" y2="20" stroke="#E5E7EB" strokeDasharray="3 3" />
@@ -609,7 +609,7 @@ export function AdvancedBiostatisticsDiagrams({
             </svg>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200 text-xs text-[#5F6368] space-y-1 font-mono leading-relaxed">
+          <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200 text-xs text-slate-500 space-y-1 font-mono leading-relaxed">
             <div><strong>Biostatistical Test:</strong> Log-Rank (Mantel-Cox) test $\chi^2 = 6.04$, degrees of freedom $= 1$, $p = 0.014$.</div>
             <div><strong>Outcome Endpoint:</strong> 1-year cumulative survival of 95.8% (95% CI: 91.5% - 98.2%) vs. 71.4% (95% CI: 58.2% - 82.1%).</div>
           </div>
@@ -620,22 +620,22 @@ export function AdvancedBiostatisticsDiagrams({
           TAB 2: LINEAR REGRESSION & SCATTER PLOT WITH R^2 AND EQUATION
           ========================================================================= */}
       {activeDiagramTab === "linear-regression" && (
-        <div className="bg-white rounded-2xl border border-[#DADCE0] p-6 shadow-xs space-y-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 p-6 shadow-xs space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100 dark:border-slate-700">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A73E8]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
                 Parametric Correlation Model
               </span>
-              <h3 className="text-base font-bold text-[#202124]">
+              <h3 className="text-base font-bold text-slate-900">
                 Linear Regression &amp; Pearson Correlation Analysis
               </h3>
-              <p className="text-xs text-[#5F6368] mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Evaluates linear dependencies between clinical predictors and operative resource utilization.
               </p>
             </div>
 
             {/* Regression Equation Formula Badge */}
-            <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 font-mono text-xs text-[#1A73E8]">
+            <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 font-mono text-xs text-blue-600">
               <strong>Equation: </strong>
               <span>
                 y = {regressionStats.slope.toFixed(2)}x {regressionStats.intercept >= 0 ? "+" : "-"}{" "}
@@ -649,7 +649,7 @@ export function AdvancedBiostatisticsDiagrams({
           </div>
 
           {/* SVG Vector Render of Scatter Plot & Regression Line */}
-          <div className="h-[320px] w-full bg-[#FAFAFC] rounded-xl border border-gray-200 p-4 relative select-none">
+          <div className="h-[320px] w-full bg-slate-50 rounded-xl border border-gray-200 p-4 relative select-none">
             <svg viewBox="0 0 700 280" className="w-full h-full">
               {/* Axes */}
               <line x1="50" y1="20" x2="50" y2="240" stroke="#9CA3AF" strokeWidth="1.5" />
@@ -720,14 +720,14 @@ export function AdvancedBiostatisticsDiagrams({
             </svg>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 text-center text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs">
             <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
               <span className="text-gray-500 block text-[10px] uppercase">Pearson Correlation (r)</span>
-              <strong className="text-sm font-mono text-[#202124]">{regressionStats.r.toFixed(3)}</strong>
+              <strong className="text-sm font-mono text-slate-900">{regressionStats.r.toFixed(3)}</strong>
             </div>
             <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
               <span className="text-gray-500 block text-[10px] uppercase">Coefficient of Determination (R²)</span>
-              <strong className="text-sm font-mono text-[#1A73E8]">{regressionStats.r2.toFixed(3)}</strong>
+              <strong className="text-sm font-mono text-blue-600">{regressionStats.r2.toFixed(3)}</strong>
             </div>
             <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
               <span className="text-gray-500 block text-[10px] uppercase">Statistical Significance (p)</span>
@@ -741,27 +741,27 @@ export function AdvancedBiostatisticsDiagrams({
           TAB 3: MULTIVARIABLE FOREST PLOT (ODDS RATIOS & 95% CI)
           ========================================================================= */}
       {activeDiagramTab === "forest-plot" && (
-        <div className="bg-white rounded-2xl border border-[#DADCE0] p-6 shadow-xs space-y-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 p-6 shadow-xs space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100 dark:border-slate-700">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A73E8]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
                 Multivariable Logistic Regression Model
               </span>
-              <h3 className="text-base font-bold text-[#202124]">
+              <h3 className="text-base font-bold text-slate-900">
                 Forest Plot: Independent Predictors of Adverse Events &amp; Secondary Failure
               </h3>
-              <p className="text-xs text-[#5F6368] mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Adjusted Odds Ratios (OR) with 95% Confidence Intervals calculated via binary logistic regression.
               </p>
             </div>
 
-            <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 font-mono text-xs text-[#202124]">
+            <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 font-mono text-xs text-slate-900">
               {"logit(P) = β₀ + Σ(βᵢ · Xᵢ), ORᵢ = exp(βᵢ)"}
             </div>
           </div>
 
           {/* SVG Vector Render of the Forest Plot */}
-          <div className="w-full bg-[#FAFAFC] rounded-xl border border-gray-200 p-5 overflow-x-auto select-none">
+          <div className="w-full bg-slate-50 rounded-xl border border-gray-200 p-5 overflow-x-auto select-none">
             <svg viewBox="0 0 760 300" className="w-full min-w-[700px]">
               {/* Vertical Reference Line at Null Value OR = 1.0 */}
               <line x1="380" y1="20" x2="380" y2="260" stroke="#9CA3AF" strokeWidth="2" strokeDasharray="4 4" />
@@ -840,7 +840,7 @@ export function AdvancedBiostatisticsDiagrams({
             </svg>
           </div>
 
-          <div className="text-xs text-[#5F6368] leading-relaxed p-3 bg-gray-50 rounded-xl border border-gray-200">
+          <div className="text-xs text-slate-500 leading-relaxed p-3 bg-gray-50 rounded-xl border border-gray-200">
             <strong>Interpretation:</strong> Factors with 95% confidence interval whiskers entirely to the right of the vertical reference line (OR = 1.0) represent statistically significant independent risk factors (p &lt; 0.05), while factors to the left confer significant technical protection.
           </div>
         </div>
@@ -850,16 +850,16 @@ export function AdvancedBiostatisticsDiagrams({
           TAB 4: ROC CURVE & CUTOFF OPTIMIZATION (YOUDEN INDEX)
           ========================================================================= */}
       {activeDiagramTab === "roc-curve" && (
-        <div className="bg-white rounded-2xl border border-[#DADCE0] p-6 shadow-xs space-y-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 p-6 shadow-xs space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-gray-100 dark:border-slate-700">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A73E8]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
                 Diagnostic &amp; Procedural Discrimination
               </span>
-              <h3 className="text-base font-bold text-[#202124]">
+              <h3 className="text-base font-bold text-slate-900">
                 Receiver Operating Characteristic (ROC) &amp; Threshold Optimization
               </h3>
-              <p className="text-xs text-[#5F6368] mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Area Under Curve (AUC) discrimination with Youden Index (J = max[Sens + Spec - 1]) for clinical cutoff.
               </p>
             </div>
@@ -871,7 +871,7 @@ export function AdvancedBiostatisticsDiagrams({
           </div>
 
           {/* SVG Vector Render of ROC Curve */}
-          <div className="h-[320px] w-full bg-[#FAFAFC] rounded-xl border border-gray-200 p-4 relative flex items-center justify-center select-none">
+          <div className="h-[320px] w-full bg-slate-50 rounded-xl border border-gray-200 p-4 relative flex items-center justify-center select-none">
             <svg viewBox="0 0 600 280" className="w-full h-full max-w-lg">
               {/* Axes */}
               <line x1="60" y1="20" x2="60" y2="240" stroke="#9CA3AF" strokeWidth="1.5" />
@@ -894,7 +894,7 @@ export function AdvancedBiostatisticsDiagrams({
 
               {/* Optimal Youden Index Marker */}
               <circle cx="120" cy="75" r="6" fill="#7C3AED" stroke="white" strokeWidth="2" />
-              <text x="135" y="70" className="text-[10px] fill-[#7C3AED] font-bold font-mono">
+              <text x="135" y="70" className="text-[10px] fill-purple-600 font-bold font-mono">
                 Optimal Cutoff (J = 0.74, Sens 88.2%, Spec 86.1%)
               </text>
 
@@ -908,7 +908,7 @@ export function AdvancedBiostatisticsDiagrams({
             </svg>
           </div>
 
-          <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs text-[#5F6368] space-y-1">
+          <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs text-slate-500 space-y-1">
             <div>
               <strong>Clinical Utility:</strong> Outstanding discriminatory power (AUC = 0.892). Confirms the mathematical validity of the cutoff threshold in stratifying patient outcomes before angiosuite intervention.
             </div>
@@ -920,15 +920,15 @@ export function AdvancedBiostatisticsDiagrams({
           TAB 5: CORRELATION MATRIX HEATMAP
           ========================================================================= */}
       {activeDiagramTab === "correlation-matrix" && (
-        <div className="bg-white rounded-2xl border border-[#DADCE0] p-6 shadow-xs space-y-5">
-          <div className="pb-3 border-b border-gray-100">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A73E8]">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 p-6 shadow-xs space-y-5">
+          <div className="pb-3 border-b border-gray-100 dark:border-slate-700">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
               Inter-Variable Association Matrix
             </span>
-            <h3 className="text-base font-bold text-[#202124]">
+            <h3 className="text-base font-bold text-slate-900">
               Multi-Parameter Pearson Correlation Matrix Heatmap
             </h3>
-            <p className="text-xs text-[#5F6368] mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Pairwise correlation coefficients (r between -1.0 and +1.0) across clinical, morphological, and dosimetric variables.
             </p>
           </div>
@@ -937,7 +937,7 @@ export function AdvancedBiostatisticsDiagrams({
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-center border-collapse">
               <thead>
-                <tr className="bg-[#F8F9FA] text-[#202124] font-semibold">
+                <tr className="bg-slate-50 text-slate-900 font-semibold">
                   <th className="py-2.5 px-3 text-left">Clinical Variable</th>
                   <th className="py-2.5 px-3">Age</th>
                   <th className="py-2.5 px-3">Morph. Dimension</th>
@@ -949,7 +949,7 @@ export function AdvancedBiostatisticsDiagrams({
               </thead>
               <tbody className="divide-y divide-gray-100 font-mono">
                 <tr>
-                  <td className="py-2.5 px-3 text-left font-sans font-medium text-[#202124]">Age</td>
+                  <td className="py-2.5 px-3 text-left font-sans font-medium text-slate-900">Age</td>
                   <td className="bg-blue-600 text-white font-bold">1.00</td>
                   <td className="bg-blue-50 text-blue-900">+0.12</td>
                   <td className="bg-blue-50 text-blue-900">+0.08</td>
@@ -958,7 +958,7 @@ export function AdvancedBiostatisticsDiagrams({
                   <td className="bg-red-50 text-red-900">-0.05</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 px-3 text-left font-sans font-medium text-[#202124]">Morph. Dimension</td>
+                  <td className="py-2.5 px-3 text-left font-sans font-medium text-slate-900">Morph. Dimension</td>
                   <td className="bg-blue-50 text-blue-900">+0.12</td>
                   <td className="bg-blue-600 text-white font-bold">1.00</td>
                   <td className="bg-red-100 text-red-900">-0.28*</td>
@@ -967,7 +967,7 @@ export function AdvancedBiostatisticsDiagrams({
                   <td className="bg-red-100 text-red-900">-0.22*</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 px-3 text-left font-sans font-medium text-[#202124]">Landing Zone Length</td>
+                  <td className="py-2.5 px-3 text-left font-sans font-medium text-slate-900">Landing Zone Length</td>
                   <td className="bg-blue-50 text-blue-900">+0.08</td>
                   <td className="bg-red-100 text-red-900">-0.28*</td>
                   <td className="bg-blue-600 text-white font-bold">1.00</td>
@@ -976,7 +976,7 @@ export function AdvancedBiostatisticsDiagrams({
                   <td className="bg-blue-300 text-blue-950 font-bold">+0.52**</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 px-3 text-left font-sans font-medium text-[#202124]">Fluoro Time (mins)</td>
+                  <td className="py-2.5 px-3 text-left font-sans font-medium text-slate-900">Fluoro Time (mins)</td>
                   <td className="bg-blue-100 text-blue-900">+0.22</td>
                   <td className="bg-blue-200 text-blue-900">+0.44**</td>
                   <td className="bg-red-100 text-red-900">-0.31*</td>
@@ -985,7 +985,7 @@ export function AdvancedBiostatisticsDiagrams({
                   <td className="bg-red-50 text-red-900">-0.14</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 px-3 text-left font-sans font-medium text-[#202124]">DAP (Gy.cm²)</td>
+                  <td className="py-2.5 px-3 text-left font-sans font-medium text-slate-900">DAP (Gy.cm²)</td>
                   <td className="bg-blue-100 text-blue-900">+0.19</td>
                   <td className="bg-blue-200 text-blue-900">+0.38**</td>
                   <td className="bg-red-100 text-red-900">-0.26*</td>
@@ -994,7 +994,7 @@ export function AdvancedBiostatisticsDiagrams({
                   <td className="bg-red-50 text-red-900">-0.11</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 px-3 text-left font-sans font-medium text-[#202124]">Success Endpoint</td>
+                  <td className="py-2.5 px-3 text-left font-sans font-medium text-slate-900">Success Endpoint</td>
                   <td className="bg-red-50 text-red-900">-0.05</td>
                   <td className="bg-red-100 text-red-900">-0.22*</td>
                   <td className="bg-blue-300 text-blue-950 font-bold">+0.52**</td>
@@ -1006,7 +1006,7 @@ export function AdvancedBiostatisticsDiagrams({
             </table>
           </div>
 
-          <div className="text-[11px] text-[#5F6368] italic">
+          <div className="text-[11px] text-slate-500 italic">
             *p &lt; 0.05; **p &lt; 0.01; ***p &lt; 0.001. Deep blue denotes positive correlation; soft red denotes inverse correlation.
           </div>
         </div>

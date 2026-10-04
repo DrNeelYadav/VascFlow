@@ -206,11 +206,11 @@ export function BarcodeScannerModal({
             ? "border-emerald-500 ring-4 ring-emerald-500/20"
             : scanFlash === "ERROR"
             ? "border-red-500 ring-4 ring-red-500/20"
-            : "border-[#DADCE0]"
+            : "border-slate-200"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 bg-[#F8F9FA] border-b border-[#DADCE0]">
+        <div className="flex items-center justify-between px-5 py-4 bg-slate-50 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
               <Scan className="w-5 h-5" />
@@ -235,7 +235,7 @@ export function BarcodeScannerModal({
 
         {/* Scan Input Area */}
         <div className="p-5 flex flex-col gap-4">
-          <div className="rounded-lg border border-[#DADCE0] bg-[#F8F9FA] p-4 flex flex-col items-center justify-center">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 flex flex-col items-center justify-center">
             <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
               <Keyboard className="w-3.5 h-3.5 text-gray-500" />
               <span>Listening for USB/Bluetooth HID Barcode Wedge or Manual Entry</span>
@@ -249,7 +249,7 @@ export function BarcodeScannerModal({
                 onChange={(e) => setInputVal(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Scan barcode or enter GS1 string and press Enter..."
-                className="w-full bg-white border border-[#DADCE0] focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 font-mono text-sm px-3.5 py-2 rounded-lg outline-none transition"
+                className="w-full bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 font-mono text-sm px-3.5 py-2 rounded-lg outline-none transition"
               />
               <button
                 onClick={() => {
@@ -281,7 +281,7 @@ export function BarcodeScannerModal({
                 onClick={() =>
                   handleProcessScan("(01)00884521098231(17)270831(10)LOT8291042(21)SN104928")
                 }
-                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-[#DADCE0] text-xs transition"
+                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-slate-200 text-xs transition"
               >
                 <div className="font-medium text-gray-900">Wallstent 10x60mm (SEMS)</div>
                 <div className="font-mono text-[11px] text-gray-500 truncate">
@@ -293,7 +293,7 @@ export function BarcodeScannerModal({
                 onClick={() =>
                   handleProcessScan("(01)00384910248102(17)280315(10)LOT9482103(21)SN882104")
                 }
-                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-[#DADCE0] text-xs transition"
+                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-slate-200 text-xs transition"
               >
                 <div className="font-medium text-gray-900">Progreat 2.7F Coaxial Microcatheter</div>
                 <div className="font-mono text-[11px] text-gray-500 truncate">
@@ -305,7 +305,7 @@ export function BarcodeScannerModal({
                 onClick={() =>
                   handleProcessScan("(01)00761928410294(17)261231(10)LOT5510931(21)SN948123")
                 }
-                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-[#DADCE0] text-xs transition"
+                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-slate-200 text-xs transition"
               >
                 <div className="font-medium text-gray-900">Lipiodol Ultra-Fluid (10ml)</div>
                 <div className="font-mono text-[11px] text-gray-500 truncate">
@@ -317,7 +317,7 @@ export function BarcodeScannerModal({
                 onClick={() =>
                   handleProcessScan("(01)00918239102948(17)270530(10)LOT3819204(21)SN552109")
                 }
-                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-[#DADCE0] text-xs transition"
+                className="text-left p-2.5 rounded-lg bg-white hover:bg-gray-50 border border-slate-200 text-xs transition"
               >
                 <div className="font-medium text-gray-900">Cook Tornado Coil 4mm/2mm</div>
                 <div className="font-mono text-[11px] text-gray-500 truncate">
@@ -367,7 +367,7 @@ export function BarcodeScannerModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="px-5 py-3 bg-[#F8F9FA] border-t border-[#DADCE0] flex items-center justify-between">
+        <div className="px-5 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
           <div className="text-xs text-gray-500">
             Scans: <span className="font-mono font-semibold text-gray-900">{scanCount}</span>
           </div>
@@ -375,7 +375,7 @@ export function BarcodeScannerModal({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded-md bg-white hover:bg-gray-50 text-gray-700 font-medium text-xs border border-[#DADCE0] transition"
+              className="px-3.5 py-1.5 rounded-md bg-white hover:bg-gray-50 text-gray-700 font-medium text-xs border border-slate-200 transition"
             >
               Cancel
             </button>
@@ -385,7 +385,7 @@ export function BarcodeScannerModal({
               className={`px-4 py-1.5 rounded-md font-medium text-xs flex items-center gap-1.5 transition ${
                 lastScanned
                   ? "bg-blue-600 hover:bg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-400 border border-[#DADCE0] cursor-not-allowed"
+                  : "bg-gray-100 text-gray-400 border border-slate-200 cursor-not-allowed"
               }`}
             >
               <Package className="w-3.5 h-3.5" />

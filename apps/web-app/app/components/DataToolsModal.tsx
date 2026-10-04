@@ -148,41 +148,41 @@ export function DataToolsModal({ isOpen, onClose }: DataToolsModalProps) {
     {
       id: "sync-sheets",
       icon: CloudUpload,
-      iconColor: "text-[#1A73E8]",
+      iconColor: "text-blue-600",
       title: "Sync Google Sheets",
       subtitle: "Webhook sync",
       actionLabel: "Sync",
-      actionColor: "text-[#1A73E8]",
+      actionColor: "text-blue-600",
       handler: handleSyncSheets,
     },
     {
       id: "copy-tsv",
       icon: Copy,
-      iconColor: "text-[#137333]",
+      iconColor: "text-emerald-700",
       title: "Copy TSV Table",
       subtitle: "Clipboard (Excel / Sheets)",
       actionLabel: "Copy",
-      actionColor: "text-[#137333]",
+      actionColor: "text-emerald-700",
       handler: handleCopyTsv,
     },
     {
       id: "export-csv",
       icon: FileText,
-      iconColor: "text-[#E37400]",
+      iconColor: "text-amber-700",
       title: "Export Research CSV",
       subtitle: "Tabular dataset",
       actionLabel: "Download",
-      actionColor: "text-[#E37400]",
+      actionColor: "text-amber-700",
       handler: handleDownloadCsv,
     },
     {
       id: "all-dossiers",
       icon: Heart,
-      iconColor: "text-[#7E22CE]",
+      iconColor: "text-purple-600",
       title: "Patient Dossiers",
       subtitle: "Consultation records",
       actionLabel: "View",
-      actionColor: "text-[#7E22CE]",
+      actionColor: "text-purple-600",
       handler: handleAllDossiers,
     },
   ];
@@ -194,15 +194,15 @@ export function DataToolsModal({ isOpen, onClose }: DataToolsModalProps) {
       aria-modal="true"
       aria-labelledby="data-tools-title"
     >
-      <div className="bg-white border border-[#DADCE0] rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between border-b border-[#DADCE0] pb-3">
-          <h3 id="data-tools-title" className="text-base font-bold text-[#202124]">
+      <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h3 id="data-tools-title" className="text-base font-bold text-slate-900">
             Data &amp; Export Tools
           </h3>
           <button
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#80868B] hover:text-[#202124] transition-colors cursor-pointer"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -212,8 +212,8 @@ export function DataToolsModal({ isOpen, onClose }: DataToolsModalProps) {
           <div
             className={`p-3 rounded-xl text-xs flex items-center gap-2 border transition-all ${
               notification.type === "success"
-                ? "bg-[#E6F4EA] border-[#CEEAD6] text-[#137333]"
-                : "bg-[#E8F0FE] border-[#D2E3FC] text-[#1A73E8]"
+                ? "bg-emerald-50 border-emerald-100 text-emerald-700"
+                : "bg-blue-50 border-blue-200 text-blue-600"
             }`}
           >
             {notification.type === "success" ? (
@@ -232,15 +232,15 @@ export function DataToolsModal({ isOpen, onClose }: DataToolsModalProps) {
               <button
                 key={tool.id}
                 onClick={tool.handler}
-                className="w-full flex items-center justify-between p-3 rounded-xl border border-[#DADCE0] hover:bg-[#F8F9FA] transition-colors cursor-pointer text-left"
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer text-left"
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`w-4 h-4 ${tool.iconColor}`} />
                   <div>
-                    <p className="font-semibold text-xs text-[#202124]">
+                    <p className="font-semibold text-xs text-slate-900">
                       {tool.title}
                     </p>
-                    <p className="text-[10px] text-[#80868B]">
+                    <p className="text-[10px] text-slate-400">
                       {tool.subtitle}
                     </p>
                   </div>

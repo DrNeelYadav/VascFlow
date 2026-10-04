@@ -109,49 +109,64 @@ describe("DICOM & Cine Web Player Suite", () => {
   });
 
   describe("ImagingWorkstationPage Workstation View", () => {
-    it("renders the workstation header with title and subtitle", () => {
+    it("renders the PACS workstation shell", () => {
       const html = renderToStaticMarkup(React.createElement(ImagingWorkstationPage));
 
-      expect(html).toContain("Imaging &amp; Cine Viewer");
-      expect(html).toContain("Zero-lag DSA fluoroscopy cines, pre-op CT/MRI slice scrubbing, and Google Drive / Tailscale streaming.");
+      // The page is now a departmental-PACS workstation: study list on the
+      // left, Cornerstone viewport in the centre, procedures and tools on the
+      // right. There is no title banner - the panels carry the structure.
+      expect(html).toContain('PACS');
+      // The four old source tabs are gone. Two of them (Google Drive, upload)
+      // invited arbitrary external media onto a clinical screen.
+      expect(html).not.toContain("Google Drive");
+      expect(html).not.toContain("Tailscale");
+      expect(html).not.toContain("Sample IR Cines");
     });
 
-    it("renders all four source switcher tabs", () => {
+    it("offers no external media source switcher", () => {
+      // Regression guard: the viewer previously offered a stranger's Google
+      // Drive link and a Tailscale peer as clinical image sources.
       const html = renderToStaticMarkup(React.createElement(ImagingWorkstationPage));
-
-      expect(html).toContain("Sample IR Cines &amp; Scans");
-      expect(html).toContain("Google Drive / Cloud Stream");
-      expect(html).toContain("Departmental PC (Tailscale)");
-      expect(html).toContain("Upload / Drop Video");
+      expect(html).not.toContain("Upload / Drop Video");
+      expect(html).not.toContain("Departmental PC");
     });
 
-    it("renders sample IR procedures and sequential angiography runs", () => {
+    it("ships no bundled sample studies", () => {
+      // Regression guard. The viewer bundled five worked cases, each attributed
+      // to an anonymised patient with a fabricated CR number, DAP and air-kerma
+      // figure and a "successful access" narrative, rendered exactly like a real
+      // study. With those removed the library starts empty and says so.
       const html = renderToStaticMarkup(React.createElement(ImagingWorkstationPage));
 
-      expect(html).toContain("Splenic Artery Embolization DSA");
-      expect(html).toContain("Bronchial Artery DSA (Hemoptysis)");
-      expect(html).toContain("TACE Hepatic Angiogram");
-      expect(html).toContain("Abdominal Aortic CT");
-
-      // Check angiosuite runs list
-      expect(html).toContain("Angiosuite Runs &amp; Series");
-      expect(html).toContain("Celiac Axis Diagnostic Run");
-      expect(html).toContain("Selective Splenic Artery DSA");
+      expect(html).not.toContain("Splenic Artery Embolization DSA");
+      expect(html).not.toContain("Celiac Axis Diagnostic Run");
+      expect(html).not.toContain("ANON_");
+      // No invented acquisition defaults either.
+      expect(html).not.toContain("1024 x 1024");
+      expect(html).not.toContain("Automated DSA");
     });
   });
 
   describe("GoogleSidebar Navigation Integration", () => {
-    it("verifies Imaging & Cine Viewer is registered in GoogleSidebar.tsx", () => {
-      const sidebarPath = path.resolve(
+    it("verifies Imaging & Cine Viewer is reachable from the sidebar", () => {
+      // The sidebar no longer hardcodes a nav list; it renders the shared
+      // registry in app/lib/navigation. Reachability is asserted against that
+      // registry so the guarantee survives a change to either file.
+      const navPath = path.resolve(
         process.cwd(),
-        "apps/web-app/app/components/GoogleSidebar.tsx"
+        "apps/web-app/app/lib/navigation.ts"
       );
-      const content = fs.readFileSync(sidebarPath, "utf-8");
+      const content = fs.readFileSync(navPath, "utf-8");
 
-      expect(content).toContain('id: "imaging"');
-      expect(content).toContain('name: "Imaging & Cine Viewer"');
       expect(content).toContain('href: "/dashboard/imaging"');
-      expect(content).toContain("Film");
+      expect(content).toContain('label: "Imaging"');
+      // The sidebar must consume the registry, not a private copy of the list.
+      const sidebar = fs.readFileSync(
+        path.resolve(process.cwd(), "apps/web-app/app/components/GoogleSidebar.tsx"),
+        "utf-8"
+      );
+      expect(sidebar).toContain("from \"../lib/navigation\"");
+      expect(sidebar).not.toContain("/dashboard/imaging");
     });
   });
 

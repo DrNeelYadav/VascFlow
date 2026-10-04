@@ -41,7 +41,7 @@ export const app: FirebaseApp =
   getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 /**
- * Primary Google Cloud Firestore instance for VascFlow OS collections.
+ * Primary Google Cloud Firestore instance for EndoFlow OS collections.
  * Uses persistent local IndexedDB cache with multi-tab management in browser.
  */
 export const db: Firestore = (() => {

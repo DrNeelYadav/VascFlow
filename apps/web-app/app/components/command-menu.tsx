@@ -8,24 +8,16 @@ import {
   User,
   Activity,
   Calculator,
-  FileText,
   Lock,
   Layers,
-  ArrowRight,
-  Calendar,
-  Eye,
-  BarChart3,
-  X,
-  FileSignature,
-  ClipboardCheck,
   BedDouble,
-  Stethoscope,
-  Sparkles,
-  Package,
+  X,
 } from "lucide-react";
 import { useEndoflowStore } from "../dashboard/useEndoflowStore";
 import { DAILY_ROUTINE_IR_PROCEDURES } from "../dashboard/operative-notes/dailyRoutineProcedures";
 import { IR_PROCEDURES_CATALOG } from "@vascule/catalog";
+import { WORKSPACES } from "../lib/navigation";
+import { WorkspaceIcon } from "./shell/WorkspaceIcon";
 
 interface CommandMenuProps {
   onLockBedside?: () => void;
@@ -159,7 +151,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
             {/* Group 1: High-Yield Procedures & Blueprints */}
             <Command.Group
               heading="IR Procedures & Clinical Blueprints"
-              className="text-[11px] font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
+              className="text-xs font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
             >
               {/* Daily 16 Routine SMS Procedures */}
               {DAILY_ROUTINE_IR_PROCEDURES.map((proc) => (
@@ -207,7 +199,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
                     <Layers className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <div className="truncate">
                       <span className="font-medium text-slate-900 dark:text-slate-100">{catProc.title}</span>
-                      <span className="ml-2 text-slate-500 text-[11px]">({catProc.category})</span>
+                      <span className="ml-2 text-slate-500 text-xs">({catProc.category})</span>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded shrink-0 ml-2">
@@ -222,7 +214,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
             {/* Group 2: Point-of-Care Clinical Calculators & Decision Logic */}
             <Command.Group
               heading="Clinical Risk Calculators & Formulas"
-              className="text-[11px] font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
+              className="text-xs font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
             >
               <Command.Item
                 value="calc: rotterdam bcs-pi budd chiari prognostic index tips dips liver"
@@ -305,7 +297,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
             {/* Group 3: Active Inpatient & Cath-Lab Cases */}
             <Command.Group
               heading="Active Patients & Cath-Lab Cases"
-              className="text-[11px] font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
+              className="text-xs font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
             >
               {patients.map((p) => (
                 <Command.Item
@@ -318,7 +310,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
                     <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <div className="truncate">
                       <span className="font-semibold text-slate-900 dark:text-slate-100">{p.name}</span>
-                      <span className="ml-2 font-mono text-[11px] text-slate-500">{p.hid}</span>
+                      <span className="ml-2 font-mono text-xs text-slate-500">{p.hid}</span>
                       <span className="ml-2 text-slate-500">• {p.procedure}</span>
                     </div>
                   </div>
@@ -339,7 +331,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
                     <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <div className="truncate">
                       <span className="font-semibold text-slate-900 dark:text-slate-100">{c.patientName}</span>
-                      <span className="ml-2 font-mono text-[11px] text-slate-500">{c.ssoNumber}</span>
+                      <span className="ml-2 font-mono text-xs text-slate-500">{c.ssoNumber}</span>
                       <span className="ml-2 text-slate-500">• {c.procedureTitle}</span>
                     </div>
                   </div>
@@ -360,7 +352,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
                     <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <div className="truncate">
                       <span className="font-semibold text-slate-900 dark:text-slate-100">{r.patientName}</span>
-                      <span className="ml-2 font-mono text-[11px] text-slate-500">{r.smsBillId}</span>
+                      <span className="ml-2 font-mono text-xs text-slate-500">{r.smsBillId}</span>
                       <span className="ml-2 text-slate-500">• {r.procedureTitle || r.primaryDiagnosis}</span>
                     </div>
                   </div>
@@ -373,81 +365,47 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
 
             <Command.Separator className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
 
-            {/* Group 4: Hospital Navigation & Workstations */}
+            {/* Group 4: Workspaces, generated from the navigation registry */}
             <Command.Group
-              heading="Clinical Workstations"
-              className="text-[11px] font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
+              heading="Workspaces"
+              className="text-xs font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
             >
-              <Command.Item
-                value="nav: procedure catalog 1120 master library blueprint hardware"
-                onSelect={() => runCommand(() => router.push("/dashboard/catalog"))}
-                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 aria-selected:bg-slate-100 transition"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Layers className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span className="font-medium text-slate-900 dark:text-slate-100">Procedure Catalog &amp; Blueprints</span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">1,120 Procedures</span>
-              </Command.Item>
+              {WORKSPACES.flatMap((w) =>
+                w.members.map((m) => (
+                  <Command.Item
+                    key={m.href}
+                    value={`nav: ${w.label} ${m.label} ${m.keywords ?? ""} go to workspace`}
+                    onSelect={() => runCommand(() => router.push(m.href))}
+                    className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 aria-selected:bg-slate-100 transition"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <WorkspaceIcon icon={w.icon} className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                        {m.label}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-slate-400 shrink-0 ml-2">
+                      {w.label}
+                    </span>
+                  </Command.Item>
+                ))
+              )}
 
+              {/* Ward search keeps its own prefix so `w:` still resolves beds. */}
               <Command.Item
-                value="nav: operative notes summary sms sheet print whatsapp"
-                onSelect={() => runCommand(() => router.push("/dashboard/operative-notes"))}
-                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 aria-selected:bg-slate-100 transition"
-              >
-                <div className="flex items-center gap-2.5">
-                  <FileSignature className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span className="font-medium text-slate-900 dark:text-slate-100">Operative Notes &amp; Summary</span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">SMS Format</span>
-              </Command.Item>
-
-              <Command.Item
-                value="ward: live bed-board beds occupancy status admissions icu ward"
+                value="ward: bed-board beds occupancy status admissions icu liver"
                 onSelect={() => runCommand(() => router.push("/dashboard/bed-board"))}
                 className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 aria-selected:bg-slate-100 transition"
               >
-                <div className="flex items-center gap-2.5">
-                  <BedDouble className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                  <span className="font-medium text-slate-900 dark:text-slate-100">Ward &amp; Bed Board (Liver ICU / D-Block)</span>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <BedDouble className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                    Bed Occupancy
+                  </span>
                 </div>
-                <span className="text-[10px] font-mono text-slate-400">{beds.filter(b => b.status === 'occupied').length}/8</span>
-              </Command.Item>
-
-              <Command.Item
-                value="nav: informed consent forms bilingual english hindi legal"
-                onSelect={() => runCommand(() => router.push("/dashboard/consent"))}
-                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 aria-selected:bg-slate-100 transition"
-              >
-                <div className="flex items-center gap-2.5">
-                  <ClipboardCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span className="font-medium text-slate-900 dark:text-slate-100">Informed Consent Studio (Bilingual)</span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">Legal</span>
-              </Command.Item>
-
-              <Command.Item
-                value="nav: discharge summary studio ihms bilingual prescription"
-                onSelect={() => runCommand(() => router.push("/dashboard/discharge"))}
-                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 aria-selected:bg-slate-100 transition"
-              >
-                <div className="flex items-center gap-2.5">
-                  <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span className="font-medium text-slate-900 dark:text-slate-100">Discharge Summary Studio (IHMS)</span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">e-Hospital</span>
-              </Command.Item>
-
-              <Command.Item
-                value="nav: logbook registry historical 1059 cases export csv"
-                onSelect={() => runCommand(() => router.push("/dashboard/logbook"))}
-                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs cursor-pointer text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 aria-selected:bg-slate-100 transition"
-              >
-                <div className="flex items-center gap-2.5">
-                  <BarChart3 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                  <span className="font-medium text-slate-900 dark:text-slate-100">Master Cath-Lab Logbook &amp; Registry</span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">1,059 Cases</span>
+                <span className="text-[10px] text-slate-400 shrink-0 ml-2">
+                  {beds.filter((b) => b.status === "occupied").length}/8
+                </span>
               </Command.Item>
             </Command.Group>
 
@@ -456,7 +414,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
             {/* Group 5: Session Controls */}
             <Command.Group
               heading="Session"
-              className="text-[11px] font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
+              className="text-xs font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
             >
               <Command.Item
                 value="sec: lock bedside station lock screen timeout session"
@@ -479,7 +437,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
           </Command.List>
 
           {/* Footer Info Strip */}
-          <div className="flex items-center justify-between px-3 py-2 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500">
+          <div className="flex items-center justify-between px-3 py-2 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500">
             <div className="flex items-center gap-1.5">
               <span>Navigate:</span>
               <kbd className="px-1 py-0.5 text-[10px] font-mono bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded">↑</kbd>

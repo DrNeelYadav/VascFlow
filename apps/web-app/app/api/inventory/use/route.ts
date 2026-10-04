@@ -278,7 +278,7 @@ export async function POST(request: NextRequest) {
 
     // 4. Log Audit Trail (if postgres was used)
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
-    const userAgent = request.headers.get("user-agent") || "VascFlow-HardwareLedger/1.0";
+    const userAgent = request.headers.get("user-agent") || "EndoFlow-HardwareLedger/1.0";
 
     if (depletionSuccess && source === "postgres_prisma_transaction") {
       try {

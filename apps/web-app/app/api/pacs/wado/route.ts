@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
       entityType: requestType === "qido" ? "DicomQidoSearch" : "DicomStudy",
       entityId: studyUid || patientId || "DICOMWEB_PROXY",
       ipAddress: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1",
-      userAgent: request.headers.get("user-agent") || "VascFlow-RIS-Viewer",
+      userAgent: request.headers.get("user-agent") || "EndoFlow-RIS-Viewer",
       details: { queryPatientId: patientId, studyUid, requestType, targetUrl },
     });
   } catch {

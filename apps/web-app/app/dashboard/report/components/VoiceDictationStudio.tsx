@@ -333,7 +333,7 @@ export function VoiceDictationStudio({
           </button>
 
           {isListening && (
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-rose-950/60 border border-rose-800/60 rounded text-[11px] text-rose-300 font-mono">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-rose-950/60 border border-rose-800/60 rounded text-xs text-rose-300 font-mono">
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block" />
               <span>LIVE</span>
               <div className="flex items-center gap-0.5 ml-1">
@@ -365,7 +365,7 @@ export function VoiceDictationStudio({
                 "Right common femoral artery access. 6F sheath. Simmons 2 catheter used for superselective embolization with Lipiodol and PVA particles. Hemostasis achieved with Angio-Seal 6F."
               )
             }
-            className="text-[11px] text-slate-400 hover:text-slate-200 hover:bg-slate-800 px-2 py-1 rounded transition-colors font-mono"
+            className="text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800 px-2 py-1 rounded transition-colors font-mono"
             title="Inject simulated clinical sample"
           >
             Sample IR Run
@@ -374,7 +374,7 @@ export function VoiceDictationStudio({
             <button
               type="button"
               onClick={handleClear}
-              className="text-[11px] text-slate-400 hover:text-rose-400 px-2 py-1 rounded font-mono"
+              className="text-xs text-slate-400 hover:text-rose-400 px-2 py-1 rounded font-mono"
             >
               Clear
             </button>
@@ -384,7 +384,7 @@ export function VoiceDictationStudio({
 
       {/* Live Transcript Display */}
       <div className="relative mb-3">
-        <div className="w-full bg-slate-950 border border-slate-800 rounded p-2.5 min-h-[64px] text-xs font-mono text-slate-200 leading-relaxed overflow-y-auto max-h-36">
+        <div className="w-full bg-slate-950 border border-slate-800 rounded p-2.5 min-h-16 text-xs font-mono text-slate-200 leading-relaxed overflow-y-auto max-h-36">
           {transcript ? (
             <span>{transcript}</span>
           ) : (
@@ -403,7 +403,7 @@ export function VoiceDictationStudio({
       {/* Real-Time Extracted Vascular Entities Table */}
       <div className="bg-slate-950/70 border border-slate-800/80 rounded p-2.5">
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400 uppercase tracking-wider">
             <Sparkles className="w-3 h-3 text-emerald-400" />
             <span>Parsed Vascular Entities</span>
           </div>

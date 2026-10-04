@@ -525,21 +525,21 @@ ${referencesText}
   return (
     <div className="space-y-4">
       {/* Top Controls Toolbar */}
-      <div className="bg-white rounded-xl border border-[#DADCE0] p-3 shadow-xs sticky top-2 z-20 flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-3 shadow-xs sticky top-2 z-20 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {/* Layout Mode Switcher */}
-          <div className="bg-[#F1F3F4] p-1 rounded-xl flex items-center gap-1">
+          <div className="bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 p-1 rounded-xl flex items-center gap-1">
             <button
               type="button"
               onClick={() => setLayoutMode("journal-proof")}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer ${
                 layoutMode === "journal-proof"
-                  ? "bg-white text-[#202124] shadow-xs"
-                  : "text-[#5F6368] hover:text-[#202124]"
+                  ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-xs"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               }`}
               title="Official Journal Published Proof Layout (exact PDF look)"
             >
-              <Columns className="w-3.5 h-3.5 text-[#1A73E8]" />
+              <Columns className="w-3.5 h-3.5 text-blue-600" />
               <span>Journal Proof View</span>
             </button>
 
@@ -548,8 +548,8 @@ ${referencesText}
               onClick={() => setLayoutMode("submission-manuscript")}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer ${
                 layoutMode === "submission-manuscript"
-                  ? "bg-white text-[#202124] shadow-xs"
-                  : "text-[#5F6368] hover:text-[#202124]"
+                  ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-xs"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               }`}
               title="Double-Spaced Word Manuscript (Guide for Authors submission format)"
             >
@@ -562,24 +562,24 @@ ${referencesText}
           <button
             type="button"
             onClick={() => setShowStandardsModal(true)}
-            className="px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white hover:bg-gray-50 text-xs font-semibold text-[#5F6368] hover:text-[#202124] transition flex items-center gap-1.5 cursor-pointer"
+            className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5 cursor-pointer"
             title="Official Journal Guidelines & Dataset Requirements"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#1A73E8]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
             <span>{style.journalAbbrev} Rules</span>
           </button>
         </div>
 
         {/* Word count & Metrics */}
-        <div className="flex items-center gap-2 text-xs text-[#5F6368]">
-          <span className="font-semibold text-[#202124] bg-gray-100 px-2 py-1 rounded">
+        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <span className="font-semibold text-slate-900 dark:text-slate-100 bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded">
             Main: {wordCount} / {style.manuscriptWordLimit} words
           </span>
           <span
             className={`font-semibold px-2 py-1 rounded ${
               abstractWordCount <= style.abstractWordLimit
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-red-50 text-red-700 font-bold"
+                ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300"
+                : "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 font-bold"
             }`}
           >
             Abstract: {abstractWordCount} / {style.abstractWordLimit} w
@@ -591,7 +591,7 @@ ${referencesText}
           <button
             type="button"
             onClick={handleSaveDocument}
-            className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold border border-emerald-200 transition flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 text-xs font-semibold border border-emerald-300 dark:border-emerald-700 transition flex items-center gap-1.5 cursor-pointer"
             title="Save changes to local storage"
           >
             <Save className="w-3.5 h-3.5" />
@@ -601,7 +601,7 @@ ${referencesText}
           <button
             type="button"
             onClick={handleCopyFullManuscript}
-            className="px-3 py-1.5 rounded-lg bg-[#E8F0FE] hover:bg-[#D2E3FC] text-[#1A73E8] text-xs font-semibold border border-[#D2E3FC] transition flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5 cursor-pointer"
             title="Copy plain manuscript text"
           >
             <Copy className="w-3.5 h-3.5" />
@@ -623,21 +623,21 @@ ${referencesText}
 
       {/* Copy Toast */}
       {copiedNotification && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-2 animate-in fade-in">
+        <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-2 animate-in fade-in">
           <Check className="w-4 h-4 text-emerald-600" />
           <span>{copiedNotification}</span>
         </div>
       )}
 
       {/* Canvas Wrapper */}
-      <div className="bg-[#F0F2F5] p-4 sm:p-8 rounded-2xl border border-[#DADCE0] flex justify-center">
+      <div className="bg-slate-100 dark:bg-slate-900 p-4 sm:p-8 rounded-2xl border border-slate-300 dark:border-slate-700 flex justify-center">
         {/* =========================================================================
             MODE 1: OFFICIAL JOURNAL PUBLISHED PROOF LAYOUT
             ========================================================================= */}
         {layoutMode === "journal-proof" && (
           <div
             style={{ fontFamily: style.fontFamily }}
-            className="max-w-4xl w-full bg-white shadow-xl border border-[#DADCE0] rounded-xs p-8 sm:p-14 space-y-7 text-[#1A1A1A] leading-relaxed relative"
+            className="max-w-4xl w-full bg-white shadow-xl border border-slate-300 dark:border-slate-700 rounded-xs p-8 sm:p-14 space-y-7 text-slate-900 leading-relaxed relative"
           >
             {/* Top Official Journal Header Masthead */}
             <div
@@ -682,13 +682,13 @@ ${referencesText}
                 value={docTitle}
                 onChange={(e) => setDocTitle(e.target.value)}
                 style={{ color: style.primaryColor }}
-                className="w-full text-2xl sm:text-3xl font-bold border-b border-dashed border-gray-300 focus:border-[#1A73E8] focus:outline-none bg-transparent resize-none leading-tight font-serif"
+                className="w-full text-2xl sm:text-3xl font-bold border-b border-dashed border-gray-300 focus:border-blue-600 focus:outline-none bg-transparent resize-none leading-tight font-serif"
               />
             </div>
 
             {/* Authors Byline & Affiliation */}
             <div className="font-sans text-xs space-y-1.5 pb-2 border-b border-gray-100">
-              <div className="font-bold text-[#202124] text-sm">
+              <div className="font-bold text-slate-900 text-sm">
                 <input
                   type="text"
                   value={docAuthors}
@@ -726,7 +726,7 @@ ${referencesText}
                 </span>
               </div>
 
-              <div className="space-y-2 text-xs leading-relaxed text-[#202124]">
+              <div className="space-y-2 text-xs leading-relaxed text-slate-900">
                 <div>
                   <strong style={{ color: style.primaryColor }}>
                     {style.abstractHeadings[0]}{" "}
@@ -735,7 +735,7 @@ ${referencesText}
                     rows={2}
                     value={abstractPurpose || abstractBg}
                     onChange={(e) => setAbstractPurpose(e.target.value)}
-                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-[#1A73E8]"
+                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-blue-600"
                   />
                 </div>
 
@@ -747,7 +747,7 @@ ${referencesText}
                     rows={3}
                     value={abstractMethods}
                     onChange={(e) => setAbstractMethods(e.target.value)}
-                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-[#1A73E8]"
+                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-blue-600"
                   />
                 </div>
 
@@ -759,7 +759,7 @@ ${referencesText}
                     rows={3}
                     value={abstractResults}
                     onChange={(e) => setAbstractResults(e.target.value)}
-                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-[#1A73E8]"
+                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-blue-600"
                   />
                 </div>
 
@@ -771,7 +771,7 @@ ${referencesText}
                     rows={2}
                     value={abstractConclusion}
                     onChange={(e) => setAbstractConclusion(e.target.value)}
-                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-[#1A73E8]"
+                    className="w-full mt-0.5 p-1.5 rounded border border-gray-200 bg-white/80 focus:outline-none focus:border-blue-600"
                   />
                 </div>
 
@@ -802,7 +802,7 @@ ${referencesText}
                 rows={9}
                 value={introText}
                 onChange={(e) => setIntroText(e.target.value)}
-                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#1A73E8]"
+                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-600"
               />
             </div>
 
@@ -821,7 +821,7 @@ ${referencesText}
                 rows={11}
                 value={methodsText}
                 onChange={(e) => setMethodsText(e.target.value)}
-                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#1A73E8]"
+                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-600"
               />
             </div>
 
@@ -829,7 +829,7 @@ ${referencesText}
                 THREE-LINE PUBLICATION TABLE 1 (CLASSIC MEDICAL STANDARD)
                 ========================================================================= */}
             <div className="space-y-1.5 pt-2">
-              <div className="font-sans text-xs font-bold text-[#202124]">
+              <div className="font-sans text-xs font-bold text-slate-900">
                 Table 1. Baseline Clinical, Demographic and Morphological Characteristics of Cohort
               </div>
               <div className="overflow-x-auto">
@@ -902,7 +902,7 @@ ${referencesText}
                 rows={11}
                 value={resultsText}
                 onChange={(e) => setResultsText(e.target.value)}
-                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#1A73E8]"
+                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-600"
               />
             </div>
 
@@ -910,7 +910,7 @@ ${referencesText}
                 THREE-LINE PUBLICATION TABLE 2 (ENDPOINTS & SUCCESS)
                 ========================================================================= */}
             <div className="space-y-1.5 pt-2">
-              <div className="font-sans text-xs font-bold text-[#202124]">
+              <div className="font-sans text-xs font-bold text-slate-900">
                 Table 2. Endovascular Procedural Hardware, Embolic Modalities and Success Endpoints
               </div>
               <div className="overflow-x-auto">
@@ -993,7 +993,7 @@ ${referencesText}
                 rows={10}
                 value={discussionText}
                 onChange={(e) => setDiscussionText(e.target.value)}
-                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#1A73E8]"
+                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-600"
               />
             </div>
 
@@ -1012,7 +1012,7 @@ ${referencesText}
                 rows={4}
                 value={conclusionText}
                 onChange={(e) => setConclusionText(e.target.value)}
-                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#1A73E8]"
+                className="w-full text-sm leading-relaxed p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-600"
               />
             </div>
 
@@ -1041,8 +1041,8 @@ ${referencesText}
             MODE 2: SUBMISSION MANUSCRIPT FORMAT (DOUBLE-SPACED 12PT WORD STYLE)
             ========================================================================= */}
         {layoutMode === "submission-manuscript" && (
-          <div className="max-w-3xl w-full bg-white shadow-md border border-[#DADCE0] p-12 sm:p-16 font-mono text-xs leading-loose space-y-8 text-[#202124]">
-            <div className="text-[10px] text-gray-400 pb-2 border-b border-gray-200 flex items-center justify-between">
+          <div className="max-w-3xl w-full bg-white dark:bg-slate-800 shadow-md border border-slate-300 dark:border-slate-700 p-12 sm:p-16 font-mono text-xs leading-loose space-y-8 text-slate-900 dark:text-slate-100">
+            <div className="text-[10px] text-gray-400 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
               <span>DOUBLE-SPACED SUBMISSION MANUSCRIPT FORMAT</span>
               <span>1-INCH MARGINS &bull; 12PT COURIER/TIMES</span>
             </div>
@@ -1138,7 +1138,7 @@ ${referencesText}
       {/* Official Journal Submission & Dataset Guide Modal */}
       {showStandardsModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-[#DADCE0] max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in-95">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div
@@ -1148,10 +1148,10 @@ ${referencesText}
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#202124]">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
                     {style.journalAbbrev} Official Author &amp; Dataset Standards
                   </h3>
-                  <p className="text-xs text-[#5F6368]">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Published by {style.publisher} &bull; Guide to prevent desk rejection
                   </p>
                 </div>
@@ -1159,7 +1159,7 @@ ${referencesText}
               <button
                 type="button"
                 onClick={() => setShowStandardsModal(false)}
-                className="p-1.5 rounded-lg text-[#5F6368] hover:bg-gray-100 text-lg leading-none"
+                className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 text-lg leading-none"
               >
                 &times;
               </button>
@@ -1167,23 +1167,23 @@ ${referencesText}
 
             {/* Quick Limits Summary */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
-              <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-center">
-                <span className="text-gray-500 block text-[10px] uppercase">Abstract Limit</span>
-                <strong className="text-[#202124] text-sm">{style.abstractWordLimit} words</strong>
+              <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center">
+                <span className="text-gray-500 dark:text-slate-400 block text-[10px] uppercase">Abstract Limit</span>
+                <strong className="text-slate-900 dark:text-slate-100 text-sm">{style.abstractWordLimit} words</strong>
               </div>
-              <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-center">
-                <span className="text-gray-500 block text-[10px] uppercase">Text Word Limit</span>
-                <strong className="text-[#202124] text-sm">{style.manuscriptWordLimit} words</strong>
+              <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center">
+                <span className="text-gray-500 dark:text-slate-400 block text-[10px] uppercase">Text Word Limit</span>
+                <strong className="text-slate-900 dark:text-slate-100 text-sm">{style.manuscriptWordLimit} words</strong>
               </div>
-              <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-center">
-                <span className="text-gray-500 block text-[10px] uppercase">Max Tables &amp; Figs</span>
-                <strong className="text-[#202124] text-sm">
+              <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center">
+                <span className="text-gray-500 dark:text-slate-400 block text-[10px] uppercase">Max Tables &amp; Figs</span>
+                <strong className="text-slate-900 dark:text-slate-100 text-sm">
                   {style.submissionGuidelines.maxTablesFigures} combined
                 </strong>
               </div>
-              <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-center">
-                <span className="text-gray-500 block text-[10px] uppercase">Impact Factor</span>
-                <strong className="text-[#1A73E8] text-sm">
+              <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center">
+                <span className="text-gray-500 dark:text-slate-400 block text-[10px] uppercase">Impact Factor</span>
+                <strong className="text-blue-600 dark:text-blue-400 text-sm">
                   {paper.journalImpactFactor} ({paper.journalQuartile})
                 </strong>
               </div>
@@ -1191,32 +1191,32 @@ ${referencesText}
 
             {/* Rejection Prevention Rules Checklist */}
             <div className="space-y-2 pt-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#202124] flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
                 Editorial Desk-Rejection Prevention Checklist
               </h4>
-              <div className="space-y-1.5 text-xs text-[#5F6368]">
+              <div className="space-y-1.5 text-xs text-slate-500 dark:text-slate-400">
                 {style.submissionGuidelines.rejectionMitigationRules.map((rule, idx) => (
                   <div
                     key={idx}
-                    className="p-2.5 rounded-lg bg-blue-50/50 border border-blue-100 flex items-start gap-2"
+                    className="p-2.5 rounded-lg bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 flex items-start gap-2"
                   >
-                    <Check className="w-4 h-4 text-[#1A73E8] shrink-0 mt-0.5" />
-                    <span className="text-[#202124]">{rule}</span>
+                    <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                    <span className="text-slate-900 dark:text-slate-100">{rule}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Research Dataset Sharing Requirements */}
-            <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200 text-xs space-y-1.5 leading-relaxed text-[#5F6368]">
-              <div className="font-bold text-[#202124] flex items-center gap-1.5">
+            <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs space-y-1.5 leading-relaxed text-slate-500 dark:text-slate-400">
+              <div className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-emerald-600" />
                 Research Dataset Deposit Requirement
               </div>
               <p>
                 <strong>{style.publisher}</strong> mandates that raw de-identified research datasets be shared via{" "}
-                <strong className="text-[#202124]">{style.submissionGuidelines.datasetDeposit}</strong>.
+                <strong className="text-slate-900 dark:text-slate-100">{style.submissionGuidelines.datasetDeposit}</strong>.
                 All patient identifiers (names, exact birthdates, UHIDs) must be removed, and variable headers must match standardized medical nomenclature.
               </p>
             </div>
@@ -1225,7 +1225,7 @@ ${referencesText}
               <button
                 type="button"
                 onClick={() => setShowStandardsModal(false)}
-                className="px-4 py-2 rounded-xl bg-[#202124] text-white text-xs font-semibold hover:bg-black"
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-semibold cursor-pointer"
               >
                 Close Standards Guide
               </button>

@@ -107,27 +107,27 @@ export function ChangePasswordModal({
       aria-modal="true"
       aria-labelledby="change-password-modal-title"
     >
-      <div className="w-full max-w-md rounded-2xl border border-[#DADCE0] bg-white p-6 shadow-2xl text-[#202124] relative">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl text-slate-900 relative">
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#5F6368] hover:text-[#202124] transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
           aria-label="Close change password modal"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-3 border-b border-[#F1F3F4] pb-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]">
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200">
             <KeyRound className="h-5 w-5" />
           </div>
           <div>
-            <h3 id="change-password-modal-title" className="text-base font-bold text-[#202124] tracking-tight">
+            <h3 id="change-password-modal-title" className="text-base font-bold text-slate-900 tracking-tight">
               Update Resident Password
             </h3>
-            <p className="text-xs text-[#5F6368]">
+            <p className="text-xs text-slate-500">
               Interventional Radiology Workstation Security
             </p>
           </div>
@@ -135,19 +135,19 @@ export function ChangePasswordModal({
 
         {/* Resident Indicator if found */}
         {staffAccount && (
-          <div className="mt-4 flex items-center gap-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] p-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1A73E8] font-bold text-white text-xs">
+          <div className="mt-4 flex items-center gap-3 rounded-xl bg-slate-50 border border-slate-200 p-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 font-bold text-white text-xs">
               {staffAccount.avatar}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold text-[#202124] truncate">
+              <div className="text-xs font-semibold text-slate-900 truncate">
                 {staffAccount.name}
               </div>
-              <div className="text-[11px] text-[#5F6368] truncate">
+              <div className="text-[11px] text-slate-500 truncate">
                 {staffAccount.title} &bull; {staffAccount.code}
               </div>
             </div>
-            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-white text-[#1A73E8] border border-[#D2E3FC]">
+            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-white text-blue-600 border border-blue-200">
               {staffAccount.tier}
             </span>
           </div>
@@ -162,7 +162,7 @@ export function ChangePasswordModal({
         >
           {/* Staff ID / Username */}
           <div className="space-y-1">
-            <label htmlFor="change-password-username" className="block text-xs font-medium text-[#202124]">
+            <label htmlFor="change-password-username" className="block text-xs font-medium text-slate-900">
               Resident / Staff ID
             </label>
             <input
@@ -179,13 +179,13 @@ export function ChangePasswordModal({
                 setErrorMsg(null);
               }}
               placeholder="e.g. DM01"
-              className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-sm text-[#202124] uppercase font-mono tracking-wide focus:border-[#1A73E8] focus:ring-1 focus:ring-[#1A73E8] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 uppercase font-mono tracking-wide focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none"
             />
           </div>
 
           {/* Current Password */}
           <div className="space-y-1">
-            <label htmlFor="change-password-current" className="block text-xs font-medium text-[#202124]">
+            <label htmlFor="change-password-current" className="block text-xs font-medium text-slate-900">
               Current Password / PIN
             </label>
             <div className="relative">
@@ -201,12 +201,12 @@ export function ChangePasswordModal({
                   setErrorMsg(null);
                 }}
                 placeholder="Enter current PIN"
-                className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-sm text-[#202124] tracking-widest focus:border-[#1A73E8] focus:ring-1 focus:ring-[#1A73E8] focus:outline-none pr-9"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 tracking-widest focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none pr-9"
               />
               <button
                 type="button"
                 onClick={() => setShowCurrent(!showCurrent)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5F6368] hover:text-[#202124]"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
                 aria-label={showCurrent ? "Hide current password" : "Show current password"}
               >
                 {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -216,7 +216,7 @@ export function ChangePasswordModal({
 
           {/* New Password */}
           <div className="space-y-1">
-            <label htmlFor="change-password-new" className="block text-xs font-medium text-[#202124]">
+            <label htmlFor="change-password-new" className="block text-xs font-medium text-slate-900">
               New Password / PIN (Min. 4 chars)
             </label>
             <div className="relative">
@@ -232,12 +232,12 @@ export function ChangePasswordModal({
                   setErrorMsg(null);
                 }}
                 placeholder="Enter new PIN"
-                className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-sm text-[#202124] tracking-widest focus:border-[#1A73E8] focus:ring-1 focus:ring-[#1A73E8] focus:outline-none pr-9"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 tracking-widest focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none pr-9"
               />
               <button
                 type="button"
                 onClick={() => setShowNew(!showNew)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5F6368] hover:text-[#202124]"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
                 aria-label={showNew ? "Hide new password" : "Show new password"}
               >
                 {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -247,7 +247,7 @@ export function ChangePasswordModal({
 
           {/* Confirm New Password */}
           <div className="space-y-1">
-            <label htmlFor="change-password-confirm" className="block text-xs font-medium text-[#202124]">
+            <label htmlFor="change-password-confirm" className="block text-xs font-medium text-slate-900">
               Confirm New Password / PIN
             </label>
             <div className="relative">
@@ -263,12 +263,12 @@ export function ChangePasswordModal({
                   setErrorMsg(null);
                 }}
                 placeholder="Re-enter new PIN"
-                className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-sm text-[#202124] tracking-widest focus:border-[#1A73E8] focus:ring-1 focus:ring-[#1A73E8] focus:outline-none pr-9"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 tracking-widest focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none pr-9"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5F6368] hover:text-[#202124]"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
                 aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
               >
                 {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -278,15 +278,15 @@ export function ChangePasswordModal({
 
           {/* Feedback Alerts */}
           {errorMsg && (
-            <div className="p-2.5 rounded-lg border border-[#FAD2CF] bg-[#FCE8E6] text-[#C5221F] text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-[#C5221F]" />
+            <div className="p-2.5 rounded-lg border border-rose-100 bg-rose-50 text-rose-700 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-700" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-2.5 rounded-lg border border-[#CEEAD6] bg-[#E6F4EA] text-[#137333] text-xs flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#137333]" />
+            <div className="p-2.5 rounded-lg border border-emerald-100 bg-emerald-50 text-emerald-700 text-xs flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-700" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -296,14 +296,14 @@ export function ChangePasswordModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-2 text-xs font-medium text-[#5F6368] hover:bg-[#F1F3F4] rounded-lg transition-colors cursor-pointer"
+              className="px-3.5 py-2 text-xs font-medium text-slate-500 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-medium text-white bg-[#1A73E8] hover:bg-[#1557B0] rounded-lg transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+              className="px-4 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
             >
               {isSubmitting ? (
                 <>

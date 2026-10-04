@@ -163,230 +163,36 @@ export interface PatientLogisticsRecord {
 // ============================================================================
 // INITIAL SEED DATA (SMS Medical College & Attached Hospitals Cohort)
 // ============================================================================
-const INITIAL_LOGISTICS_PATIENTS: PatientLogisticsRecord[] = [
-  {
-    id: "PT01",
-    crNumber: "SMS-2026-LP01",
-    patientName: "Lakshmi",
-    age: 45,
-    gender: "F",
-    ipdWard: "IR ICU, Bed 01",
-    assignedBedId: "ICU-01",
-    schemeType: "MAAY",
-    schemeCardNumber: "MM-JAIPUR-88392",
-    diagnosis: "Hypersplenism post Splenic Artery Embolization",
-    procedureTitle: "Splenic Artery Embolization for Hypersplenism",
-    cirseRiskTier: 3,
-    scheduledRoom: "Cath Lab 1 (Philips Azurion Biplane)",
-    scheduledTime: "08:30 AM",
-    estimatedDurationMin: 90,
-    primaryOperator: "Dr. Meenu Bagarhatta (Sr. Prof & Head)",
-    supervisingConsultant: "Dr. Meenu Bagarhatta (Sr. Prof & Head)",
-    currentStage: "PACU_PHASE_1",
-    status: "post-procedure",
-    stageUpdatedAt: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
-    isStatEmergency: false,
-    transitJob: {
-      porterName: "Ram Lal (Porter #14)",
-      porterContact: "+91 98290 11221",
-      pickupWard: "IR ICU, Bed 01",
-      destinationRoom: "Cath Lab 1",
-      dispatchRequestedAt: new Date(Date.now() - 150 * 60 * 1000).toISOString(),
-      porterAssignedAt: new Date(Date.now() - 145 * 60 * 1000).toISOString(),
-      arrivedAtWardAt: new Date(Date.now() - 135 * 60 * 1000).toISOString(),
-      inTransitAt: new Date(Date.now() - 125 * 60 * 1000).toISOString(),
-      arrivedHoldingAt: new Date(Date.now() - 110 * 60 * 1000).toISOString(),
-      delayMinutes: 5,
-    },
-    preOpChecklist: {
-      verifiedTwoIdentifiers: true,
-      ivAccessPatent: true,
-      ivGaugeAndSite: "18G Green Right Forearm",
-      npoFastingHours: 8,
-      isNpoCompliant: true,
-      consentSignedBilingual: true,
-      accessSiteMarked: true,
-      inr: 1.15,
-      platelets: 185000,
-      serumCreatinine: 0.9,
-      patientWeightKg: 64,
-      eGfr: 92,
-      bloodBankCrossMatchedUnits: 2,
-      isClearedByNurse: true,
-      clearedByStaffName: "Anita (Sister Incharge)",
-      clearedAt: new Date(Date.now() - 95 * 60 * 1000).toISOString(),
-      emergencyOverrideAuthorized: false,
-    },
-    intraOpWatchdog: {
-      contrastInjectedMl: 110,
-      cigarroaMacdLimitMl: 355.5, // (5 * 64) / 0.9
-      fluoroscopyTimeSeconds: 1220,
-      cumulativeDapGyCm2: 38.2,
-      cumulativeAirKermaMgy: 1250,
-      actSecondsCurrent: 265,
-      contrastWarningAcknowledged: false,
-      airKermaWarningAcknowledged: false,
-    },
-    pacuRecovery: {
-      phase: "PHASE_1",
-      accessSite: "Right Common Femoral Artery (5F)",
-      hemostasisMethod: "ANGIO_SEAL",
-      bedrestDueHours: 4,
-      bedrestStartedAt: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
-      bedrestCompleted: false,
-      punctureSiteDry: true,
-      hematomaDetected: false,
-      hematomaSizeCm: 0,
-      distalPulsePalpable: true,
-      hematomaChecks: [
-        {
-          timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
-          intervalMin: 15,
-          siteStatus: "DRY",
-          pulseStatus: "STRONG",
-          checkedBy: "Anita (Sister Incharge)",
-        },
-      ],
-      aldreteScore: {
-        activity: 2,
-        respiration: 2,
-        circulation: 2,
-        consciousness: 2,
-        o2Sat: 2,
-        total: 10,
-      },
-      spontaneousVoidingVerified: false,
-      clearedForDischarge: false,
-    },
-    history: [
-      { stage: "ORDERED", timestamp: "2026-09-14T07:00:00Z", actor: "Dr. Meenu Bagarhatta" },
-      { stage: "VETTED_APPROVED", timestamp: "2026-09-14T07:15:00Z", actor: "Dr. Meenu Bagarhatta" },
-      { stage: "SCHEDULED", timestamp: "2026-09-14T07:30:00Z", actor: "Cath Lab Coordinator" },
-      { stage: "TRANSPORT_DISPATCHED", timestamp: "2026-09-14T08:00:00Z", actor: "Sister Anita" },
-      { stage: "IN_TRANSIT", timestamp: "2026-09-14T08:15:00Z", actor: "Ram Lal (Porter)" },
-      { stage: "PREOP_HOLDING", timestamp: "2026-09-14T08:25:00Z", actor: "Sister Anita" },
-      { stage: "WHEELS_IN", timestamp: "2026-09-14T08:45:00Z", actor: "JP (Tech)" },
-      { stage: "PUNCTURE_ACTIVE", timestamp: "2026-09-14T09:00:00Z", actor: "Dr. Meenu Bagarhatta" },
-      { stage: "HEMOSTASIS_CLOSURE", timestamp: "2026-09-14T10:10:00Z", actor: "Dr. Meenu Bagarhatta" },
-      { stage: "PACU_PHASE_1", timestamp: "2026-09-14T10:25:00Z", actor: "Sister Anita" },
-    ],
-  },
-  {
-    id: "PT02",
-    crNumber: "SMS-2026-RS01",
-    patientName: "Roshan",
-    age: 38,
-    gender: "M",
-    ipdWard: "Old Gastro IR Ward, Bed 01",
-    assignedBedId: "Ward-01",
-    schemeType: "MAAY",
-    schemeCardNumber: "MM-RJ-9921004",
-    diagnosis: "Liquefactive Pyogenic Liver Abscess",
-    procedureTitle: "Percutaneous Liver Abscess Drainage",
-    cirseRiskTier: 2,
-    scheduledRoom: "Cath Lab 1 (Philips Azurion Biplane)",
-    scheduledTime: "10:30 AM",
-    estimatedDurationMin: 90,
-    primaryOperator: "Dr. Naresh Mangalhara (Associate Professor)",
-    supervisingConsultant: "Dr. Naresh Mangalhara (Associate Professor)",
-    currentStage: "PACU_PHASE_1",
-    status: "post-procedure",
-    dischargeStatus: "AJH (Allowed to Go Home)",
-    stageUpdatedAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-    isStatEmergency: false,
-    transitJob: {
-      porterName: "Mohan Singh (Porter #08)",
-      porterContact: "+91 98290 33442",
-      pickupWard: "Old Gastro IR Ward, Bed 01",
-      destinationRoom: "Cath Lab 1",
-      dispatchRequestedAt: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
-      porterAssignedAt: new Date(Date.now() - 85 * 60 * 1000).toISOString(),
-      arrivedAtWardAt: new Date(Date.now() - 75 * 60 * 1000).toISOString(),
-      inTransitAt: new Date(Date.now() - 65 * 60 * 1000).toISOString(),
-      arrivedHoldingAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
-      delayMinutes: 0,
-    },
-    preOpChecklist: {
-      verifiedTwoIdentifiers: true,
-      ivAccessPatent: true,
-      ivGaugeAndSite: "18G Green Left Forearm",
-      npoFastingHours: 6,
-      isNpoCompliant: true,
-      consentSignedBilingual: true,
-      accessSiteMarked: true,
-      inr: 1.3,
-      platelets: 112000,
-      serumCreatinine: 1.0,
-      patientWeightKg: 62,
-      eGfr: 82,
-      bloodBankCrossMatchedUnits: 2,
-      isClearedByNurse: true,
-      clearedByStaffName: "Anita (Sister Incharge)",
-      clearedAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
-      emergencyOverrideAuthorized: false,
-    },
-    intraOpWatchdog: {
-      contrastInjectedMl: 95,
-      cigarroaMacdLimitMl: 310.0,
-      fluoroscopyTimeSeconds: 840,
-      cumulativeDapGyCm2: 26.5,
-      cumulativeAirKermaMgy: 890,
-      actSecondsCurrent: 260,
-      contrastWarningAcknowledged: false,
-      airKermaWarningAcknowledged: false,
-    },
-    pacuRecovery: {
-      phase: "PHASE_1",
-      accessSite: "Right Common Femoral Artery (5F)",
-      hemostasisMethod: "MANUAL_FEMORAL",
-      bedrestDueHours: 6,
-      bedrestStartedAt: "",
-      bedrestCompleted: false,
-      punctureSiteDry: true,
-      hematomaDetected: false,
-      hematomaSizeCm: 0,
-      distalPulsePalpable: true,
-      hematomaChecks: [],
-      aldreteScore: { activity: 2, respiration: 2, circulation: 2, consciousness: 2, o2Sat: 2, total: 10 },
-      spontaneousVoidingVerified: false,
-      clearedForDischarge: false,
-    },
-    history: [
-      { stage: "ORDERED", timestamp: "2026-09-14T08:00:00Z", actor: "Dr. Naresh Mangalhara" },
-      { stage: "VETTED_APPROVED", timestamp: "2026-09-14T08:20:00Z", actor: "Dr. Naresh Mangalhara" },
-      { stage: "SCHEDULED", timestamp: "2026-09-14T08:30:00Z", actor: "Cath Lab Coordinator" },
-      { stage: "TRANSPORT_DISPATCHED", timestamp: "2026-09-14T09:00:00Z", actor: "Sister Anita" },
-      { stage: "IN_TRANSIT", timestamp: "2026-09-14T09:20:00Z", actor: "Mohan Singh (Porter)" },
-      { stage: "PREOP_HOLDING", timestamp: "2026-09-14T09:40:00Z", actor: "Sister Anita" },
-      { stage: "WHEELS_IN", timestamp: "2026-09-14T10:05:00Z", actor: "Sumit (Tech)" },
-      { stage: "PUNCTURE_ACTIVE", timestamp: "2026-09-14T10:20:00Z", actor: "Dr. Naresh Mangalhara" },
-    ],
-  },
-];
+/**
+ * No fabricated patients.
+ *
+ * This array previously held invented admissions (names, CR numbers, scheme
+ * card numbers and treating consultants) that rendered on the ward board and
+ * the logistics timeline as though they were real patients. Occupancy now
+ * arrives from the department's actual records; an empty list is the honest
+ * state, and it is what a clinician must see when nothing is admitted.
+ */
+const INITIAL_LOGISTICS_PATIENTS: PatientLogisticsRecord[] = [];
+
 
 // Room turnover tracking state
-const INITIAL_ROOM_TURNOVER: SuiteTurnoverMetric = {
-  suiteId: "AZURION_01",
-  suiteName: "Cath Lab 1 (Philips Azurion Biplane)",
-  previousCaseId: "PT01",
-  nextCaseId: "PT02",
-  wheelsOutTime: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
-  terminalCleanStart: new Date(Date.now() - 33 * 60 * 1000).toISOString(),
-  terminalCleanComplete: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-  airExchangeReady: new Date(Date.now() - 22 * 60 * 1000).toISOString(),
-  sterileTrayOpened: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
-  wheelsInTime: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-  totalTurnoverMinutes: 20,
-  targetMet: true,
-};
+/**
+ * No fabricated theatre turnover.
+ *
+ * The previous baseline asserted a completed case, a terminal-clean cycle and
+ * a specific next case, all invented, and drove the cath-lab turnaround timer.
+ * With no confirmed case there is no turnover to report.
+ */
+const INITIAL_ROOM_TURNOVER: SuiteTurnoverMetric | null = null;
+
 
 // ============================================================================
 // ZUSTAND STORE INTERFACE
 // ============================================================================
 interface PatientLogisticsState {
   patients: PatientLogisticsRecord[];
-  activeTurnover: SuiteTurnoverMetric;
-  selectedPatientId: string;
+  activeTurnover: SuiteTurnoverMetric | null;
+    selectedPatientId: string | null;
   isEmergencyModalOpen: boolean;
 
   // Actions
@@ -479,7 +285,7 @@ export const usePatientLogisticsStore = create<PatientLogisticsState>()(
     (set, get) => ({
       patients: INITIAL_LOGISTICS_PATIENTS,
       activeTurnover: INITIAL_ROOM_TURNOVER,
-      selectedPatientId: "PT01",
+      selectedPatientId: null,
       isEmergencyModalOpen: false,
 
       setSelectedPatientId: (id) => set({ selectedPatientId: id }),
@@ -742,26 +548,29 @@ export const usePatientLogisticsStore = create<PatientLogisticsState>()(
       },
 
       recordTurnoverMilestone: (milestone) => {
-        set((state) => {
-          const now = new Date().toISOString();
-          const t = state.activeTurnover;
-          const updates: Partial<SuiteTurnoverMetric> = {};
+              set((state) => {
+                const now = new Date().toISOString();
+                const t = state.activeTurnover;
+                // No confirmed case means no turnover in progress. Recording a
+                // milestone against an absent baseline would invent one.
+                if (!t) return state;
+                const updates: Partial<SuiteTurnoverMetric> = {};
 
-          if (milestone === "TERMINAL_CLEAN_START") updates.terminalCleanStart = now;
-          if (milestone === "TERMINAL_CLEAN_DONE") updates.terminalCleanComplete = now;
-          if (milestone === "AIR_EXCHANGE_DONE") updates.airExchangeReady = now;
-          if (milestone === "TRAY_OPENED") updates.sterileTrayOpened = now;
-          if (milestone === "WHEELS_IN") {
-            updates.wheelsInTime = now;
-            const diffMs = new Date(now).getTime() - new Date(t.wheelsOutTime).getTime();
-            const minutes = Math.round(diffMs / 60000);
-            updates.totalTurnoverMinutes = minutes;
-            updates.targetMet = minutes <= 20;
-          }
+                if (milestone === "TERMINAL_CLEAN_START") updates.terminalCleanStart = now;
+                if (milestone === "TERMINAL_CLEAN_DONE") updates.terminalCleanComplete = now;
+                if (milestone === "AIR_EXCHANGE_DONE") updates.airExchangeReady = now;
+                if (milestone === "TRAY_OPENED") updates.sterileTrayOpened = now;
+                if (milestone === "WHEELS_IN") {
+                  updates.wheelsInTime = now;
+                  const diffMs = new Date(now).getTime() - new Date(t.wheelsOutTime).getTime();
+                  const minutes = Math.round(diffMs / 60000);
+                  updates.totalTurnoverMinutes = minutes;
+                  updates.targetMet = minutes <= 20;
+                }
 
-          return { activeTurnover: { ...t, ...updates } };
-        });
-      },
+                return { activeTurnover: { ...t, ...updates } };
+              });
+            },
 
       recordHematomaCheck: (patientId, siteStatus, pulseStatus, checkedBy) => {
         set((state) => {
@@ -973,9 +782,9 @@ export const usePatientLogisticsStore = create<PatientLogisticsState>()(
 
       resetToDefaultBaseline: () => {
         set({
-          patients: INITIAL_LOGISTICS_PATIENTS,
-          activeTurnover: INITIAL_ROOM_TURNOVER,
-          selectedPatientId: "PT01",
+          patients: [],
+          activeTurnover: null,
+          selectedPatientId: null,
           isEmergencyModalOpen: false,
         });
       },

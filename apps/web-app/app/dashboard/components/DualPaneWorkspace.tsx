@@ -46,47 +46,54 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
         supervisingConsultant: activePatient.postedBy || "Dr. Meenu Bagarhatta (Sr. Prof & Head)",
       }
     : {
-        caseId: "SMS-2026-LP01",
-        crNumber: "SMS-2026-LP01",
-        patientName: "Lakshmi",
-        age: 45,
-        gender: "Female",
-        diagnosis: "Hypersplenism • Splenic Artery Embolization",
-        procedureName: "Splenic Artery Embolization",
-        status: "IN_PROCEDURE",
-        supervisingConsultant: "Dr. Meenu Bagarhatta (Sr. Prof & Head)",
+        // No active case. The workspace used to invent one here, so a clinician
+        // opening a panel with nothing selected saw a plausible patient. An
+        // explicit gap is the only safe rendering.
+        caseId: "",
+        crNumber: "",
+        patientName: "No active case selected",
+        age: 0,
+        gender: "Not specified",
+        diagnosis: "",
+        procedureName: "",
+        status: "NO_CASE_SELECTED",
+        supervisingConsultant: "",
       };
 
   // Anatomical target vessel state
   const [selectedVessel, setSelectedVessel] = useState<string>("Proper Hepatic Artery");
 
-  // Vitals state
+  // Vitals state: truthful to patient telemetry or unrecorded
   const vitals = {
-    hr: 74,
-    bp: "128/82",
-    spo2: 99,
-    map: 97,
+    hr: null as number | null,
+    bp: null as string | null,
+    spo2: null as number | null,
+    map: null as number | null,
   };
 
-  // Lab trends
-  const labs = {
-    creatinine: 1.1,
-    age: currentCase.age || 58,
-    gender: (currentCase.gender?.toLowerCase() === "female" ? "female" : "male") as "male" | "female",
-    inr: 1.2,
-    platelets: 165000,
-    aptt: 31,
-  };
+  // Lab trends: derived directly from patient record
+  const patientLabs = activePatient?.labs;
+  const hasCreat = typeof patientLabs?.creat === "number" && patientLabs.creat > 0;
+  const hasInr = typeof patientLabs?.inr === "number" && patientLabs.inr > 0;
+  const hasPlt = typeof patientLabs?.plt === "number" && patientLabs.plt > 0;
 
-  const egfr = calculateCKDEPI(labs.creatinine, labs.age, labs.gender);
-  const contrastSafety = evaluateContrastSafety(egfr);
-  const bleedingRisk = evaluateBleedingRisk(labs.inr, labs.platelets, labs.aptt, "high");
+  const egfr = hasCreat
+    ? calculateCKDEPI(
+        patientLabs!.creat!,
+        currentCase.age || 50,
+        (currentCase.gender?.toLowerCase() === "female" ? "female" : "male")
+      )
+    : null;
+  const contrastSafety = egfr !== null ? evaluateContrastSafety(egfr) : null;
+  const bleedingRisk = hasInr && hasPlt
+    ? evaluateBleedingRisk(patientLabs!.inr!, patientLabs!.plt!, 30, "high")
+    : null;
 
   return (
-    <div className="flex flex-col md:flex-row h-full w-full overflow-hidden bg-slate-100 dark:bg-[#09090b]">
+    <div className="flex flex-col md:flex-row h-full w-full overflow-hidden bg-slate-100 dark:bg-slate-950">
       {/* LEFT PANE (42% md / 45% lg): Clinical Cockpit, Patient Dossier & Anatomical Roadmap */}
       <div
-        className="w-full md:w-[42%] lg:w-[45%] h-full flex flex-col border-b md:border-b-0 md:border-r border-slate-200 dark:border-[#27272a] bg-white dark:bg-[#18181b] overflow-y-auto p-4 space-y-4 touch-pan-y"
+        className="w-full md:w-[42%] lg:w-[45%] h-full flex flex-col border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto p-4 space-y-4 touch-pan-y"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* Header Strip with Case Selector */}
@@ -101,7 +108,7 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
             <select
               value={selectedPatientId || currentCase.caseId}
               onChange={(e) => setSelectedPatientId(e.target.value)}
-              className="min-h-[44px] px-3 py-2 text-xs font-mono border border-slate-200 dark:border-slate-700 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 cursor-pointer touch-manipulation focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-11 px-3 py-2 text-xs font-mono border border-slate-200 dark:border-slate-700 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 cursor-pointer touch-manipulation focus:outline-none focus:ring-2 focus:ring-blue-500"
               data-touch-target="true"
               aria-label="Select Patient Case"
             >
@@ -120,7 +127,7 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
             <div className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>{currentCase.patientName}</span>
-              <span className="text-[11px] font-normal text-slate-500">
+              <span className="text-xs font-normal text-slate-500">
                 ({currentCase.age}y / {currentCase.gender})
               </span>
             </div>
@@ -131,7 +138,7 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
           <div className="text-xs text-slate-700 dark:text-slate-300 font-medium">
             {currentCase.diagnosis}
           </div>
-          <div className="flex items-center justify-between pt-1 text-[11px] text-slate-500 dark:text-slate-400">
+          <div className="flex items-center justify-between pt-1 text-xs text-slate-500 dark:text-slate-400">
             <span>Proc: <strong className="text-slate-800 dark:text-slate-200">{currentCase.procedureName}</strong></span>
             <span className="font-mono uppercase text-emerald-600 dark:text-emerald-400 font-semibold">
               {currentCase.status?.replace(/_/g, " ")}
@@ -140,13 +147,19 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
         </div>
 
         {/* 2. Bedside Vitals Summary Strip */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 text-center">
             <div className="text-[10px] font-semibold text-slate-400 flex items-center justify-center gap-1">
               <HeartPulse className="w-3 h-3 text-rose-500" /> HR
             </div>
             <div className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100 mt-0.5">
-              {vitals.hr} <span className="text-[9px] font-normal text-slate-400">bpm</span>
+              {vitals.hr ? (
+                <>
+                  {vitals.hr} <span className="text-[10px] font-normal text-slate-400">bpm</span>
+                </>
+              ) : (
+                <span className="text-xs font-normal text-slate-400">Unrecorded</span>
+              )}
             </div>
           </div>
           <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 text-center">
@@ -154,7 +167,7 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
               <Activity className="w-3 h-3 text-blue-500" /> BP
             </div>
             <div className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100 mt-0.5">
-              {vitals.bp}
+              {vitals.bp || <span className="text-xs font-normal text-slate-400">Unrecorded</span>}
             </div>
           </div>
           <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 text-center">
@@ -162,13 +175,23 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
               <Droplets className="w-3 h-3 text-cyan-500" /> SpO2
             </div>
             <div className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100 mt-0.5">
-              {vitals.spo2}%
+              {vitals.spo2 ? (
+                `${vitals.spo2}%`
+              ) : (
+                <span className="text-xs font-normal text-slate-400">Unrecorded</span>
+              )}
             </div>
           </div>
           <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 text-center">
             <div className="text-[10px] font-semibold text-slate-400">MAP</div>
             <div className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100 mt-0.5">
-              {vitals.map} <span className="text-[9px] font-normal text-slate-400">mmHg</span>
+              {vitals.map ? (
+                <>
+                  {vitals.map} <span className="text-[10px] font-normal text-slate-400">mmHg</span>
+                </>
+              ) : (
+                <span className="text-xs font-normal text-slate-400">Unrecorded</span>
+              )}
             </div>
           </div>
         </div>
@@ -182,36 +205,54 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
 
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="p-2 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <div className="text-[10px] text-slate-500">eGFR (Creatinine: {labs.creatinine})</div>
+              <div className="text-[10px] text-slate-500">
+                eGFR {hasCreat ? `(Cr: ${patientLabs!.creat} mg/dL)` : "(Cr Unrecorded)"}
+              </div>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="font-mono font-bold text-base text-slate-900 dark:text-slate-100">
-                  {egfr}
-                </span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border ${
-                  contrastSafety.status === "safe"
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400"
-                    : contrastSafety.status === "caution"
-                    ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400"
-                    : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400"
-                }`}>
-                  {contrastSafety.status.toUpperCase()}
-                </span>
+                {hasCreat && egfr !== null && contrastSafety ? (
+                  <>
+                    <span className="font-mono font-bold text-base text-slate-900 dark:text-slate-100">
+                      {egfr}
+                    </span>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border ${
+                      contrastSafety.status === "safe"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400"
+                        : contrastSafety.status === "caution"
+                        ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400"
+                        : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400"
+                    }`}>
+                      {contrastSafety.status.toUpperCase()}
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-mono text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    PENDING LAB ENTRY
+                  </span>
+                )}
               </div>
             </div>
 
             <div className="p-2 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
               <div className="text-[10px] text-slate-500">Coagulation (INR / Plt)</div>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="font-mono font-bold text-base text-slate-900 dark:text-slate-100">
-                  {labs.inr} <span className="text-xs font-normal text-slate-400">/ {Math.round(labs.platelets / 1000)}k</span>
-                </span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border ${
-                  bleedingRisk.status === "safe"
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400"
-                    : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400"
-                }`}>
-                  {bleedingRisk.status === "safe" ? "HEMOSTASIS OK" : "RISK"}
-                </span>
+                {hasInr && hasPlt && bleedingRisk ? (
+                  <>
+                    <span className="font-mono font-bold text-base text-slate-900 dark:text-slate-100">
+                      {patientLabs!.inr} <span className="text-xs font-normal text-slate-400">/ {Math.round(patientLabs!.plt! / 1000)}k</span>
+                    </span>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border ${
+                      bleedingRisk.status === "safe"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400"
+                        : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400"
+                    }`}>
+                      {bleedingRisk.status === "safe" ? "HEMOSTASIS OK" : "RISK"}
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-mono text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    {hasInr ? `INR ${patientLabs!.inr} (Plt Pending)` : "PENDING COAG ENTRY"}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -240,7 +281,7 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
                 key={vessel}
                 type="button"
                 onClick={() => setSelectedVessel(vessel)}
-                className={`min-h-[44px] px-3 py-2 rounded-lg text-xs font-medium text-left transition border cursor-pointer touch-manipulation flex items-center justify-between active:scale-[0.98] ${
+                className={`min-h-11 px-3 py-2 rounded-lg text-xs font-medium text-left transition border cursor-pointer touch-manipulation flex items-center justify-between active:scale-[0.98] ${
                   selectedVessel === vessel
                     ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 border-transparent shadow-xs ring-1 ring-slate-900 dark:ring-slate-100"
                     : "bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -256,7 +297,7 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
             ))}
           </div>
 
-          <div className="mt-2 p-2.5 rounded bg-slate-950 text-slate-100 font-mono text-[11px] leading-relaxed border border-slate-800">
+          <div className="mt-2 p-2.5 rounded bg-slate-950 text-slate-100 font-mono text-xs leading-relaxed border border-slate-800">
             <div className="text-emerald-400 font-semibold mb-0.5 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               TARGET: {selectedVessel.toUpperCase()}
@@ -277,7 +318,7 @@ export function DualPaneWorkspace({ children }: DualPaneWorkspaceProps) {
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Active Workflow Window • Right Pane
           </span>
-          <span className="text-[11px] font-mono text-slate-400">
+          <span className="text-xs font-mono text-slate-400">
             Independent Scroll (100vh)
           </span>
         </div>

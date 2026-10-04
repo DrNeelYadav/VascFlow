@@ -1,0 +1,115 @@
+/* ============================================================================
+ * ENDOFLOW ENTERPRISE DESIGN SYSTEM: SHADCN & CLINICAL DESIGN TOKENS
+ * Apple-inspired aesthetic minimalism with high-contrast cath-lab dark mode
+ * ============================================================================ */
+
+:root {
+  /* Shadcn / Radix Standard Semantic Color Tokens */
+  --background: 0 0% 98%;           /* #FAFAFA */
+  --foreground: 240 10% 4%;         /* #09090B */
+
+  --card: 0 0% 100%;                /* #FFFFFF */
+  --card-foreground: 240 10% 4%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 4%;
+
+  --primary: 221.2 83.2% 53.3%;     /* #2563EB - Apple System Blue */
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 40% 96.1%;       /* #F1F5F9 */
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;      /* #E2E8F0 */
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+
+  /* Surfaces & Canvas */
+  --bg-canvas: #FAFAFA;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F1F5F9;
+  --bg-hover: #E2E8F0;
+
+  /* Borders */
+  --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  /* Text & Inks */
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+
+  /* Action Accents */
+  --action-primary: #0F172A;
+  --action-primary-hover: #1E293B;
+  --action-primary-text: #FFFFFF;
+
+  /* Clinical Status */
+  --status-verified: #16A34A;
+  --status-pending: #D97706;
+  --status-alert: #DC2626;
+
+  /* Strict Control & Row Densities */
+  --control-height: 28px;
+  --control-height-mobile: 32px;
+  --table-row-height: 32px;
+  --table-row-height-mobile: 36px;
+  --sidebar-width-desktop: 48px;
+  --sidebar-width-expanded: 192px;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;     /* #0B0F17 - Cath Lab OLED Deep Slate */
+  --foreground: 210 40% 98%;
+
+  --card: 222.2 84% 6.5%;           /* #0F172A */
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222.2 84% 6.5%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 217.2 91.2% 59.8%;     /* #38BDF8 - Radiopaque Cyan */
+  --primary-foreground: 222.2 47.4% 11.2%;
+
+  --secondary: 217.2 32.6% 17.5%;   /* #1E293B */
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+
+  --bg-canvas: #0B0F17;
+  --bg-surface: #0F172A;
+  --bg-subtle: #1E293B;
+  --bg-hover: #334155;
+
+  --border-subtle: #1E293B;
+  --border-strong: #334155;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  --action-primary: #F8FAFC;
+  --action-primary-hover: #FFFFFF;
+  --action-primary-text: #0B0F17;
+}

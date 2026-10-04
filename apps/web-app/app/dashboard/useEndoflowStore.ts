@@ -7,14 +7,64 @@ import {
 } from "../lib/staffAccounts";
 import { db, isFirebaseConfigured } from "../lib/firebase";
 import { doc, setDoc, writeBatch } from "firebase/firestore";
-import {
-  DEMO_8_BEDS,
-  DEMO_CT_REVIEWS,
-  DEMO_ENDOFLOW_PATIENTS,
-  DEMO_BOOKED_CASES,
-  DEMO_DOPPLER_RECORDS,
-} from "../lib/demoSeedData";
 import { ClinicalDisposition } from "../types/clinical";
+import { getQueryClient } from "../lib/queryClient";
+import { casesService } from "../services/casesService";
+import { patientsService } from "../services/patientsService";
+
+function invalidatePatientQueries(patientId?: string): void {
+  try {
+    const qc = getQueryClient();
+    qc.invalidateQueries({ queryKey: ["patients"] });
+    if (patientId) {
+      qc.invalidateQueries({ queryKey: ["patient", patientId] });
+    }
+  } catch {
+    // Safe no-op if query cache is uninitialized
+  }
+}
+
+function invalidateCaseQueries(caseId?: string): void {
+  try {
+    const qc = getQueryClient();
+    qc.invalidateQueries({ queryKey: ["cases"] });
+    if (caseId) {
+      qc.invalidateQueries({ queryKey: ["case", caseId] });
+    }
+  } catch {
+    // Safe no-op if query cache is uninitialized
+  }
+}
+
+function safeSavePatient(patient: unknown): void {
+  if (typeof window !== "undefined") {
+    try {
+      void patientsService.savePatient(patient as any);
+    } catch {
+      // Offline fallback handled in service
+    }
+  }
+}
+
+function safeSaveCase(caseData: unknown): void {
+  if (typeof window !== "undefined") {
+    try {
+      void casesService.saveCase(caseData as any);
+    } catch {
+      // Offline fallback handled in service
+    }
+  }
+}
+
+function safeUpdateCaseStatus(caseId: string, status: string, notes?: string): void {
+  if (typeof window !== "undefined") {
+    try {
+      void casesService.updateCaseStatus(caseId, status, notes);
+    } catch {
+      // Offline fallback handled in service
+    }
+  }
+}
 
 // ============================================================================
 // STRICT ZOD VALIDATION SCHEMAS & TYPES (ZERO VULNERABILITIES)
@@ -554,7 +604,6 @@ export interface EndoflowState {
   setSearchQuery: (query: string) => void;
   setFilterModality: (modality: string) => void;
   resetToDefaultPatients: () => void;
-  loadDemoSeedData: () => void;
 
   // Real-Time Multi-Device Cloud Sync Setters
   setPatients: (patients: EndoflowPatient[]) => void;
@@ -707,6 +756,8 @@ export const useEndoflowStore = create<EndoflowState>()(
           patients: [patient, ...state.patients.filter((p) => p.id !== patient.id)],
         }));
         await syncPatientToFirestore(patient);
+        safeSavePatient(patient);
+        invalidatePatientQueries(patient.id);
       },
 
   advanceStage: (patientId: string, nextStatus: ClinicalStage) => {
@@ -761,6 +812,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === patientId);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(patientId);
     }
   },
 
@@ -793,6 +846,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === patientId);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(patientId);
     }
   },
 
@@ -835,6 +890,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === patientId);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(patientId);
     }
   },
 
@@ -855,6 +912,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === patientId);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(patientId);
     }
   },
 
@@ -875,6 +934,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === patientId);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(patientId);
     }
   },
 
@@ -895,6 +956,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === patientId);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(patientId);
     }
   },
 
@@ -915,6 +978,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === patientId);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(patientId);
     }
   },
 
@@ -969,6 +1034,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     if (assignedBed) {
       void syncBedToFirestore(assignedBed);
     }
+    safeSavePatient(patientData);
+    invalidatePatientQueries(patientData.id);
 
     return { success: true };
   },
@@ -1076,6 +1143,8 @@ export const useEndoflowStore = create<EndoflowState>()(
       bookedCases: [parsed.data, ...state.bookedCases],
     }));
     void syncBookedCaseToFirestore(parsed.data);
+    safeSaveCase(parsed.data);
+    invalidateCaseQueries(newId);
     return { success: true, id: newId };
   },
 
@@ -1102,6 +1171,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().bookedCases.find((c) => c.id === caseId);
     if (target) {
       void syncBookedCaseToFirestore(target);
+      safeUpdateCaseStatus(caseId, "Rescheduled", reason || "OPD Rescheduled by Resident");
+      invalidateCaseQueries(caseId);
     }
   },
 
@@ -1133,6 +1204,7 @@ export const useEndoflowStore = create<EndoflowState>()(
     if (affectedCases.length > 0) {
       void syncBookedCasesBatchToFirestore(affectedCases);
     }
+    invalidateCaseQueries();
     return movedCount;
   },
 
@@ -1158,6 +1230,8 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().bookedCases.find((c) => c.id === caseId);
     if (target) {
       void syncBookedCaseToFirestore(target);
+      safeUpdateCaseStatus(caseId, "On Hold", reason || "Parked / On Hold by attending");
+      invalidateCaseQueries(caseId);
     }
   },
 
@@ -1189,6 +1263,7 @@ export const useEndoflowStore = create<EndoflowState>()(
     if (affectedCases.length > 0) {
       void syncBookedCasesBatchToFirestore(affectedCases);
     }
+    invalidateCaseQueries();
     return movedCount;
   },
 
@@ -1495,29 +1570,25 @@ export const useEndoflowStore = create<EndoflowState>()(
     const target = get().patients.find((p) => p.id === id);
     if (target) {
       void syncPatientToFirestore(target);
+      safeSavePatient(target);
+      invalidatePatientQueries(id);
     }
   },
 
   setSearchQuery: (query: string) => set({ searchQuery: query }),
   setFilterModality: (modality: string) => set({ filterModality: modality }),
-  resetToDefaultPatients: () =>
-    set({
-      patients: [],
-      activeCaseId: null,
-      beds: CLEAN_VACANT_8_BEDS,
-      bookedCases: [],
-      ctReviews: [],
-      dopplerRecords: [],
-    }),
-  loadDemoSeedData: () =>
-    set({
-      patients: DEMO_ENDOFLOW_PATIENTS,
-      beds: DEMO_8_BEDS,
-      bookedCases: DEMO_BOOKED_CASES,
-      ctReviews: DEMO_CT_REVIEWS,
-      dopplerRecords: DEMO_DOPPLER_RECORDS,
-      activeCaseId: "PT03",
-    }),
+  resetToDefaultPatients: () => {
+      set({
+        patients: [],
+        activeCaseId: null,
+        beds: CLEAN_VACANT_8_BEDS,
+        bookedCases: [],
+        ctReviews: [],
+        dopplerRecords: [],
+      });
+      invalidatePatientQueries();
+      invalidateCaseQueries();
+  },
 
   // Universal Real-Time Multi-Device Cloud Sync Setters
   setPatients: (patients) => set({ patients }),
@@ -1544,3 +1615,17 @@ export const useEndoflowStore = create<EndoflowState>()(
     }
   )
 );
+
+// ============================================================================
+// FINE-GRAINED SELECTOR HOOKS FOR STATE DECOUPLING & RE-RENDER HYGIENE
+// ============================================================================
+
+export const useEndoflowPatients = () => useEndoflowStore((state) => state.patients);
+export const useEndoflowActiveCaseId = () => useEndoflowStore((state) => state.activeCaseId);
+export const useEndoflowBeds = () => useEndoflowStore((state) => state.beds);
+export const useEndoflowBookedCases = () => useEndoflowStore((state) => state.bookedCases);
+export const useEndoflowCtReviews = () => useEndoflowStore((state) => state.ctReviews);
+export const useEndoflowDopplerRecords = () => useEndoflowStore((state) => state.dopplerRecords);
+export const useEndoflowCurrentStaff = () => useEndoflowStore((state) => state.currentStaff);
+export const useEndoflowSyncAlert = () => useEndoflowStore((state) => state.syncAlert);
+

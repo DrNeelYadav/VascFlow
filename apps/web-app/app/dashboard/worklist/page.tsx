@@ -189,24 +189,24 @@ export default function RisWorklistPage() {
   return (
     <div className="space-y-5 pb-12">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#DADCE0] pb-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#202124] tracking-tight">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             Cath-Lab Worklist
           </h1>
         </div>
 
         {/* Date & Quick Refresh */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-2 rounded-xl border border-[#DADCE0] bg-white px-3 py-2 text-xs text-[#3C4043] shadow-xs">
-            <Calendar className="h-4 w-4 text-[#5F6368]" />
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 shadow-xs">
+            <Calendar className="h-4 w-4 text-slate-500" />
             <span className="font-semibold">
               {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
             </span>
           </div>
           <button
             onClick={handleResetOrRefresh}
-            className="rounded-xl border border-[#DADCE0] bg-white p-2 text-[#5F6368] hover:text-[#202124] hover:bg-[#F1F3F4] shadow-xs transition"
+            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 shadow-xs transition"
             title="Reset / refresh worklist"
           >
             <RefreshCw className="h-4 w-4" />
@@ -215,14 +215,14 @@ export default function RisWorklistPage() {
       </div>
 
       {/* 1. Today's Scheduled Patients (Prominently at the Very Top) */}
-      <div className="rounded-xl border border-[#DADCE0] bg-white p-4 sm:p-5 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#DADCE0] pb-3 mb-4">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 pb-3 mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E8F0FE] text-[#1A73E8]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <CalendarClock className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#202124] uppercase tracking-wider">
+              <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
                 Today&apos;s Patients
               </h2>
             </div>
@@ -257,8 +257,8 @@ export default function RisWorklistPage() {
                 onClick={() => setScheduledRoomFilter(scope.id)}
                 className={`rounded-full px-3 py-1 font-medium transition ${
                   scheduledRoomFilter === scope.id
-                    ? "bg-[#202124] text-white shadow-2xs"
-                    : "bg-[#F8F9FA] text-[#5F6368] border border-[#DADCE0] hover:bg-[#F1F3F4] hover:text-[#202124]"
+                    ? "bg-slate-900 text-white shadow-2xs"
+                    : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
                 {scope.label}
@@ -278,50 +278,50 @@ export default function RisWorklistPage() {
             return (
               <div
                 key={patient.caseId}
-                className="flex flex-col justify-between rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-3.5 shadow-2xs hover:border-[#202124] hover:shadow-xs transition-all"
+                className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs hover:border-slate-900 hover:shadow-xs transition-all"
               >
                 <div>
                   {/* Top: Time & Room Badge */}
                   <div className="flex items-center justify-between gap-1.5 mb-2">
-                    <div className="flex items-center gap-1 text-xs font-mono font-semibold text-[#202124]">
-                      <Clock className="h-3.5 w-3.5 text-[#5F6368]" />
+                    <div className="flex items-center gap-1 text-xs font-mono font-semibold text-slate-900">
+                      <Clock className="h-3.5 w-3.5 text-slate-500" />
                       <span>{patient.plannedTime}</span>
                     </div>
-                    <span className="rounded bg-[#F1F3F4] px-2 py-0.5 text-[10px] font-semibold text-[#3C4043] border border-[#DADCE0]">
+                    <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700 border border-slate-200">
                       {roomLabel}
                     </span>
                   </div>
 
                   {/* Patient Name & CR Number */}
                   <div className="mt-1">
-                    <div className="font-semibold text-xs text-[#202124] truncate" title={patient.patientName}>
+                    <div className="font-semibold text-xs text-slate-900 truncate" title={patient.patientName}>
                       {patient.patientName}
                     </div>
-                    <div className="font-mono text-[10px] text-[#5F6368] tabular-nums">
+                    <div className="font-mono text-[10px] text-slate-500 tabular-nums">
                       CR: {patient.crNumber}
                     </div>
                   </div>
 
                   {/* Procedure Name */}
-                  <div className="mt-2 text-xs font-medium text-[#3C4043] line-clamp-1 truncate" title={patient.procedureName}>
+                  <div className="mt-2 text-xs font-medium text-slate-700 line-clamp-1 truncate" title={patient.procedureName}>
                     {patient.procedureName}
                   </div>
 
                   {/* Operator */}
-                  <div className="mt-1 flex items-center gap-1 text-[11px] text-[#5F6368] truncate" title={patient.operatorResident}>
-                    <User className="h-3 w-3 shrink-0 text-[#70757A]" />
+                  <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500 truncate" title={patient.operatorResident}>
+                    <User className="h-3 w-3 shrink-0 text-slate-500" />
                     <span className="truncate">{patient.operatorResident}</span>
                   </div>
                 </div>
 
                 {/* Direct Action Button */}
-                <div className="border-t border-[#DADCE0]/70 pt-2.5 mt-3">
+                <div className="border-t border-slate-200/70 pt-2.5 mt-3">
                   {isInProc ? (
                     <Link
                       href={`/dashboard/cath-lab-flowsheet?caseId=${patient.caseId}`}
-                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#202124] text-white text-xs font-semibold py-1.5 hover:bg-black transition shadow-2xs"
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold py-1.5 hover:bg-black transition shadow-2xs"
                     >
-                      <Activity className="h-3.5 w-3.5 text-[#34A853] animate-pulse" />
+                      <Activity className="h-3.5 w-3.5 text-emerald-600 animate-pulse" />
                       Flowsheet
                     </Link>
                   ) : isScheduled || isPrepped ? (
@@ -332,7 +332,7 @@ export default function RisWorklistPage() {
                           isScheduled ? "ADMITTED_PREPPED" : "IN_PROCEDURE"
                         )
                       }
-                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1A73E8] text-white text-xs font-semibold py-1.5 hover:bg-[#1557B0] transition shadow-2xs"
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold py-1.5 hover:bg-blue-700 transition shadow-2xs"
                     >
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       Check In
@@ -340,9 +340,9 @@ export default function RisWorklistPage() {
                   ) : (
                     <Link
                       href={`/dashboard/cath-lab-flowsheet?caseId=${patient.caseId}`}
-                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#DADCE0] bg-white text-[#3C4043] text-xs font-semibold py-1.5 hover:bg-[#F1F3F4] transition"
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 text-xs font-semibold py-1.5 hover:bg-slate-100 transition"
                     >
-                      <Activity className="h-3.5 w-3.5 text-[#5F6368]" />
+                      <Activity className="h-3.5 w-3.5 text-slate-500" />
                       Flowsheet
                     </Link>
                   )}
@@ -365,89 +365,89 @@ export default function RisWorklistPage() {
           onClick={() => setActiveTab("SCHEDULED")}
           className={`cursor-pointer rounded-xl border p-3 transition shadow-2xs ${
             activeTab === "SCHEDULED"
-              ? "border-[#202124] bg-[#F1F3F4] ring-1 ring-[#202124]"
-              : "border-[#DADCE0] bg-white hover:bg-[#F8F9FA]"
+              ? "border-slate-900 bg-slate-100 ring-1 ring-slate-900"
+              : "border-slate-200 bg-white hover:bg-slate-50"
           }`}
         >
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] truncate">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">
             Scheduled
           </div>
-          <div className="text-2xl font-bold text-[#202124] mt-0.5">{scheduledCount}</div>
+          <div className="text-2xl font-bold text-slate-900 mt-0.5">{scheduledCount}</div>
         </div>
 
         <div
           onClick={() => setActiveTab("PREPPED")}
           className={`cursor-pointer rounded-xl border p-3 transition shadow-2xs ${
             activeTab === "PREPPED"
-              ? "border-[#202124] bg-[#F1F3F4] ring-1 ring-[#202124]"
-              : "border-[#DADCE0] bg-white hover:bg-[#F8F9FA]"
+              ? "border-slate-900 bg-slate-100 ring-1 ring-slate-900"
+              : "border-slate-200 bg-white hover:bg-slate-50"
           }`}
         >
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] truncate">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">
             Prepped
           </div>
-          <div className="text-2xl font-bold text-[#202124] mt-0.5">{preppedCount}</div>
+          <div className="text-2xl font-bold text-slate-900 mt-0.5">{preppedCount}</div>
         </div>
 
         <div
           onClick={() => setActiveTab("IN_LAB")}
           className={`cursor-pointer rounded-xl border p-3 transition shadow-2xs ${
             activeTab === "IN_LAB"
-              ? "border-[#202124] bg-[#F1F3F4] ring-1 ring-[#202124]"
-              : "border-[#DADCE0] bg-white hover:bg-[#F8F9FA]"
+              ? "border-slate-900 bg-slate-100 ring-1 ring-slate-900"
+              : "border-slate-200 bg-white hover:bg-slate-50"
           }`}
         >
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] truncate">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">
             In Lab
           </div>
-          <div className="text-2xl font-bold text-[#202124] mt-0.5">{onTableCount}</div>
+          <div className="text-2xl font-bold text-slate-900 mt-0.5">{onTableCount}</div>
         </div>
 
         <div
           onClick={() => setActiveTab("HOLDING")}
           className={`cursor-pointer rounded-xl border p-3 transition shadow-2xs ${
             activeTab === "HOLDING"
-              ? "border-[#202124] bg-[#F1F3F4] ring-1 ring-[#202124]"
-              : "border-[#DADCE0] bg-white hover:bg-[#F8F9FA]"
+              ? "border-slate-900 bg-slate-100 ring-1 ring-slate-900"
+              : "border-slate-200 bg-white hover:bg-slate-50"
           }`}
         >
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] truncate">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">
             Holding
           </div>
-          <div className="text-2xl font-bold text-[#202124] mt-0.5">{holdingCount}</div>
+          <div className="text-2xl font-bold text-slate-900 mt-0.5">{holdingCount}</div>
         </div>
 
         <div
           onClick={() => setActiveTab("REPORT_DRAFT")}
           className={`cursor-pointer rounded-xl border p-3 transition shadow-2xs ${
             activeTab === "REPORT_DRAFT"
-              ? "border-[#202124] bg-[#F1F3F4] ring-1 ring-[#202124]"
-              : "border-[#DADCE0] bg-white hover:bg-[#F8F9FA]"
+              ? "border-slate-900 bg-slate-100 ring-1 ring-slate-900"
+              : "border-slate-200 bg-white hover:bg-slate-50"
           }`}
         >
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] truncate">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">
             Verify Pending
           </div>
-          <div className="text-2xl font-bold text-[#202124] mt-0.5">{reportsPendingCount}</div>
+          <div className="text-2xl font-bold text-slate-900 mt-0.5">{reportsPendingCount}</div>
         </div>
 
         <div
           onClick={() => setActiveTab("FINALIZED")}
           className={`cursor-pointer rounded-xl border p-3 transition shadow-2xs ${
             activeTab === "FINALIZED"
-              ? "border-[#202124] bg-[#F1F3F4] ring-1 ring-[#202124]"
-              : "border-[#DADCE0] bg-white hover:bg-[#F8F9FA]"
+              ? "border-slate-900 bg-slate-100 ring-1 ring-slate-900"
+              : "border-slate-200 bg-white hover:bg-slate-50"
           }`}
         >
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-[#5F6368] truncate">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 truncate">
             Finalized
           </div>
-          <div className="text-2xl font-bold text-[#202124] mt-0.5">{finalizedCount}</div>
+          <div className="text-2xl font-bold text-slate-900 mt-0.5">{finalizedCount}</div>
         </div>
       </div>
 
       {/* 4. Filter Tabs and Live Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-3 rounded-xl border border-[#DADCE0] shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
         {/* Filter Pills */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
           {[
@@ -464,8 +464,8 @@ export default function RisWorklistPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`rounded-full px-3.5 py-1.5 transition ${
                 activeTab === tab.id
-                  ? "bg-[#202124] text-white shadow-2xs"
-                  : "bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F1F3F4] hover:text-[#202124]"
+                  ? "bg-slate-900 text-white shadow-2xs"
+                  : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
               {tab.label}
@@ -475,13 +475,13 @@ export default function RisWorklistPage() {
 
         {/* Search Input */}
         <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-[#5F6368]" />
+          <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-500" />
           <input
             type="text"
             placeholder="Search worklist..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-full border border-[#DADCE0] bg-[#F8F9FA] py-1.5 pl-9 pr-3 text-xs text-[#202124] placeholder:text-[#5F6368] focus:border-[#1A73E8] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#1A73E8]"
+            className="w-full rounded-full border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-500 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600"
           />
         </div>
       </div>

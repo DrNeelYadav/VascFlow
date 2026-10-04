@@ -76,7 +76,7 @@ export async function PATCH(
     return privateJson({ error: "Invalid request body." }, 400);
   }
 
-  const nextStatus = body.nextStatus as CaseStatus;
+  const nextStatus = ((body.nextStatus || body.status) as CaseStatus);
   if (!VALID_STATUSES.includes(nextStatus)) {
     return privateJson({ error: "Invalid case status." }, 400);
   }
@@ -141,3 +141,5 @@ export async function PATCH(
     return privateJson({ error: "Case status could not be saved to the live record." }, 503);
   }
 }
+
+export const POST = PATCH;

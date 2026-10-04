@@ -20,7 +20,12 @@ const HOP_BY_HOP_HEADERS = new Set([
 ]);
 
 interface RouteContext {
-  params: Promise<{ path: string[] }> | { path: string[] };
+  // Next 16 always provides `params` as a Promise, so that is the only form
+  // declared. Accepting the already-resolved object as well made every handler
+  // in this file fail Next's generated ParamCheck, which is why the webpack
+  // build rejected all five verbs. The body already awaits through
+  // Promise.resolve, so nothing downstream changes.
+  params: Promise<{ path: string[] }>;
 }
 
 /**

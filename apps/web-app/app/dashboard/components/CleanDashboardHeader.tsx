@@ -8,9 +8,9 @@ interface HeaderProps {
 
 export function CleanDashboardHeader({ department, activeCases, onQuickAction }: HeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-800 dark:bg-slate-950">
-      <div className="flex items-center gap-3">
-        <h1 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 sm:px-6 py-3 dark:border-slate-800 dark:bg-slate-950">
+      <div className="flex items-center gap-3 min-w-0">
+        <h1 className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
           {department}
         </h1>
         <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs font-medium text-slate-600 dark:bg-slate-900 dark:text-slate-400">

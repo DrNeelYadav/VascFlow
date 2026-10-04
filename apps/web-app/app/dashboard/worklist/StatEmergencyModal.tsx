@@ -212,9 +212,9 @@ export function StatEmergencyModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl rounded-2xl border-2 border-[#EA4335] bg-[#FFFFFF] shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-2xl rounded-2xl border-2 border-rose-600 bg-white shadow-2xl overflow-hidden">
         {/* Top Emergency Banner */}
-        <div className="bg-[#EA4335] text-white px-5 py-3.5 flex items-center justify-between">
+        <div className="bg-rose-600 text-white px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 text-white animate-pulse">
               <Zap className="h-5 w-5 fill-white" />
@@ -239,7 +239,7 @@ export function StatEmergencyModal({
         <div className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
           {/* Quick Preset Selector */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#5F6368] block mb-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">
               Select Acute Emergency Preset:
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -250,12 +250,12 @@ export function StatEmergencyModal({
                   onClick={() => handleSelectPreset(idx)}
                   className={`text-left p-2.5 rounded-xl border text-xs transition font-medium ${
                     selectedPresetIndex === idx
-                      ? "border-[#EA4335] bg-[#FCE8E6] text-[#C5221F] font-bold shadow-2xs"
-                      : "border-[#DADCE0] bg-[#F8F9FA] text-[#3C4043] hover:border-[#EA4335]/50"
+                      ? "border-rose-600 bg-rose-50 text-rose-700 font-bold shadow-2xs"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-rose-600/50"
                   }`}
                 >
                   <div className="truncate">{preset.title}</div>
-                  <div className="text-[10px] text-[#70757A] truncate font-normal">
+                  <div className="text-[10px] text-slate-500 truncate font-normal">
                     {preset.modality} &bull; {preset.durationMinutes}m
                   </div>
                 </button>
@@ -266,7 +266,7 @@ export function StatEmergencyModal({
           {/* Form Fields Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="text-xs font-bold text-[#202124] block mb-1">
+              <label className="text-xs font-bold text-slate-900 block mb-1">
                 Patient Name
               </label>
               <input
@@ -275,14 +275,14 @@ export function StatEmergencyModal({
                 onChange={(e) => setPatientName(e.target.value)}
                 autoComplete="off"
                 data-lpignore="true"
-                className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-medium focus:border-[#EA4335] focus:outline-hidden focus:ring-1 focus:ring-[#EA4335]"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:border-rose-600 focus:outline-hidden focus:ring-1 focus:ring-rose-600"
                 placeholder="e.g. Rameshwar Sharma"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-[#202124]">
+                <label className="text-xs font-bold text-slate-900">
                   CR / UHID Number
                 </label>
                 <button
@@ -290,7 +290,7 @@ export function StatEmergencyModal({
                   onClick={() =>
                     setCrNumber(`STAT-SMS-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`)
                   }
-                  className="text-[10px] font-semibold text-[#1A73E8] hover:underline"
+                  className="text-[10px] font-semibold text-blue-600 hover:underline"
                 >
                   Regen STAT CR
                 </button>
@@ -301,12 +301,12 @@ export function StatEmergencyModal({
                 onChange={(e) => setCrNumber(e.target.value)}
                 autoComplete="off"
                 data-lpignore="true"
-                className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-mono font-medium focus:border-[#EA4335] focus:outline-hidden"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono font-medium focus:border-rose-600 focus:outline-hidden"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="text-xs font-bold text-[#202124] block mb-1">
+              <label className="text-xs font-bold text-slate-900 block mb-1">
                 Emergency Procedure Title
               </label>
               <input
@@ -315,18 +315,18 @@ export function StatEmergencyModal({
                 onChange={(e) => setProcedureName(e.target.value)}
                 autoComplete="off"
                 data-lpignore="true"
-                className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-medium focus:border-[#EA4335] focus:outline-hidden"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:border-rose-600 focus:outline-hidden"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-[#202124] block mb-1">
+              <label className="text-xs font-bold text-slate-900 block mb-1">
                 Target Room / Angio Suite
               </label>
               <select
                 value={room}
                 onChange={(e) => setRoom(e.target.value)}
-                className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-medium bg-white focus:border-[#EA4335] focus:outline-hidden"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium bg-white focus:border-rose-600 focus:outline-hidden"
               >
                 {DEPARTMENT_ROOMS.map((r) => (
                   <option key={r} value={r}>
@@ -337,13 +337,13 @@ export function StatEmergencyModal({
             </div>
 
             <div>
-              <label className="text-xs font-bold text-[#202124] block mb-1">
+              <label className="text-xs font-bold text-slate-900 block mb-1">
                 Operating Lead Resident
               </label>
               <select
                 value={operatorResident}
                 onChange={(e) => setOperatorResident(e.target.value)}
-                className="w-full rounded-xl border border-[#DADCE0] px-3 py-2 text-xs font-medium bg-white focus:border-[#EA4335] focus:outline-hidden"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium bg-white focus:border-rose-600 focus:outline-hidden"
               >
                 <option value="Dr. Neel Yadav">Dr. Neel Yadav (DM-01)</option>
                 <option value="Dr. Nilesh Gupta">Dr. Nilesh Gupta (DM-02)</option>
@@ -354,18 +354,18 @@ export function StatEmergencyModal({
           </div>
 
           {/* Clinical Nephrotoxicity, Coagulation & Contrast Safety Guardrail */}
-          <div className="rounded-xl border border-[#DADCE0] bg-[#F8F9FA] p-3 space-y-2.5">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#202124] flex items-center gap-1.5">
-                <Calculator className="h-3.5 w-3.5 text-[#5F6368]" />
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                <Calculator className="h-3.5 w-3.5 text-slate-500" />
                 Urgent Renal &amp; Hemostasis Pre-Check
               </span>
-              <label className="flex items-center gap-1.5 text-xs text-[#3C4043] cursor-pointer">
+              <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isDialysisPatient}
                   onChange={(e) => setIsDialysisPatient(e.target.checked)}
-                  className="rounded border-[#DADCE0] text-[#EA4335] focus:ring-[#EA4335]"
+                  className="rounded border-slate-200 text-rose-600 focus:ring-rose-600"
                 />
                 <span>Active Dialysis Patient</span>
               </label>
@@ -373,7 +373,7 @@ export function StatEmergencyModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#5F6368]">Creatinine:</span>
+                <span className="text-xs text-slate-500">Creatinine:</span>
                 <input
                   type="number"
                   step="0.1"
@@ -383,13 +383,13 @@ export function StatEmergencyModal({
                   autoComplete="off"
                   data-lpignore="true"
                   onChange={(e) => setSerumCreatinine(e.target.value)}
-                  className="w-20 rounded-lg border border-[#DADCE0] px-2 py-1 text-xs font-mono font-bold bg-white"
+                  className="w-20 rounded-lg border border-slate-200 px-2 py-1 text-xs font-mono font-bold bg-white"
                 />
-                <span className="text-xs text-[#5F6368]">mg/dL</span>
+                <span className="text-xs text-slate-500">mg/dL</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#5F6368]">INR:</span>
+                <span className="text-xs text-slate-500">INR:</span>
                 <input
                   type="number"
                   step="0.1"
@@ -399,13 +399,13 @@ export function StatEmergencyModal({
                   autoComplete="off"
                   data-lpignore="true"
                   onChange={(e) => setInr(e.target.value)}
-                  className="w-20 rounded-lg border border-[#DADCE0] px-2 py-1 text-xs font-mono font-bold bg-white"
+                  className="w-20 rounded-lg border border-slate-200 px-2 py-1 text-xs font-mono font-bold bg-white"
                   placeholder="1.1"
                 />
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#5F6368]">Platelets:</span>
+                <span className="text-xs text-slate-500">Platelets:</span>
                 <input
                   type="number"
                   step="1000"
@@ -415,26 +415,26 @@ export function StatEmergencyModal({
                   autoComplete="off"
                   data-lpignore="true"
                   onChange={(e) => setPlatelets(e.target.value)}
-                  className="w-24 rounded-lg border border-[#DADCE0] px-2 py-1 text-xs font-mono font-bold bg-white"
+                  className="w-24 rounded-lg border border-slate-200 px-2 py-1 text-xs font-mono font-bold bg-white"
                   placeholder="220000"
                 />
-                <span className="text-xs text-[#5F6368]">/µL</span>
+                <span className="text-xs text-slate-500">/µL</span>
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-1 border-t border-[#DADCE0] flex-wrap gap-2">
-              <label className="flex items-center gap-1.5 text-xs text-[#C5221F] font-semibold cursor-pointer">
+            <div className="flex items-center justify-between pt-1 border-t border-slate-200 flex-wrap gap-2">
+              <label className="flex items-center gap-1.5 text-xs text-rose-700 font-semibold cursor-pointer">
                 <input
                   type="checkbox"
                   checked={hasContrastAllergy}
                   onChange={(e) => setHasContrastAllergy(e.target.checked)}
-                  className="rounded border-[#DADCE0] text-[#EA4335] focus:ring-[#EA4335]"
+                  className="rounded border-slate-200 text-rose-600 focus:ring-rose-600"
                 />
                 <span>Severe Contrast Allergy History</span>
               </label>
 
               {isAkiRisk && (
-                <div className="flex items-center gap-1 text-[11px] font-bold text-[#C5221F] bg-[#FCE8E6] px-2 py-0.5 rounded-lg border border-[#EA4335]/30">
+                <div className="flex items-center gap-1 text-xs font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-600/30">
                   <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
                   <span>CIRSE Hard Cap: Maximum 40 mL Contrast</span>
                 </div>
@@ -444,21 +444,21 @@ export function StatEmergencyModal({
 
           {/* Hard-Stop Warning Banner & Override Checkbox */}
           {isHardStop && (
-            <div className="rounded-xl border-2 border-[#D93025] bg-[#FCE8E6] p-3.5 space-y-2.5">
+            <div className="rounded-xl border-2 border-rose-600 bg-rose-50 p-3.5 space-y-2.5">
               <div className="flex items-start gap-2.5">
-                <AlertTriangle className="h-5 w-5 text-[#D93025] shrink-0 mt-0.5 animate-pulse" />
-                <div className="text-xs font-bold text-[#C5221F] leading-snug">
+                <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5 animate-pulse" />
+                <div className="text-xs font-bold text-rose-700 leading-snug">
                   CRITICAL CLINICAL HARD-STOP: Elevated puncture-site bleeding risk (INR &gt; 1.5 / Platelets &lt; 50k), severe renal impairment (Cr &gt; 2.0), or contrast anaphylaxis risk detected.
                 </div>
               </div>
 
-              <div className="rounded-lg bg-white border border-[#EA4335]/40 p-2.5 space-y-2">
-                <label className="flex items-start gap-2 text-xs font-bold text-[#C5221F] cursor-pointer">
+              <div className="rounded-lg bg-white border border-rose-600/40 p-2.5 space-y-2">
+                <label className="flex items-start gap-2 text-xs font-bold text-rose-700 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={isOverrideConfirmed}
                     onChange={(e) => setIsOverrideConfirmed(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-[#EA4335] text-[#D93025] focus:ring-[#EA4335] cursor-pointer"
+                    className="mt-0.5 h-4 w-4 rounded border-rose-600 text-rose-600 focus:ring-rose-600 cursor-pointer"
                   />
                   <span>
                     I confirm explicit Senior Operator Emergency Override for life/limb salvage and accept procedural risks.
@@ -467,14 +467,14 @@ export function StatEmergencyModal({
 
                 {isOverrideConfirmed && (
                   <div className="pt-1">
-                    <label className="text-[10px] uppercase font-bold text-[#5F6368] block mb-1">
+                    <label className="text-[10px] uppercase font-bold text-slate-500 block mb-1">
                       Override Indication / Documentation:
                     </label>
                     <input
                       type="text"
                       value={overrideReason}
                       onChange={(e) => setOverrideReason(e.target.value)}
-                      className="w-full text-xs font-medium border border-[#DADCE0] rounded-lg px-2.5 py-1.5 bg-[#F8F9FA] focus:border-[#EA4335] focus:outline-hidden"
+                      className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:border-rose-600 focus:outline-hidden"
                       placeholder="Emergent life/limb salvage indication"
                     />
                   </div>
@@ -485,15 +485,15 @@ export function StatEmergencyModal({
         </div>
 
         {/* Footer CTA */}
-        <div className="bg-[#F8F9FA] px-5 py-3.5 border-t border-[#DADCE0] flex items-center justify-between">
-          <div className="text-xs text-[#5F6368]">
-            Status set immediately to: <span className="font-bold text-[#202124]">IN_PROCEDURE (ON TABLE)</span>
+        <div className="bg-slate-50 px-5 py-3.5 border-t border-slate-200 flex items-center justify-between">
+          <div className="text-xs text-slate-500">
+            Status set immediately to: <span className="font-bold text-slate-900">IN_PROCEDURE (ON TABLE)</span>
           </div>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-[#DADCE0] bg-white px-4 py-2 text-xs font-semibold text-[#5F6368] hover:bg-[#F1F3F4] transition"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 transition"
             >
               Cancel
             </button>
@@ -501,7 +501,7 @@ export function StatEmergencyModal({
               type="button"
               disabled={isSubmitting || (isHardStop && !isOverrideConfirmed)}
               onClick={handleActivate}
-              className="flex items-center gap-2 rounded-xl bg-[#EA4335] hover:bg-[#D93025] text-white px-5 py-2 text-xs font-bold shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 rounded-xl bg-rose-600 hover:bg-rose-600 text-white px-5 py-2 text-xs font-bold shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Zap className="h-4 w-4 fill-white" />
               <span>{isSubmitting ? "Activating..." : "ACTIVATE ON TABLE STAT"}</span>

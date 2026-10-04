@@ -11,7 +11,7 @@ import {
   matchWardFilter,
   getWardBadgeStyle,
   WARD_FILTER_OPTIONS,
-} from "../../app/dashboard/logbook/page";
+} from "../../app/dashboard/logbook/page";;
 
 describe("SMS Cath-Lab Master Logbook & Registry Precision Engine", () => {
   describe("1. Record Count & Mandatory Field Integrity", () => {

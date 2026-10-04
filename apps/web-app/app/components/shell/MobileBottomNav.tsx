@@ -3,128 +3,88 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Stethoscope,
-  BedDouble,
-  Kanban,
-  Calendar,
-  Activity,
-  Menu,
-} from "lucide-react";
+import { Menu } from "lucide-react";
 import { useEndoflowStore } from "../../dashboard/useEndoflowStore";
+import { WorkspaceIcon } from "./WorkspaceIcon";
+import { WORKSPACES, isWorkspaceActive, type Workspace } from "../../lib/navigation";
 
-export function MobileBottomNav({
-  onToggleMore,
-}: {
-  onToggleMore: () => void;
-}) {
+/**
+ * Widths on a phone cannot hold seven slots, so the dock carries the four
+ * workspaces a clinician touches between cases and defers everything else to
+ * the drawer. The choice of four is presentation only - the registry still
+ * governs what exists.
+ */
+const DOCK_WORKSPACE_IDS = ["today", "clinic", "documentation", "logbook"];
+
+export function MobileBottomNav({ onToggleMore }: { onToggleMore: () => void }) {
   const pathname = usePathname();
 
-  // Store indicators
   const ctReviews = useEndoflowStore((s) => s.ctReviews);
-  const beds = useEndoflowStore((s) => s.beds);
-  const patients = useEndoflowStore((s) => s.patients);
   const bookedCases = useEndoflowStore((s) => s.bookedCases);
 
-  const pendingReviewsCount = ctReviews.filter((r) => r.status === "Pending Review").length;
-  const occupiedBedsCount = beds.filter((b) => b.status === "occupied").length;
-  const activeCasesCount = patients.filter((p) => p.status !== "Discharged").length;
-  const bookedCasesCount = bookedCases.filter((c) => c.status !== "Completed").length;
-
-  const NAV_ITEMS = [
-    {
-      id: "op-clinic",
-      label: "OPD",
-      href: "/dashboard/op-clinic",
-      icon: Stethoscope,
-      badge: pendingReviewsCount > 0 ? pendingReviewsCount : undefined,
-    },
-    {
-      id: "bed-board",
-      label: "Beds",
-      href: "/dashboard/bed-board",
-      icon: BedDouble,
-      badge: `${occupiedBedsCount}/8`,
-    },
-    {
-      id: "worklist",
-      label: "Worklist",
-      href: "/dashboard/worklist",
-      icon: Kanban,
-      badge: activeCasesCount > 0 ? activeCasesCount : undefined,
-    },
-    {
-      id: "calendar",
-      label: "OT Cal",
-      href: "/dashboard/calendar",
-      icon: Calendar,
-      badge: bookedCasesCount > 0 ? bookedCasesCount : undefined,
-    },
-    {
-      id: "protocols",
-      label: "Calcs",
-      href: "/dashboard/protocols",
-      icon: Activity,
-    },
-  ];
-
-  const isItemActive = (href: string) => {
-    if (href === "/dashboard" && pathname === "/dashboard") return true;
-    if (href !== "/dashboard" && pathname.startsWith(href)) return true;
-    return false;
+  const badges: Record<string, number> = {
+    clinic: ctReviews.filter((r) => r.status === "Pending Review").length,
+    today: bookedCases.filter((c) => c.status !== "Completed").length,
   };
+
+  const dockItems: Workspace[] = WORKSPACES.filter((w) =>
+    DOCK_WORKSPACE_IDS.includes(w.id)
+  );
 
   return (
     <nav
       aria-label="Mobile Navigation Bar"
-      className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)] select-none"
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom,0px)] select-none"
     >
-      <div className="grid grid-cols-6 h-14 items-stretch px-1">
-        {NAV_ITEMS.map((item) => {
-          const active = isItemActive(item.href);
-          const Icon = item.icon;
-
+      <div
+        className="grid h-14 items-stretch px-1"
+        style={{ gridTemplateColumns: `repeat(${dockItems.length + 1}, minmax(0, 1fr))` }}
+      >
+        {dockItems.map((w) => {
+          const active = isWorkspaceActive(w, pathname);
+          const badge = badges[w.id];
           return (
             <Link
-              key={item.id}
-              href={item.href}
-              className={`flex flex-col items-center justify-center relative py-1 transition-all group ${
+              key={w.id}
+              href={w.href}
+              aria-current={active ? "page" : undefined}
+              className={`flex flex-col items-center justify-center relative py-1 min-h-[44px] touch-manipulation transition-colors ${
                 active
-                  ? "text-blue-600 dark:text-blue-400 font-semibold"
-                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                  ? "text-slate-900 dark:text-slate-100 font-semibold"
+                  : "text-slate-500 dark:text-slate-400"
               }`}
             >
               <div className="relative">
-                <Icon
-                  className={`w-5 h-5 transition-transform ${
+                <WorkspaceIcon
+                  icon={w.icon}
+                  className={`w-[19px] h-[19px] transition-transform ${
                     active ? "scale-110 stroke-[2.25]" : "stroke-[1.75]"
                   }`}
                 />
-                {item.badge !== undefined && (
-                  <span className="absolute -top-1.5 -right-2.5 px-1 min-w-[14px] h-3.5 bg-blue-600 text-white rounded-full text-[9px] font-bold flex items-center justify-center shadow-xs leading-none">
-                    {item.badge}
+                {badge !== undefined && badge > 0 && (
+                  <span className="absolute -top-1.5 -right-2.5 px-1 min-w-3.5 h-3.5 bg-blue-600 text-white rounded-full text-[10px] font-bold flex items-center justify-center leading-none">
+                    {badge}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] mt-0.5 tracking-tight truncate max-w-full px-0.5">
-                {item.label}
+              <span className="text-[11px] mt-0.5 tracking-tight truncate max-w-full px-0.5">
+                {w.shortLabel}
               </span>
               {active && (
-                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-slate-900 dark:bg-slate-100 rounded-full" />
               )}
             </Link>
           );
         })}
 
-        {/* More Drawer Button */}
         <button
           type="button"
           onClick={onToggleMore}
-          className="flex flex-col items-center justify-center relative py-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all cursor-pointer"
-          aria-label="Open More Clinical Navigation Options"
+          className="flex flex-col items-center justify-center relative py-1 min-h-[44px] touch-manipulation text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
+          aria-label="Open more clinical workspaces"
         >
-          <Menu className="w-5 h-5 stroke-[1.75]" />
-          <span className="text-[10px] mt-0.5 tracking-tight">More</span>
+          <Menu className="w-[19px] h-[19px] stroke-[1.75]" />
+          <span className="text-[11px] mt-0.5 tracking-tight">More</span>
         </button>
       </div>
     </nav>

@@ -18,6 +18,7 @@ export interface RealSmsPatientCase {
   procedureName: string;
   diagnosis: string;
   radiationDose: string;
+  primaryOperator?: string;
 }
 
 /**

@@ -11,7 +11,12 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["packages/**/*.test.ts", "apps/**/*.test.ts"],
-    exclude: ["_legacy_vite_archive/**", "**/node_modules/**", "dist/**"],
-  },
+      // `.tsx` is required as well as `.ts`: the imaging suite renders React
+      // components with renderToStaticMarkup.
+      include: [
+        "packages/**/*.test.{ts,tsx}",
+        "apps/**/*.test.{ts,tsx}",
+      ],
+      exclude: ["_legacy_vite_archive/**", "**/node_modules/**", "dist/**"],
+    },
 });

@@ -59,6 +59,10 @@ export interface OperativeNoteOptions {
   customIntervention?: string;
   indication?: string;
   suite?: string;
+  accessSite?: string;
+  sheath?: string;
+  fluoroTimeMinutes?: number;
+  contrast?: string;
 }
 
 export interface MasterCategoryMeta {

@@ -43,9 +43,9 @@ export function VersionNotification() {
 
   return (
     <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 max-w-sm animate-in fade-in slide-in-from-bottom-3 duration-300">
-      <div className="bg-[#1C1C1E] text-white p-3.5 rounded-2xl shadow-xl border border-white/10 flex items-center justify-between gap-3">
+      <div className="bg-slate-900 text-white p-3.5 rounded-2xl shadow-xl border border-white/10 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-[#007AFF]/20 text-[#007AFF] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-600 flex items-center justify-center shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <div className="min-w-0">
@@ -56,7 +56,7 @@ export function VersionNotification() {
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => window.location.reload()}
-            className="px-2.5 py-1.5 bg-[#007AFF] hover:bg-[#0062CC] text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+            className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
           >
             <RefreshCw className="w-3 h-3" />
             <span>Reload</span>

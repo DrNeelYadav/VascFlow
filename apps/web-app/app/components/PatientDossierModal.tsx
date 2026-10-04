@@ -116,8 +116,9 @@ export function PatientDossierModal({
   const [cirseGrade, setCirseGrade] = useState("Grade 1 (No therapy)");
   const [followupPatency, setFollowupPatency] = useState("Patent on Doppler at 1 Month");
 
-  // Dynamic Clinical Calculations (Pure Zero-Division Guarded)
+  // Dynamic Clinical Calculations (Pure Zero-Division Guarded, No Phantom Defaults)
   const rotterdamResult = useMemo(() => {
+    if (inr === undefined || bili === undefined) return null;
     return calculateRotterdam({
       enceph: 0,
       ascites: ascitesGrade === "none" ? 0 : 1,
@@ -127,6 +128,7 @@ export function PatientDossierModal({
   }, [ascitesGrade, inr, bili]);
 
   const clichyResult = useMemo(() => {
+    if (bili === undefined || creat === undefined) return null;
     return calculateClichy({
       age,
       bilirubinMg: bili,
@@ -136,10 +138,11 @@ export function PatientDossierModal({
   }, [age, bili, alt, creat]);
 
   const ctpResult = useMemo(() => {
+    if (bili === undefined || alb === undefined || inr === undefined) return null;
     return calculateChildPugh({
-      bilirubinMg: bili ?? 1.0,
-      albuminGdl: alb ?? 3.5,
-      inr: inr ?? 1.0,
+      bilirubinMg: bili,
+      albuminGdl: alb,
+      inr: inr,
       ascites:
         ascitesGrade === "none"
           ? "None"
@@ -151,10 +154,11 @@ export function PatientDossierModal({
   }, [bili, alb, inr, ascitesGrade]);
 
   const meldResult = useMemo(() => {
+    if (creat === undefined || bili === undefined || inr === undefined || creat <= 0) return null;
     return calculateMeld3({
-      creatinine: creat ?? 1.0,
-      bilirubin: bili ?? 1.0,
-      inr: inr ?? 1.0,
+      creatinine: creat,
+      bilirubin: bili,
+      inr: inr,
       sodium: 138,
       albumin: alb,
       isFemale: sex === "Female",
@@ -162,11 +166,13 @@ export function PatientDossierModal({
   }, [creat, bili, inr, alb, sex]);
 
   const macdResult = useMemo(() => {
-    return calculateCigarroaMACD(68, creat ?? 1.0);
+    if (creat === undefined || creat <= 0) return null;
+    return calculateCigarroaMACD(68, creat);
   }, [creat]);
 
   const egfrResult = useMemo(() => {
-    return calculateEgfrCkdEpi(creat ?? 1.0, age, sex === "Female");
+    if (creat === undefined || creat <= 0) return null;
+    return calculateEgfrCkdEpi(creat, age, sex === "Female");
   }, [creat, age, sex]);
 
   useEffect(() => {
@@ -270,46 +276,46 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
       aria-modal="false"
     >
       {/* Sticky Top Header */}
-        <div className="px-5 py-3.5 border-b border-[#DADCE0] bg-[#FFFFFF] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+        <div className="px-5 py-3.5 border-b border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 text-xs font-semibold transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Worklist</span>
             </button>
-            <span className="text-[#DADCE0]">|</span>
+            <span className="text-slate-200">|</span>
             <span
               className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                 patient.modality === "XA"
-                  ? "bg-[#FCE8E6] text-[#C5221F]"
+                  ? "bg-rose-50 text-rose-700"
                   : patient.modality === "CT"
-                  ? "bg-[#FEF7E0] text-[#B06000]"
+                  ? "bg-amber-50 text-amber-700"
                   : patient.modality === "US"
-                  ? "bg-[#E6F4EA] text-[#137333]"
-                  : "bg-[#F3E8FD] text-[#7E22CE]"
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "bg-purple-50 text-purple-600"
               }`}
             >
               [{patient.modality}]
             </span>
-            <h1 className="text-base font-bold text-[#202124]">{name}</h1>
-            <span className="px-2 py-0.5 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-[10px] font-bold">
+            <h1 className="text-base font-bold text-slate-900">{name}</h1>
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold">
               {status}
             </span>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-[#5F6368]">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
             <span>
               {age}Y/{sex === "Male" ? "M" : "F"} &bull; HID:{" "}
-              <strong className="font-mono text-[#202124]">{hid}</strong>
+              <strong className="font-mono text-slate-900">{hid}</strong>
             </span>
-            <span className="hidden md:inline font-semibold text-[#1A73E8]">
+            <span className="hidden md:inline font-semibold text-blue-600">
               {postedBy}
             </span>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-[#F1F3F4] text-[#80868B] hover:text-[#202124] transition-colors cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -317,8 +323,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
         </div>
 
         {/* Linear Google Material 3 Segmented Tabs */}
-        <div className="px-5 pt-3 pb-2 border-b border-[#DADCE0] bg-[#F8F9FA] overflow-x-auto shrink-0">
-          <div className="inline-flex rounded-xl bg-[#FFFFFF] border border-[#DADCE0] p-1 gap-1">
+        <div className="px-5 pt-3 pb-2 border-b border-slate-200 bg-slate-50 overflow-x-auto shrink-0">
+          <div className="inline-flex rounded-xl bg-white border border-slate-200 p-1 gap-1">
             {[
               { id: 1, label: "Clinical Labs & Vitals" },
               { id: 2, label: "100 IR Catalog & Vessels" },
@@ -332,15 +338,15 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-[#1A73E8] text-white shadow-xs"
-                    : "text-[#5F6368] hover:bg-[#F1F3F4] hover:text-[#202124]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
                 <span
                   className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
                     activeTab === tab.id
-                      ? "bg-white text-[#1A73E8]"
-                      : "bg-[#F1F3F4] text-[#5F6368]"
+                      ? "bg-white text-blue-600"
+                      : "bg-slate-100 text-slate-500"
                   }`}
                 >
                   {tab.id}
@@ -352,21 +358,21 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
         </div>
 
         {/* Scrollable Tab Content Pane */}
-        <div className="flex-1 overflow-y-auto p-5 bg-[#F8F9FA]">
+        <div className="flex-1 overflow-y-auto p-5 bg-slate-50">
           {/* TAB 1: CLINICAL LABS & VITALS */}
           {activeTab === 1 && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Left Column: Demographics & Presentation */}
-              <div className="lg:col-span-7 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-[#1A73E8]">
+              <div className="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-blue-600">
                     Clinical Profile
                   </h3>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Full Name
                     </label>
                     <input
@@ -374,28 +380,28 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                       autoFocus
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-900 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Age
                     </label>
                     <input
                       type="number"
                       value={age}
                       onChange={(e) => setAge(Number(e.target.value))}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-900 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Sex
                     </label>
                     <select
                       value={sex}
                       onChange={(e) => setSex(e.target.value as "Male" | "Female")}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-900 focus:border-blue-600 focus:outline-none"
                     >
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -405,97 +411,97 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       HID / CR Number
                     </label>
                     <input
                       type="text"
                       value={hid}
                       onChange={(e) => setHid(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-mono font-bold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono font-bold text-slate-900 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Scan ID / PACS Acc
                     </label>
                     <input
                       type="text"
                       value={scanId}
                       onChange={(e) => setScanId(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-mono font-semibold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono font-semibold text-slate-900 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Phone Number
                     </label>
                     <input
                       type="text"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-900 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Referring Unit
                     </label>
                     <input
                       type="text"
                       value={unit}
                       onChange={(e) => setUnit(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-900 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Posted By Doctor
                     </label>
                     <input
                       type="text"
                       value={postedBy}
                       onChange={(e) => setPostedBy(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold text-[#1A73E8] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-blue-600 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">
                     Clinical Indication & Summary
                   </label>
                   <textarea
                     rows={2}
                     value={summary}
                     onChange={(e) => setSummary(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-[#DADCE0] bg-white text-xs text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-xs text-slate-900 focus:border-blue-600 focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Scheduled Procedure
                     </label>
                     <input
                       type="text"
                       value={procedure}
                       onChange={(e) => setProcedure(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-bold text-[#1A73E8] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-blue-600 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Cath-Lab Stage Status
                     </label>
                     <select
                       value={status}
                       onChange={(e) => setStatus(e.target.value as ClinicalStage)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-bold text-[#202124] focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-900 focus:border-blue-600 focus:outline-none"
                     >
                       <option value="Scheduled">Scheduled</option>
                       <option value="Pre-Op Pending">Pre-Op Pending</option>
@@ -510,41 +516,41 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
               {/* Right Column: Lab Panel & Live Calculators */}
               <div className="lg:col-span-5 space-y-4">
                 {/* Biochemical Panel */}
-                <div className="bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-3">
-                  <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#137333]">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-emerald-700">
                       Coagulation & Liver Panel
                     </h3>
-                    <span className="text-[10px] text-[#80868B]">
+                    <span className="text-[10px] text-slate-400">
                       Real-time Dynamic Update
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         AST (U/L)
                       </label>
                       <input
                         type="number"
                         value={ast ?? ""}
                         onChange={(e) => setAst(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         ALT (U/L)
                       </label>
                       <input
                         type="number"
                         value={alt ?? ""}
                         onChange={(e) => setAlt(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         Bilirubin (mg/dL)
                       </label>
                       <input
@@ -552,22 +558,22 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                         step="0.1"
                         value={bili ?? ""}
                         onChange={(e) => setBili(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         LDH (U/L)
                       </label>
                       <input
                         type="number"
                         value={ldh ?? ""}
                         onChange={(e) => setLdh(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         Albumin (g/dL)
                       </label>
                       <input
@@ -575,11 +581,11 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                         step="0.1"
                         value={alb ?? ""}
                         onChange={(e) => setAlb(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         Creatinine (mg/dL)
                       </label>
                       <input
@@ -587,11 +593,11 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                         step="0.01"
                         value={creat ?? ""}
                         onChange={(e) => setCreat(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         PT / INR
                       </label>
                       <input
@@ -599,28 +605,28 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                         step="0.01"
                         value={inr ?? ""}
                         onChange={(e) => setInr(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         Platelets (/uL)
                       </label>
                       <input
                         type="number"
                         value={plt ?? ""}
                         onChange={(e) => setPlt(e.target.value ? Number(e.target.value) : undefined)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#5F6368]">
+                      <label className="block text-[10px] font-semibold text-slate-500">
                         Ascites Grade
                       </label>
                       <select
                         value={ascitesGrade ?? "none"}
                         onChange={(e) => setAscitesGrade(e.target.value)}
-                        className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs"
+                        className="w-full px-2 py-1 rounded border border-slate-200 text-xs"
                       >
                         <option value="none">None</option>
                         <option value="mild">Mild</option>
@@ -632,101 +638,131 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                 </div>
 
                 {/* Prognostic Risk Indices (Calculators Engine) */}
-                <div className="bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-3">
-                  <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#B06000]">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-amber-700">
                       Prognostic Risk Indices
                     </h3>
-                    <span className="text-[10px] font-mono text-[#1A73E8]">
+                    <span className="text-[10px] font-mono text-blue-600">
                       Mathematical Engines
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2.5">
                     {/* Rotterdam */}
-                    <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0]">
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-[#5F6368]">
+                        <span className="text-[10px] font-bold text-slate-500">
                           Rotterdam BCS-PI
                         </span>
-                        <span className="text-[10px] font-bold text-[#C5221F]">
-                          {rotterdamResult.riskClass}
-                        </span>
+                        {rotterdamResult && (
+                          <span className="text-[10px] font-bold text-rose-700">
+                            {rotterdamResult.riskClass}
+                          </span>
+                        )}
                       </div>
-                      <div className="text-lg font-black font-mono text-[#202124] mt-0.5">
-                        {rotterdamResult.score}
-                      </div>
-                      <p className="text-[9px] text-[#5F6368]">
-                        1-Yr Surv: {rotterdamResult.oneYrSurvival}
-                      </p>
+                      {rotterdamResult ? (
+                        <>
+                          <div className="text-lg font-black font-mono text-slate-900 mt-0.5">
+                            {rotterdamResult.score}
+                          </div>
+                          <p className="text-[10px] text-slate-500">
+                            1-Yr Surv: {rotterdamResult.oneYrSurvival}
+                          </p>
+                        </>
+                      ) : (
+                        <div className="text-xs font-mono text-amber-700 mt-1">Pending Labs (Bili/INR)</div>
+                      )}
                     </div>
 
                     {/* Clichy */}
-                    <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0]">
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-[#5F6368]">
+                        <span className="text-[10px] font-bold text-slate-500">
                           Clichy Score
                         </span>
-                        <span
-                          className={`text-[10px] font-bold ${
-                            clichyResult.score < 5.4
-                              ? "text-[#137333]"
-                              : "text-[#C5221F]"
-                          }`}
-                        >
-                          {clichyResult.score < 5.4 ? "Favorable" : "Poor"}
-                        </span>
+                        {clichyResult && (
+                          <span
+                            className={`text-[10px] font-bold ${
+                              clichyResult.score < 5.4
+                                ? "text-emerald-700"
+                                : "text-rose-700"
+                            }`}
+                          >
+                            {clichyResult.score < 5.4 ? "Favorable" : "Poor"}
+                          </span>
+                        )}
                       </div>
-                      <div className="text-lg font-black font-mono text-[#202124] mt-0.5">
-                        {clichyResult.score}
-                      </div>
-                      <p className="text-[9px] text-[#5F6368]">
-                        Cutoff &lt; 5.4 TIPS Candidate
-                      </p>
+                      {clichyResult ? (
+                        <>
+                          <div className="text-lg font-black font-mono text-slate-900 mt-0.5">
+                            {clichyResult.score}
+                          </div>
+                          <p className="text-[10px] text-slate-500">
+                            Cutoff &lt; 5.4 TIPS Candidate
+                          </p>
+                        </>
+                      ) : (
+                        <div className="text-xs font-mono text-amber-700 mt-1">Pending Labs (Bili/Cr)</div>
+                      )}
                     </div>
 
                     {/* Child-Pugh */}
-                    <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0]">
-                      <span className="text-[10px] font-bold text-[#5F6368]">
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] font-bold text-slate-500">
                         Child-Pugh (CTP)
                       </span>
-                      <div className="text-lg font-black font-mono text-[#202124] mt-0.5">
-                        {ctpResult.score} Pts ({ctpResult.grade})
-                      </div>
-                      <p className="text-[9px] text-[#5F6368]">
-                        1-Yr Surv: {ctpResult.oneYrSurvival}
-                      </p>
+                      {ctpResult ? (
+                        <>
+                          <div className="text-lg font-black font-mono text-slate-900 mt-0.5">
+                            {ctpResult.score} Pts ({ctpResult.grade})
+                          </div>
+                          <p className="text-[10px] text-slate-500">
+                            1-Yr Surv: {ctpResult.oneYrSurvival}
+                          </p>
+                        </>
+                      ) : (
+                        <div className="text-xs font-mono text-amber-700 mt-1">Pending Labs (Bili/Alb/INR)</div>
+                      )}
                     </div>
 
                     {/* MELD 3.0 */}
-                    <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0]">
-                      <span className="text-[10px] font-bold text-[#5F6368]">
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] font-bold text-slate-500">
                         MELD 3.0 Score
                       </span>
-                      <div className="text-lg font-black font-mono text-[#202124] mt-0.5">
-                        {meldResult.meldScore}
-                      </div>
-                      <p className="text-[9px] text-[#5F6368]">
-                        3-Mo Mort: {meldResult.threeMonthMortality}
-                      </p>
+                      {meldResult ? (
+                        <>
+                          <div className="text-lg font-black font-mono text-slate-900 mt-0.5">
+                            {meldResult.meldScore}
+                          </div>
+                          <p className="text-[10px] text-slate-500">
+                            3-Mo Mort: {meldResult.threeMonthMortality}
+                          </p>
+                        </>
+                      ) : (
+                        <div className="text-xs font-mono text-amber-700 mt-1">Pending Labs (Cr/Bili/INR)</div>
+                      )}
                     </div>
                   </div>
 
                   {/* Contrast & eGFR Safety Gauge */}
-                  <div className="p-2.5 rounded-xl bg-[#E8F0FE] border border-[#D2E3FC] text-xs flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-xs flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-[#1A73E8]">
+                      <span className="font-bold text-blue-600">
                         MACD Contrast Cap:
                       </span>
-                      <span className="font-mono font-bold ml-1 text-[#202124]">
-                        {macdResult.macdMl} mL
+                      <span className="font-mono font-bold ml-1 text-slate-900">
+                        {macdResult ? `${macdResult.macdMl} mL` : "Unrecorded Cr"}
                       </span>
-                      <span className="ml-1 text-[10px] text-[#5F6368]">
-                        (80%: {macdResult.safeLimit80Percent} mL)
-                      </span>
+                      {macdResult && (
+                        <span className="ml-1 text-[10px] text-slate-500">
+                          (80%: {macdResult.safeLimit80Percent} mL)
+                        </span>
+                      )}
                     </div>
-                    <div className="text-[11px] font-mono font-bold text-[#137333]">
-                      eGFR: {egfrResult.egfr} ({egfrResult.stage})
+                    <div className="text-xs font-mono font-bold text-emerald-700">
+                      {egfrResult ? `eGFR: ${egfrResult.egfr} (${egfrResult.stage})` : "eGFR: Unrecorded"}
                     </div>
                   </div>
                 </div>
@@ -736,25 +772,25 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
 
           {/* TAB 2: 100 IR CATALOG & VESSELS */}
           {activeTab === 2 && (
-            <div className="bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F1F3F4] pb-3">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                 <div>
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-[#1A73E8]">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-blue-600">
                     100 Interventional Radiology Catalog
                   </h3>
-                  <p className="text-[11px] text-[#5F6368]">
+                  <p className="text-xs text-slate-500">
                     Vascular target anatomy, roadmapping & consumable indent
                   </p>
                 </div>
-                <span className="px-3 py-1 text-xs font-mono font-bold rounded-full bg-[#E6F4EA] text-[#137333]">
+                <span className="px-3 py-1 text-xs font-mono font-bold rounded-full bg-emerald-50 text-emerald-700">
                   ₹ 3,15,000 INR (Cashless Package)
                 </span>
               </div>
 
               {/* Target Vessels */}
               <div>
-                <label className="block text-xs font-bold text-[#202124] mb-2">
-                  <Route className="w-3.5 h-3.5 inline text-[#1A73E8] mr-1" />
+                <label className="block text-xs font-bold text-slate-900 mb-2">
+                  <Route className="w-3.5 h-3.5 inline text-blue-600 mr-1" />
                   Target Vessels & Vascular Territory:
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -768,7 +804,7 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                   ].map((v) => (
                     <span
                       key={v}
-                      className="px-2.5 py-1 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-xs font-semibold border border-[#D2E3FC]"
+                      className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold border border-blue-200"
                     >
                       {v}
                     </span>
@@ -779,8 +815,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
               {/* Checklists & Hardware Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
                 {/* Pre-Procedure Checklist */}
-                <div className="p-4 rounded-xl border border-[#DADCE0] space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#137333] flex items-center gap-1.5">
+                <div className="p-4 rounded-xl border border-slate-200 space-y-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
                     <ClipboardCheck className="w-4 h-4" />
                     Pre-Procedure Verification Checklist
                   </h4>
@@ -795,27 +831,27 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     ].map((item, idx) => (
                       <label
                         key={idx}
-                        className="flex items-center gap-2.5 p-2 rounded-lg bg-[#F8F9FA] border border-[#DADCE0] cursor-pointer hover:bg-[#FFFFFF]"
+                        className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer hover:bg-white"
                       >
                         <input
                           type="checkbox"
                           defaultChecked
-                          className="w-4 h-4 rounded text-[#1A73E8] accent-[#1A73E8]"
+                          className="w-4 h-4 rounded text-blue-600 accent-blue-600"
                         />
-                        <span className="text-[#202124]">{item}</span>
+                        <span className="text-slate-900">{item}</span>
                       </label>
                     ))}
                   </div>
                 </div>
 
                 {/* Cath-Lab Hardware Requisition */}
-                <div className="p-4 rounded-xl border border-[#DADCE0] space-y-3">
+                <div className="p-4 rounded-xl border border-slate-200 space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#B06000] flex items-center gap-1.5">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
                       <Boxes className="w-4 h-4" />
                       Cath-Lab Hardware Requisition
                     </h4>
-                    <span className="text-[10px] text-[#5F6368]">
+                    <span className="text-[10px] text-slate-500">
                       {hwItems.length} Indents
                     </span>
                   </div>
@@ -824,7 +860,7 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     {hwItems.map((item) => (
                       <label
                         key={item.id}
-                        className="flex items-center gap-2.5 p-2 rounded-lg bg-[#F8F9FA] border border-[#DADCE0] cursor-pointer hover:bg-[#FFFFFF]"
+                        className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer hover:bg-white"
                       >
                         <input
                           type="checkbox"
@@ -838,9 +874,9 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                               )
                             )
                           }
-                          className="w-4 h-4 rounded text-[#1A73E8] accent-[#1A73E8]"
+                          className="w-4 h-4 rounded text-blue-600 accent-blue-600"
                         />
-                        <span className="text-[#202124] font-medium">
+                        <span className="text-slate-900 font-medium">
                           {item.name}
                         </span>
                       </label>
@@ -848,17 +884,17 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                   </div>
 
                   {/* Add Custom Hardware */}
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#F1F3F4]">
+                  <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
                     <input
                       type="text"
                       placeholder="Add custom consumable/wire..."
                       value={customHwName}
                       onChange={(e) => setCustomHwName(e.target.value)}
-                      className="flex-1 px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs"
+                      className="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
                     />
                     <button
                       onClick={handleAddCustomHw}
-                      className="px-3 py-1.5 rounded-lg bg-[#1A73E8] text-white text-xs font-semibold cursor-pointer"
+                      className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold cursor-pointer"
                     >
                       Add
                     </button>
@@ -871,17 +907,17 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
           {/* TAB 3: GOVT SCHEME & BILLING */}
           {activeTab === 3 && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-              <div className="lg:col-span-7 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
+              <div className="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <div>
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#C2410C]">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-amber-700">
                       Rajasthan Govt Scheme & Pre-Auth
                     </h3>
-                    <p className="text-[10px] text-[#80868B]">
+                    <p className="text-[10px] text-slate-400">
                       MAAY / Chiranjeevi, RGHS & TMS SSO Portal
                     </p>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-[#E6F4EA] text-[#137333] text-[10px] font-bold flex items-center gap-1">
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     Pre-Auth Approved
                   </span>
@@ -889,13 +925,13 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Health Scheme
                     </label>
                     <select
                       value={scheme}
                       onChange={(e) => setScheme(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-semibold focus:border-[#1A73E8] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold focus:border-blue-600 focus:outline-none"
                     >
                       <option value="MAAY">Mukhyamantri Ayushman (MAAY)</option>
                       <option value="RGHS">Rajasthan Govt Health Scheme (RGHS)</option>
@@ -904,52 +940,52 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Jan Aadhaar / Card ID
                     </label>
                     <input
                       type="text"
                       value={beneficiaryId}
                       onChange={(e) => setBeneficiaryId(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-mono font-semibold"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono font-semibold"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Pre-Auth TID
                     </label>
                     <input
                       type="text"
                       value={schemeTid}
                       onChange={(e) => setSchemeTid(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white text-xs font-mono font-bold text-[#1A73E8]"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono font-bold text-blue-600"
                     />
                   </div>
                 </div>
 
                 {/* Tariff Breakdown */}
-                <div className="grid grid-cols-3 gap-3 p-3.5 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
                   <div>
-                    <span className="text-[10px] font-bold text-[#5F6368]">
+                    <span className="text-[10px] font-bold text-slate-500">
                       Base Package Tariff
                     </span>
-                    <div className="text-base font-black font-mono text-[#202124] mt-0.5">
+                    <div className="text-base font-black font-mono text-slate-900 mt-0.5">
                       ₹ 1,50,000
                     </div>
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-[#5F6368]">
+                    <span className="text-[10px] font-bold text-slate-500">
                       Approved Implant Cap
                     </span>
-                    <div className="text-base font-black font-mono text-[#1A73E8] mt-0.5">
+                    <div className="text-base font-black font-mono text-blue-600 mt-0.5">
                       ₹ 1,65,000
                     </div>
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-[#5F6368]">
+                    <span className="text-[10px] font-bold text-slate-500">
                       Total Cashless Claim
                     </span>
-                    <div className="text-base font-black font-mono text-[#137333] mt-0.5">
+                    <div className="text-base font-black font-mono text-emerald-700 mt-0.5">
                       ₹ 3,15,000
                     </div>
                   </div>
@@ -957,8 +993,8 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
 
                 {/* Barcode Verification Checklist */}
                 <div className="space-y-2 pt-1">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#202124] flex items-center gap-1.5">
-                    <Barcode className="w-4 h-4 text-[#1A73E8]" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                    <Barcode className="w-4 h-4 text-blue-600" />
                     Cath-Lab Implant Barcode Verification
                   </h4>
                   <div className="space-y-2 text-xs">
@@ -969,14 +1005,14 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     ].map((item, idx) => (
                       <label
                         key={idx}
-                        className="flex items-center gap-2 p-2 rounded-lg border border-[#DADCE0] cursor-pointer hover:bg-[#F8F9FA]"
+                        className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50"
                       >
                         <input
                           type="checkbox"
                           defaultChecked
-                          className="w-4 h-4 rounded text-[#1A73E8] accent-[#1A73E8]"
+                          className="w-4 h-4 rounded text-blue-600 accent-blue-600"
                         />
-                        <span className="text-[#202124]">{item}</span>
+                        <span className="text-slate-900">{item}</span>
                       </label>
                     ))}
                   </div>
@@ -984,86 +1020,86 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
               </div>
 
               {/* RMRS Revenue Distribution Pool */}
-              <div className="lg:col-span-5 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
+              <div className="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <div>
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#137333]">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-emerald-700">
                       SMS RMRS Revenue Distribution
                     </h3>
-                    <p className="text-[10px] text-[#80868B]">
+                    <p className="text-[10px] text-slate-400">
                       Official Rajasthan Medicare Relief Society Policy
                     </p>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#E6F4EA] text-[#137333]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">
                     Cashless (₹0 Co-Pay)
                   </span>
                 </div>
 
                 <div className="space-y-2.5 text-xs">
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]">
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
                     <div>
-                      <p className="font-bold text-[#202124]">
+                      <p className="font-bold text-slate-900">
                         Hospital Infrastructure Pool (60%)
                       </p>
-                      <p className="text-[10px] text-[#80868B]">
+                      <p className="text-[10px] text-slate-400">
                         Biplane UPS, X-ray tube maintenance
                       </p>
                     </div>
-                    <span className="font-mono font-bold text-[#202124]">
+                    <span className="font-mono font-bold text-slate-900">
                       ₹ 90,000
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]">
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
                     <div>
-                      <p className="font-bold text-[#202124]">
+                      <p className="font-bold text-slate-900">
                         Department Academic Fund (15%)
                       </p>
-                      <p className="text-[10px] text-[#80868B]">
+                      <p className="text-[10px] text-slate-400">
                         Consumable buffer stock, research
                       </p>
                     </div>
-                    <span className="font-mono font-bold text-[#1A73E8]">
+                    <span className="font-mono font-bold text-blue-600">
                       ₹ 22,500
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#E8F0FE] border border-[#D2E3FC]">
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 border border-blue-200">
                     <div>
-                      <p className="font-bold text-[#1A73E8]">
+                      <p className="font-bold text-blue-600">
                         Clinical Team Incentive Pool (25%)
                       </p>
-                      <p className="text-[10px] text-[#5F6368]">
+                      <p className="text-[10px] text-slate-500">
                         Shared among operator, residents & staff
                       </p>
                     </div>
-                    <span className="font-mono font-bold text-[#1A73E8]">
+                    <span className="font-mono font-bold text-blue-600">
                       ₹ 37,500
                     </span>
                   </div>
 
-                  <div className="pl-2 border-l-2 border-[#1A73E8] space-y-1 text-[11px] text-[#5F6368]">
+                  <div className="pl-2 border-l-2 border-blue-600 space-y-1 text-xs text-slate-500">
                     <div className="flex justify-between">
                       <span>&bull; Primary Operator / Faculty (50%):</span>
-                      <span className="font-mono font-semibold text-[#202124]">
+                      <span className="font-mono font-semibold text-slate-900">
                         ₹ 18,750
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>&bull; Senior Residents / Fellows (20%):</span>
-                      <span className="font-mono font-semibold text-[#202124]">
+                      <span className="font-mono font-semibold text-slate-900">
                         ₹ 7,500
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>&bull; Nurses & Radiographers (20%):</span>
-                      <span className="font-mono font-semibold text-[#202124]">
+                      <span className="font-mono font-semibold text-slate-900">
                         ₹ 7,500
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>&bull; Anesthesia & Support Team (10%):</span>
-                      <span className="font-mono font-semibold text-[#202124]">
+                      <span className="font-mono font-semibold text-slate-900">
                         ₹ 3,750
                       </span>
                     </div>
@@ -1077,30 +1113,30 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
           {activeTab === 4 && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Inpatient Bed Allocation & Puncture Care */}
-              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
+              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <div>
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#1A73E8]">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-blue-600">
                       Inpatient (IPD) Ward & Bed Allocation
                     </h3>
-                    <p className="text-[10px] text-[#80868B]">
+                    <p className="text-[10px] text-slate-400">
                       SMS Hospital Inpatient Management
                     </p>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-[#E6F4EA] text-[#137333] text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
                     {podDay}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Admission Type
                     </label>
                     <select
                       value={admissionType}
                       onChange={(e) => setAdmissionType(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-semibold"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold"
                     >
                       <option value="IPD">Inpatient (IPD)</option>
                       <option value="Day-Care">Day-Care</option>
@@ -1108,13 +1144,13 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Ward
                     </label>
                     <select
                       value={ward}
                       onChange={(e) => setWard(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-semibold"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold"
                     >
                       <option value="Liver ICU">Liver ICU</option>
                       <option value="IR Dedicated Ward (D-Block)">
@@ -1125,29 +1161,29 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Bed ID
                     </label>
                     <input
                       type="text"
                       value={bed}
                       onChange={(e) => setBed(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-mono font-bold"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-mono font-bold"
                     />
                   </div>
                 </div>
 
                 {/* Groin Protocol */}
-                <div className="p-3.5 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] space-y-1.5 text-xs">
-                  <h4 className="font-bold text-[#C5221F] flex items-center gap-1.5">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs">
+                  <h4 className="font-bold text-rose-700 flex items-center gap-1.5">
                     <HeartPulse className="w-3.5 h-3.5" />
                     Groin & Puncture Site Protocol
                   </h4>
-                  <p className="text-[#202124]">
+                  <p className="text-slate-900">
                     Right CFA (6F) - 4-6 hours strict flat supine bed rest with
                     sandbag compression.
                   </p>
-                  <p className="text-[11px] text-[#1A73E8] pt-1">
+                  <p className="text-xs text-blue-600 pt-1">
                     Pulse Audit Schedule: Bilateral DP & PT pulses q15m x 1h,
                     q30m x 2h, q1h x 4h.
                   </p>
@@ -1155,7 +1191,7 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
 
                 {/* Discharge Checklist */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#137333]">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700">
                     Objective Discharge Clearance Checklist
                   </h4>
                   <div className="space-y-1.5 text-xs">
@@ -1167,14 +1203,14 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     ].map((c, i) => (
                       <label
                         key={i}
-                        className="flex items-center gap-2 p-2 rounded-lg border border-[#DADCE0] cursor-pointer hover:bg-[#F8F9FA]"
+                        className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50"
                       >
                         <input
                           type="checkbox"
                           defaultChecked={i < 3}
-                          className="w-4 h-4 rounded text-[#137333] accent-[#137333]"
+                          className="w-4 h-4 rounded text-emerald-700 accent-emerald-700"
                         />
-                        <span className="text-[#202124]">{c}</span>
+                        <span className="text-slate-900">{c}</span>
                       </label>
                     ))}
                   </div>
@@ -1182,19 +1218,19 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
               </div>
 
               {/* RMSCL e-Aushadhi Drug Indent */}
-              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#F1F3F4] pb-2">
+              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <div>
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#B06000]">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-amber-700">
                       RMSCL e-Aushadhi Drug Indent
                     </h3>
-                    <p className="text-[10px] text-[#80868B]">
+                    <p className="text-[10px] text-slate-400">
                       Rajasthan Essential Drug List (EDL) Indent Slip
                     </p>
                   </div>
                   <button
                     onClick={handleCopyEaushadhi}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-xs font-semibold hover:bg-[#D2E3FC] transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold hover:bg-blue-200 transition-colors cursor-pointer"
                   >
                     <Copy className="w-3.5 h-3.5" />
                     <span>Copy Indent</span>
@@ -1211,15 +1247,15 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                   ].map((d, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]"
+                      className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200"
                     >
                       <div>
-                        <p className="font-bold text-[#202124]">{d.drug}</p>
-                        <p className="text-[10px] text-[#5F6368]">
+                        <p className="font-bold text-slate-900">{d.drug}</p>
+                        <p className="text-[10px] text-slate-500">
                           {d.route} &bull; Duration: {d.dur}
                         </p>
                       </div>
-                      <span className="font-mono font-bold text-[#1A73E8]">
+                      <span className="font-mono font-bold text-blue-600">
                         {d.dose}
                       </span>
                     </div>
@@ -1227,21 +1263,21 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                 </div>
 
                 {/* 6h & 24h Surveillance Checklist */}
-                <div className="pt-2 border-t border-[#F1F3F4] space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#202124]">
+                <div className="pt-2 border-t border-slate-100 space-y-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
                     6h & 24h Clinical Surveillance Checklist
                   </h4>
-                  <div className="space-y-1.5 text-xs text-[#5F6368]">
-                    <div className="p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]">
-                      <span className="font-bold text-[#202124]">
+                  <div className="space-y-1.5 text-xs text-slate-500">
+                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                      <span className="font-bold text-slate-900">
                         Serial Hb Drop Check (6h):{" "}
                       </span>
                       <span>
                         Trigger STAT CT if drop &gt; 2.0 g/dL (retroperitoneal bleed)
                       </span>
                     </div>
-                    <div className="p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]">
-                      <span className="font-bold text-[#202124]">
+                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                      <span className="font-bold text-slate-900">
                         Color Doppler Check (24h):{" "}
                       </span>
                       <span>
@@ -1258,21 +1294,21 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
           {activeTab === 5 && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Histopathology & ICD-10 Coding */}
-              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-3">
-                <div className="border-b border-[#F1F3F4] pb-2">
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-[#7E22CE]">
+              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
+                <div className="border-b border-slate-100 pb-2">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-purple-600">
                     Histopathology & ICD-10 Coding
                   </h3>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">
                     ICD-10 Diagnostic Code
                   </label>
                   <select
                     value={icdCode}
                     onChange={(e) => setIcdCode(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-semibold focus:border-[#1A73E8] focus:outline-none"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold focus:border-blue-600 focus:outline-none"
                   >
                     <option value="I82.0">I82.0 &bull; Budd-Chiari syndrome (HVOTO)</option>
                     <option value="K76.6">K76.6 &bull; Portal hypertension</option>
@@ -1287,62 +1323,62 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Biopsy Core Yield
                     </label>
                     <input
                       type="text"
                       value={biopsyYield}
                       onChange={(e) => setBiopsyYield(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-mono"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Needle Gauge
                     </label>
                     <input
                       type="text"
                       value={needleGauge}
                       onChange={(e) => setNeedleGauge(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-mono"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-mono"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Puncture Site
                     </label>
                     <input
                       type="text"
                       value={punctureSite}
                       onChange={(e) => setPunctureSite(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Pathology Lab ID
                     </label>
                     <input
                       type="text"
                       value={pathLabId}
                       onChange={(e) => setPathLabId(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-mono"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-mono"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">
                     Pathology Status
                   </label>
                   <select
                     value={pathStatus}
                     onChange={(e) => setPathStatus(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
                   >
                     <option value="Sample Dispatched to Pathology">
                       Sample Dispatched to Pathology
@@ -1359,22 +1395,22 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
               </div>
 
               {/* CIRSE / SIR Clinical Outcomes */}
-              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-[#DADCE0] space-y-3">
-                <div className="border-b border-[#F1F3F4] pb-2">
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-[#1A73E8]">
+              <div className="lg:col-span-6 bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
+                <div className="border-b border-slate-100 pb-2">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-blue-600">
                     CIRSE / SIR Clinical Outcomes
                   </h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Technical Success
                     </label>
                     <select
                       value={techSuccess}
                       onChange={(e) => setTechSuccess(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-bold text-[#137333]"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-emerald-700"
                     >
                       <option value="Yes - Full Technical Success">
                         Yes - Full Technical Success
@@ -1384,13 +1420,13 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Clinical Response
                     </label>
                     <select
                       value={clinicalResponse}
                       onChange={(e) => setClinicalResponse(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-semibold"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold"
                     >
                       <option value="Complete Resolution">Complete Resolution</option>
                       <option value="Partial Response">Partial Response</option>
@@ -1399,47 +1435,47 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-[10px] font-semibold text-[#5F6368]">
+                    <label className="block text-[10px] font-semibold text-slate-500">
                       Pre-Grad (mmHg)
                     </label>
                     <input
                       type="number"
                       defaultValue={22}
-                      className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                      className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-[#5F6368]">
+                    <label className="block text-[10px] font-semibold text-slate-500">
                       Post-Grad (mmHg)
                     </label>
                     <input
                       type="number"
                       defaultValue={8}
-                      className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                      className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-[#5F6368]">
+                    <label className="block text-[10px] font-semibold text-slate-500">
                       Stay (Days)
                     </label>
                     <input
                       type="number"
                       defaultValue={3}
-                      className="w-full px-2 py-1 rounded border border-[#DADCE0] text-xs font-mono"
+                      className="w-full px-2 py-1 rounded border border-slate-200 text-xs font-mono"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">
                     CIRSE Complication Classification
                   </label>
                   <select
                     value={cirseGrade}
                     onChange={(e) => setCirseGrade(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs"
                   >
                     <option value="Grade 1 (No therapy)">Grade 1 (No therapy)</option>
                     <option value="Grade 2 (Minor therapy)">Grade 2 (Minor therapy)</option>
@@ -1453,13 +1489,13 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#5F6368] mb-1">
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">
                     Follow-up Shunt Patency
                   </label>
                   <select
                     value={followupPatency}
                     onChange={(e) => setFollowupPatency(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs font-semibold"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold"
                   >
                     <option value="Patent on Doppler at 1 Month">
                       Patent on Doppler (1 Month)
@@ -1480,20 +1516,20 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
           {/* TAB 6: PROCEDURAL ATTACHMENTS & ANGIOGRAM RUNS */}
           {activeTab === 6 && (
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#F8F9FA] rounded-2xl border border-[#DADCE0]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
                 <div>
-                  <h3 className="text-sm font-bold text-[#202124] flex items-center gap-1.5">
-                    <Camera className="w-4 h-4 text-[#1A73E8]" />
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                    <Camera className="w-4 h-4 text-blue-600" />
                     Procedural Imaging &amp; Angiogram Runs
                   </h3>
-                  <p className="text-xs text-[#5F6368]">
+                  <p className="text-xs text-slate-500">
                     Verified fluoroscopy DSA runs, ultrasound Doppler scans, and CECT cross-sections for {name}
                   </p>
                 </div>
 
                 <a
                   href="/dashboard/discharge"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold transition-colors shadow-2xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors shadow-2xs"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   <span>Open in IHMS Discharge Studio</span>
@@ -1501,15 +1537,15 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
               </div>
 
               {(!patient.attachments || patient.attachments.length === 0) ? (
-                <div className="p-8 text-center border-2 border-dashed border-[#DADCE0] rounded-2xl bg-white space-y-2">
-                  <Camera className="w-10 h-10 text-[#80868B] mx-auto" />
-                  <p className="font-bold text-sm text-[#202124]">No Imaging Attached Yet</p>
-                  <p className="text-xs text-[#5F6368] max-w-md mx-auto">
+                <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-white space-y-2">
+                  <Camera className="w-10 h-10 text-slate-400 mx-auto" />
+                  <p className="font-bold text-sm text-slate-900">No Imaging Attached Yet</p>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto">
                     Procedural images attached in the IHMS Discharge Cards studio will automatically sync here to the patient dossier.
                   </p>
                   <a
                     href="/dashboard/discharge"
-                    className="inline-block mt-2 px-4 py-1.5 rounded-full border border-[#DADCE0] hover:bg-[#F1F3F4] text-xs font-semibold text-[#1A73E8]"
+                    className="inline-block mt-2 px-4 py-1.5 rounded-full border border-slate-200 hover:bg-slate-100 text-xs font-semibold text-blue-600"
                   >
                     Go to Discharge Cards &rarr;
                   </a>
@@ -1519,16 +1555,16 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                   {patient.attachments.map((att, idx) => (
                     <div
                       key={att.id || idx}
-                      className="border border-[#DADCE0] rounded-xl overflow-hidden bg-white shadow-2xs flex flex-col"
+                      className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs flex flex-col"
                     >
-                      <div className="px-3 py-2 bg-[#F8F9FA] border-b border-[#DADCE0] flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2 font-bold text-[#202124]">
-                          <span className="px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-[#1A73E8] text-white">
+                      <div className="px-3 py-2 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2 font-bold text-slate-900">
+                          <span className="px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-blue-600 text-white">
                             {att.modality}
                           </span>
                           <span className="truncate">{att.title}</span>
                         </div>
-                        <span className="text-[10px] text-[#5F6368] font-mono">{att.capturedAt}</span>
+                        <span className="text-[10px] text-slate-500 font-mono">{att.capturedAt}</span>
                       </div>
 
                       <div className="p-2 bg-black flex items-center justify-center">
@@ -1541,26 +1577,26 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
                             className="w-full max-h-48 object-contain rounded"
                           />
                         ) : (
-                          <div className="w-full h-44 bg-[#050811] rounded flex flex-col items-center justify-center text-center p-4 font-mono text-xs text-[#94A3B8]">
-                            <Camera className="w-8 h-8 text-[#38BDF8] mb-2" />
+                          <div className="w-full h-44 bg-slate-950 rounded flex flex-col items-center justify-center text-center p-4 font-mono text-xs text-slate-400">
+                            <Camera className="w-8 h-8 text-cyan-50 mb-2" />
                             <span className="font-bold text-white uppercase tracking-wider">
                               SMS Angiosuite Run [{att.modality}]
                             </span>
-                            <span className="text-[10px] text-[#4ADE80] mt-1">
+                            <span className="text-[10px] text-emerald-400 mt-1">
                               Intra-procedural Technical Check OK
                             </span>
                           </div>
                         )}
                       </div>
 
-                      <div className="p-3 text-xs space-y-1.5 flex-1 bg-white border-t border-[#DADCE0]">
-                        <p className="text-[#3C4043] leading-relaxed">
-                          <strong className="text-[#202124]">Findings:</strong> {att.caption}
+                      <div className="p-3 text-xs space-y-1.5 flex-1 bg-white border-t border-slate-200">
+                        <p className="text-slate-700 leading-relaxed">
+                          <strong className="text-slate-900">Findings:</strong> {att.caption}
                         </p>
-                        <div className="pt-2 flex items-center justify-between text-[10px] text-[#5F6368] border-t border-[#F1F3F4]">
+                        <div className="pt-2 flex items-center justify-between text-[10px] text-slate-500 border-t border-slate-100">
                           <span>SMS Medical College &bull; Angiosuite</span>
-                          <span className="font-semibold text-[#137333] flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3 text-[#137333]" />
+                          <span className="font-semibold text-emerald-700 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-700" />
                             Verified
                           </span>
                         </div>
@@ -1574,17 +1610,17 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
         </div>
 
         {/* Sticky Bottom Floating Dock */}
-        <div className="px-5 py-3 border-t border-[#DADCE0] bg-[#FFFFFF] flex items-center justify-between gap-3 shrink-0">
+        <div className="px-5 py-3 border-t border-slate-200 bg-white flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="flex items-center gap-1 px-3 py-2 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-xs font-medium transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-3 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 text-xs font-medium transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back</span>
             </button>
             {saveToast && (
-              <span className="text-xs font-bold text-[#137333] flex items-center gap-1 animate-pulse">
+              <span className="text-xs font-bold text-emerald-700 flex items-center gap-1 animate-pulse">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 {saveToast}
               </span>
@@ -1594,21 +1630,21 @@ Prescribed by: ${postedBy} | Interventional Radiology Unit`;
           <div className="flex items-center gap-2">
             <a
               href="/dashboard/discharge"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#D2E3FC] bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <FileText className="w-3.5 h-3.5 text-[#1A73E8]" />
+              <FileText className="w-3.5 h-3.5 text-blue-600" />
               <span>IHMS Discharge Card</span>
             </a>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
+              <Printer className="w-3.5 h-3.5 text-slate-500" />
               <span>Print Dossier</span>
             </button>
             <button
               onClick={handleSaveAndLock}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
             >
               <Save className="w-3.5 h-3.5" />
               <span>Save & Lock</span>

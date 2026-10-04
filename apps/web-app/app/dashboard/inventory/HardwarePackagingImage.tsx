@@ -140,7 +140,7 @@ export function HardwarePackagingImage({
         );
       case "CLOSURE":
         return (
-          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-[#5F6368]" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2">
             {/* Vascular Closure Suture / Collagen Device */}
             <rect x="18" y="15" width="24" height="30" rx="3" strokeWidth="2" fill="#E8EAED" />
             <line x1="30" y1="10" x2="30" y2="50" strokeWidth="2.5" stroke="#1A73E8" />
@@ -150,7 +150,7 @@ export function HardwarePackagingImage({
         );
       case "RETRIEVER":
         return (
-          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-[#5F6368]" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2">
             {/* Stent Retriever / Snare Basket */}
             <line x1="10" y1="30" x2="25" y2="30" strokeWidth="2.5" stroke="#1A73E8" />
             <ellipse cx="38" cy="30" rx="14" ry="9" strokeWidth="2" strokeDasharray="3 2" fill="#E8EAED" fillOpacity="0.4" />
@@ -159,7 +159,7 @@ export function HardwarePackagingImage({
         );
       case "FILTER":
         return (
-          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-[#5F6368]" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2">
             {/* Conical IVC Vena Cava Filter with Anchoring Struts */}
             <circle cx="30" cy="14" r="3" fill="#1A73E8" />
             <line x1="30" y1="14" x2="16" y2="46" strokeWidth="2" stroke="#5F6368" />
@@ -172,7 +172,7 @@ export function HardwarePackagingImage({
         );
       case "ACCESSORY":
         return (
-          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-[#5F6368]" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2">
             {/* Syringe / Y-Connector / Stopcock */}
             <rect x="20" y="16" width="20" height="28" rx="2" fill="#E8EAED" stroke="#5F6368" strokeWidth="2" />
             <line x1="30" y1="10" x2="30" y2="16" strokeWidth="3" stroke="#1A73E8" />
@@ -184,7 +184,7 @@ export function HardwarePackagingImage({
         );
       case "DRUG":
         return (
-          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-[#5F6368]" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 60 60" className="w-3/4 h-3/4 text-slate-500" fill="none" stroke="currentColor" strokeWidth="2">
             {/* Glass Pharmaceutical Vial with Flip-Off Cap */}
             <rect x="22" y="14" width="16" height="6" rx="1" fill="#EA4335" stroke="#EA4335" />
             <rect x="25" y="20" width="10" height="6" fill="#BDC1C6" />
@@ -215,7 +215,7 @@ export function HardwarePackagingImage({
           className="w-full h-full object-contain"
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-[#5F6368]">
+        <div className="w-full h-full flex items-center justify-center text-slate-500">
           {renderSilhouette()}
         </div>
       )}

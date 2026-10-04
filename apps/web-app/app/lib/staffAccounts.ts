@@ -173,6 +173,17 @@ export const INSTITUTIONAL_STAFF_ACCOUNTS: StaffAccount[] = [
     email: "tc02@sms.rajasthan.gov.in",
   },
   {
+    code: "NO01",
+    name: "Sr. Sister Sunita",
+    role: "NURSE",
+    tier: "NURSING_OFFICER",
+    title: "Nursing Officer / Sister Incharge",
+    department: "Cath-Lab Nursing",
+    avatar: "SN",
+    isActive: true,
+    email: "sunita.no@smsmc.rajasthan.gov.in",
+  },
+  {
     code: "NO07",
     name: "Mrs. Anita",
     role: "NURSE",

@@ -305,7 +305,7 @@ export async function flushQueue(
         method: mutation.method,
         headers: {
           'Content-Type': 'application/json',
-          'X-VascFlow-Offline-Replay': 'true',
+          'X-EndoFlow-Offline-Replay': 'true',
         },
         body: mutation.payload ? JSON.stringify(mutation.payload) : undefined,
       });
@@ -758,7 +758,7 @@ export async function clearAllOfflineStorage(): Promise<void> {
 if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
     flushQueue().catch((err) => {
-      console.error('[VascFlow Offline Queue] Auto-sync failed on online reconnection:', err);
+      console.error('[EndoFlow Offline Queue] Auto-sync failed on online reconnection:', err);
     });
   });
 }

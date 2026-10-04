@@ -155,7 +155,7 @@ export const PreBookingWorkupModal: React.FC<Props> = ({
 
     const text = `================================================================================
 SMS MEDICAL COLLEGE & ATTACHED HOSPITALS, JAIPUR
-DEPARTMENT OF RADIODIAGNOSIS & INTERVENTIONAL RADIOLOGY
+DEPARTMENT OF INTERVENTIONAL RADIOLOGY
 INTERVENTIONAL RADIOLOGY PRE-PROCEDURE WORKUP & BOOKING DOSSIER
 ================================================================================
 PATIENT NAME : ${name} | AGE/SEX: ${age}Y / ${gender}
@@ -224,14 +224,14 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto font-sans">
       {/* Container Card */}
-      <div className="bg-white text-[#202124] rounded-2xl shadow-2xl border border-[#DADCE0] max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden my-auto print:max-w-none print:w-full print:max-h-none print:shadow-none print:border-none print:m-0 print:rounded-none">
+      <div className="bg-white text-slate-900 rounded-2xl shadow-2xl border border-slate-200 max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden my-auto print:max-w-none print:w-full print:max-h-none print:shadow-none print:border-none print:m-0 print:rounded-none">
         
         {/* Top Control Bar (Hidden on Print) */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-[#DADCE0] bg-gray-50/80 print:hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-gray-50/80 print:hidden">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#1A73E8]" />
+            <FileText className="w-5 h-5 text-blue-600" />
             <div>
-              <span className="font-bold text-sm text-[#202124]">
+              <span className="font-bold text-sm text-slate-900">
                 IR Pre-Booking Clinical Workup &amp; Dossier
               </span>
               <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-medium">
@@ -243,7 +243,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           <div className="flex items-center gap-2">
             <button
               onClick={handleResetDefaults}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#DADCE0] bg-white hover:bg-gray-100 text-xs text-[#5F6368] font-medium transition"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-gray-100 text-xs text-slate-500 font-medium transition"
               title="Reset template to protocol defaults"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -252,7 +252,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
 
             <button
               onClick={handleCopyText}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white hover:bg-gray-100 text-xs font-semibold text-[#1A73E8] transition shadow-sm"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-gray-100 text-xs font-semibold text-blue-600 transition shadow-sm"
               title="Copy Rajasthan IHMS formatted text"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -261,7 +261,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
 
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white hover:bg-gray-100 text-xs font-bold text-[#202124] shadow-sm transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-gray-100 text-xs font-bold text-slate-900 shadow-sm transition"
             >
               <Printer className="w-3.5 h-3.5 text-rose-600" />
               <span>Print Dossier</span>
@@ -269,7 +269,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg border border-[#DADCE0] hover:bg-gray-200 text-[#5F6368] transition"
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-gray-200 text-slate-500 transition"
               title="Close"
             >
               <X className="w-4 h-4" />
@@ -282,16 +282,16 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           
           {/* Institutional Letterhead Header */}
           <div className="text-center pb-4 border-b-2 border-black/80 space-y-1">
-            <div className="text-[11px] uppercase tracking-widest text-[#5F6368] font-semibold print:text-black">
+            <div className="text-xs uppercase tracking-widest text-slate-500 font-semibold print:text-black">
               Government of Rajasthan • Department of Medical Education
             </div>
-            <h1 className="text-lg sm:text-xl font-black tracking-tight text-[#202124] print:text-black">
+            <h1 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 print:text-black">
               SAWAI MAN SINGH (SMS) MEDICAL COLLEGE &amp; ATTACHED HOSPITALS, JAIPUR
             </h1>
-            <h2 className="text-xs sm:text-sm font-bold text-[#1A73E8] tracking-wide print:text-black">
+            <h2 className="text-xs sm:text-sm font-bold text-blue-600 tracking-wide print:text-black">
               DEPARTMENT OF RADIODIAGNOSIS &amp; INTERVENTIONAL RADIOLOGY
             </h2>
-            <div className="inline-block mt-1 px-3 py-0.5 bg-black text-white text-[11px] font-bold uppercase tracking-wider rounded print:bg-black print:text-white">
+            <div className="inline-block mt-1 px-3 py-0.5 bg-black text-white text-xs font-bold uppercase tracking-wider rounded print:bg-black print:text-white">
               INTERVENTIONAL RADIOLOGY PRE-PROCEDURE WORKUP &amp; BOOKING DOSSIER
             </div>
           </div>
@@ -300,7 +300,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           <div className="border border-black/30 rounded-xl p-3 bg-gray-50/40 print:bg-white print:border-black print:rounded-none">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">Patient Name:</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">Patient Name:</span>
                 <input
                   type="text"
                   value={name}
@@ -311,7 +311,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 />
               </div>
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">Age / Gender:</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">Age / Gender:</span>
                 <div className="flex items-center gap-1">
                   <input
                     type="number"
@@ -334,7 +334,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 </div>
               </div>
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">CR No (HID):</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">CR No (HID):</span>
                 <input
                   type="text"
                   value={crNo}
@@ -345,7 +345,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 />
               </div>
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">IPD / Bed No:</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">IPD / Bed No:</span>
                 <div className="flex items-center gap-1">
                   <input
                     type="text"
@@ -367,7 +367,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 </div>
               </div>
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">Contact Phone:</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">Contact Phone:</span>
                 <input
                   type="text"
                   value={phone}
@@ -378,7 +378,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 />
               </div>
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">Scheme / Coverage:</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">Scheme / Coverage:</span>
                 <input
                   type="text"
                   value={scheme}
@@ -389,7 +389,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 />
               </div>
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">Procedure Date:</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">Procedure Date:</span>
                 <input
                   type="date"
                   value={procedureDate}
@@ -400,7 +400,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 />
               </div>
               <div>
-                <span className="text-[#5F6368] block text-[10px] uppercase font-bold print:text-black">Urgency Tier:</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold print:text-black">Urgency Tier:</span>
                 <select
                   value={urgencyTier}
                   onChange={(e) => setUrgencyTier(e.target.value as any)}
@@ -417,7 +417,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           {/* Main Heading: Diagnosis & Planned Procedure */}
           <div className="border border-black/40 rounded-xl p-3.5 bg-blue-50/40 print:bg-white print:border-black print:rounded-none space-y-2">
             <div>
-              <span className="text-[10px] uppercase font-black tracking-wider text-[#1A73E8] block print:text-black">
+              <span className="text-[10px] uppercase font-black tracking-wider text-blue-600 block print:text-black">
                 Primary Clinical Diagnosis:
               </span>
               <input
@@ -426,12 +426,12 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 onChange={(e) => setDiagnosis(e.target.value)}
                 autoComplete="off"
                 data-lpignore="true"
-                className="w-full font-bold text-sm text-[#202124] bg-transparent border-b border-dashed border-blue-300 focus:border-blue-700 focus:outline-none print:border-none print:text-black"
+                className="w-full font-bold text-sm text-slate-900 bg-transparent border-b border-dashed border-blue-300 focus:border-blue-700 focus:outline-none print:border-none print:text-black"
               />
             </div>
 
             <div>
-              <span className="text-[10px] uppercase font-black tracking-wider text-[#1A73E8] block print:text-black">
+              <span className="text-[10px] uppercase font-black tracking-wider text-blue-600 block print:text-black">
                 Planned Interventional Procedure:
               </span>
               <input
@@ -448,11 +448,11 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           {/* Section 1: Structured Clinical History & Pre-Labeled Durations */}
           <div className="space-y-2">
             <div className="flex items-center justify-between border-b border-black/40 pb-1">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-[#202124] flex items-center gap-1.5 print:text-black">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-1.5 print:text-black">
                 <span className="w-4 h-4 rounded-full bg-black text-white text-[10px] flex items-center justify-center font-mono">1</span>
                 <span>Common Clinical History &amp; Presenting Complaints</span>
               </h3>
-              <span className="text-[10px] text-[#5F6368] font-medium print:hidden">Check symptoms &amp; adjust durations</span>
+              <span className="text-[10px] text-slate-500 font-medium print:hidden">Check symptoms &amp; adjust durations</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -460,7 +460,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 <div
                   key={item.id}
                   className={`flex items-start justify-between gap-2 p-2 rounded-lg border ${
-                    item.defaultPresent ? 'bg-white border-[#DADCE0]' : 'bg-gray-50/70 border-dashed border-gray-200 text-gray-500'
+                    item.defaultPresent ? 'bg-white border-slate-200' : 'bg-gray-50/70 border-dashed border-gray-200 text-gray-500'
                   } print:bg-white print:border-none print:p-1`}
                 >
                   <label className="flex items-start gap-2 cursor-pointer flex-1">
@@ -473,14 +473,14 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                           prev.map((h, i) => (i === idx ? { ...h, defaultPresent: checked } : h))
                         );
                       }}
-                      className="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] print:text-black"
+                      className="mt-0.5 rounded border-slate-200 text-blue-600 print:text-black"
                     />
                     <span className="font-medium leading-tight">{item.label}</span>
                   </label>
 
                   {item.defaultPresent && (
                     <div className="flex items-center gap-1 shrink-0">
-                      <span className="text-[10px] text-[#5F6368] uppercase font-mono print:text-black">Duration:</span>
+                      <span className="text-[10px] text-slate-500 uppercase font-mono print:text-black">Duration:</span>
                       <input
                         type="text"
                         value={item.defaultDuration}
@@ -490,7 +490,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                             prev.map((h, i) => (i === idx ? { ...h, defaultDuration: val } : h))
                           );
                         }}
-                        className="px-1.5 py-0.5 border border-[#DADCE0] rounded text-[11px] font-bold w-24 bg-white focus:outline-none focus:border-blue-600 print:border-none print:w-auto"
+                        className="px-1.5 py-0.5 border border-slate-200 rounded text-xs font-bold w-24 bg-white focus:outline-none focus:border-blue-600 print:border-none print:w-auto"
                       />
                     </div>
                   )}
@@ -500,7 +500,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
 
             {/* Custom Clinical History Gap */}
             <div className="pt-2">
-              <label className="block text-[11px] font-bold text-[#202124] mb-1 print:text-black">
+              <label className="block text-xs font-bold text-slate-900 mb-1 print:text-black">
                 Additional Clinical History &amp; Specific Patient Notes (Custom Gap):
               </label>
               <textarea
@@ -510,7 +510,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 autoComplete="off"
                 data-lpignore="true"
                 placeholder="Enter any other specific clinical details, past medical interventions, comorbidities, or custom patient observations..."
-                className="w-full text-xs p-2.5 rounded-lg border border-[#DADCE0] bg-white focus:outline-none focus:border-blue-600 print:border-black/30 print:p-1"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:border-blue-600 print:border-black/30 print:p-1"
               />
             </div>
           </div>
@@ -518,7 +518,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           {/* Section 2: Pre-Procedure Imaging & Anatomical Screening */}
           <div className="space-y-2">
             <div className="flex items-center justify-between border-b border-black/40 pb-1">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-[#202124] flex items-center gap-1.5 print:text-black">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-1.5 print:text-black">
                 <span className="w-4 h-4 rounded-full bg-black text-white text-[10px] flex items-center justify-center font-mono">2</span>
                 <span>Pre-Procedure Imaging &amp; Anatomical Screening Checklist</span>
               </h3>
@@ -526,8 +526,8 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
 
             <div className="space-y-2 text-xs">
               {screeningItems.map((scr, idx) => (
-                <div key={scr.id} className="p-2 rounded-lg border border-[#DADCE0] bg-gray-50/40 print:bg-white print:border-none print:p-0.5">
-                  <span className="font-bold block text-[11px] text-[#202124] mb-1 print:text-black">
+                <div key={scr.id} className="p-2 rounded-lg border border-slate-200 bg-gray-50/40 print:bg-white print:border-none print:p-0.5">
+                  <span className="font-bold block text-xs text-slate-900 mb-1 print:text-black">
                     {scr.label}:
                   </span>
                   {scr.options && scr.options.length > 0 ? (
@@ -539,7 +539,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                           prev.map((s, i) => (i === idx ? { ...s, defaultValue: val } : s))
                         );
                       }}
-                      className="w-full p-1.5 border border-[#DADCE0] rounded text-xs bg-white focus:outline-none focus:border-blue-600 print:border-none print:p-0 print:font-semibold"
+                      className="w-full p-1.5 border border-slate-200 rounded text-xs bg-white focus:outline-none focus:border-blue-600 print:border-none print:p-0 print:font-semibold"
                     >
                       {scr.options.map((opt) => (
                         <option key={opt} value={opt}>{opt}</option>
@@ -558,7 +558,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                           prev.map((s, i) => (i === idx ? { ...s, defaultValue: val } : s))
                         );
                       }}
-                      className="w-full p-1.5 border border-[#DADCE0] rounded text-xs bg-white focus:outline-none focus:border-blue-600 print:border-none print:p-0 print:font-semibold"
+                      className="w-full p-1.5 border border-slate-200 rounded text-xs bg-white focus:outline-none focus:border-blue-600 print:border-none print:p-0 print:font-semibold"
                     />
                   )}
                 </div>
@@ -569,18 +569,18 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           {/* Section 3: Hardware & Consumables Checklist */}
           <div className="space-y-2">
             <div className="flex items-center justify-between border-b border-black/40 pb-1">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-[#202124] flex items-center gap-1.5 print:text-black">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-1.5 print:text-black">
                 <span className="w-4 h-4 rounded-full bg-black text-white text-[10px] flex items-center justify-center font-mono">3</span>
                 <span>Hardware &amp; Consumables Checklist</span>
               </h3>
-              <span className="text-[10px] text-[#5F6368] font-medium print:hidden">Checklist for Cath-Lab Nurse &amp; Tech</span>
+              <span className="text-[10px] text-slate-500 font-medium print:hidden">Checklist for Cath-Lab Nurse &amp; Tech</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
               {hardwareItems.map((hw, idx) => (
                 <div
                   key={`${hw.item}-${idx}`}
-                  className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded border border-[#DADCE0] bg-white print:border-none print:py-0.5 print:px-0"
+                  className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded border border-slate-200 bg-white print:border-none print:py-0.5 print:px-0"
                 >
                   <label className="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
                     <input
@@ -592,13 +592,13 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                           prev.map((item, i) => (i === idx ? { ...item, defaultChecked: checked } : item))
                         );
                       }}
-                      className="rounded border-[#DADCE0] text-[#1A73E8] print:text-black"
+                      className="rounded border-slate-200 text-blue-600 print:text-black"
                     />
                     <span className="truncate font-medium">{hw.item}</span>
                   </label>
 
-                  <div className="flex items-center gap-1.5 shrink-0 font-mono text-[11px]">
-                    <span className="text-[#5F6368] print:text-black">Qty:</span>
+                  <div className="flex items-center gap-1.5 shrink-0 font-mono text-xs">
+                    <span className="text-slate-500 print:text-black">Qty:</span>
                     <input
                       type="text"
                       value={hw.quantity}
@@ -610,7 +610,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                           prev.map((item, i) => (i === idx ? { ...item, quantity: val } : item))
                         );
                       }}
-                      className="w-12 text-center font-bold px-1 py-0.5 border border-[#DADCE0] rounded bg-gray-50 focus:outline-none print:border-none print:bg-white"
+                      className="w-12 text-center font-bold px-1 py-0.5 border border-slate-200 rounded bg-gray-50 focus:outline-none print:border-none print:bg-white"
                     />
                     <button
                       onClick={() => removeHardwareItem(idx)}
@@ -633,7 +633,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 autoComplete="off"
                 data-lpignore="true"
                 onChange={(e) => setNewHardwareItem(e.target.value)}
-                className="flex-1 px-2.5 py-1.5 text-xs border border-[#DADCE0] rounded-lg focus:outline-none focus:border-blue-600"
+                className="flex-1 px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600"
               />
               <input
                 type="text"
@@ -642,11 +642,11 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
                 autoComplete="off"
                 data-lpignore="true"
                 onChange={(e) => setNewHardwareQty(e.target.value)}
-                className="w-16 px-2 py-1.5 text-xs text-center border border-[#DADCE0] rounded-lg focus:outline-none"
+                className="w-16 px-2 py-1.5 text-xs text-center border border-slate-200 rounded-lg focus:outline-none"
               />
               <button
                 onClick={addHardwareItem}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#DADCE0] bg-white hover:bg-gray-100 text-xs font-semibold text-[#1A73E8]"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-gray-100 text-xs font-semibold text-blue-600"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Hardware</span>
@@ -657,11 +657,11 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           {/* Section 4: Current Procedural Plan & Strategy (At the End) */}
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between border-b border-black/40 pb-1">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-[#202124] flex items-center gap-1.5 print:text-black">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-1.5 print:text-black">
                 <span className="w-4 h-4 rounded-full bg-black text-white text-[10px] flex items-center justify-center font-mono">4</span>
                 <span>Current Procedural Plan &amp; Execution Strategy</span>
               </h3>
-              <span className="text-[10px] text-[#5F6368] font-medium print:hidden">Clinician's Step-by-Step Plan</span>
+              <span className="text-[10px] text-slate-500 font-medium print:hidden">Clinician's Step-by-Step Plan</span>
             </div>
 
             <textarea
@@ -677,22 +677,22 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           {/* Sign-Off Block */}
           <div className="pt-6 border-t border-black/30 flex items-end justify-between text-xs print:pt-4">
             <div className="space-y-1">
-              <div className="text-[10px] uppercase font-bold text-[#5F6368] print:text-black">
+              <div className="text-[10px] uppercase font-bold text-slate-500 print:text-black">
                 Interventional Radiology Angiosuite Team
               </div>
-              <div className="text-xs font-semibold text-[#202124]">
+              <div className="text-xs font-semibold text-slate-900">
                 SMS Medical College &amp; Attached Hospitals, Jaipur
               </div>
-              <div className="text-[10px] text-[#5F6368] font-mono">
+              <div className="text-[10px] text-slate-500 font-mono">
                 Date &amp; Time Generated: {new Date().toLocaleDateString('en-GB')} {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
 
             <div className="text-right space-y-10">
               <div className="border-b border-black w-48 ml-auto"></div>
-              <div className="text-xs font-bold text-[#202124] print:text-black">
+              <div className="text-xs font-bold text-slate-900 print:text-black">
                 Operating Interventional Radiologist / Senior Resident
-                <span className="block text-[10px] font-normal text-[#5F6368] print:text-black">Department of Radiodiagnosis &amp; IR</span>
+                <span className="block text-[10px] font-normal text-slate-500 print:text-black">Department of Radiodiagnosis &amp; IR</span>
               </div>
             </div>
           </div>
@@ -700,7 +700,7 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
         </div>
 
         {/* Footer Actions (Hidden on Print) */}
-        <div className="p-3 bg-gray-50 border-t border-[#DADCE0] flex items-center justify-between text-xs print:hidden">
+        <div className="p-3 bg-gray-50 border-t border-slate-200 flex items-center justify-between text-xs print:hidden">
           <div className="flex items-center gap-1.5 text-emerald-700 font-medium">
             <CheckCircle2 className="w-4 h-4" />
             <span>Ready for Procedure Pre-Booking &amp; Clinical Printout</span>
@@ -709,14 +709,14 @@ Department of Radiodiagnosis & Interventional Radiology, SMS Hospital, Jaipur
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[#DADCE0] bg-white hover:bg-gray-100 text-xs font-bold text-[#202124] shadow-sm transition"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-gray-100 text-xs font-bold text-slate-900 shadow-sm transition"
             >
               <Printer className="w-4 h-4 text-rose-600" />
               <span>Print Workup Dossier</span>
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-[#DADCE0] bg-white hover:bg-gray-100 text-xs font-medium text-[#5F6368]"
+              className="px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-gray-100 text-xs font-medium text-slate-500"
             >
               Close
             </button>

@@ -186,28 +186,28 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Live Reactive Analytics Banner */}
-      <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/60 to-purple-50/50 rounded-2xl border border-blue-100 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Biostatistical Analytics Banner */}
+      <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/60 to-purple-50/50 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#1A73E8] text-white">
-              LIVE BIOSTATISTICAL ENGINE
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-600 text-white">
+              BIOSTATISTICAL ANALYSIS
             </span>
-            <span className="text-xs font-semibold text-[#5F6368]">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
               {paper.shortName} ({paper.code}) &bull; {paper.targetJournal.split("(")[0]}
             </span>
           </div>
-          <h2 className="text-lg font-bold text-[#202124] mt-1.5">
-            On-The-Go Reactive Analysis (Cohort N = {stats.totalN})
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1.5">
+            Statistical Analytics (Cohort N = {stats.totalN})
           </h2>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            All biostatistical metrics, percentages, and contingency distributions re-compute dynamically as you enter data in the sheet.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Statistical metrics, confidence intervals, and contingency distributions calculated from verified registry data.
           </p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-xs rounded-xl border border-blue-200 px-4 py-3 shrink-0 shadow-2xs">
-          <div className="text-[11px] font-medium text-[#5F6368]">Retrospective Audit Progress</div>
-          <div className="text-base font-bold text-[#1A73E8]">
+        <div className="bg-white/90 dark:bg-slate-900 backdrop-blur-xs rounded-xl border border-slate-300 dark:border-slate-700 px-4 py-3 shrink-0 shadow-2xs">
+          <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Retrospective Audit Progress</div>
+          <div className="text-base font-bold text-blue-600 dark:text-blue-400">
             {stats.reviewedCount} of {stats.totalN} cases (
             {Math.round((stats.reviewedCount / (stats.totalN || 1)) * 100)}%)
           </div>
@@ -217,95 +217,95 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
       {/* 4 Core Primary Statistical Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Primary Technical Success */}
-        <div className="bg-white rounded-xl border border-[#DADCE0] p-4 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-4 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#5F6368]">Primary Technical Success</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Primary Technical Success</span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-emerald-700">
+          <div className="mt-2 text-2xl font-bold text-emerald-700 dark:text-emerald-400">
             {stats.successPct.toFixed(1)}%
           </div>
-          <p className="text-[11px] text-[#5F6368] mt-1 font-mono">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-mono">
             {stats.successCases} / {stats.totalN} cases
           </p>
-          <div className="mt-2 pt-2 border-t border-gray-100 text-[11px] text-gray-500">
+          <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400">
             Wilson 95% CI: [{stats.successCi.low.toFixed(1)}% – {stats.successCi.high.toFixed(1)}%]
           </div>
         </div>
 
         {/* Adverse Events & Complications */}
-        <div className="bg-white rounded-xl border border-[#DADCE0] p-4 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-4 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#5F6368]">Complications / Adverse Events</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Complications / Adverse Events</span>
+            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-red-600">
+          <div className="mt-2 text-2xl font-bold text-red-600 dark:text-red-400">
             {stats.compPct.toFixed(1)}%
           </div>
-          <p className="text-[11px] text-[#5F6368] mt-1 font-mono">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-mono">
             {stats.compCases} / {stats.totalN} cases
           </p>
-          <div className="mt-2 pt-2 border-t border-gray-100 text-[11px] text-gray-500">
+          <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400">
             Wilson 95% CI: [{stats.compCi.low.toFixed(1)}% – {stats.compCi.high.toFixed(1)}%]
           </div>
         </div>
 
         {/* Demographics & Age */}
-        <div className="bg-white rounded-xl border border-[#DADCE0] p-4 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-4 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#5F6368]">Patient Age Demographics</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Patient Age Demographics</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-[#202124]">
+          <div className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">
             {stats.meanAge > 0 ? `${stats.meanAge.toFixed(1)}y` : "—"}
           </div>
-          <p className="text-[11px] text-[#5F6368] mt-1">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
             Mean &plusmn; SD: {stats.meanAge.toFixed(1)} &plusmn; {stats.stdAge.toFixed(1)} yrs
           </p>
-          <div className="mt-2 pt-2 border-t border-gray-100 text-[11px] text-gray-500">
+          <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400">
             Median: {stats.medianAge.toFixed(1)}y (IQR: {stats.iqrLow}-{stats.iqrHigh})
           </div>
         </div>
 
         {/* Gender Ratio */}
-        <div className="bg-white rounded-xl border border-[#DADCE0] p-4 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-4 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#5F6368]">Sex / Gender Ratio</span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Sex / Gender Ratio</span>
+            <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
               <PieChart className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-purple-700">
+          <div className="mt-2 text-2xl font-bold text-purple-700 dark:text-purple-400">
             {stats.males}M / {stats.females}F
           </div>
-          <p className="text-[11px] text-[#5F6368] mt-1">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
             {stats.totalN > 0 ? ((stats.males / stats.totalN) * 100).toFixed(1) : 0}% Male
           </p>
-          <div className="mt-2 pt-2 border-t border-gray-100 text-[11px] text-gray-500">
+          <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400">
             {stats.females} Female ({stats.totalN > 0 ? ((stats.females / stats.totalN) * 100).toFixed(1) : 0}%)
           </div>
         </div>
       </div>
 
       {/* Primary Classification Distribution Chart */}
-      <div className="bg-white rounded-xl border border-[#DADCE0] p-5 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-[#202124] flex items-center gap-2">
-              <BarChart className="w-4 h-4 text-[#1A73E8]" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <BarChart className="w-4 h-4 text-blue-600" />
               {paper.primaryClassificationName} Breakdown
             </h3>
-            <p className="text-xs text-[#5F6368]">
-              Real-time stratification of the cohort according to the paper&apos;s primary staging system.
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Stratification of the cohort according to the paper&apos;s primary staging system.
             </p>
           </div>
-          <span className="text-xs font-medium text-[#5F6368]">
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
             {stats.totalN - stats.unclassifiedCount} / {stats.totalN} classified
           </span>
         </div>
@@ -318,14 +318,14 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
             return (
               <div key={opt} className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#202124]">{opt}</span>
-                  <span className="font-mono text-[#5F6368]">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">{opt}</span>
+                  <span className="font-mono text-slate-500 dark:text-slate-400">
                     <strong>{count}</strong> ({pct.toFixed(1)}%)
                   </span>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                <div className="w-full bg-gray-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
                   <div
-                    className="bg-[#1A73E8] h-2.5 rounded-full transition-all duration-300"
+                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -335,14 +335,14 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
 
           {stats.unclassifiedCount > 0 && (
             <div className="space-y-1 pt-1">
-              <div className="flex items-center justify-between text-xs text-amber-700">
+              <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-400">
                 <span className="italic font-medium">Unclassified / Awaiting Review</span>
                 <span className="font-mono">
                   <strong>{stats.unclassifiedCount}</strong> (
                   {((stats.unclassifiedCount / stats.totalN) * 100).toFixed(1)}%)
                 </span>
               </div>
-              <div className="w-full bg-amber-100 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-amber-100 dark:bg-amber-950/40 rounded-full h-2 overflow-hidden">
                 <div
                   className="bg-amber-500 h-2 rounded-full transition-all"
                   style={{ width: `${(stats.unclassifiedCount / stats.totalN) * 100}%` }}
@@ -355,19 +355,19 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
 
       {/* Multivariable / Landing Zone Contingency Table (When Applicable) */}
       {paper.landingZoneRelevant && (
-        <div className="bg-white rounded-xl border border-[#DADCE0] p-5 shadow-xs space-y-3">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-5 shadow-xs space-y-3">
           <div>
-            <h3 className="text-sm font-bold text-[#202124]">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
               Landing Zone Adequacy vs. Complication &amp; Rebleed Contingency
             </h3>
-            <p className="text-xs text-[#5F6368]">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Univariate comparison showing complication distribution across proximal/distal landing zone lengths.
             </p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left border-collapse">
-              <thead className="bg-[#F8F9FA] text-[#202124] border-b border-[#DADCE0]">
+              <thead className="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-b border-slate-300 dark:border-slate-700">
                 <tr>
                   <th className="py-2.5 px-3 font-semibold">Landing Zone Category</th>
                   <th className="py-2.5 px-3 font-semibold text-center">Total Cases (n)</th>
@@ -375,17 +375,17 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
                   <th className="py-2.5 px-3 font-semibold text-center">Adverse Event Rate (%)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DADCE0]">
+              <tbody className="divide-y divide-slate-300 dark:divide-slate-700">
                 {Object.entries(stats.landingComp).map(([zone, data]) => {
                   const rate = data.total > 0 ? (data.complications / data.total) * 100 : 0;
                   return (
-                    <tr key={zone} className="hover:bg-gray-50">
-                      <td className="py-2.5 px-3 font-medium text-[#202124]">{zone}</td>
-                      <td className="py-2.5 px-3 text-center font-mono">{data.total}</td>
-                      <td className="py-2.5 px-3 text-center font-mono font-semibold text-red-600">
+                    <tr key={zone} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                      <td className="py-2.5 px-3 font-medium text-slate-900 dark:text-slate-100">{zone}</td>
+                      <td className="py-2.5 px-3 text-center font-mono dark:text-slate-200">{data.total}</td>
+                      <td className="py-2.5 px-3 text-center font-mono font-semibold text-red-600 dark:text-red-400">
                         {data.complications}
                       </td>
-                      <td className="py-2.5 px-3 text-center font-mono font-bold">
+                      <td className="py-2.5 px-3 text-center font-mono font-bold dark:text-slate-200">
                         {rate.toFixed(1)}%
                       </td>
                     </tr>
@@ -398,18 +398,18 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
       )}
 
       {/* Radiation Dosimetry Telemetry Strip */}
-      <div className="bg-[#F8F9FA] rounded-xl border border-[#DADCE0] p-4 text-xs flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-[#5F6368]">
+      <div className="bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 p-4 text-xs flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
           <Zap className="w-4 h-4 text-amber-600" />
           <span>Radiation Dosimetry Records (DICOM Tags 0018,115E &amp; 0018,115A):</span>
         </div>
-        <div className="flex items-center gap-6 font-medium text-[#202124]">
+        <div className="flex items-center gap-6 font-medium text-slate-900 dark:text-slate-100">
           <div>
             Mean Fluoroscopy Time:{" "}
             <strong>
               {stats.meanFluoro !== null ? `${stats.meanFluoro.toFixed(1)} mins` : "Pending Entry"}
             </strong>{" "}
-            <span className="text-[#5F6368] font-normal font-mono">
+            <span className="text-slate-500 dark:text-slate-400 font-normal font-mono">
               ({stats.validFluoroCount} logged)
             </span>
           </div>
@@ -418,7 +418,7 @@ export function ReactiveAnalytics({ paper, cases }: ReactiveAnalyticsProps) {
             <strong>
               {stats.meanDap !== null ? `${stats.meanDap.toFixed(0)} Gy.cm²` : "Pending Entry"}
             </strong>{" "}
-            <span className="text-[#5F6368] font-normal font-mono">
+            <span className="text-slate-500 dark:text-slate-400 font-normal font-mono">
               ({stats.validDapCount} logged)
             </span>
           </div>

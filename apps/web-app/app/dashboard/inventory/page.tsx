@@ -313,12 +313,15 @@ export default function InventoryDashboard() {
     setDepletionFeedback(null);
     setDepletionIsError(false);
 
-    const activePatient = currentPatient || {
-      id: "PT01",
-      crNumber: "SMS-2026-089",
-      patientName: "Ramswaroop Meena",
-      procedureTitle: "Direct Transcaval Portosystemic Shunt (DIPS)",
-    };
+    // Depletion must be attributable to a real patient. If none is selected,
+    // abort rather than write the transaction against an invented record.
+    const activePatient = currentPatient;
+    if (!activePatient) {
+      setDepletionFeedback("Select an admitted patient before recording depletion.");
+      setDepletionIsError(true);
+      setIsDepleting(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/inventory/deplete", {
@@ -417,23 +420,23 @@ export default function InventoryDashboard() {
   };
 
   return (
-    <div className="flex flex-col gap-5 max-w-7xl mx-auto font-sans text-[#202124]">
+    <div className="flex flex-col gap-5 max-w-7xl mx-auto font-sans text-slate-900">
       {/* Top Banner Header with RBAC Operator Console */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-[#DADCE0] shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
         <div className="flex items-center gap-3.5">
           <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
             <Package className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-semibold text-[#202124]">
+              <h1 className="text-base font-semibold text-slate-900">
                 Hardware Inventory &amp; Depletion Ledger
               </h1>
-              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-slate-700 border border-slate-200">
                 Angiosuite Inventory
               </span>
             </div>
-            <p className="text-xs text-[#5F6368] mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Sterile endovascular hardware, diagnostic consumables, and implant tracking
             </p>
           </div>
@@ -441,15 +444,15 @@ export default function InventoryDashboard() {
 
         {/* RBAC Operator Identification and Barcode Scanner */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-1.5 bg-[#F8F9FA] px-2.5 py-1.5 rounded-lg border border-[#DADCE0] text-xs">
-            <span className="text-[#5F6368] font-medium">Logged In:</span>
+          <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs">
+            <span className="text-slate-500 font-medium">Logged In:</span>
             <select
               value={currentStaff?.code || "DM01"}
               onChange={(e) => {
                 const found = INSTITUTIONAL_STAFF_ACCOUNTS.find((s) => s.code === e.target.value);
                 if (found) setCurrentStaff(found);
               }}
-              className="bg-transparent font-bold text-[#202124] focus:outline-none cursor-pointer"
+              className="bg-transparent font-bold text-slate-900 focus:outline-none cursor-pointer"
             >
               {INSTITUTIONAL_STAFF_ACCOUNTS.map((staff) => (
                 <option key={staff.code} value={staff.code}>
@@ -460,20 +463,20 @@ export default function InventoryDashboard() {
           </div>
 
           {isTechnician ? (
-            <span className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-[#137333] border border-emerald-200 flex items-center gap-1.5 shadow-xs">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#137333]" />
+            <span className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
               <span>Technician (+/- Stock Adjust Active)</span>
             </span>
           ) : (
-            <span className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-[#B06000] border border-amber-200 flex items-center gap-1.5 shadow-xs">
-              <Lock className="w-3.5 h-3.5 text-[#B06000]" />
+            <span className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1.5 shadow-xs">
+              <Lock className="w-3.5 h-3.5 text-amber-700" />
               <span>{currentStaff?.role || "CLINICAL"} (Read-Only Inventory)</span>
             </span>
           )}
 
           <button
             onClick={() => setIsScannerOpen(true)}
-            className="px-3.5 py-2 rounded-lg bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-xs flex items-center gap-2 transition cursor-pointer shadow-xs"
+            className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs flex items-center gap-2 transition cursor-pointer shadow-xs"
           >
             <Scan className="w-4 h-4" />
             <span>Scan Barcode / RFID</span>
@@ -483,28 +486,28 @@ export default function InventoryDashboard() {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-[#DADCE0] flex items-center justify-between shadow-xs">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-xs text-[#5F6368]">Total Implants Stocked</span>
-            <div className="text-xl font-semibold text-[#202124] font-mono mt-0.5">{totalImplantsCount}</div>
-            <span className="text-[11px] text-[#5F6368]">{stockItems.length} Master SKUs (Needles to Shunts)</span>
+            <span className="text-xs text-slate-500">Total Implants Stocked</span>
+            <div className="text-xl font-semibold text-slate-900 font-mono mt-0.5">{totalImplantsCount}</div>
+            <span className="text-[11px] text-slate-500">{stockItems.length} Master SKUs (Needles to Shunts)</span>
           </div>
-          <div className="p-2 rounded-lg bg-gray-50 text-gray-600 border border-[#DADCE0]">
+          <div className="p-2 rounded-lg bg-gray-50 text-gray-600 border border-slate-200">
             <Layers className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#DADCE0] flex items-center justify-between shadow-xs">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-xs text-[#5F6368]">Low-Stock Alerts</span>
+            <span className="text-xs text-slate-500">Low-Stock Alerts</span>
             <div
               className={`text-xl font-semibold font-mono mt-0.5 ${
-                lowStockCount > 0 ? "text-[#C5221F]" : "text-[#137333]"
+                lowStockCount > 0 ? "text-rose-700" : "text-emerald-700"
               }`}
             >
               {lowStockCount}
             </div>
-            <span className="text-[11px] text-[#5F6368]">Below Reorder Level</span>
+            <span className="text-[11px] text-slate-500">Below Reorder Level</span>
           </div>
           <div
             className={`p-2 rounded-lg border ${
@@ -517,24 +520,24 @@ export default function InventoryDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#DADCE0] flex items-center justify-between shadow-xs">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-xs text-[#5F6368]">RMSCL Alignment</span>
-            <div className="text-xl font-semibold text-[#137333] font-mono mt-0.5">100%</div>
-            <span className="text-[11px] text-[#5F6368]">e-Aushadhi &amp; RGHS Verified</span>
+            <span className="text-xs text-slate-500">RMSCL Alignment</span>
+            <div className="text-xl font-semibold text-emerald-700 font-mono mt-0.5">100%</div>
+            <span className="text-[11px] text-slate-500">e-Aushadhi &amp; RGHS Verified</span>
           </div>
           <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
             <ShieldCheck className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#DADCE0] flex items-center justify-between shadow-xs">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-xs text-[#5F6368]">Staged for Case</span>
-            <div className="text-xl font-semibold text-[#1A73E8] font-mono mt-0.5">
+            <span className="text-xs text-slate-500">Staged for Case</span>
+            <div className="text-xl font-semibold text-blue-600 font-mono mt-0.5">
               {stagedDepletions.length}
             </div>
-            <span className="text-[11px] text-[#5F6368]">Pending Sign-Off</span>
+            <span className="text-[11px] text-slate-500">Pending Sign-Off</span>
           </div>
           <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
             <Scan className="w-4 h-4" />
@@ -544,38 +547,38 @@ export default function InventoryDashboard() {
 
       {/* 1. Staged Hardware for Case Depletion Table */}
       {stagedDepletions.length > 0 && (
-        <div className="bg-white rounded-xl border border-[#DADCE0] overflow-hidden shadow-xs">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
           {/* Standardized Table Heading Card */}
-          <div className="p-4 border-b border-[#DADCE0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8F9FA]">
+          <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
                 <Package className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-[#202124]">
+                  <h2 className="text-sm font-bold text-slate-900">
                     Hardware Inventory &amp; Depletion Ledger
                   </h2>
-                  <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
+                  <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-slate-700 border border-slate-200">
                     Angiosuite Inventory
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]">
+                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-100">
                     Staged for Case Depletion
                   </span>
                 </div>
-                <p className="text-xs text-[#5F6368] mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Pre-procedural sterile verification and atomic batch depletion
                 </p>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex items-center gap-1.5 bg-[#F8F9FA] px-3 py-1 rounded-lg border border-[#DADCE0] text-xs">
-                <span className="text-[#5F6368] font-medium">Billed To:</span>
+              <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-200 text-xs">
+                <span className="text-slate-500 font-medium">Billed To:</span>
                 <select
-                  value={selectedPatientId}
+                  value={selectedPatientId ?? ""}
                   onChange={(e) => setSelectedPatientId(e.target.value)}
-                  className="bg-transparent font-bold text-[#202124] focus:outline-none cursor-pointer"
+                  className="bg-transparent font-bold text-slate-900 focus:outline-none cursor-pointer"
                 >
                   {patients.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -584,13 +587,13 @@ export default function InventoryDashboard() {
                   ))}
                 </select>
               </div>
-              <span className="text-xs font-semibold text-[#1A73E8] bg-[#E8F0FE] px-2.5 py-1 rounded-full border border-[#D2E3FC]">
+              <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
                 {stagedDepletions.length} Item(s) Staged
               </span>
               <button
                 onClick={handleExecuteDepletion}
                 disabled={isDepleting}
-                className="px-3.5 py-1.5 rounded-lg bg-[#137333] hover:bg-[#0d5926] text-white font-medium text-xs flex items-center gap-1.5 transition disabled:opacity-50 cursor-pointer shadow-xs"
+                className="px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs flex items-center gap-1.5 transition disabled:opacity-50 cursor-pointer shadow-xs"
               >
                 <Check className="w-3.5 h-3.5" />
                 {isDepleting ? "Executing..." : "Confirm & Deplete All"}
@@ -599,8 +602,8 @@ export default function InventoryDashboard() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-[#3C4043]">
-              <thead className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[11px] font-semibold text-[#5F6368]">
+            <table className="w-full text-left text-xs text-slate-700">
+              <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500">
                 <tr>
                   <th className="px-4 py-2.5">Packaging &amp; Hardware</th>
                   <th className="px-4 py-2.5">Category</th>
@@ -610,7 +613,7 @@ export default function InventoryDashboard() {
                   <th className="px-4 py-2.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DADCE0]">
+              <tbody className="divide-y divide-slate-200">
                 {stagedDepletions.map((staged, idx) => {
                   const matchedCatalogItem = MASTER_HARDWARE_CATALOG.find(
                     (m: MasterHardwareItem) =>
@@ -635,7 +638,7 @@ export default function InventoryDashboard() {
                               onClick={() =>
                                 matchedCatalogItem && handleOpenBrochure(matchedCatalogItem)
                               }
-                              className={`font-medium text-[#202124] text-xs ${
+                              className={`font-medium text-slate-900 text-xs ${
                                 matchedCatalogItem
                                   ? "hover:text-blue-600 hover:underline cursor-pointer"
                                   : ""
@@ -643,26 +646,26 @@ export default function InventoryDashboard() {
                             >
                               {staged.catalogName}
                             </div>
-                            <div className="text-[10px] text-[#9AA0A6] font-normal mt-0.5">
+                            <div className="text-[10px] text-slate-400 font-normal mt-0.5">
                               {matchedCatalogItem?.manufacturer || "Cath-Lab Store"}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded text-[11px] bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
+                        <span className="px-2 py-0.5 rounded text-[11px] bg-gray-100 text-slate-700 border border-slate-200">
                           {staged.category || "Implants"}
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-[11px] text-[#137333]">
+                      <td className="px-4 py-3 font-mono text-[11px] text-emerald-700">
                         {staged.rmsclSku || staged.gtin || "RMSCL-DEPLETE-ITEM"}
                       </td>
-                      <td className="px-4 py-3 text-center font-mono font-bold text-xs text-[#1A73E8]">
+                      <td className="px-4 py-3 text-center font-mono font-bold text-xs text-blue-600">
                         1 Unit
                       </td>
                       <td className="px-4 py-3 font-mono text-[11px]">
-                        <div className="text-[#202124]">Lot: {staged.lotNumber}</div>
-                        <div className="text-[10px] text-[#5F6368]">Exp: {staged.expirationDate}</div>
+                        <div className="text-slate-900">Lot: {staged.lotNumber}</div>
+                        <div className="text-[10px] text-slate-500">Exp: {staged.expirationDate}</div>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex items-center gap-1.5 justify-end">
@@ -712,10 +715,10 @@ export default function InventoryDashboard() {
       )}
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col gap-3 bg-white p-3.5 rounded-xl border border-[#DADCE0] shadow-xs">
+      <div className="flex flex-col gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-[#5F6368] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Filter by Category:
             </span>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-50 text-blue-700 font-bold border border-blue-100">
@@ -730,7 +733,7 @@ export default function InventoryDashboard() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Needle, Stent, Shunt, SKU, Brand..."
-              className="w-full bg-white border border-[#DADCE0] focus:border-blue-500 rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#202124] outline-none"
+              className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-900 outline-none"
             />
           </div>
         </div>
@@ -743,8 +746,8 @@ export default function InventoryDashboard() {
               onClick={() => setActiveCategory(cat.id)}
               className={`px-3 py-1 rounded-md text-xs transition cursor-pointer ${
                 activeCategory === cat.id
-                  ? "bg-[#1A73E8] text-white font-semibold shadow-xs"
-                  : "bg-white text-[#5F6368] hover:bg-gray-50 border border-[#DADCE0]"
+                  ? "bg-blue-600 text-white font-semibold shadow-xs"
+                  : "bg-white text-slate-500 hover:bg-gray-50 border border-slate-200"
               }`}
             >
               {cat.label}
@@ -754,39 +757,39 @@ export default function InventoryDashboard() {
       </div>
 
       {/* 2. Master Hardware Ledger Table */}
-      <div className="bg-white rounded-xl border border-[#DADCE0] overflow-hidden shadow-xs">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
         {/* Standardized Table Heading Card */}
-        <div className="p-4 border-b border-[#DADCE0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8F9FA]">
+        <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
               <Package className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-[#202124]">
+                <h2 className="text-sm font-bold text-slate-900">
                   Hardware Inventory &amp; Depletion Ledger
                 </h2>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-slate-700 border border-slate-200">
                   Angiosuite Inventory
                 </span>
                 <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-blue-50 text-blue-700 font-semibold border border-blue-100">
                   {stockItems.length} SKUs (Needles to Shunts)
                 </span>
               </div>
-              <p className="text-xs text-[#5F6368] mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Active catalog with GS1 barcoding, sterile lot tracking, and reorder levels
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-mono text-[#5F6368]">
+            <span className="font-mono text-slate-500">
               Showing <strong>{filteredItems.length}</strong> of {stockItems.length} Verified SKUs
             </span>
           </div>
         </div>
 
         {/* Mobile Inventory Cards */}
-        <div className="block md:hidden divide-y divide-[#E8EAED]">
+        <div className="block md:hidden divide-y divide-slate-200">
           {filteredItems.map((item) => {
             const isLow = item.currentStock <= item.reorderLevel;
             const isCritical = item.currentStock === 0;
@@ -803,11 +806,11 @@ export default function InventoryDashboard() {
                     <div>
                       <div
                         onClick={() => handleOpenBrochure(item)}
-                        className="font-medium text-[#202124] text-xs hover:text-blue-600 hover:underline cursor-pointer"
+                        className="font-medium text-slate-900 text-xs hover:text-blue-600 hover:underline cursor-pointer"
                       >
                         {item.name}
                       </div>
-                      <div className="text-[10px] text-[#5F6368] font-mono">
+                      <div className="text-[10px] text-slate-500 font-mono">
                         {item.sku} • {item.category}
                       </div>
                     </div>
@@ -816,62 +819,62 @@ export default function InventoryDashboard() {
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
                         isCritical
-                          ? "bg-[#C5221F]"
+                          ? "bg-rose-700"
                           : isLow
-                          ? "bg-[#B06000]"
-                          : "bg-[#137333]"
+                          ? "bg-amber-700"
+                          : "bg-emerald-700"
                       }`}
                     />
                     {isCritical ? "Out of Stock" : isLow ? "Low Stock" : "Adequate"}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 bg-[#F8F9FA] p-2 rounded-lg border border-[#E8EAED] text-center text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 text-center text-xs">
                   <div>
-                    <div className="text-[10px] text-[#5F6368]">Stock</div>
-                    <div className={`font-mono font-bold ${isCritical ? "text-[#C5221F]" : isLow ? "text-[#B06000]" : "text-[#202124]"}`}>
+                    <div className="text-[10px] text-slate-500">Stock</div>
+                    <div className={`font-mono font-bold ${isCritical ? "text-rose-700" : isLow ? "text-amber-700" : "text-slate-900"}`}>
                       {item.currentStock} {item.unit}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#5F6368]">Reorder</div>
-                    <div className="font-mono text-[#5F6368]">{item.reorderLevel} {item.unit}</div>
+                    <div className="text-[10px] text-slate-500">Reorder</div>
+                    <div className="font-mono text-slate-500">{item.reorderLevel} {item.unit}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#5F6368]">Tariff</div>
-                    <div className="font-mono text-[#202124] font-medium">₹{item.tariffCappedInr.toLocaleString("en-IN")}</div>
+                    <div className="text-[10px] text-slate-500">Tariff</div>
+                    <div className="font-mono text-slate-900 font-medium">₹{item.tariffCappedInr.toLocaleString("en-IN")}</div>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-1">
-                  <span className="font-mono text-[10px] text-[#5F6368]">
+                  <span className="font-mono text-[10px] text-slate-500">
                     Lot: {item.lastLot} • Exp: {item.expiryDate}
                   </span>
                   <div className="flex items-center gap-1.5">
                     {isTechnician ? (
-                      <div className="inline-flex items-center bg-[#F1F3F4] rounded-lg p-0.5 border border-[#DADCE0]">
+                      <div className="inline-flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
                         <button
                           onClick={() => handleUpdateQuantity(item.id, -1)}
                           disabled={item.currentStock <= 0}
-                          className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
+                          className="w-6 h-6 rounded flex items-center justify-center text-slate-700 hover:bg-white hover:text-rose-700 disabled:opacity-30 transition cursor-pointer"
                           title="Decrease Quantity by 1"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="w-6 text-center font-mono font-bold text-xs text-[#202124]">
+                        <span className="w-6 text-center font-mono font-bold text-xs text-slate-900">
                           {item.currentStock}
                         </span>
                         <button
                           onClick={() => handleUpdateQuantity(item.id, 1)}
-                          className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#137333] transition cursor-pointer"
+                          className="w-6 h-6 rounded flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-700 transition cursor-pointer"
                           title="Increase Quantity by 1"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-[#5F6368] border border-[#DADCE0]">
-                        <Lock className="w-2.5 h-2.5 text-[#5F6368]" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-slate-500 border border-slate-200">
+                        <Lock className="w-2.5 h-2.5 text-slate-500" />
                         <span>{item.currentStock} {item.unit} (Read-Only)</span>
                       </span>
                     )}
@@ -892,8 +895,8 @@ export default function InventoryDashboard() {
 
         {/* Desktop Table View */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left text-xs text-[#3C4043]">
-            <thead className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[11px] font-semibold text-[#5F6368]">
+          <table className="w-full text-left text-xs text-slate-700">
+            <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500">
               <tr>
                 <th className="px-4 py-2.5">Packaging &amp; Hardware</th>
                 <th className="px-4 py-2.5">Category</th>
@@ -906,7 +909,7 @@ export default function InventoryDashboard() {
                 <th className="px-4 py-2.5 text-center">Quick Adjust</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#DADCE0]">
+            <tbody className="divide-y divide-slate-200">
               {filteredItems.map((item) => {
                 const isLow = item.currentStock <= item.reorderLevel;
                 const isCritical = item.currentStock === 0;
@@ -924,12 +927,12 @@ export default function InventoryDashboard() {
                         <div className="flex-1 min-w-0">
                           <div
                             onClick={() => handleOpenBrochure(item)}
-                            className="font-semibold text-[#202124] text-xs hover:text-blue-600 hover:underline cursor-pointer flex items-center gap-1.5"
+                            className="font-semibold text-slate-900 text-xs hover:text-blue-600 hover:underline cursor-pointer flex items-center gap-1.5"
                           >
                             <span>{item.name}</span>
                             <Info className="w-3 h-3 text-gray-400 shrink-0" />
                           </div>
-                          <div className="text-[11px] text-[#9AA0A6] font-normal mt-0.5">
+                          <div className="text-[11px] text-slate-400 font-normal mt-0.5">
                             {item.manufacturer}
                           </div>
                         </div>
@@ -937,14 +940,14 @@ export default function InventoryDashboard() {
                     </td>
 
                     <td className="px-4 py-3">
-                      <span className="px-2 py-0.5 rounded text-[11px] bg-gray-100 text-[#3C4043] border border-[#DADCE0] whitespace-nowrap">
+                      <span className="px-2 py-0.5 rounded text-[11px] bg-gray-100 text-slate-700 border border-slate-200 whitespace-nowrap">
                         {item.category}
                       </span>
                     </td>
 
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-1.5 font-mono text-[11px] text-[#137333]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#137333] shrink-0" />
+                      <div className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-700">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                         <span>{item.rmsclMatchingCode}</span>
                       </div>
                     </td>
@@ -954,40 +957,40 @@ export default function InventoryDashboard() {
                         <span
                           className={`text-xs font-bold ${
                             isCritical
-                              ? "text-[#C5221F]"
+                              ? "text-rose-700"
                               : isLow
-                              ? "text-[#B06000]"
-                              : "text-[#202124]"
+                              ? "text-amber-700"
+                              : "text-slate-900"
                           }`}
                         >
                           {item.currentStock}
                         </span>
-                        <span className="text-[10px] text-[#5F6368]">{item.unit}</span>
+                        <span className="text-[10px] text-slate-500">{item.unit}</span>
                       </div>
                     </td>
 
-                    <td className="px-4 py-3 text-center font-mono text-[#5F6368]">
+                    <td className="px-4 py-3 text-center font-mono text-slate-500">
                       {item.reorderLevel} {item.unit}
                     </td>
 
                     <td className="px-4 py-3 font-mono text-[11px]">
-                      <div className="text-[#202124]">{item.lastLot}</div>
-                      <div className="text-[10px] text-[#5F6368]">Exp: {item.expiryDate}</div>
+                      <div className="text-slate-900">{item.lastLot}</div>
+                      <div className="text-[10px] text-slate-500">Exp: {item.expiryDate}</div>
                     </td>
 
-                    <td className="px-4 py-3 text-right font-mono text-[#202124] whitespace-nowrap font-medium">
+                    <td className="px-4 py-3 text-right font-mono text-slate-900 whitespace-nowrap font-medium">
                       ₹{item.tariffCappedInr.toLocaleString("en-IN")}
                     </td>
 
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#3C4043] whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-700 whitespace-nowrap">
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
                             isCritical
-                              ? "bg-[#C5221F]"
+                              ? "bg-rose-700"
                               : isLow
-                              ? "bg-[#B06000]"
-                              : "bg-[#137333]"
+                              ? "bg-amber-700"
+                              : "bg-emerald-700"
                           }`}
                         />
                         {isCritical ? "Out of Stock" : isLow ? "Low Stock" : "Adequate"}
@@ -998,21 +1001,21 @@ export default function InventoryDashboard() {
                       <div className="inline-flex items-center gap-1.5">
                         {/* Interactive Quantity Adjuster: Technicians Only */}
                         {isTechnician ? (
-                          <div className="inline-flex items-center bg-[#F1F3F4] rounded-lg p-0.5 border border-[#DADCE0]">
+                          <div className="inline-flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
                             <button
                               onClick={() => handleUpdateQuantity(item.id, -1)}
                               disabled={item.currentStock <= 0}
-                              className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#C5221F] disabled:opacity-30 transition cursor-pointer"
+                              className="w-6 h-6 rounded flex items-center justify-center text-slate-700 hover:bg-white hover:text-rose-700 disabled:opacity-30 transition cursor-pointer"
                               title="Decrease Quantity by 1"
                             >
                               <Minus className="w-3 h-3" />
                             </button>
-                            <span className="w-6 text-center font-mono font-bold text-xs text-[#202124]">
+                            <span className="w-6 text-center font-mono font-bold text-xs text-slate-900">
                               {item.currentStock}
                             </span>
                             <button
                               onClick={() => handleUpdateQuantity(item.id, 1)}
-                              className="w-6 h-6 rounded flex items-center justify-center text-[#3C4043] hover:bg-white hover:text-[#137333] transition cursor-pointer"
+                              className="w-6 h-6 rounded flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-700 transition cursor-pointer"
                               title="Increase Quantity by 1 (Restock)"
                             >
                               <Plus className="w-3 h-3" />
@@ -1020,11 +1023,11 @@ export default function InventoryDashboard() {
                           </div>
                         ) : (
                           <span
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#5F6368] border border-[#DADCE0]"
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-slate-500 border border-slate-200"
                             title="Read-Only: Only Cath Lab Technicians can adjust stock levels"
                           >
-                            <Lock className="w-3 h-3 text-[#5F6368]" />
-                            <span className="font-mono font-bold text-[#202124]">{item.currentStock}</span>
+                            <Lock className="w-3 h-3 text-slate-500" />
+                            <span className="font-mono font-bold text-slate-900">{item.currentStock}</span>
                             <span className="text-[10px]">Read-Only</span>
                           </span>
                         )}
@@ -1041,7 +1044,7 @@ export default function InventoryDashboard() {
                         <button
                           onClick={() => handleStageItem(item)}
                           disabled={item.currentStock <= 0}
-                          className="px-2 py-1 rounded text-[11px] font-medium bg-[#E8F0FE] text-[#1A73E8] hover:bg-[#D2E3FC] border border-[#D2E3FC] disabled:opacity-40 transition cursor-pointer"
+                          className="px-2 py-1 rounded text-[11px] font-medium bg-blue-50 text-blue-600 hover:bg-blue-200 border border-blue-200 disabled:opacity-40 transition cursor-pointer"
                           title="Stage 1 Unit for Case Depletion"
                         >
                           Stage
@@ -1057,40 +1060,40 @@ export default function InventoryDashboard() {
       </div>
 
       {/* 3. Recent Consumptions & Case Depletions Table */}
-      <div className="bg-white rounded-xl border border-[#DADCE0] overflow-hidden shadow-xs">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
         {/* Standardized Table Heading Card */}
-        <div className="p-4 border-b border-[#DADCE0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8F9FA]">
+        <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
               <History className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-[#202124]">
+                <h2 className="text-sm font-bold text-slate-900">
                   Hardware Inventory &amp; Depletion Ledger
                 </h2>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-[#3C4043] border border-[#DADCE0]">
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-slate-700 border border-slate-200">
                   Cath-Lab Store
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-[#137333] border border-emerald-200">
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Consumption Audit Trail
                 </span>
               </div>
-              <p className="text-xs text-[#5F6368] mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 SMS Medical College, Jaipur • Rajasthan RMSCL SKU synchronization
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-mono text-[#5F6368]">
+            <span className="font-mono text-slate-500">
               <strong>{depletionLogs.length}</strong> Logged Depletions
             </span>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-[#3C4043]">
-            <thead className="bg-[#F8F9FA] border-b border-[#DADCE0] text-[11px] font-semibold text-[#5F6368]">
+          <table className="w-full text-left text-xs text-slate-700">
+            <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500">
               <tr>
                 <th className="px-4 py-2.5">Date &amp; Time</th>
                 <th className="px-4 py-2.5">Patient &amp; Case CR</th>
@@ -1102,37 +1105,37 @@ export default function InventoryDashboard() {
                 <th className="px-4 py-2.5 text-center">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#DADCE0]">
+            <tbody className="divide-y divide-slate-200">
               {depletionLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-gray-50 transition">
-                  <td className="px-4 py-3 font-mono text-[11px] text-[#5F6368] whitespace-nowrap">
+                  <td className="px-4 py-3 font-mono text-[11px] text-slate-500 whitespace-nowrap">
                     {log.timestamp}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-[#202124] text-xs">{log.patientName}</div>
-                    <div className="font-mono text-[11px] text-[#1A73E8]">{log.crNo}</div>
-                    <div className="text-[10px] text-[#5F6368] truncate max-w-xs">{log.procedure}</div>
+                    <div className="font-medium text-slate-900 text-xs">{log.patientName}</div>
+                    <div className="font-mono text-[11px] text-blue-600">{log.crNo}</div>
+                    <div className="text-[10px] text-slate-500 truncate max-w-xs">{log.procedure}</div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-[#202124] text-xs">{log.itemName}</div>
-                    <div className="text-[10px] text-[#9AA0A6] font-normal mt-0.5">
+                    <div className="font-medium text-slate-900 text-xs">{log.itemName}</div>
+                    <div className="text-[10px] text-slate-400 font-normal mt-0.5">
                       {log.manufacturer || "Cath-Lab Store"}
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-mono text-[11px] text-[#137333]">
+                  <td className="px-4 py-3 font-mono text-[11px] text-emerald-700">
                     {log.rmsclSku}
                   </td>
-                  <td className="px-4 py-3 text-center font-mono font-bold text-xs text-[#C5221F]">
+                  <td className="px-4 py-3 text-center font-mono font-bold text-xs text-rose-700">
                     -{log.quantity} {log.unit}
                   </td>
-                  <td className="px-4 py-3 font-mono text-[11px] text-[#202124]">
+                  <td className="px-4 py-3 font-mono text-[11px] text-slate-900">
                     {log.lotNumber}
                   </td>
-                  <td className="px-4 py-3 text-xs text-[#202124]">
+                  <td className="px-4 py-3 text-xs text-slate-900">
                     {log.signedBy}
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-[#137333] border border-emerald-200">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                       <CheckCircle2 className="w-3 h-3" />
                       {log.status === "CONFIRMED_DEPLETED" ? "Depleted" : "RMSCL Verified"}
                     </span>

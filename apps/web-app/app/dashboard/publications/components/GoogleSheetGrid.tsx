@@ -204,17 +204,17 @@ export function GoogleSheetGrid({
   return (
     <div className="space-y-4">
       {/* Action and Filter Control Bar */}
-      <div className="bg-white rounded-xl border border-[#DADCE0] p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2.5 flex-1">
           {/* Quick Search */}
           <div className="relative flex-1 min-w-[220px] max-w-sm">
-            <Search className="w-4 h-4 text-[#5F6368] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search SMS ID, CR, patient name, diagnosis..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-[#DADCE0] text-xs focus:outline-none focus:border-[#1A73E8] focus:ring-1 focus:ring-[#1A73E8] bg-[#F8F9FA]"
+              className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100"
             />
           </div>
 
@@ -222,7 +222,7 @@ export function GoogleSheetGrid({
           <select
             value={classificationFilter}
             onChange={(e) => setClassificationFilter(e.target.value)}
-            className="px-2.5 py-1.5 rounded-lg border border-[#DADCE0] text-xs bg-white text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+            className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
           >
             <option value="ALL">All {paper.primaryClassificationName} Stages</option>
             {paper.primaryClassificationOptions.map((opt) => (
@@ -236,14 +236,14 @@ export function GoogleSheetGrid({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-2.5 py-1.5 rounded-lg border border-[#DADCE0] text-xs bg-white text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+            className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
           >
             <option value="ALL">All Review Statuses</option>
             <option value="Pending Review">Pending Review</option>
             <option value="Completed">Review Completed</option>
           </select>
 
-          <span className="text-xs text-[#5F6368] font-medium hidden sm:inline">
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">
             Showing <strong>{sortedCases.length}</strong> of {cases.length} cases
           </span>
         </div>
@@ -253,7 +253,7 @@ export function GoogleSheetGrid({
           <button
             type="button"
             onClick={handleCopyGoogleSheetsTsv}
-            className="px-3 py-1.5 rounded-lg bg-[#E8F0FE] hover:bg-[#D2E3FC] text-[#1A73E8] text-xs font-semibold border border-[#D2E3FC] transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
             title="Copies table formatted for direct paste into Google Sheets"
           >
             <Copy className="w-3.5 h-3.5" />
@@ -263,7 +263,7 @@ export function GoogleSheetGrid({
           <button
             type="button"
             onClick={handleDownloadCsv}
-            className="px-3 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-[#202124] text-xs font-semibold border border-[#DADCE0] transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
             title="Download CSV for Excel, SPSS, or R"
           >
             <Download className="w-3.5 h-3.5" />
@@ -273,7 +273,7 @@ export function GoogleSheetGrid({
           <button
             type="button"
             onClick={() => setShowGoogleApiModal(true)}
-            className="p-1.5 rounded-lg bg-white hover:bg-gray-50 text-[#5F6368] hover:text-[#202124] border border-[#DADCE0] transition cursor-pointer"
+            className="p-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 border border-slate-300 dark:border-slate-700 transition cursor-pointer"
             title="Google Sheets API & Cloud Sync Settings"
           >
             <Key className="w-3.5 h-3.5" />
@@ -283,25 +283,25 @@ export function GoogleSheetGrid({
 
       {/* Copy Notification Toast */}
       {copiedNotification && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+        <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
           <Check className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>{copiedNotification}</span>
         </div>
       )}
 
       {/* Google Sheets-like Grid Container */}
-      <div className="bg-white rounded-xl border border-[#DADCE0] shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 shadow-xs overflow-hidden">
         {/* Formula / Cell Helper Bar */}
-        <div className="px-3 py-2 bg-[#F8F9FA] border-b border-[#DADCE0] flex items-center justify-between text-xs text-[#5F6368]">
+        <div className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-300 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-[#1A73E8] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+            <span className="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
               fx
             </span>
             <span className="italic">
               Direct cell click-to-edit enabled. Changes auto-save instantly to localStorage and recalculate live charts.
             </span>
           </div>
-          <span className="font-medium text-[#202124]">
+          <span className="font-medium text-slate-900">
             Reviewed: {reviewedCount}/{cases.length} ({Math.round(cases.length > 0 ? (reviewedCount / cases.length) * 100 : 0)}%)
           </span>
         </div>
@@ -309,121 +309,121 @@ export function GoogleSheetGrid({
         {/* The Spreadsheet Table */}
         <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
           <table className="w-full text-left text-xs border-collapse font-sans">
-            <thead className="bg-[#F1F3F4] text-[#202124] sticky top-0 z-10 border-b border-[#DADCE0] select-none font-semibold">
+            <thead className="bg-slate-100 text-slate-900 sticky top-0 z-10 border-b border-slate-200 select-none font-semibold">
               <tr>
-                <th className="py-2.5 px-3 w-10 text-center border-r border-[#DADCE0] text-[10px] text-[#5F6368]">
+                <th className="py-2.5 px-3 w-10 text-center border-r border-slate-200 text-[10px] text-slate-500">
                   #
                 </th>
                 <th
                   onClick={() => handleSort("caseId")}
-                  className="py-2.5 px-3 min-w-[140px] border-r border-[#DADCE0] cursor-pointer hover:bg-[#E8EAED]"
+                  className="py-2.5 px-3 min-w-[140px] border-r border-slate-200 cursor-pointer hover:bg-slate-200"
                 >
                   <div className="flex items-center justify-between gap-1">
                     <span>Case ID (SMS)</span>
-                    <ArrowUpDown className="w-3 h-3 text-[#5F6368]" />
+                    <ArrowUpDown className="w-3 h-3 text-slate-500" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort("patientName")}
-                  className="py-2.5 px-3 min-w-[150px] border-r border-[#DADCE0] cursor-pointer hover:bg-[#E8EAED]"
+                  className="py-2.5 px-3 min-w-[150px] border-r border-slate-200 cursor-pointer hover:bg-slate-200"
                 >
                   <div className="flex items-center justify-between gap-1">
                     <span>Patient Name</span>
-                    <ArrowUpDown className="w-3 h-3 text-[#5F6368]" />
+                    <ArrowUpDown className="w-3 h-3 text-slate-500" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort("age")}
-                  className="py-2.5 px-2 w-16 text-center border-r border-[#DADCE0] cursor-pointer hover:bg-[#E8EAED]"
+                  className="py-2.5 px-2 w-16 text-center border-r border-slate-200 cursor-pointer hover:bg-slate-200"
                 >
                   Age/Sex
                 </th>
                 <th
                   onClick={() => handleSort("classificationStage")}
-                  className="py-2.5 px-3 min-w-[210px] border-r border-[#DADCE0] bg-[#E8F0FE] text-[#1A73E8] cursor-pointer hover:bg-[#D2E3FC]"
+                  className="py-2.5 px-3 min-w-[210px] border-r border-slate-200 bg-blue-50 text-blue-600 cursor-pointer hover:bg-blue-200"
                 >
                   <div className="flex items-center justify-between gap-1">
                     <span>{paper.primaryClassificationName}</span>
-                    <ArrowUpDown className="w-3 h-3 text-[#1A73E8]" />
+                    <ArrowUpDown className="w-3 h-3 text-blue-600" />
                   </div>
                 </th>
                 {paper.landingZoneRelevant ? (
                   <>
-                    <th className="py-2.5 px-2 w-28 text-center border-r border-[#DADCE0]">
+                    <th className="py-2.5 px-2 w-28 text-center border-r border-slate-200">
                       Landing Zone (mm)
                     </th>
-                    <th className="py-2.5 px-3 min-w-[170px] border-r border-[#DADCE0]">
+                    <th className="py-2.5 px-3 min-w-[170px] border-r border-slate-200">
                       Landing Adequacy
                     </th>
                   </>
                 ) : (
-                  <th className="py-2.5 px-3 min-w-[160px] border-r border-[#DADCE0]">
+                  <th className="py-2.5 px-3 min-w-[160px] border-r border-slate-200">
                     {paper.secondaryParameterName}
                   </th>
                 )}
-                <th className="py-2.5 px-3 min-w-[190px] border-r border-[#DADCE0]">
+                <th className="py-2.5 px-3 min-w-[190px] border-r border-slate-200">
                   Technique / Embolic
                 </th>
                 <th
                   onClick={() => handleSort("technicalSuccess")}
-                  className="py-2.5 px-3 min-w-[160px] border-r border-[#DADCE0] cursor-pointer hover:bg-[#E8EAED]"
+                  className="py-2.5 px-3 min-w-[160px] border-r border-slate-200 cursor-pointer hover:bg-slate-200"
                 >
                   Technical Success
                 </th>
-                <th className="py-2.5 px-3 min-w-[150px] border-r border-[#DADCE0]">
+                <th className="py-2.5 px-3 min-w-[150px] border-r border-slate-200">
                   Complications
                 </th>
-                <th className="py-2.5 px-2 w-24 text-center border-r border-[#DADCE0]">
+                <th className="py-2.5 px-2 w-24 text-center border-r border-slate-200">
                   Fluoro (min)
                 </th>
-                <th className="py-2.5 px-2 w-24 text-center border-r border-[#DADCE0]">
+                <th className="py-2.5 px-2 w-24 text-center border-r border-slate-200">
                   DAP (Gy.cm²)
                 </th>
                 <th
                   onClick={() => handleSort("reviewStatus")}
-                  className="py-2.5 px-3 min-w-[130px] border-r border-[#DADCE0] cursor-pointer hover:bg-[#E8EAED]"
+                  className="py-2.5 px-3 min-w-[130px] border-r border-slate-200 cursor-pointer hover:bg-slate-200"
                 >
                   Review Status
                 </th>
-                <th className="py-2.5 px-3 min-w-[140px] border-r border-[#DADCE0]">
+                <th className="py-2.5 px-3 min-w-[140px] border-r border-slate-200">
                   DICOM Series UID
                 </th>
                 <th className="py-2.5 px-3 min-w-[180px]">Review Notes</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#DADCE0]">
+            <tbody className="divide-y divide-slate-200">
               {sortedCases.map((record, index) => {
                 const isReviewed = record.reviewStatus === "Completed";
 
                 return (
                   <tr
                     key={record.id}
-                    className={`hover:bg-[#F8F9FA] transition-colors ${
-                      isReviewed ? "bg-white" : "bg-[#FEF7E0]/15"
+                    className={`hover:bg-slate-50 transition-colors ${
+                      isReviewed ? "bg-white" : "bg-amber-50/15"
                     }`}
                   >
                     {/* Row Number */}
-                    <td className="py-2 px-3 text-center border-r border-[#DADCE0] text-[11px] text-[#5F6368] bg-[#F8F9FA] font-mono">
+                    <td className="py-2 px-3 text-center border-r border-slate-200 text-[11px] text-slate-500 bg-slate-50 font-mono">
                       {index + 1}
                     </td>
 
                     {/* Case ID */}
-                    <td className="py-2 px-3 border-r border-[#DADCE0] font-mono text-xs font-semibold text-[#1A73E8]">
+                    <td className="py-2 px-3 border-r border-slate-200 font-mono text-xs font-semibold text-blue-600">
                       {record.caseId}
                     </td>
 
                     {/* Patient Name */}
-                    <td className="py-2 px-3 border-r border-[#DADCE0] text-xs font-medium text-[#202124]">
+                    <td className="py-2 px-3 border-r border-slate-200 text-xs font-medium text-slate-900">
                       {record.patientName}
                     </td>
 
                     {/* Age / Sex */}
-                    <td className="py-2 px-2 border-r border-[#DADCE0] text-center text-xs text-[#5F6368]">
+                    <td className="py-2 px-2 border-r border-slate-200 text-center text-xs text-slate-500">
                       {record.age ? `${record.age}y` : "—"}/{record.gender}
                     </td>
 
                     {/* Primary Classification (IN-CELL DROPDOWN) */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0] bg-blue-50/30">
+                    <td className="py-1 px-2 border-r border-slate-200 bg-blue-50/30">
                       <select
                         value={record.classificationStage || ""}
                         onChange={(e) => {
@@ -432,9 +432,9 @@ export function GoogleSheetGrid({
                             onUpdateCase(record.id, "reviewStatus", "Completed");
                           }
                         }}
-                        className={`w-full py-1 px-2 rounded text-xs font-medium border focus:outline-none focus:ring-1 focus:ring-[#1A73E8] ${
+                        className={`w-full py-1 px-2 rounded text-xs font-medium border focus:outline-none focus:ring-1 focus:ring-blue-600 ${
                           record.classificationStage
-                            ? "bg-white border-[#BDC1C6] text-[#202124]"
+                            ? "bg-white border-slate-300 text-slate-900"
                             : "bg-amber-50 border-amber-300 text-amber-900 italic"
                         }`}
                       >
@@ -451,7 +451,7 @@ export function GoogleSheetGrid({
                     {paper.landingZoneRelevant ? (
                       <>
                         {/* Landing Zone mm (IN-CELL NUMBER INPUT) */}
-                        <td className="py-1 px-2 border-r border-[#DADCE0]">
+                        <td className="py-1 px-2 border-r border-slate-200">
                           <input
                             type="number"
                             min="0"
@@ -472,18 +472,18 @@ export function GoogleSheetGrid({
                               }
                             }}
                             placeholder="mm"
-                            className="w-full py-1 px-2 text-center rounded border border-[#DADCE0] text-xs focus:outline-none focus:border-[#1A73E8]"
+                            className="w-full py-1 px-2 text-center rounded border border-slate-200 text-xs focus:outline-none focus:border-blue-600"
                           />
                         </td>
 
                         {/* Landing Adequacy (IN-CELL DROPDOWN) */}
-                        <td className="py-1 px-2 border-r border-[#DADCE0]">
+                        <td className="py-1 px-2 border-r border-slate-200">
                           <select
                             value={record.landingZoneAdequacy || ""}
                             onChange={(e) =>
                               onUpdateCase(record.id, "landingZoneAdequacy", e.target.value)
                             }
-                            className="w-full py-1 px-2 rounded border border-[#DADCE0] text-xs bg-white text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                            className="w-full py-1 px-2 rounded border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:border-blue-600"
                           >
                             <option value="">— Select Adequacy —</option>
                             <option value="Adequate (>=10mm)">Adequate (&ge;10mm)</option>
@@ -495,13 +495,13 @@ export function GoogleSheetGrid({
                       </>
                     ) : (
                       /* Non-VAPSA Secondary Parameter */
-                      <td className="py-1 px-2 border-r border-[#DADCE0]">
+                      <td className="py-1 px-2 border-r border-slate-200">
                         <select
                           value={record.subclassification || ""}
                           onChange={(e) =>
                             onUpdateCase(record.id, "subclassification", e.target.value)
                           }
-                          className="w-full py-1 px-2 rounded border border-[#DADCE0] text-xs bg-white text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                          className="w-full py-1 px-2 rounded border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:border-blue-600"
                         >
                           <option value="">— Select {paper.secondaryParameterName} —</option>
                           {paper.secondaryParameterOptions.map((opt) => (
@@ -514,11 +514,11 @@ export function GoogleSheetGrid({
                     )}
 
                     {/* Technique / Embolic Modality (IN-CELL DROPDOWN / TEXT) */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0]">
+                    <td className="py-1 px-2 border-r border-slate-200">
                       <select
                         value={record.embolicAgent || ""}
                         onChange={(e) => onUpdateCase(record.id, "embolicAgent", e.target.value)}
-                        className="w-full py-1 px-2 rounded border border-[#DADCE0] text-xs bg-white text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+                        className="w-full py-1 px-2 rounded border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:border-blue-600"
                       >
                         <option value={record.embolicAgent}>{record.embolicAgent || "Select Technique"}</option>
                         {paper.techniqueOptions.map((opt) => (
@@ -530,7 +530,7 @@ export function GoogleSheetGrid({
                     </td>
 
                     {/* Technical Success */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0]">
+                    <td className="py-1 px-2 border-r border-slate-200">
                       <select
                         value={record.technicalSuccess}
                         onChange={(e) =>
@@ -549,17 +549,17 @@ export function GoogleSheetGrid({
                     </td>
 
                     {/* Complications */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0]">
+                    <td className="py-1 px-2 border-r border-slate-200">
                       <input
                         type="text"
                         value={record.complications}
                         onChange={(e) => onUpdateCase(record.id, "complications", e.target.value)}
-                        className="w-full py-1 px-2 rounded border border-[#DADCE0] text-xs focus:outline-none focus:border-[#1A73E8]"
+                        className="w-full py-1 px-2 rounded border border-slate-200 text-xs focus:outline-none focus:border-blue-600"
                       />
                     </td>
 
                     {/* Fluoroscopy Time mins */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0]">
+                    <td className="py-1 px-2 border-r border-slate-200">
                       <input
                         type="number"
                         min="0"
@@ -573,12 +573,12 @@ export function GoogleSheetGrid({
                           )
                         }
                         placeholder="mins"
-                        className="w-full py-1 px-1 text-center rounded border border-[#DADCE0] text-xs focus:outline-none focus:border-[#1A73E8]"
+                        className="w-full py-1 px-1 text-center rounded border border-slate-200 text-xs focus:outline-none focus:border-blue-600"
                       />
                     </td>
 
                     {/* DAP Gy.cm2 */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0]">
+                    <td className="py-1 px-2 border-r border-slate-200">
                       <input
                         type="number"
                         min="0"
@@ -592,12 +592,12 @@ export function GoogleSheetGrid({
                           )
                         }
                         placeholder="Gy.cm²"
-                        className="w-full py-1 px-1 text-center rounded border border-[#DADCE0] text-xs focus:outline-none focus:border-[#1A73E8]"
+                        className="w-full py-1 px-1 text-center rounded border border-slate-200 text-xs focus:outline-none focus:border-blue-600"
                       />
                     </td>
 
                     {/* Review Status Toggle */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0]">
+                    <td className="py-1 px-2 border-r border-slate-200">
                       <select
                         value={record.reviewStatus}
                         onChange={(e) =>
@@ -619,7 +619,7 @@ export function GoogleSheetGrid({
                     </td>
 
                     {/* DICOM Series UID */}
-                    <td className="py-1 px-2 border-r border-[#DADCE0]">
+                    <td className="py-1 px-2 border-r border-slate-200">
                       <input
                         type="text"
                         value={record.dicomSeriesUid || ""}
@@ -627,7 +627,7 @@ export function GoogleSheetGrid({
                           onUpdateCase(record.id, "dicomSeriesUid", e.target.value)
                         }
                         placeholder="Tag (0020,000E)"
-                        className="w-full py-1 px-2 rounded border border-[#DADCE0] text-xs font-mono text-[11px] focus:outline-none focus:border-[#1A73E8]"
+                        className="w-full py-1 px-2 rounded border border-slate-200 text-xs font-mono text-[11px] focus:outline-none focus:border-blue-600"
                       />
                     </td>
 
@@ -640,7 +640,7 @@ export function GoogleSheetGrid({
                           onUpdateCase(record.id, "reviewNotes", e.target.value)
                         }
                         placeholder="Add retrospective notes..."
-                        className="w-full py-1 px-2 rounded border border-[#DADCE0] text-xs focus:outline-none focus:border-[#1A73E8]"
+                        className="w-full py-1 px-2 rounded border border-slate-200 text-xs focus:outline-none focus:border-blue-600"
                       />
                     </td>
                   </tr>
@@ -654,25 +654,25 @@ export function GoogleSheetGrid({
       {/* Google Sheets API Modal */}
       {showGoogleApiModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-[#DADCE0] max-w-lg w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-300 dark:border-slate-700 max-w-lg w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <FileSpreadsheet className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#202124]">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
                     Google Sheets Cloud Integration
                   </h3>
-                  <p className="text-xs text-[#5F6368]">
-                    Sync this dataset directly with your institution's Google Sheets account.
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Sync this dataset directly with your institution&apos;s Google Sheets account.
                   </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowGoogleApiModal(false)}
-                className="p-1.5 rounded-lg text-[#5F6368] hover:bg-gray-100"
+                className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700"
               >
                 &times;
               </button>
@@ -680,7 +680,7 @@ export function GoogleSheetGrid({
 
             <div className="space-y-3 pt-2 text-xs">
               <div>
-                <label className="font-semibold text-[#202124] block mb-1">
+                <label className="font-semibold text-slate-900 dark:text-slate-100 block mb-1">
                   Google API Key (Optional)
                 </label>
                 <input
@@ -688,12 +688,12 @@ export function GoogleSheetGrid({
                   value={googleApiKey}
                   onChange={(e) => setGoogleApiKey(e.target.value)}
                   placeholder="AIzaSy..."
-                  className="w-full p-2.5 rounded-lg border border-[#DADCE0] font-mono text-xs focus:border-[#1A73E8] focus:outline-none"
+                  className="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-mono text-xs focus:border-blue-600 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-[#202124] block mb-1">
+                <label className="font-semibold text-slate-900 dark:text-slate-100 block mb-1">
                   Google Spreadsheet ID
                 </label>
                 <input
@@ -701,15 +701,15 @@ export function GoogleSheetGrid({
                   value={spreadsheetId}
                   onChange={(e) => setSpreadsheetId(e.target.value)}
                   placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
-                  className="w-full p-2.5 rounded-lg border border-[#DADCE0] font-mono text-xs focus:border-[#1A73E8] focus:outline-none"
+                  className="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-mono text-xs focus:border-blue-600 focus:outline-none"
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#DADCE0] text-[11px] text-[#5F6368] space-y-1 leading-relaxed">
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400 space-y-1 leading-relaxed">
                 <p>
                   <strong>Tip for instant sync:</strong> You do not even need an API key! Simply click{" "}
                   <strong>&quot;Copy for Google Sheets&quot;</strong> on the toolbar, open your Google Sheet, and press{" "}
-                  <kbd className="px-1 py-0.5 rounded bg-white border border-gray-300 font-mono">
+                  <kbd className="px-1 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-slate-900 dark:text-slate-100">
                     Ctrl + V
                   </kbd>
                   . All columns, headers, and values will paste seamlessly aligned.
@@ -721,7 +721,7 @@ export function GoogleSheetGrid({
               <button
                 type="button"
                 onClick={() => setShowGoogleApiModal(false)}
-                className="px-4 py-2 rounded-lg border border-[#DADCE0] text-xs font-semibold text-[#5F6368] hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
               >
                 Close
               </button>
@@ -732,7 +732,7 @@ export function GoogleSheetGrid({
                   setCopiedNotification("Google API credentials saved for session sync.");
                   setTimeout(() => setCopiedNotification(null), 3000);
                 }}
-                className="px-4 py-2 rounded-lg bg-[#1A73E8] text-white text-xs font-semibold hover:bg-blue-600"
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700"
               >
                 Save Configuration
               </button>

@@ -12,9 +12,9 @@
   "scripts": {
     "postinstall": "prisma generate --schema=packages/db/schema.prisma",
     "dev": "next dev apps/web-app -p 3001",
-    "build": "prisma generate --schema=packages/db/schema.prisma && next build apps/web-app",
+    "build": "prisma generate --schema=packages/db/schema.prisma && next build apps/web-app --webpack",
     "start": "next start apps/web-app -p 3001",
-    "build:web": "next build apps/web-app",
+    "build:web": "next build apps/web-app --webpack",
     "start:web": "next start apps/web-app -p 3001",
     "dev:web": "next dev apps/web-app -p 3001",
     "host": "next start apps/web-app -H 0.0.0.0 -p 3001",

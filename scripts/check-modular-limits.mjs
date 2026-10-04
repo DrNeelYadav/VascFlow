@@ -10,6 +10,9 @@ const TARGET_DIRECTORIES = [
   "apps/web-app/app/dashboard/operative-notes",
   "apps/web-app/app/dashboard/calendar",
   "apps/web-app/app/dashboard/consent",
+  "apps/web-app/app/dashboard/protocols",
+  "apps/web-app/app/dashboard/schemes-correlation",
+  "apps/web-app/app/dashboard/imaging",
 ];
 
 const TARGET_FILES = [

@@ -3,7 +3,8 @@ import { NextRequest } from "next/server";
 import { getHolidayForDate } from "../../app/lib/rajasthanHolidays2026";
 import { calculateNextAvailableOtDate, CLINICAL_BUMP_REASONS } from "../../app/dashboard/worklist/theatreBumpingLogic";
 import { parseDeterministicClinicalText } from "../../app/lib/services/geminiVisionOcrService";
-import { POST, GET, AUTHORIZED_CHAT_IDS } from "../../app/api/webhooks/telegram-ingest/route";
+import { POST, GET } from "../../app/api/webhooks/telegram-ingest/route";
+import { AUTHORIZED_CHAT_IDS } from "../../app/api/webhooks/telegram-ingest/telegramTypes";
 
 describe("Phase 40: Epoch IV Verification, Webhook Security & OCR Accuracy Certification", () => {
   describe("1. Integer Calendar Engine & Rajasthan Gazetted Holidays", () => {

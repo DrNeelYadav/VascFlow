@@ -5,9 +5,6 @@ import { useDischargeSummary } from "./useDischargeSummary";
 import { DischargeHeaderBar } from "./DischargeHeaderBar";
 import { DischargeStatutoryDocument } from "./DischargeStatutoryDocument";
 
-// Re-export pure domain synthesis engine for tests and external consumers
-export * from "./dischargeSynthesisEngine";
-
 export default function DischargeSummaryPage() {
   const {
     patients,

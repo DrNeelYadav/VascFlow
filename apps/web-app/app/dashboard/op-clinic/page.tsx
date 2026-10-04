@@ -19,9 +19,6 @@ import { ConsultationDeskForm } from "./ConsultationDeskForm";
 import { ReviewQueueTable } from "./ReviewQueueTable";
 import { BookingModal } from "./BookingModal";
 
-// Re-export required clinical options for external consumers and tests
-export { URGENCY_OPTIONS, ORGAN_SYSTEM_OPTIONS, BLANK_PATIENT_FORM };
-
 export default function OpClinicConsultationDeskPage() {
   const desk = useOpClinicDesk();
   const [activeTab, setActiveTab] = useState<"desk" | "queue">("desk");

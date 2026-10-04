@@ -4,7 +4,7 @@ import { MASTER_IMPLANTS } from "@vascule/feature-scheme-billing";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export interface SchemeSummary {
+interface SchemeSummary {
   code: "MAAY" | "RGHS" | "AB-PMJAY" | "RMRS";
   name: string;
   category: string;
@@ -21,7 +21,7 @@ export interface SchemeSummary {
   }[];
 }
 
-export const CANONICAL_SCHEMES: SchemeSummary[] = [
+const CANONICAL_SCHEMES: SchemeSummary[] = [
   {
     code: "MAAY",
     name: "Mukhyamantri Ayushman Arogya Yojana (MAAY / Chiranjeevi)",

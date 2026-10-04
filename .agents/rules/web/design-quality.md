@@ -66,10 +66,22 @@ Every meaningful frontend surface should demonstrate at least four of these:
 
 Do not default to dark mode automatically. Choose the visual direction the product actually wants.
 
+## Venus, Shadcn & Radix UI Design Principles
+
+1. **"See the Design, Don't Change the Design"**: Never reskin or break working UI layouts. Preserve established clinical borders, spacing rhythms, and information hierarchy.
+2. **Venus Design Aesthetics**: Clinical-grade density, crisp slate/zinc borders (`border-slate-200 dark:border-slate-800`), purposeful typography hierarchy, and distraction-free angiosuite contrast.
+3. **Radix Primitives + Shadcn Ergonomics**: Accessible dialogs, popovers, dropdowns, and tabs with zero focus traps and keyboard navigation.
+4. **Framer Motion Micro-Interactions**: Use fluid layout animations (`layoutId`, spring physics, `AnimatePresence`) for state changes, tabs, and drawers. Respect `prefers-reduced-motion`.
+5. **100–200 Line Document Ceiling**: Maintain single-responsibility files under 200 lines. Extract custom hooks (`use*.ts`) for state/handlers and split large views into modular sub-components.
+
 ## Component Checklist
 
-- [ ] Does it avoid looking like a default Tailwind or shadcn template?
+- [ ] Does it respect "See the design, don't change the design"?
+- [ ] Is the component under 200 lines with complex logic extracted into custom hooks?
+- [ ] Does it avoid looking like a default Tailwind or unstyled template?
+- [ ] Does it use Radix/Shadcn accessible primitives?
+- [ ] Does it use Framer Motion for fluid transitions without animation jank?
 - [ ] Does it have intentional hover/focus/active states?
 - [ ] Does it use hierarchy rather than uniform emphasis?
-- [ ] Would this look believable in a real product screenshot?
-- [ ] If it supports both themes, do both light and dark feel intentional?
+- [ ] Would this look believable in a real clinical angiosuite workstation?
+- [ ] If it supports both themes, do both light and dark feel intentional and contrast-compliant?

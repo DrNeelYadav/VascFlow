@@ -31,15 +31,15 @@ interface RouteContext {
 /**
  * Circuit Breaker State & Resilience Configuration
  */
-export type CircuitState = "CLOSED" | "OPEN" | "HALF_OPEN";
+type CircuitState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
-export interface CircuitBreakerConfig {
+interface CircuitBreakerConfig {
   failureThreshold: number;
   resetTimeoutMs: number;
   timeoutMs: number;
 }
 
-export interface ServiceCircuitStatus {
+interface ServiceCircuitStatus {
   state: CircuitState;
   consecutiveFailures: number;
   lastFailureTime: number;
@@ -52,9 +52,9 @@ const DEFAULT_CIRCUIT_CONFIG: CircuitBreakerConfig = {
   timeoutMs: 2500,        // 2.5 seconds timeout
 };
 
-export const circuitRegistry = new Map<string, ServiceCircuitStatus>();
+const circuitRegistry = new Map<string, ServiceCircuitStatus>();
 
-export function getServiceCircuitKey(urlOrTarget: string): string {
+function getServiceCircuitKey(urlOrTarget: string): string {
   try {
     const parsed = new URL(urlOrTarget);
     return `${parsed.protocol}//${parsed.host}`;
@@ -63,7 +63,7 @@ export function getServiceCircuitKey(urlOrTarget: string): string {
   }
 }
 
-export function getCircuitStatus(targetKey: string): ServiceCircuitStatus {
+function getCircuitStatus(targetKey: string): ServiceCircuitStatus {
   let status = circuitRegistry.get(targetKey);
   if (!status) {
     status = {
@@ -83,7 +83,7 @@ export function getCircuitStatus(targetKey: string): ServiceCircuitStatus {
   return status;
 }
 
-export function recordCircuitSuccess(targetKey: string): void {
+function recordCircuitSuccess(targetKey: string): void {
   const status = getCircuitStatus(targetKey);
   status.state = "CLOSED";
   status.consecutiveFailures = 0;
@@ -91,7 +91,7 @@ export function recordCircuitSuccess(targetKey: string): void {
   status.nextAllowedAttempt = 0;
 }
 
-export function recordCircuitFailure(
+function recordCircuitFailure(
   targetKey: string,
   config: CircuitBreakerConfig = DEFAULT_CIRCUIT_CONFIG
 ): CircuitState {
@@ -107,7 +107,7 @@ export function recordCircuitFailure(
   return status.state;
 }
 
-export function resetCircuitBreakerRegistry(): void {
+function resetCircuitBreakerRegistry(): void {
   circuitRegistry.clear();
 }
 

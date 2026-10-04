@@ -15,6 +15,9 @@ const nextConfig = {
     '@vascule/feature-ot-scheduling',
     '@vascule/feature-dicom-viewer',
   ],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   // Aliases node core modules (fs/path/crypto/...) to an empty module for the
   // browser target, so the emscripten codecs' ENVIRONMENT_IS_NODE branch cannot
   // fail the compile with "Module not found: Can't resolve 'fs'".

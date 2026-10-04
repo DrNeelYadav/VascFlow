@@ -22,6 +22,19 @@
         "postgresql://postgres:postgres@localhost:5432/vascflow"
       ],
       "description": "PostgreSQL database schema inspection and clinical query engine for VascFlow"
+    },
+    "figma": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "figma-developer-mcp",
+        "--stdio"
+      ],
+      "env": {
+        "FIGMA_API_KEY": "${FIGMA_API_KEY}",
+        "FIGMA_PERSONAL_ACCESS_TOKEN": "${FIGMA_PERSONAL_ACCESS_TOKEN}"
+      },
+      "description": "Figma design integration: fetch design hierarchy, styles, components, and assets"
     }
   }
 }

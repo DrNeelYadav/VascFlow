@@ -4,7 +4,7 @@ import {
   VaricoseCriteria,
   VaricoceleCriteria,
   OtherIrCriteria,
-} from "../../app/dashboard/discharge/page";
+} from "../../app/dashboard/discharge/dischargeSynthesisEngine";
 import {
   SUNIL_KUMAR_DISCHARGE,
   ANJUM_NISHA_DISCHARGE,

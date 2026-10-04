@@ -31,6 +31,11 @@ const TARGET_FILES = [
   "apps/web-app/app/dashboard/discharge/DischargeSignaturesBlock.tsx",
   "apps/web-app/app/dashboard/discharge/DischargeStatutoryDocument.tsx",
   "apps/web-app/app/hooks/useDocPreview.ts",
+  "apps/web-app/app/dashboard/op-clinic/ClinicalPhotoAttachment.tsx",
+  "apps/web-app/app/dashboard/worklist/TheatreBumpingModal.tsx",
+  "apps/web-app/app/dashboard/worklist/theatreBumpingLogic.ts",
+  "apps/web-app/app/lib/services/geminiVisionOcrService.ts",
+  "apps/web-app/app/api/webhooks/telegram-ingest/route.ts",
 ];
 
 

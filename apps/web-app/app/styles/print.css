@@ -1,0 +1,118 @@
+/**
+ * EndoFlow / SMS Medical College & Attached Hospitals, Jaipur
+ * Department of Radiodiagnosis & Interventional Radiology
+ * Phase 24 & Phase 30: A4 Clinical Document Print Stylesheet
+ */
+
+@page {
+  size: A4 portrait;
+  margin: 12mm 15mm 15mm 15mm;
+}
+
+@media print {
+  /* Color and Background Resets */
+  *,
+  *::before,
+  *::after {
+    color: #000000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Non-Printable Elements */
+  .print\:hidden,
+  nav,
+  aside,
+  header,
+  footer:not(.print-footer),
+  [role="navigation"],
+  #mobile-bottom-nav,
+  .sidebar,
+  .toast,
+  button:not(.printable-button),
+  input[type="button"],
+  input[type="submit"] {
+    display: none !important;
+  }
+
+  /* Main Document Canvas */
+  main,
+  .print-document,
+  .printable-area {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Page Break Hygiene */
+  .break-inside-avoid,
+  .print-avoid-break,
+  .card,
+  table,
+  tr,
+  figure,
+  .signature-block {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Table formatting */
+  thead {
+    display: table-header-group !important;
+  }
+
+  tbody {
+    display: table-row-group !important;
+  }
+
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border-color: #333333 !important;
+  }
+
+  /* Letterhead & Rule lines */
+  .print-letterhead {
+    display: block !important;
+    border-bottom: 2pt solid #000000 !important;
+    padding-bottom: 8pt !important;
+    margin-bottom: 12pt !important;
+    text-align: center !important;
+  }
+
+  .print-signatures {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-top: 24pt !important;
+    padding-top: 8pt !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}

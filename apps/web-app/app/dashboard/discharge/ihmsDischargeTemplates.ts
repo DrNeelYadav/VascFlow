@@ -192,6 +192,15 @@ export interface IhmsDischargeSummaryData {
 // OFFICIAL SMS HOSPITAL DISCHARGE SUMMARY EXAMPLES (AUTHENTIC REAL RECORDS)
 // ============================================================================
 
+/**
+ * Blank export template.
+ *
+ * The identifying fields (name, hospital ID, admission number, ABHA address)
+ * are deliberately empty. This constant exists to document the IHMS export
+ * shape - which keys the e-Hospital system expects - not to describe a patient.
+ * A plausible-looking HID or ABHA address here would be indistinguishable from
+ * a real one once pasted into a discharge summary.
+ */
 export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
   id: "IHMS-DIS-2026-001",
   patientId: "EX01",
@@ -202,18 +211,18 @@ export const SUNIL_KUMAR_DISCHARGE: IhmsDischargeSummaryData = {
     unitHead: "Dr. Alok Verma",
     unitName: "UNIT I",
     opdDays: "Mon,Tue,Wed,Thu,Fri,Sat",
-    hid: "150223147650888",
-    patientName: "Varicose Veins Patient",
+    hid: "",
+    patientName: "",
     age: "18Y",
     gender: "M",
-    admissionNo: "A/SMSH/26/109750",
+    admissionNo: "",
     dateOfAdmission: "31-08-2026 09:38:00 AM",
     dateOfDischarge: "01-09-2026 04:29:46 PM",
     admissionType: "ON DOCTOR ADVICE",
     dischargeType: "NORMAL DISCHARGE",
     patientCategory: "MAAY",
     wardBed: "OLD GASTRO WARD/IR-1",
-    abhaAddress: "91587244105074@abdm",
+    abhaAddress: "",
     abhaNumber: "91-5872-4410-5074",
     unitDoctors: [
       { name: "Dr. Alok Verma", designation: "Senior Professor & Head" },
@@ -356,18 +365,18 @@ export const BUDD_CHIARI_DISCHARGE: IhmsDischargeSummaryData = {
     unitHead: "Dr. Alok Verma",
     unitName: "UNIT 1",
     opdDays: "Mon,Thu",
-    hid: "240826303019538",
-    patientName: "Budd-Chiari Patient",
+    hid: "",
+    patientName: "",
     age: "31Y",
     gender: "F",
-    admissionNo: "A/SSH/26/17215",
+    admissionNo: "",
     dateOfAdmission: "24-08-2026 01:22:00 PM",
     dateOfDischarge: "31-08-2026 03:29:10 PM",
     admissionType: "ON DOCTOR ADVICE",
     dischargeType: "DISCHARGE ON REQUEST",
     patientCategory: "MAAY",
     wardBed: "202 GASTRO MALE AND FEMALE / GASTROUI-24",
-    abhaAddress: "anjumnisha1995@abdm",
+    abhaAddress: "",
     abhaNumber: "91-1045-4574-3452",
     unitDoctors: [
       { name: "Dr. Alok Verma", designation: "Senior Professor & Head" },

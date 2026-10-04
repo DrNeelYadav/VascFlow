@@ -154,27 +154,27 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
     <div className="space-y-4">
       {/* Toast Feedback */}
       {copyFeedback && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#1E8E3E] text-white text-xs font-semibold shadow-lg flex items-center gap-2 animate-bounce print:hidden">
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-emerald-700 text-white text-xs font-semibold shadow-lg flex items-center gap-2 animate-bounce print:hidden">
           <CheckCircle2 className="w-4 h-4" />
           <span>{copyFeedback} copied to clipboard</span>
         </div>
       )}
 
       {/* 1. Header Banner */}
-      <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8]">
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600">
               Department of Interventional Radiology
             </span>
             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
               {SMS_PATIENT_ARCHIVE_REAL.length} Verified Patient Records
             </span>
           </div>
-          <h2 className="text-lg font-bold text-[#202124] mt-1">
+          <h2 className="text-lg font-bold text-slate-900 mt-1">
             Patient Dossier &amp; Verified Records Archive
           </h2>
-          <p className="text-xs text-[#5F6368] mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Search authentic patient discharge cards &amp; post-operative notes by Year, Month, Name, Procedure, or IR Number. Only patients with a real document on file are listed.
           </p>
         </div>
@@ -183,15 +183,15 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#DADCE0] bg-white text-[#3C4043] hover:bg-[#F1F3F4] text-xs font-semibold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 text-xs font-semibold transition-colors cursor-pointer"
           >
-            <Printer className="w-3.5 h-3.5 text-[#5F6368]" />
+            <Printer className="w-3.5 h-3.5 text-slate-500" />
             <span>Print Dossier</span>
           </button>
           {onLoadIntoEditor && currentPatient && (
             <button
               onClick={() => onLoadIntoEditor(currentPatient)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Load into Active Editor</span>
@@ -201,26 +201,26 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
       </div>
 
       {/* 2. Search & Filter Bar */}
-      <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 shadow-xs space-y-3 print:hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3 print:hidden">
         {/* Top search row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-[#5F6368] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search by Patient Name, CR Number, IR Number (e.g. 1052), or Procedure..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs border border-[#DADCE0] rounded-xl bg-[#F8F9FA] focus:outline-none focus:border-[#1A73E8] text-[#202124]"
+              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:border-blue-600 text-slate-900"
             />
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-medium text-[#5F6368]">Year:</span>
+            <span className="text-xs font-medium text-slate-500">Year:</span>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="px-2.5 py-1.5 text-xs bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+              className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
             >
               <option value="ALL">All Years (2023-2026)</option>
               <option value="2026">2026</option>
@@ -229,11 +229,11 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
               <option value="2023">2023</option>
             </select>
 
-            <span className="text-xs font-medium text-[#5F6368] ml-2">Month:</span>
+            <span className="text-xs font-medium text-slate-500 ml-2">Month:</span>
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-2.5 py-1.5 text-xs bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-[#202124] focus:outline-none focus:border-[#1A73E8]"
+              className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
             >
               <option value="ALL">All Months</option>
               {MONTH_OPTIONS.map((m) => (
@@ -246,28 +246,28 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
         </div>
 
         {/* Secondary filters row */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#F1F3F4] text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[#5F6368] font-medium">Gender:</span>
+            <span className="text-slate-500 font-medium">Gender:</span>
             {["ALL", "Male", "Female"].map((g) => (
               <button
                 key={g}
                 onClick={() => setSelectedGender(g)}
                 className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                   selectedGender === g
-                    ? "bg-[#1A73E8] text-white shadow-2xs"
-                    : "bg-[#F8F9FA] text-[#3C4043] hover:bg-[#F1F3F4] border border-[#DADCE0]"
+                    ? "bg-blue-600 text-white shadow-2xs"
+                    : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
                 }`}
               >
                 {g}
               </button>
             ))}
 
-            <span className="text-[#5F6368] font-medium ml-3">Procedure:</span>
+            <span className="text-slate-500 font-medium ml-3">Procedure:</span>
             <select
               value={selectedProcedure}
               onChange={(e) => setSelectedProcedure(e.target.value)}
-              className="px-2.5 py-1 text-xs bg-[#F8F9FA] border border-[#DADCE0] rounded-lg text-[#202124] focus:outline-none focus:border-[#1A73E8] max-w-[220px] truncate"
+              className="px-2.5 py-1 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 max-w-[220px] truncate"
             >
               {PROCEDURE_CATEGORIES.map((p) => (
                 <option key={p} value={p}>
@@ -277,7 +277,7 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
             </select>
           </div>
 
-          <div className="text-xs font-mono text-[#5F6368]">
+          <div className="text-xs font-mono text-slate-500">
             Found <strong>{filteredPatients.length}</strong> matching records
           </div>
         </div>
@@ -286,16 +286,16 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
       {/* 3. Main Split View: Left Patient List + Right Patient Dossier Presentation */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column (4 cols on lg): Searchable Patient Cards List */}
-        <div className="lg:col-span-4 bg-white border border-[#DADCE0] rounded-2xl shadow-xs overflow-hidden flex flex-col h-[750px] print:hidden">
-          <div className="p-3 bg-[#F8F9FA] border-b border-[#DADCE0] flex items-center justify-between text-xs">
-            <span className="font-bold text-[#202124] flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5 text-[#1A73E8]" />
+        <div className="lg:col-span-4 bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden flex flex-col h-[750px] print:hidden">
+          <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs">
+            <span className="font-bold text-slate-900 flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5 text-blue-600" />
               Archived Patients ({filteredPatients.length})
             </span>
-            <span className="text-[10px] text-[#5F6368] font-mono">Select to view</span>
+            <span className="text-[10px] text-slate-500 font-mono">Select to view</span>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-[#F1F3F4]">
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
             {filteredPatients.length === 0 ? (
               <div className="p-8 text-center text-xs text-slate-400 font-mono">
                 No archived patient matched your filter criteria.
@@ -309,30 +309,30 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
                     onClick={() => setSelectedPatientId(p.irNumber)}
                     className={`p-3 space-y-1.5 transition-colors cursor-pointer ${
                       isSelected
-                        ? "bg-blue-50/70 border-l-4 border-[#1A73E8]"
+                        ? "bg-blue-50/70 border-l-4 border-blue-600"
                         : "hover:bg-slate-50 border-l-4 border-transparent"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono text-xs font-bold text-[#1A73E8]">
+                        <span className="font-mono text-xs font-bold text-blue-600">
                           #{p.dsaNo}
                         </span>
-                        <span className="text-[11px] font-semibold text-[#202124] truncate max-w-[130px]">
+                        <span className="text-xs font-semibold text-slate-900 truncate max-w-[130px]">
                           {p.patientName}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-[#5F6368]">
+                      <span className="text-[10px] font-mono text-slate-500">
                         {p.procedureDate || `${p.month} ${p.year}`}
                       </span>
                     </div>
 
-                    <div className="text-[11px] text-[#5F6368] truncate" title={p.procedureName}>
+                    <div className="text-xs text-slate-500 truncate" title={p.procedureName}>
                       {p.procedureName}
                     </div>
 
                     <div className="flex items-center justify-between gap-1 text-[10px]">
-                      <span className="font-mono text-[#5F6368]">
+                      <span className="font-mono text-slate-500">
                         {p.age}y • {p.gender === "Unknown" ? "Sex n/r" : p.gender === "Female" ? "F" : "M"} • CR: {p.crNo}
                       </span>
 
@@ -340,14 +340,14 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
                       <div className="flex items-center gap-1 shrink-0">
                         {p.hasDischargeCard ? (
                           <span
-                            className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-100 text-emerald-800"
+                            className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800"
                             title="Discharge Card (BHT) available"
                           >
                             BHT
                           </span>
                         ) : (
                           <span
-                            className="px-1 py-0.5 rounded text-[9px] text-slate-400 bg-slate-100"
+                            className="px-1 py-0.5 rounded text-[10px] text-slate-400 bg-slate-100"
                             title="No discharge card in folder"
                           >
                             —
@@ -355,14 +355,14 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
                         )}
                         {p.hasOperativeNote ? (
                           <span
-                            className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-blue-100 text-blue-800"
+                            className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-100 text-blue-800"
                             title="Post-op report available"
                           >
                             Op-Note
                           </span>
                         ) : (
                           <span
-                            className="px-1 py-0.5 rounded text-[9px] text-slate-400 bg-slate-100"
+                            className="px-1 py-0.5 rounded text-[10px] text-slate-400 bg-slate-100"
                             title="No op-note in folder"
                           >
                             —
@@ -380,34 +380,34 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
         {/* Right Column (8 cols on lg): De-identified Reference Dossier Presentation */}
         <div className="lg:col-span-8 space-y-4">
           {/* De-identified Patient Header Card */}
-          <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#F1F3F4]">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded font-mono text-xs font-bold bg-[#E8F0FE] text-[#1A73E8]">
+                  <span className="px-2 py-0.5 rounded font-mono text-xs font-bold bg-blue-50 text-blue-600">
                     IR Number: #{currentPatient.dsaNo} ({currentPatient.irNumber})
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
                     {currentPatient.scheme}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-[#202124] mt-1">
+                <h3 className="text-xl font-bold text-slate-900 mt-1">
                   {currentPatient.patientName}
                 </h3>
-                <p className="text-xs text-[#5F6368] font-mono">
+                <p className="text-xs text-slate-500 font-mono">
                   Age: {currentPatient.age} Y • Gender: {currentPatient.gender === "Unknown" ? "not recorded" : currentPatient.gender} • CR No: {currentPatient.crNo}
                   {currentPatient.admissionNo ? ` • Admission: ${currentPatient.admissionNo}` : ""}
                 </p>
               </div>
 
               {/* Document Mode Toggle Tabs */}
-              <div className="flex items-center bg-[#F1F3F4] p-1 rounded-xl gap-1 shrink-0 print:hidden">
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl gap-1 shrink-0 print:hidden">
                 <button
                   onClick={() => setActiveDocMode("DISCHARGE")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     activeDocMode === "DISCHARGE"
-                      ? "bg-white text-[#1A73E8] shadow-xs"
-                      : "text-[#5F6368] hover:text-[#202124]"
+                      ? "bg-white text-blue-600 shadow-xs"
+                      : "text-slate-500 hover:text-slate-900"
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
@@ -421,8 +421,8 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
                   onClick={() => setActiveDocMode("OPERATIVE_NOTE")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     activeDocMode === "OPERATIVE_NOTE"
-                      ? "bg-white text-[#1A73E8] shadow-xs"
-                      : "text-[#5F6368] hover:text-[#202124]"
+                      ? "bg-white text-blue-600 shadow-xs"
+                      : "text-slate-500 hover:text-slate-900"
                   }`}
                 >
                   <Activity className="w-3.5 h-3.5" />
@@ -435,23 +435,23 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
             </div>
 
             {/* Folder Location & Metadata Metadata Bar */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs bg-[#F8F9FA] p-3 rounded-xl border border-[#DADCE0]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200">
               <div>
-                <span className="text-[10px] text-[#5F6368] block">Reference Archive Path:</span>
-                <span className="font-mono text-[11px] text-[#202124] font-medium break-all flex items-center gap-1">
+                <span className="text-[10px] text-slate-500 block">Reference Archive Path:</span>
+                <span className="font-mono text-xs text-slate-900 font-medium break-all flex items-center gap-1">
                   <FolderOpen className="w-3 h-3 text-amber-600 shrink-0" />
                   {currentPatient.folderPath || `SMS IR Archive / IR ${currentPatient.dsaNo} / ${currentPatient.procedureDate || "date not recorded"}`}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-[#5F6368] block">Procedure &amp; Date:</span>
-                <span className="font-medium text-[#202124]">
+                <span className="text-[10px] text-slate-500 block">Procedure &amp; Date:</span>
+                <span className="font-medium text-slate-900">
                   {currentPatient.procedureName} ({currentPatient.procedureDate})
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-[#5F6368] block">Files in Patient Folder:</span>
-                <span className="font-mono text-[11px] text-[#1A73E8]">
+                <span className="text-[10px] text-slate-500 block">Files in Patient Folder:</span>
+                <span className="font-mono text-xs text-blue-600">
                   {currentPatient.filesAvailable.length > 0
                     ? currentPatient.filesAvailable.join(", ")
                     : "BHT & REPORT (Verified via Registry)"}
@@ -462,10 +462,10 @@ export function PatientArchiveDossier({ onLoadIntoEditor }: PatientArchiveDossie
 
           {/* DOCUMENT PRESENTATION 1: Discharge card -- real on-disk documents */}
           {activeDocMode === "DISCHARGE" && (
-            <div className="bg-white border border-[#DADCE0] rounded-2xl shadow-xs overflow-hidden">
-              <div className="p-3 bg-[#F8F9FA] border-b border-[#DADCE0] flex items-center justify-between text-xs print:hidden">
-                <span className="font-bold text-[#202124] flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-[#1A73E8]" />
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+              <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs print:hidden">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-blue-600" />
                   Discharge Card / Bed Head Ticket
                 </span>
                 <button
@@ -481,7 +481,7 @@ ON-FILE DOCUMENTS (${refs.length}):
 ${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.chars} chars, matched by ${d.linkReason}`).join("\n")}`;
                     handleCopy(text, "Discharge Card Index");
                   }}
-                  className="px-2.5 py-1 rounded bg-white border border-[#DADCE0] hover:border-[#1A73E8] text-[11px] font-semibold text-[#1A73E8] flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 rounded bg-white border border-slate-200 hover:border-blue-600 text-xs font-semibold text-blue-600 flex items-center gap-1 cursor-pointer"
                 >
                   <Copy className="w-3 h-3" />
                   <span>Copy Index</span>
@@ -501,9 +501,9 @@ ${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.cha
                   </p>
                 </div>
               ) : (
-                <div className="p-6 sm:p-8 space-y-5 text-[#202124] text-xs">
+                <div className="p-6 sm:p-8 space-y-5 text-slate-900 text-xs">
                   <div className="text-center border-b-2 border-slate-900 pb-3 space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
                       SMS Medical College &amp; S.M.S. Hospital, Jaipur
                     </p>
                     <h3 className="text-base font-bold uppercase tracking-wide">
@@ -524,47 +524,47 @@ ${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.cha
                       ["Unit / Ward", currentPatient.unitOrWard || "Not recorded"],
                     ].map(([label, value]) => (
                       <div key={label}>
-                        <span className="text-[10px] text-[#5F6368] block uppercase">{label}</span>
-                        <span className="font-medium text-[#202124]">{value}</span>
+                        <span className="text-[10px] text-slate-500 block uppercase">{label}</span>
+                        <span className="font-medium text-slate-900">{value}</span>
                       </div>
                     ))}
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-[#5F6368] block uppercase">Diagnosis</span>
+                    <span className="text-[10px] text-slate-500 block uppercase">Diagnosis</span>
                     <p className="text-slate-700 leading-relaxed">
                       {currentPatient.diagnosis || "Not recorded in the registry."}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#5F6368] block uppercase">Procedure</span>
-                    <p className="font-semibold text-[#202124]">
+                    <span className="text-[10px] text-slate-500 block uppercase">Procedure</span>
+                    <p className="font-semibold text-slate-900">
                       {currentPatient.procedureName || "Not recorded in the registry."}
                     </p>
                   </div>
 
-                  <div className="border-t border-[#DADCE0] pt-4 space-y-2">
-                    <span className="text-[10px] text-[#5F6368] block uppercase">
+                  <div className="border-t border-slate-200 pt-4 space-y-2">
+                    <span className="text-[10px] text-slate-500 block uppercase">
                       Source documents ({currentPatient.dischargeDocuments.length})
                     </span>
                     {currentPatient.dischargeDocuments.map((d, i) => (
                       <div
                         key={d.path}
-                        className="flex items-start gap-2 p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]"
+                        className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200"
                       >
-                        <FileText className="w-3.5 h-3.5 text-[#1A73E8] mt-0.5 shrink-0" />
+                        <FileText className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
                         <div className="min-w-0">
-                          <p className="font-mono text-[11px] text-[#202124] break-all">
+                          <p className="font-mono text-xs text-slate-900 break-all">
                             {d.path}
                           </p>
-                          <p className="text-[10px] text-[#5F6368] mt-0.5">
+                          <p className="text-[10px] text-slate-500 mt-0.5">
                             Extracted via {d.method} &middot; {d.chars.toLocaleString()} characters
                             &middot; matched by {d.linkReason.replace(/_/g, " ")}
                           </p>
                         </div>
                       </div>
                     ))}
-                    <p className="text-[10px] text-[#5F6368] italic pt-1">
+                    <p className="text-[10px] text-slate-500 italic pt-1">
                       Vital signs, medication lists and narrative fields are not shown because
                       they are not reliably machine-readable across this scanned corpus. The
                       authoritative content is in the source document listed above.
@@ -577,10 +577,10 @@ ${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.cha
 
           {/* DOCUMENT PRESENTATION 2: Post-operative note -- real on-disk documents */}
           {activeDocMode === "OPERATIVE_NOTE" && (
-            <div className="bg-white border border-[#DADCE0] rounded-2xl shadow-xs overflow-hidden">
-              <div className="p-3 bg-[#F8F9FA] border-b border-[#DADCE0] flex items-center justify-between text-xs print:hidden">
-                <span className="font-bold text-[#202124] flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-[#1A73E8]" />
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+              <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs print:hidden">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-blue-600" />
                   Post-Operative / Operative Procedure Note
                 </span>
                 <button
@@ -595,7 +595,7 @@ ON-FILE DOCUMENTS (${refs.length}):
 ${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.chars} chars, matched by ${d.linkReason}`).join("\n")}`;
                     handleCopy(text, "Operative Note Index");
                   }}
-                  className="px-2.5 py-1 rounded bg-white border border-[#DADCE0] hover:border-[#1A73E8] text-[11px] font-semibold text-[#1A73E8] flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 rounded bg-white border border-slate-200 hover:border-blue-600 text-xs font-semibold text-blue-600 flex items-center gap-1 cursor-pointer"
                 >
                   <Copy className="w-3 h-3" />
                   <span>Copy Index</span>
@@ -616,9 +616,9 @@ ${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.cha
                   </p>
                 </div>
               ) : (
-                <div className="p-6 sm:p-8 space-y-5 text-[#202124] text-xs">
+                <div className="p-6 sm:p-8 space-y-5 text-slate-900 text-xs">
                   <div className="text-center border-b-2 border-slate-900 pb-3 space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
                       Department of Interventional Radiology
                     </p>
                     <h3 className="text-base font-bold uppercase tracking-wide">
@@ -639,47 +639,47 @@ ${refs.map((d, i) => `${i + 1}. ${d.path}\n   extracted via ${d.method}, ${d.cha
                       ["Category", currentPatient.procedureCategory],
                     ].map(([label, value]) => (
                       <div key={label}>
-                        <span className="text-[10px] text-[#5F6368] block uppercase">{label}</span>
-                        <span className="font-medium text-[#202124]">{value}</span>
+                        <span className="text-[10px] text-slate-500 block uppercase">{label}</span>
+                        <span className="font-medium text-slate-900">{value}</span>
                       </div>
                     ))}
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-[#5F6368] block uppercase">Procedure</span>
-                    <p className="font-semibold text-[#202124]">
+                    <span className="text-[10px] text-slate-500 block uppercase">Procedure</span>
+                    <p className="font-semibold text-slate-900">
                       {currentPatient.procedureName || "Not recorded in the registry."}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#5F6368] block uppercase">Diagnosis / Indication</span>
+                    <span className="text-[10px] text-slate-500 block uppercase">Diagnosis / Indication</span>
                     <p className="text-slate-700 leading-relaxed">
                       {currentPatient.diagnosis || "Not recorded in the registry."}
                     </p>
                   </div>
 
-                  <div className="border-t border-[#DADCE0] pt-4 space-y-2">
-                    <span className="text-[10px] text-[#5F6368] block uppercase">
+                  <div className="border-t border-slate-200 pt-4 space-y-2">
+                    <span className="text-[10px] text-slate-500 block uppercase">
                       Source documents ({currentPatient.operativeDocuments.length})
                     </span>
                     {currentPatient.operativeDocuments.map((d) => (
                       <div
                         key={d.path}
-                        className="flex items-start gap-2 p-2.5 rounded-lg bg-[#F8F9FA] border border-[#DADCE0]"
+                        className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200"
                       >
-                        <Activity className="w-3.5 h-3.5 text-[#1A73E8] mt-0.5 shrink-0" />
+                        <Activity className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
                         <div className="min-w-0">
-                          <p className="font-mono text-[11px] text-[#202124] break-all">
+                          <p className="font-mono text-xs text-slate-900 break-all">
                             {d.path}
                           </p>
-                          <p className="text-[10px] text-[#5F6368] mt-0.5">
+                          <p className="text-[10px] text-slate-500 mt-0.5">
                             Extracted via {d.method} &middot; {d.chars.toLocaleString()} characters
                             &middot; matched by {d.linkReason.replace(/_/g, " ")}
                           </p>
                         </div>
                       </div>
                     ))}
-                    <p className="text-[10px] text-[#5F6368] italic pt-1">
+                    <p className="text-[10px] text-slate-500 italic pt-1">
                       Access site, sheath size, embolic agent and contrast volume are not
                       shown as structured fields because they are not reliably
                       machine-readable across this corpus. The authoritative content is

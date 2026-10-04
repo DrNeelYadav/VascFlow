@@ -142,27 +142,27 @@ export const SsoIhmsPrefill: React.FC<SsoIhmsPrefillProps> = ({ summaryData }) =
   };
 
   return (
-    <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-6 shadow-xs space-y-5 print:hidden">
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-5 print:hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F1F3F4] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-[#E8F0FE] text-[#1A73E8]">
+            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
               <Globe className="w-4 h-4" />
             </span>
-            <h3 className="text-sm font-bold text-[#202124] uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
               Rajasthan SSO &amp; IHMS e-Hospital Live Ingestion Engine
             </h3>
           </div>
-          <p className="text-xs text-[#5F6368] mt-1">
-            Pre-formatted data matching the exact DOM form fields of <strong className="text-[#1A73E8]">ihms.health.rajasthan.gov.in</strong> and Rajasthan SSO.
+          <p className="text-xs text-slate-500 mt-1">
+            Pre-formatted data matching the exact DOM form fields of <strong className="text-blue-600">ihms.health.rajasthan.gov.in</strong> and Rajasthan SSO.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => copyToClipboard(generateBookmarkletScript(), "bookmarklet")}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs cursor-pointer active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs cursor-pointer active:scale-95 transition-all"
             title="Copy 1-Click Bookmarklet script for browser console or bookmark"
           >
             {copiedKey === "bookmarklet" ? (
@@ -176,11 +176,11 @@ export const SsoIhmsPrefill: React.FC<SsoIhmsPrefillProps> = ({ summaryData }) =
       </div>
 
       {/* Instructions Alert */}
-      <div className="p-3 bg-[#E8F0FE] rounded-xl border border-[#D2E3FC] flex items-start gap-2.5 text-xs text-[#1A73E8]">
+      <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 flex items-start gap-2.5 text-xs text-blue-600">
         <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
         <div className="space-y-1">
           <div className="font-bold">Rajasthan SSO Active Portal Guidance:</div>
-          <p className="text-[#3C4043] leading-relaxed">
+          <p className="text-slate-700 leading-relaxed">
             Because Rajasthan SSO e-Hospital runs under authenticated session tokens with strict CSRF verification, use either the <strong>1-Click DOM Script</strong> (paste into the DevTools Console on the IHMS portal tab) or copy individual key fields below to instantaneously populate every input block.
           </p>
         </div>
@@ -191,23 +191,23 @@ export const SsoIhmsPrefill: React.FC<SsoIhmsPrefillProps> = ({ summaryData }) =
         {ihmsFields.map((field) => (
           <div
             key={field.fieldName}
-            className="p-3.5 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] space-y-2 hover:border-[#1A73E8] transition-all group shadow-2xs"
+            className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-2 hover:border-blue-600 transition-all group shadow-2xs"
           >
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold text-[#202124] group-hover:text-[#1A73E8] transition-colors">
+                <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                   {field.label}
                 </span>
-                <span className="text-[10px] font-mono text-[#80868B] block">
-                  Field ID: <code className="text-[#1A73E8] font-bold">{field.fieldName}</code>
+                <span className="text-[10px] font-mono text-slate-400 block">
+                  Field ID: <code className="text-blue-600 font-bold">{field.fieldName}</code>
                 </span>
               </div>
               <button
                 onClick={() => copyToClipboard(field.value, field.fieldName)}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
                   copiedKey === field.fieldName
-                    ? "bg-[#137333] text-white shadow-xs"
-                    : "bg-white text-[#1A73E8] border border-[#DADCE0] hover:bg-[#E8F0FE]"
+                    ? "bg-emerald-700 text-white shadow-xs"
+                    : "bg-white text-blue-600 border border-slate-200 hover:bg-blue-50"
                 }`}
               >
                 {copiedKey === field.fieldName ? (
@@ -223,8 +223,8 @@ export const SsoIhmsPrefill: React.FC<SsoIhmsPrefillProps> = ({ summaryData }) =
                 )}
               </button>
             </div>
-            <div className="p-2 bg-white rounded-lg border border-[#DADCE0] text-[11px] text-[#3C4043] max-h-24 overflow-y-auto font-mono whitespace-pre-wrap leading-relaxed">
-              {field.value || <span className="text-[#9AA0A6] italic">Empty field</span>}
+            <div className="p-2 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-700 max-h-24 overflow-y-auto font-mono whitespace-pre-wrap leading-relaxed">
+              {field.value || <span className="text-slate-400 italic">Empty field</span>}
             </div>
           </div>
         ))}

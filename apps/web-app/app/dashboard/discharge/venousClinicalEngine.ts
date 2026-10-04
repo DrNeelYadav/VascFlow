@@ -1,7 +1,7 @@
 /**
  * Venous Interventional Radiology Clinical Schema & Synthesis Engine
  * Grounded in SVS/AVF 2023, CIRSE 2020, and UIP International Consensus Guidelines.
- * Tailored for VascFlow / SMS Medical College & Hospitals, Jaipur.
+ * Tailored for EndoFlow / SMS Medical College & Hospitals, Jaipur.
  */
 
 import type { DischargeMedicationItem, PostOperativeNoteData } from './ihmsDischargeTemplates';

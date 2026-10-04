@@ -226,23 +226,23 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
   ];
 
   return (
-    <div className="bg-white border border-[#DADCE0] rounded-2xl p-4 sm:p-6 shadow-xs space-y-5 print:hidden">
+    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-5 print:hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F1F3F4] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-[#E8F0FE] text-[#1A73E8]">
+            <span className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
               <BarChart3 className="w-4 h-4" />
             </span>
-            <h3 className="text-sm font-bold text-[#202124] uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
               Interventional Radiology &amp; Varicose Clinical Analytics Suite
             </h3>
           </div>
-          <p className="text-xs text-[#5F6368] mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Over 10 interactive hemodynamic benchmarks, CEAP venous stages, procedural radiation metrics, and authentic SMS Cath-Lab operative frequencies.
           </p>
         </div>
-        <span className="px-3 py-1 rounded-full bg-[#E6F4EA] text-[#137333] text-xs font-bold font-mono">
+        <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold font-mono">
           Authentic SMS Cohort: {REAL_SMS_PATIENT_REGISTRY.length}+ Verified Records
         </span>
       </div>
@@ -258,14 +258,14 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
               onClick={() => setSelectedChart(c.id)}
               className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border ${
                 isActive
-                  ? "bg-[#1A73E8] text-white border-[#1A73E8] shadow-xs"
-                  : "bg-[#F8F9FA] text-[#3C4043] border-[#DADCE0] hover:bg-white hover:border-[#1A73E8]"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-white hover:border-blue-600"
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-[#1A73E8]"}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-blue-600"}`} />
               <div className="text-left">
                 <span className="block leading-none">{c.title}</span>
-                <span className={`text-[10px] block mt-0.5 ${isActive ? "text-blue-100" : "text-[#80868B]"}`}>
+                <span className={`text-[10px] block mt-0.5 ${isActive ? "text-blue-100" : "text-slate-400"}`}>
                   {c.subtitle}
                 </span>
               </div>
@@ -275,31 +275,31 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
       </div>
 
       {/* Active Interactive Chart Container */}
-      <div className="p-4 sm:p-5 bg-[#F8F9FA] rounded-2xl border border-[#DADCE0]">
+      <div className="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200">
         {/* CHART 1: CEAP Varicose Classification */}
         {selectedChart === 0 && (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                  <PieChart className="w-4 h-4 text-[#1A73E8]" />
+                <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                  <PieChart className="w-4 h-4 text-blue-600" />
                   CEAP Clinical Classification Breakdown (C0–C6 Stages)
                 </h4>
-                <p className="text-[11px] text-[#5F6368]">
+                <p className="text-xs text-slate-500">
                   Clinical severity grading across 500 consecutive lower extremity duplex ultrasound evaluations.
                 </p>
               </div>
               <div className="flex items-center gap-1">
-                <Filter className="w-3 h-3 text-[#80868B]" />
-                <span className="text-[10px] font-bold text-[#5F6368]">Filter:</span>
+                <Filter className="w-3 h-3 text-slate-400" />
+                <span className="text-[10px] font-bold text-slate-500">Filter:</span>
                 {["All", "Ulcers (C5-C6)", "Complicated (C4-C6)"].map((f) => (
                   <button
                     key={f}
                     onClick={() => setActiveCeap(f)}
                     className={`px-2 py-0.5 text-[10px] rounded font-semibold cursor-pointer ${
                       activeCeap === f
-                        ? "bg-[#1A73E8] text-white"
-                        : "bg-white text-[#5F6368] border border-[#DADCE0]"
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-slate-500 border border-slate-200"
                     }`}
                   >
                     {f}
@@ -320,8 +320,8 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
                     key={item.class}
                     className={`p-3 rounded-xl border transition-all ${
                       isFiltered
-                        ? "bg-white border-[#DADCE0] shadow-xs hover:border-[#1A73E8]"
-                        : "bg-white/50 border-dashed border-[#DADCE0] opacity-40"
+                        ? "bg-white border-slate-200 shadow-xs hover:border-blue-600"
+                        : "bg-white/50 border-dashed border-slate-200 opacity-40"
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -331,15 +331,15 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
                       >
                         {item.class}
                       </span>
-                      <span className="text-xs font-bold text-[#202124]">{item.percent}%</span>
+                      <span className="text-xs font-bold text-slate-900">{item.percent}%</span>
                     </div>
                     <div className="mt-2">
-                      <div className="text-lg font-black text-[#202124]">{item.count}</div>
-                      <div className="text-[10px] text-[#5F6368] line-clamp-2 h-7 leading-tight mt-0.5">
+                      <div className="text-lg font-black text-slate-900">{item.count}</div>
+                      <div className="text-[10px] text-slate-500 line-clamp-2 h-7 leading-tight mt-0.5">
                         {item.label}
                       </div>
                     </div>
-                    <div className="w-full bg-[#F1F3F4] rounded-full h-1.5 mt-2 overflow-hidden">
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2 overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all"
                         style={{ width: `${item.percent * 2}%`, backgroundColor: item.color }}
@@ -356,46 +356,46 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 1 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Activity className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Activity className="w-4 h-4 text-blue-600" />
                 Saphenofemoral Junction &amp; GSV Caliber vs. Reflux Latency (seconds)
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Pathological retrograde color Doppler flow duration (&gt;0.5s threshold) plotted against anatomical vein caliber in standing position.
               </p>
             </div>
 
             <div className="space-y-2.5">
               {gsvRefluxVsCaliber.map((g) => (
-                <div key={g.zone} className="bg-white p-3 rounded-xl border border-[#DADCE0] shadow-xs">
+                <div key={g.zone} className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
                   <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-bold text-[#202124]">{g.zone}</span>
-                    <div className="flex items-center gap-4 text-[11px]">
-                      <span className="text-[#1A73E8] font-bold">Caliber: {g.avgCaliberMm} mm</span>
-                      <span className="text-[#EA4335] font-bold">Reflux: {g.refluxSec}s</span>
+                    <span className="font-bold text-slate-900">{g.zone}</span>
+                    <div className="flex items-center gap-4 text-xs">
+                      <span className="text-blue-600 font-bold">Caliber: {g.avgCaliberMm} mm</span>
+                      <span className="text-rose-600 font-bold">Reflux: {g.refluxSec}s</span>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <div className="flex justify-between text-[9px] text-[#80868B] mb-0.5">
+                      <div className="flex justify-between text-[10px] text-slate-400 mb-0.5">
                         <span>Caliber Index</span>
                         <span>{g.avgCaliberMm} / 12 mm</span>
                       </div>
-                      <div className="w-full bg-[#E8F0FE] rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-blue-50 rounded-full h-2 overflow-hidden">
                         <div
-                          className="bg-[#1A73E8] h-full rounded-full"
+                          className="bg-blue-600 h-full rounded-full"
                           style={{ width: `${(g.avgCaliberMm / 12) * 100}%` }}
                         />
                       </div>
                     </div>
                     <div>
-                      <div className="flex justify-between text-[9px] text-[#80868B] mb-0.5">
+                      <div className="flex justify-between text-[10px] text-slate-400 mb-0.5">
                         <span>Reflux Duration</span>
                         <span>{g.refluxSec}s (Severe &gt;2s)</span>
                       </div>
-                      <div className="w-full bg-[#FCE8E6] rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-rose-50 rounded-full h-2 overflow-hidden">
                         <div
-                          className="bg-[#EA4335] h-full rounded-full"
+                          className="bg-rose-600 h-full rounded-full"
                           style={{ width: `${Math.min((g.refluxSec / 4) * 100, 100)}%` }}
                         />
                       </div>
@@ -411,33 +411,33 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 2 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-blue-600" />
                 Endovenous Truncal Ablation Modality Comparison (SMS Cohort)
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Procedural volume share, post-op recovery time, and visual analog scale (VAS) pain score.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {ablationModalities.map((m) => (
-                <div key={m.name} className="bg-white p-4 rounded-xl border border-[#DADCE0] shadow-xs space-y-2">
+                <div key={m.name} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-[#202124]">{m.name}</span>
+                    <span className="text-xs font-black text-slate-900">{m.name}</span>
                     <span className="px-2 py-0.5 rounded text-xs font-bold text-white" style={{ backgroundColor: m.color }}>
                       {m.share}
                     </span>
                   </div>
-                  <div className="text-2xl font-black text-[#202124]">{m.count} <span className="text-xs font-normal text-[#5F6368]">cases</span></div>
-                  <div className="pt-2 border-t border-[#F1F3F4] text-[11px] space-y-1">
-                    <div className="flex justify-between text-[#5F6368]">
+                  <div className="text-2xl font-black text-slate-900">{m.count} <span className="text-xs font-normal text-slate-500">cases</span></div>
+                  <div className="pt-2 border-t border-slate-100 text-xs space-y-1">
+                    <div className="flex justify-between text-slate-500">
                       <span>Recovery:</span>
-                      <span className="font-semibold text-[#202124]">{m.recoveryHours}</span>
+                      <span className="font-semibold text-slate-900">{m.recoveryHours}</span>
                     </div>
-                    <div className="flex justify-between text-[#5F6368]">
+                    <div className="flex justify-between text-slate-500">
                       <span>Pain VAS:</span>
-                      <span className="font-bold text-[#137333]">{m.painVas}</span>
+                      <span className="font-bold text-emerald-700">{m.painVas}</span>
                     </div>
                   </div>
                 </div>
@@ -450,18 +450,18 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 3 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <TrendingUp className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
                 Portosystemic Pressure Gradient (PPG) Pre vs. Post TIPS / DIPS Stenting
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Hemodynamic reduction in hepatic venous/portal gradient to prevent variceal rebleed and decompress refractory ascites.
               </p>
             </div>
 
-            <div className="overflow-x-auto bg-white rounded-xl border border-[#DADCE0]">
+            <div className="overflow-x-auto bg-white rounded-xl border border-slate-200">
               <table className="w-full text-xs text-left">
-                <thead className="bg-[#F8F9FA] text-[10px] font-bold text-[#5F6368] uppercase border-b border-[#DADCE0]">
+                <thead className="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
                   <tr>
                     <th className="p-3">Indication / Cohort</th>
                     <th className="p-3 text-center">Pre-Stent PPG</th>
@@ -470,18 +470,18 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
                     <th className="p-3">Clinical Endpoint</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DADCE0]">
+                <tbody className="divide-y divide-slate-200">
                   {ppgGradientDrops.map((row) => (
-                    <tr key={row.cohort} className="hover:bg-[#F8F9FA]">
-                      <td className="p-3 font-bold text-[#202124]">{row.cohort}</td>
-                      <td className="p-3 text-center font-mono font-bold text-[#EA4335]">{row.preMmHg} mmHg</td>
-                      <td className="p-3 text-center font-mono font-bold text-[#137333]">{row.postMmHg} mmHg</td>
+                    <tr key={row.cohort} className="hover:bg-slate-50">
+                      <td className="p-3 font-bold text-slate-900">{row.cohort}</td>
+                      <td className="p-3 text-center font-mono font-bold text-rose-600">{row.preMmHg} mmHg</td>
+                      <td className="p-3 text-center font-mono font-bold text-emerald-700">{row.postMmHg} mmHg</td>
                       <td className="p-3 text-center">
-                        <span className="px-2 py-0.5 rounded-full bg-[#E6F4EA] text-[#137333] font-black text-[11px]">
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-black text-xs">
                           ↓ {row.dropPct}
                         </span>
                       </td>
-                      <td className="p-3 text-[#3C4043] font-semibold">{row.status}</td>
+                      <td className="p-3 text-slate-700 font-semibold">{row.status}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -494,28 +494,28 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 4 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-blue-600" />
                 Bismuth-Corlette Stricture Classification &amp; SEMS Stenting Approach
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Biliary tree anatomy and drainage approach across 220 malignant obstructive jaundice cases.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
               {bismuthDistribution.map((b) => (
-                <div key={b.type} className="bg-white p-3.5 rounded-xl border border-[#DADCE0] shadow-xs space-y-2">
-                  <div className="text-xs font-black text-[#1A73E8]">{b.type}</div>
-                  <div className="text-xl font-black text-[#202124]">{b.cases} <span className="text-xs font-normal text-[#5F6368]">cases ({b.pct}%)</span></div>
-                  <div className="pt-2 border-t border-[#F1F3F4] text-[10px] space-y-1">
+                <div key={b.type} className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-2">
+                  <div className="text-xs font-black text-blue-600">{b.type}</div>
+                  <div className="text-xl font-black text-slate-900">{b.cases} <span className="text-xs font-normal text-slate-500">cases ({b.pct}%)</span></div>
+                  <div className="pt-2 border-t border-slate-100 text-[10px] space-y-1">
                     <div>
-                      <span className="text-[#80868B] block">Standard Stent:</span>
-                      <span className="font-bold text-[#202124]">{b.stentLength}</span>
+                      <span className="text-slate-400 block">Standard Stent:</span>
+                      <span className="font-bold text-slate-900">{b.stentLength}</span>
                     </div>
                     <div>
-                      <span className="text-[#80868B] block">Approach:</span>
-                      <span className="font-semibold text-[#137333]">{b.approach}</span>
+                      <span className="text-slate-400 block">Approach:</span>
+                      <span className="font-semibold text-emerald-700">{b.approach}</span>
                     </div>
                   </div>
                 </div>
@@ -528,28 +528,28 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 5 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Flame className="w-4 h-4 text-[#EA4335]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Flame className="w-4 h-4 text-rose-600" />
                 Superselective Embolotherapy Targets &amp; Hemostatic Success Rates
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Procedural volume, primary embolic agents utilized, and immediate angiographic devascularization rate.
               </p>
             </div>
 
             <div className="space-y-2.5">
               {embolotherapyTargets.map((t) => (
-                <div key={t.target} className="bg-white p-3 rounded-xl border border-[#DADCE0] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div key={t.target} className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#202124]">{t.target}</span>
-                      <span className="text-xs font-black text-[#137333]">{t.successRate}% Success</span>
+                      <span className="text-xs font-bold text-slate-900">{t.target}</span>
+                      <span className="text-xs font-black text-emerald-700">{t.successRate}% Success</span>
                     </div>
-                    <div className="text-[10px] text-[#5F6368] mt-0.5">
-                      Embolic Choice: <strong className="text-[#1A73E8]">{t.embolic}</strong> &bull; Volume: {t.cases} cases
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      Embolic Choice: <strong className="text-blue-600">{t.embolic}</strong> &bull; Volume: {t.cases} cases
                     </div>
-                    <div className="w-full bg-[#E6F4EA] rounded-full h-1.5 mt-2 overflow-hidden">
-                      <div className="bg-[#137333] h-full rounded-full" style={{ width: `${t.successRate}%` }} />
+                    <div className="w-full bg-emerald-50 rounded-full h-1.5 mt-2 overflow-hidden">
+                      <div className="bg-emerald-700 h-full rounded-full" style={{ width: `${t.successRate}%` }} />
                     </div>
                   </div>
                 </div>
@@ -562,25 +562,25 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 6 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <GitCommit className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <GitCommit className="w-4 h-4 text-blue-600" />
                 Vascular Sheath French Size Utilization Across Procedures
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Distribution of introducer sheath calibers (4F to 10F) based on delivery system profile requirements.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
               {sheathDist.map((s) => (
-                <div key={s.size} className="bg-white p-3.5 rounded-xl border border-[#DADCE0] shadow-xs space-y-1.5">
+                <div key={s.size} className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black text-white px-2 py-0.5 rounded" style={{ backgroundColor: s.color }}>
                       {s.size}
                     </span>
-                    <span className="text-sm font-black text-[#202124]">{s.share}%</span>
+                    <span className="text-sm font-black text-slate-900">{s.share}%</span>
                   </div>
-                  <p className="text-[10px] text-[#5F6368] leading-tight pt-1">
+                  <p className="text-[10px] text-slate-500 leading-tight pt-1">
                     {s.indication}
                   </p>
                 </div>
@@ -593,18 +593,18 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 7 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <HeartPulse className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <HeartPulse className="w-4 h-4 text-blue-600" />
                 Dose Area Product (DAP Gy·cm²) &amp; Fluoroscopy Time vs. Diagnostic Reference Levels
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 AERB / CIRSE radiation safety benchmarks maintained at SMS Medical College Angiosuites.
               </p>
             </div>
 
-            <div className="overflow-x-auto bg-white rounded-xl border border-[#DADCE0]">
+            <div className="overflow-x-auto bg-white rounded-xl border border-slate-200">
               <table className="w-full text-xs text-left">
-                <thead className="bg-[#F8F9FA] text-[10px] font-bold text-[#5F6368] uppercase border-b border-[#DADCE0]">
+                <thead className="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
                   <tr>
                     <th className="p-3">Procedure</th>
                     <th className="p-3 text-center">Mean DAP (Gy·cm²)</th>
@@ -613,15 +613,15 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
                     <th className="p-3">Safety Index</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#DADCE0]">
+                <tbody className="divide-y divide-slate-200">
                   {radiationMetrics.map((r) => (
-                    <tr key={r.procedure} className="hover:bg-[#F8F9FA]">
-                      <td className="p-3 font-bold text-[#202124]">{r.procedure}</td>
-                      <td className="p-3 text-center font-mono font-bold text-[#1A73E8]">{r.meanDap}</td>
-                      <td className="p-3 text-center font-mono text-[#5F6368]">{r.drl}</td>
-                      <td className="p-3 text-center font-mono font-bold text-[#202124]">{r.fluoroMins} min</td>
+                    <tr key={r.procedure} className="hover:bg-slate-50">
+                      <td className="p-3 font-bold text-slate-900">{r.procedure}</td>
+                      <td className="p-3 text-center font-mono font-bold text-blue-600">{r.meanDap}</td>
+                      <td className="p-3 text-center font-mono text-slate-500">{r.drl}</td>
+                      <td className="p-3 text-center font-mono font-bold text-slate-900">{r.fluoroMins} min</td>
                       <td className="p-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8]">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600">
                           {r.risk}
                         </span>
                       </td>
@@ -637,30 +637,30 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 8 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#137333]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                 Iodinated Contrast Volume vs. Cigarroa Maximum Allowable Contrast Dose (MACD)
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Renal protection formula: MACD (mL) = (5 mL × Weight in kg) / Baseline Serum Creatinine (mg/dL). Zero CI-AKI protocol.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {contrastSafety.map((c) => (
-                <div key={c.procedure} className="bg-white p-3.5 rounded-xl border border-[#DADCE0] shadow-xs space-y-2">
-                  <div className="text-xs font-bold text-[#202124] truncate">{c.procedure}</div>
+                <div key={c.procedure} className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-2">
+                  <div className="text-xs font-bold text-slate-900 truncate">{c.procedure}</div>
                   <div className="flex items-baseline justify-between">
-                    <span className="text-lg font-black text-[#1A73E8]">{c.avgVolumeMl} mL</span>
-                    <span className="text-[10px] text-[#80868B]">MACD Limit: {c.macdLimitMl} mL</span>
+                    <span className="text-lg font-black text-blue-600">{c.avgVolumeMl} mL</span>
+                    <span className="text-[10px] text-slate-400">MACD Limit: {c.macdLimitMl} mL</span>
                   </div>
-                  <div className="w-full bg-[#E6F4EA] rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-emerald-50 rounded-full h-1.5 overflow-hidden">
                     <div
-                      className="bg-[#137333] h-full rounded-full"
+                      className="bg-emerald-700 h-full rounded-full"
                       style={{ width: `${Math.min((c.avgVolumeMl / c.macdLimitMl) * 100, 100)}%` }}
                     />
                   </div>
-                  <div className="text-[10px] font-bold text-[#137333] pt-0.5">{c.safetyMargin}</div>
+                  <div className="text-[10px] font-bold text-emerald-700 pt-0.5">{c.safetyMargin}</div>
                 </div>
               ))}
             </div>
@@ -672,11 +672,11 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                  <BarChart3 className="w-4 h-4 text-[#1A73E8]" />
+                <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                  <BarChart3 className="w-4 h-4 text-blue-600" />
                   Top 10 High-Frequency Procedures in Authentic SMS Registry
                 </h4>
-                <p className="text-[11px] text-[#5F6368]">
+                <p className="text-xs text-slate-500">
                   Derived dynamically from the {REAL_SMS_PATIENT_REGISTRY.length} authentic records in the Cath-Lab logbook database.
                 </p>
               </div>
@@ -687,19 +687,19 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
                 <div
                   key={proc.name}
                   onClick={() => onSelectProcedure && onSelectProcedure(proc.name)}
-                  className="bg-white p-2.5 px-3 rounded-xl border border-[#DADCE0] hover:border-[#1A73E8] transition-all flex items-center justify-between gap-3 shadow-2xs cursor-pointer group"
+                  className="bg-white p-2.5 px-3 rounded-xl border border-slate-200 hover:border-blue-600 transition-all flex items-center justify-between gap-3 shadow-2xs cursor-pointer group"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <span className="w-5 h-5 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-[10px] font-black flex items-center justify-center shrink-0">
+                    <span className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black flex items-center justify-center shrink-0">
                       {idx + 1}
                     </span>
-                    <span className="text-xs font-bold text-[#202124] group-hover:text-[#1A73E8] truncate">
+                    <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 truncate">
                       {proc.name}
                     </span>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-xs font-black text-[#202124]">{proc.count} cases</span>
-                    <span className="px-2 py-0.5 rounded-full bg-[#F1F3F4] text-[10px] font-semibold text-[#5F6368]">
+                    <span className="text-xs font-black text-slate-900">{proc.count} cases</span>
+                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] font-semibold text-slate-500">
                       {proc.percent}%
                     </span>
                   </div>
@@ -713,33 +713,33 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 10 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Users className="w-4 h-4 text-blue-600" />
                 Institutional Patient Demographics: Gender Ratio &amp; Age Distribution
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Real patient distribution across {demographicData.total} authentic SMS Hospital cath-lab and discharge records.
               </p>
             </div>
 
             {/* Gender Ratio Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white p-4 rounded-xl border border-[#DADCE0] shadow-xs flex items-center justify-between">
+              <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
                 <div>
-                  <span className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider block">Male Cohort</span>
-                  <span className="text-2xl font-black text-[#1A73E8]">{demographicData.maleCount}</span>
-                  <span className="text-xs font-semibold text-[#5F6368] ml-2">({demographicData.malePct}%)</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Male Cohort</span>
+                  <span className="text-2xl font-black text-blue-600">{demographicData.maleCount}</span>
+                  <span className="text-xs font-semibold text-slate-500 ml-2">({demographicData.malePct}%)</span>
                 </div>
-                <div className="w-12 h-12 rounded-full bg-[#E8F0FE] flex items-center justify-center text-[#1A73E8] font-bold text-sm">
+                <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-sm">
                   ♂ M
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-xl border border-[#DADCE0] shadow-xs flex items-center justify-between">
+              <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
                 <div>
-                  <span className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider block">Female Cohort</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Female Cohort</span>
                   <span className="text-2xl font-black text-rose-600">{demographicData.femaleCount}</span>
-                  <span className="text-xs font-semibold text-[#5F6368] ml-2">({demographicData.femalePct}%)</span>
+                  <span className="text-xs font-semibold text-slate-500 ml-2">({demographicData.femalePct}%)</span>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-600 font-bold text-sm">
                   ♀ F
@@ -748,13 +748,13 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
             </div>
 
             {/* Gender Progress Bar */}
-            <div className="space-y-1.5 bg-white p-3.5 rounded-xl border border-[#DADCE0]">
+            <div className="space-y-1.5 bg-white p-3.5 rounded-xl border border-slate-200">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-[#1A73E8]">Male: {demographicData.malePct}%</span>
+                <span className="text-blue-600">Male: {demographicData.malePct}%</span>
                 <span className="text-rose-600">Female: {demographicData.femalePct}%</span>
               </div>
               <div className="w-full h-3 rounded-full bg-rose-100 flex overflow-hidden">
-                <div className="bg-[#1A73E8] h-full" style={{ width: `${demographicData.malePct}%` }} />
+                <div className="bg-blue-600 h-full" style={{ width: `${demographicData.malePct}%` }} />
                 <div className="bg-rose-500 h-full" style={{ width: `${demographicData.femalePct}%` }} />
               </div>
             </div>
@@ -762,14 +762,14 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
             {/* Age Brackets */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {demographicData.ageDistribution.map((a) => (
-                <div key={a.bracket} className="bg-white p-3 rounded-xl border border-[#DADCE0] shadow-xs space-y-1">
-                  <div className="text-[11px] font-bold text-[#202124]">{a.bracket}</div>
+                <div key={a.bracket} className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-1">
+                  <div className="text-xs font-bold text-slate-900">{a.bracket}</div>
                   <div className="flex items-baseline justify-between">
-                    <span className="text-lg font-black text-[#202124]">{a.count}</span>
-                    <span className="text-xs font-semibold text-[#1A73E8]">{a.pct}%</span>
+                    <span className="text-lg font-black text-slate-900">{a.count}</span>
+                    <span className="text-xs font-semibold text-blue-600">{a.pct}%</span>
                   </div>
-                  <div className="w-full bg-[#F1F3F4] rounded-full h-1.5 overflow-hidden">
-                    <div className="bg-[#1A73E8] h-full rounded-full" style={{ width: `${a.pct}%` }} />
+                  <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div className="bg-blue-600 h-full rounded-full" style={{ width: `${a.pct}%` }} />
                   </div>
                 </div>
               ))}
@@ -781,32 +781,32 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 11 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Award className="w-4 h-4 text-[#137333]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-emerald-700" />
                 Technical Success Rates &amp; Safety Endpoints (SMS Cohort)
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Audited outcomes across the most commonly performed interventional radiology procedures at SMS Medical College.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {proceduralSuccessRates.map((item) => (
-                <div key={item.procedure} className="bg-white p-3.5 rounded-xl border border-[#DADCE0] shadow-xs space-y-2">
+                <div key={item.procedure} className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-2">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-bold text-[#202124] leading-snug">{item.procedure}</span>
+                    <span className="text-xs font-bold text-slate-900 leading-snug">{item.procedure}</span>
                     <span className="px-2 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 shrink-0">
                       {item.successRate}% Success
                     </span>
                   </div>
-                  <div className="w-full bg-[#E6F4EA] rounded-full h-2 overflow-hidden">
-                    <div className="bg-[#137333] h-full rounded-full" style={{ width: `${item.successRate}%` }} />
+                  <div className="w-full bg-emerald-50 rounded-full h-2 overflow-hidden">
+                    <div className="bg-emerald-700 h-full rounded-full" style={{ width: `${item.successRate}%` }} />
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-[#5F6368] pt-1 border-t border-[#F1F3F4]">
-                    <span>Sample: <strong className="text-[#202124]">{item.totalCases} cases</strong></span>
+                  <div className="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+                    <span>Sample: <strong className="text-slate-900">{item.totalCases} cases</strong></span>
                     <span className="text-amber-700">Complications: {item.complicationRate}</span>
                   </div>
-                  <div className="text-[10px] text-[#80868B] italic">
+                  <div className="text-[10px] text-slate-400 italic">
                     Primary Metric: {item.metric}
                   </div>
                 </div>
@@ -819,28 +819,28 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 12 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-blue-600" />
                 Embolic Agent &amp; Closure Device Utilization (Glue vs Coils vs PVA vs SEMS)
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Departmental deployment frequency of VenaSeal Cyanoacrylate glue, microcoils, PVA particles, and self-expanding stents.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {embolicAgentUsage.map((item) => (
-                <div key={item.agent} className="bg-white p-4 rounded-xl border border-[#DADCE0] shadow-xs space-y-2">
+                <div key={item.agent} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                    <span className="text-xs font-black text-[#202124]">{item.sharePct}%</span>
+                    <span className="text-xs font-black text-slate-900">{item.sharePct}%</span>
                   </div>
-                  <div className="text-xs font-bold text-[#202124] line-clamp-2 min-h-[32px]">{item.agent}</div>
-                  <div className="text-lg font-black" style={{ color: item.color }}>{item.cases} <span className="text-xs text-[#5F6368] font-normal">cases</span></div>
-                  <div className="w-full bg-[#F1F3F4] rounded-full h-1.5 overflow-hidden">
+                  <div className="text-xs font-bold text-slate-900 line-clamp-2 min-h-8">{item.agent}</div>
+                  <div className="text-lg font-black" style={{ color: item.color }}>{item.cases} <span className="text-xs text-slate-500 font-normal">cases</span></div>
+                  <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
                     <div className="h-full rounded-full" style={{ width: `${item.sharePct * 2}%`, backgroundColor: item.color }} />
                   </div>
-                  <div className="text-[10px] text-[#5F6368] pt-1">
+                  <div className="text-[10px] text-slate-500 pt-1">
                     <strong>Key Uses:</strong> {item.primaryIndications}
                   </div>
                 </div>
@@ -853,11 +853,11 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
         {selectedChart === 13 && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-black uppercase text-[#202124] flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-[#1A73E8]" />
+              <h4 className="text-xs font-black uppercase text-slate-900 flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-blue-600" />
                 Departmental Weekly Cath-Lab Throughput &amp; Scheduling Profile
               </h4>
-              <p className="text-[11px] text-[#5F6368]">
+              <p className="text-xs text-slate-500">
                 Average procedure run per weekday, dedicated modality slots, and peak cath-lab operating hours.
               </p>
             </div>
@@ -869,27 +869,27 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
                   className={`p-3 rounded-xl border shadow-2xs space-y-1.5 ${
                     d.day === "Sunday"
                       ? "bg-rose-50/50 border-rose-200"
-                      : "bg-white border-[#DADCE0]"
+                      : "bg-white border-slate-200"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs font-bold ${d.day === "Sunday" ? "text-rose-700" : "text-[#202124]"}`}>
+                    <span className={`text-xs font-bold ${d.day === "Sunday" ? "text-rose-700" : "text-slate-900"}`}>
                       {d.day.slice(0, 3)}
                     </span>
-                    <span className={`text-xs font-black ${d.day === "Sunday" ? "text-rose-600" : "text-[#1A73E8]"}`}>
+                    <span className={`text-xs font-black ${d.day === "Sunday" ? "text-rose-600" : "text-blue-600"}`}>
                       {d.avgCases}
                     </span>
                   </div>
-                  <div className="w-full bg-[#F1F3F4] rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${d.day === "Sunday" ? "bg-rose-500" : "bg-[#1A73E8]"}`}
+                      className={`h-full rounded-full ${d.day === "Sunday" ? "bg-rose-500" : "bg-blue-600"}`}
                       style={{ width: `${Math.min((d.avgCases / 8) * 100, 100)}%` }}
                     />
                   </div>
-                  <div className="text-[10px] text-[#5F6368] font-medium pt-1 line-clamp-2 min-h-[28px]">
+                  <div className="text-[10px] text-slate-500 font-medium pt-1 line-clamp-2 min-h-7">
                     {d.primaryModality}
                   </div>
-                  <div className="text-[9px] font-mono text-[#80868B]">
+                  <div className="text-[10px] font-mono text-slate-400">
                     Peak: {d.peakHour}
                   </div>
                 </div>

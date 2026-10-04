@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Inlined by postcss-import (see postcss.config.js), which runs first in the
+   chain. These partials use `@layer components`, so they must be inlined after
+   @tailwind has declared the layers. */
+@import "./styles/variables.css";
+@import "./styles/typography.css";
+@import "./styles/buttons.css";
+@import "./styles/inputs.css";
+@import "./styles/tables.css";
+@import "./styles/mobile.css";
+@import "./styles/tokens.css";
+@import "./styles/print.css";
+
+
 :root {
   /* Canvas & Card Surfaces */
   --background: 0 0% 98%;          /* #FAFAFA Clean Canvas */
@@ -35,14 +48,118 @@
   --destructive-foreground: 0 0% 100%;
 }
 
+.dark {
+  /* Angiosuite Dark Room Mode */
+  --background: 222.2 84% 4.9%;     /* #090D16 Deep Slate-Black */
+  --foreground: 210 40% 98%;        /* #F8FAFC White Ink */
+  --card: 222.2 84% 6.5%;           /* #0F172A */
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 6.5%;
+  --popover-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;      /* #1E293B */
+  --input: 217.2 32.6% 17.5%;
+  --ring: 217.2 91.2% 59.8%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --primary: 217.2 91.2% 59.8%;     /* #38BDF8 Radiopaque Cyan */
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --verified: 158 64% 52%;
+  --verified-foreground: 0 0% 100%;
+  --holding: 38 92% 50%;
+  --holding-foreground: 0 0% 100%;
+  --alert: 0 84% 60%;
+  --alert-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+}
+
 * {
   box-sizing: border-box;
 }
 
+/*
+ * Typography: Apple's optical-sizing discipline, adapted for a clinical reader.
+ *
+ * SF Pro applies slight NEGATIVE tracking at every size, not only at display
+ * sizes, so text reads tight and dense rather than airy. Reproduced here with
+ * `font-synthesis: none` and `text-rendering: optimizeLegibility` so the system
+ * UI font on macOS, Segoe UI on Windows and Roboto on Linux all render at the
+ * same optical density.
+ *
+ * `tnum` (tabular numerals) is already enabled above and is load-bearing here:
+ * dose ceilings, creatinine values and bed counts must align vertically down a
+ * column, or a digit transposition becomes possible while reading quickly.
+ */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+}
+
+body {
+  letter-spacing: -0.011em;
+}
+
+/*
+ * Touch targets. A cath-lab workstation is used with gloves, and a 28px target
+ * that is comfortable with a bare fingertip is not reachable with a nitrile
+ * one. Interactive controls get a 44px minimum hit area without changing their
+ * visual size.
+ */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a[href],
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    min-height: 44px;
+  }
+
+  /* Checkboxes and radios stay visually small but get a real hit area. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 24px;
+    min-width: 24px;
+  }
+}
+
+/*
+ * Reduced motion. Every transition in the app is decorative; when a user asks
+ * for reduced motion, all of it becomes instant rather than merely shorter.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Visible focus. Clinical workstations are keyboard-driven - a radiologist
+ * charting a case never takes their hands off the keys - so the focus ring must
+ * survive on every interactive element, not just the ones that happen to be
+ * styled for it.
+ */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 html,
 body {
-  background-color: #FAFAFA;
-  color: #09090B;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -135,3 +252,62 @@ body {
     page-break-before: always !important;
   }
 }
+
+/* ============================================================================
+ * ENTERPRISE COMPACT STANDARD (REX DESIGN SYSTEM)
+ * Unified 28px controls, 32px table rows, crisp 1px borders, zero AI slop
+ * ============================================================================ */
+@layer components {
+  /* Compact Button Primitives (Strict 28px height) */
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 h-7 px-2.5 text-xs font-medium rounded transition-colors select-none cursor-pointer border disabled:opacity-50 disabled:pointer-events-none shrink-0;
+  }
+  .btn-primary {
+    @apply bg-slate-900 text-white border-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100 dark:hover:bg-white;
+  }
+  .btn-secondary {
+    @apply bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700;
+  }
+  .btn-outline {
+    @apply bg-transparent text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100;
+  }
+  .btn-danger {
+    @apply bg-rose-600 text-white border-rose-600 hover:bg-rose-700;
+  }
+
+  /* Compact Form Controls (Strict 28px height) */
+  .input-compact {
+    @apply h-7 px-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400 font-sans tabular-nums;
+  }
+  .select-compact {
+    @apply h-7 px-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-slate-400 cursor-pointer;
+  }
+
+  /* Compact Surface Container (Crisp 1px border, zero fluffy drop-shadows) */
+  .card-compact {
+    @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded;
+  }
+
+  /* High-Density Compact Table (Strict 32px rows) */
+  .table-compact {
+    @apply w-full text-xs text-left border-collapse;
+  }
+  .table-compact thead th {
+    @apply h-8 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 uppercase tracking-wider select-none sticky top-0 z-10;
+  }
+  .table-compact tbody td {
+    @apply h-8 px-2.5 py-1 text-xs border-b border-slate-100 dark:border-slate-800/60 tabular-nums text-slate-800 dark:text-slate-200;
+  }
+  .table-compact tbody tr:hover {
+    @apply bg-slate-50/80 dark:bg-slate-800/50;
+  }
+
+  /* Compact Monospace Status Badges */
+  .badge-compact {
+    @apply inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700;
+  }
+}
+

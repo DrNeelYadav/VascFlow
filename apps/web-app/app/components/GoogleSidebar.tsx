@@ -75,15 +75,19 @@ export function GoogleSidebar({
       onClick={() => onCloseMobile?.()}
       title={item.label}
       aria-current={active ? "page" : undefined}
-      className={`relative flex items-center gap-2 rounded px-2.5 py-1.5 text-xs font-medium transition-colors ${
+      className={`relative group flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-150 ${
         active
-          ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 font-semibold"
-          : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          ? "bg-blue-600 text-white dark:bg-sky-500 dark:text-slate-950 font-semibold shadow-xs"
+          : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white"
       } ${condensed ? "justify-center px-0 h-8" : ""}`}
     >
       <WorkspaceIcon
         icon={item.icon}
-        className={`w-3.5 h-3.5 shrink-0 ${active ? "" : "text-slate-400 dark:text-slate-500"}`}
+        className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+          active
+            ? "text-white dark:text-slate-950"
+            : "text-slate-400 group-hover:text-blue-600 dark:text-slate-400 dark:group-hover:text-sky-400"
+        }`}
       />
       {!condensed && <span className="flex-1 truncate tracking-tight">{item.label}</span>}
       {!condensed && badge !== undefined && badge > 0 && (
@@ -131,7 +135,7 @@ export function GoogleSidebar({
       )}
 
       <aside
-        className={`h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all duration-150 select-none ${
+        className={`h-full border-r border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-all duration-150 select-none ${
           isMobileOpen
             ? "fixed inset-y-0 left-0 z-50 w-64 max-w-[85vw] shadow-2xl flex flex-col md:relative md:inset-auto md:z-20 md:shadow-none"
             : "hidden md:flex flex-col md:relative md:z-20 shrink-0"

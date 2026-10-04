@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useEndoflowStore } from "../../dashboard/useEndoflowStore";
 import { EndoFlowLogo } from "../EndoFlowLogo";
+import { SmsHospitalCrest } from "../SmsHospitalCrest";
 import { Search, X, Lock, LogOut, Menu, Moon, KeyRound } from "lucide-react";
 import { ChangePasswordModal } from "../ChangePasswordModal";
 import { clearStaffSession } from "../../lib/auth/sessionPersistence";
@@ -93,7 +94,7 @@ export function GoogleHeader({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full h-12 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-4 select-none flex items-center justify-between gap-2 sm:gap-3 text-slate-900 dark:text-slate-100">
+    <header className="sticky top-0 z-40 w-full h-12 bg-white/85 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-3 sm:px-4 select-none flex items-center justify-between gap-2 sm:gap-3 text-slate-900 dark:text-slate-100">
       {isMobileSearchOpen ? (
         <div className="flex items-center w-full gap-2 py-1">
           <form
@@ -134,7 +135,7 @@ export function GoogleHeader({
         </div>
       ) : (
         <>
-          {/* Left: EndoFlow / Logo Mark + Compact Hospital Badge */}
+          {/* Left: EndoFlow / Crest + Logo Mark + Hospital Badge */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <button
               type="button"
@@ -145,23 +146,43 @@ export function GoogleHeader({
               <Menu className="w-5 h-5" />
             </button>
 
-            <Link href="/dashboard" className="flex items-center gap-1.5 shrink-0">
-              <EndoFlowLogo
-                size="sm"
-                showSubtitle={false}
-                theme={isCathLabDark ? "light" : "dark"}
-              />
-              <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap leading-none shrink-0">
-                SMS IR
-              </span>
-              <span className="inline-flex sm:hidden items-center px-1 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap leading-none shrink-0">
-                IR
-              </span>
+            <Link href="/dashboard" className="flex items-center gap-2 shrink-0 group">
+              <SmsHospitalCrest size={28} />
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <EndoFlowLogo
+                    size="sm"
+                    showSubtitle={false}
+                    theme={isCathLabDark ? "light" : "dark"}
+                  />
+                  <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap leading-none shrink-0">
+                    SMS IR
+                  </span>
+                </div>
+                <span className="hidden xl:inline text-[9px] font-medium text-slate-500 dark:text-slate-400 leading-tight">
+                  SMS Medical College &amp; Attached Hospitals
+                </span>
+              </div>
             </Link>
           </div>
 
+          {/* Live Angiosuite Status Indicators */}
+          <div className="hidden lg:flex items-center gap-2.5 px-2.5 py-1 rounded-lg bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 text-[11px] font-mono shrink-0 shadow-2xs">
+            <div className="flex items-center gap-1.5" title="Angiosuite 1: Procedure in progress">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
+              <span className="font-semibold text-slate-700 dark:text-slate-200">Suite 1:</span>
+              <span className="text-emerald-700 dark:text-emerald-300 font-bold">ACTIVE (TIPS)</span>
+            </div>
+            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <div className="flex items-center gap-1.5" title="Angiosuite 2: Ready for next patient">
+              <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />
+              <span className="font-semibold text-slate-700 dark:text-slate-200">Suite 2:</span>
+              <span className="text-slate-500 dark:text-slate-400 font-medium">IDLE</span>
+            </div>
+          </div>
+
           {/* Center: Global Patient / Workspace Search (Desktop / Tablet) */}
-          <div className="hidden sm:flex flex-1 max-w-[360px] mx-auto min-w-0">
+          <div className="hidden sm:flex flex-1 max-w-[320px] mx-auto min-w-0">
             <form
               onSubmit={handleSearchSubmit}
               className="relative flex items-center w-full h-8 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/70 dark:hover:bg-slate-700/70 focus-within:bg-white dark:focus-within:bg-slate-900 focus-within:ring-1 focus-within:ring-slate-400 border border-transparent focus-within:border-slate-300 dark:focus-within:border-slate-700 transition-all px-2.5"

@@ -1,27 +1,57 @@
 /* ============================================================================
  * ENDOFLOW ENTERPRISE DESIGN TOKENS (VENUS, SHADCN, RADIX UI COMPACT)
  * High-density Interventional Radiology workstation tokens for Light & Dark mode
+ * SMS Medical College & Attached Hospitals, Jaipur
  * ============================================================================ */
 
 :root {
-  /* Surface Tokens (Light Mode - Outpatient Clinic) */
-  --surface-canvas: #F8FAFC;       /* Slate 50 */
-  --surface-card: #FFFFFF;         /* White */
+  /* Authoritative Brand Clinical Accents */
+  --brand-sapphire: #1E40AF;       /* Imperial Sapphire (HOD / Primary Authority) */
+  --brand-sapphire-light: #EFF6FF;
+  --brand-sapphire-border: #93C5FD;
+  
+  --brand-cyan: #0284C7;           /* Clinical Cyan (Vascular Diagnostics & Imaging) */
+  --brand-cyan-light: #F0F9FF;
+  --brand-cyan-border: #7DD3FC;
+  
+  --brand-emerald: #059669;        /* Phosphor Emerald (Verified / Normal / Ready) */
+  --brand-emerald-light: #ECFDF5;
+  --brand-emerald-border: #6EE7B7;
+  
+  --brand-crimson: #DC2626;        /* Vascular Crimson (Emergency / Stat / Alert) */
+  --brand-crimson-light: #FEF2F2;
+  --brand-crimson-border: #FCA5A5;
+  
+  --brand-amber: #D97706;          /* Biliary Amber (Pending / Attention / Labs) */
+  --brand-amber-light: #FFFBEB;
+  --brand-amber-border: #FCD34D;
+
+  /* Layered Surface Tokens (Light Mode - Outpatient Clinic & Wards) */
+  --surface-canvas: #F8FAFC;       /* Slate 50 Canvas */
+  --surface-card: #FFFFFF;         /* Solid Card */
+  --surface-elevated: rgba(255, 255, 255, 0.75); /* Layered Acrylic Glass */
+  --surface-acrylic: rgba(255, 255, 255, 0.88);
   --surface-subtle: #F1F5F9;       /* Slate 100 */
   --surface-hover: #E2E8F0;        /* Slate 200 */
   
   /* Typography Tokens */
   --text-primary: #0F172A;         /* Slate 900 */
-  --text-secondary: #475569;       /* Slate 600 */
-  --text-muted: #94A3B8;           /* Slate 400 */
+  --text-secondary: #334155;       /* Slate 700 */
+  --text-muted: #64748B;           /* Slate 500 */
   
-  /* Tactile High-Contrast Borders */
+  /* Tactile High-Contrast Layered Borders */
   --border-subtle: #E2E8F0;        /* Slate 200 */
   --border-contrast: #CBD5E1;      /* Slate 300 */
   --border-strong: #94A3B8;        /* Slate 400 */
+  --border-ring: rgba(15, 23, 42, 0.08);
+  --border-glass: rgba(255, 255, 255, 0.6);
   
-  /* Clinical Status */
-  --clinical-blue: #2563EB;
+  /* Elevated Glassmorphism Shadows */
+  --shadow-glass: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --shadow-elevated: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  
+  /* Clinical Status Mapping */
+  --clinical-blue: #1E40AF;
   --clinical-emerald: #059669;
   --clinical-amber: #D97706;
   --clinical-rose: #DC2626;
@@ -33,26 +63,57 @@
   --height-table-row: 32px;
   --radius-sm: 6px;
   --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 .dark {
-  /* Surface Tokens (Dark Room Mode - Angiosuite / Fluoroscopy) */
-  --surface-canvas: #090D16;       /* Deep Slate-Black */
-  --surface-card: #0F172A;         /* Slate 900 */
-  --surface-subtle: #1E293B;       /* Slate 800 */
-  --surface-hover: #334155;        /* Slate 700 */
+  /* Authoritative Brand Clinical Accents - Cath-Lab Luminous Mode */
+  --brand-sapphire: #3B82F6;
+  --brand-sapphire-light: rgba(59, 130, 246, 0.15);
+  --brand-sapphire-border: rgba(59, 130, 246, 0.35);
+  
+  --brand-cyan: #38BDF8;           /* Radiopaque Cyan (OLED Fluoroscopy Highlight) */
+  --brand-cyan-light: rgba(56, 189, 248, 0.15);
+  --brand-cyan-border: rgba(56, 189, 248, 0.35);
+  
+  --brand-emerald: #10B981;        /* Phosphor Emerald */
+  --brand-emerald-light: rgba(16, 185, 129, 0.15);
+  --brand-emerald-border: rgba(16, 185, 129, 0.35);
+  
+  --brand-crimson: #EF4444;        /* Vascular Alert */
+  --brand-crimson-light: rgba(239, 68, 68, 0.15);
+  --brand-crimson-border: rgba(239, 68, 68, 0.35);
+  
+  --brand-amber: #F59E0B;
+  --brand-amber-light: rgba(245, 158, 11, 0.15);
+  --brand-amber-border: rgba(245, 158, 11, 0.35);
+
+  /* Surface Tokens (True Cath-Lab OLED Mode #0B0F19 - Angiosuite / Dimmed) */
+  --surface-canvas: #0B0F19;       /* Cath-Lab True Slate/OLED Black */
+  --surface-card: #111827;         /* Gray 900 Surface */
+  --surface-elevated: rgba(17, 24, 39, 0.85); /* Layered Dark Glass */
+  --surface-acrylic: rgba(17, 24, 39, 0.92);
+  --surface-subtle: #1F2937;       /* Slate 800 */
+  --surface-hover: #374151;        /* Slate 700 */
   
   /* Typography Tokens */
-  --text-primary: #F8FAFC;         /* Slate 50 */
+  --text-primary: #F9FAFB;         /* High-contrast crisp white */
   --text-secondary: #CBD5E1;       /* Slate 300 */
-  --text-muted: #64748B;           /* Slate 500 */
+  --text-muted: #94A3B8;           /* Slate 400 */
   
-  /* Dark Tactile High-Contrast Borders */
-  --border-subtle: #1E293B;        /* Slate 800 */
-  --border-contrast: #334155;      /* Slate 700 */
-  --border-strong: #475569;        /* Slate 600 */
+  /* Dark Tactile High-Contrast Layered Borders */
+  --border-subtle: #1F2937;        /* Slate 800 */
+  --border-contrast: #374151;      /* Slate 700 */
+  --border-strong: #4B5563;        /* Slate 600 */
+  --border-ring: rgba(255, 255, 255, 0.12);
+  --border-glass: rgba(255, 255, 255, 0.08);
   
-  --clinical-blue: #3B82F6;
+  /* Luminous Cath-Lab Shadows */
+  --shadow-glass: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 0 15px 1px rgba(56, 189, 248, 0.08);
+  
+  --clinical-blue: #38BDF8;
   --clinical-emerald: #10B981;
   --clinical-amber: #F59E0B;
   --clinical-rose: #EF4444;

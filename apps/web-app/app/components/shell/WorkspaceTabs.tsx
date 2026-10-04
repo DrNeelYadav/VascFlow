@@ -31,10 +31,10 @@ export function WorkspaceTabs() {
             key={member.href}
             href={member.href}
             aria-current={active ? "page" : undefined}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer ${
               active
-                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800"
+                ? "bg-blue-600 text-white dark:bg-sky-500 dark:text-slate-950 shadow-xs font-semibold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             {member.label}

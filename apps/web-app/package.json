@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate --schema=../../packages/db/schema.prisma",
     "dev": "next dev",
-    "build": "prisma generate --schema=../../packages/db/schema.prisma && next build",
+    "build": "prisma generate --schema=../../packages/db/schema.prisma && next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },

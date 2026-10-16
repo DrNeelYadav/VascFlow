@@ -24,7 +24,8 @@ export type NavIconKey =
   | "library"
   | "inventory"
   | "research"
-  | "admin";
+  | "admin"
+  | "quiz";
 
 export interface WorkspaceMember {
   /** Route path, stable and externally linkable. */
@@ -45,6 +46,8 @@ export interface Workspace {
   href: string;
   /** True for personal tools that should not crowd the department workflow. */
   secondary?: boolean;
+  /** True for personal items strictly visible only to Dr. Neel Yadav. */
+  privateNeelOnly?: boolean;
   members: WorkspaceMember[];
 }
 
@@ -138,6 +141,18 @@ export const WORKSPACES: Workspace[] = [
     href: "/dashboard/publications",
     members: [
       { href: "/dashboard/publications", label: "Publications Studio", keywords: "research manuscripts papers publications vapsa" },
+    ],
+  },
+  {
+    id: "quiz",
+    shortLabel: "Quiz",
+    label: "FRCR 2A Quiz",
+    icon: "quiz",
+    href: "/dashboard/quiz",
+    secondary: true,
+    privateNeelOnly: true,
+    members: [
+      { href: "/dashboard/quiz", label: "FRCR 2A Quiz", keywords: "frcr 2a quiz paeds msk chest gut git cns exam tutor mcq radiodiagnosis" },
     ],
   },
 ];

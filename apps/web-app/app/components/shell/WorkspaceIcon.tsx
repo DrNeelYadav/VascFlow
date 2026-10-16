@@ -16,6 +16,7 @@ import {
   Package,
   FlaskConical,
   Settings,
+  GraduationCap,
   type LucideIcon,
 } from "lucide-react";
 import type { NavIconKey } from "../../lib/navigation";
@@ -33,6 +34,7 @@ const ICONS: Record<NavIconKey, LucideIcon> = {
   inventory: Package,
   research: FlaskConical,
   admin: Settings,
+  quiz: GraduationCap,
 };
 
 /** Resolves a navigation icon key to its lucide component. */

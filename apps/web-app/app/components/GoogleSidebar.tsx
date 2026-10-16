@@ -14,6 +14,7 @@ import {
   type NavIconKey,
   type Workspace,
 } from "../lib/navigation";
+import { isNeelYadavUser } from "../lib/auth-guards";
 
 /**
  * Desktop sidebar. Renders the workspace registry from `lib/navigation`, so it
@@ -60,8 +61,9 @@ export function GoogleSidebar({
     } catch {}
   };
 
-  const primary = WORKSPACES.filter((w) => !w.secondary);
-  const secondary = WORKSPACES.filter((w) => w.secondary);
+  const isNeel = isNeelYadavUser(currentStaff);
+  const primary = WORKSPACES.filter((w) => !w.secondary && (!w.privateNeelOnly || isNeel));
+  const secondary = WORKSPACES.filter((w) => w.secondary && (!w.privateNeelOnly || isNeel));
   const showAdmin = currentStaff?.role === "ADMIN";
   const condensed = isCollapsed && !isMobileOpen;
 

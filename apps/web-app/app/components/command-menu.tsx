@@ -17,6 +17,7 @@ import { useEndoflowStore } from "../dashboard/useEndoflowStore";
 import { DAILY_ROUTINE_IR_PROCEDURES } from "../dashboard/operative-notes/dailyRoutineProcedures";
 import { IR_PROCEDURES_CATALOG } from "@vascule/catalog";
 import { WORKSPACES } from "../lib/navigation";
+import { isNeelYadavUser } from "../lib/auth-guards";
 import { WorkspaceIcon } from "./shell/WorkspaceIcon";
 
 interface CommandMenuProps {
@@ -31,6 +32,8 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
   const bookedCases = useEndoflowStore((s) => s.bookedCases);
   const ctReviews = useEndoflowStore((s) => s.ctReviews);
   const beds = useEndoflowStore((s) => s.beds);
+  const currentStaff = useEndoflowStore((s) => s.currentStaff);
+  const isNeel = isNeelYadavUser(currentStaff);
 
   // Keyboard shortcut listener (Cmd+K / Ctrl+K and Cmd+L)
   useEffect(() => {
@@ -370,7 +373,7 @@ export function CommandMenu({ onLockBedside }: CommandMenuProps) {
               heading="Workspaces"
               className="text-xs font-medium text-slate-400 px-2 py-1.5 uppercase tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-400 [&_[cmdk-group-heading]]:mb-1"
             >
-              {WORKSPACES.flatMap((w) =>
+              {WORKSPACES.filter((w) => !w.privateNeelOnly || isNeel).flatMap((w) =>
                 w.members.map((m) => (
                   <Command.Item
                     key={m.href}

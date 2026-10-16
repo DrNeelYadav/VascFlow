@@ -10,11 +10,6 @@ interface ConsultationDeskIntakeHeaderProps {
 }
 
 export function ConsultationDeskIntakeHeader({ desk }: ConsultationDeskIntakeHeaderProps) {
-  const reviewPatients = useMemo(
-    () => desk.availablePatients.filter((p) => p.type === "review"),
-    [desk.availablePatients]
-  );
-
   const admittedPatients = useMemo(
     () => desk.availablePatients.filter((p) => p.type === "admitted"),
     [desk.availablePatients]
@@ -34,8 +29,6 @@ export function ConsultationDeskIntakeHeader({ desk }: ConsultationDeskIntakeHea
               </h2>
               {desk.selectedPatientKey === "new" ? (
                 <Badge tone="verified">New Patient Intake</Badge>
-              ) : desk.selectedPatientKey.startsWith("CT-REV") ? (
-                <Badge tone="info">CT Review #{desk.selectedPatientKey}</Badge>
               ) : (
                 <Badge tone="verified">Admitted IPD #{desk.selectedPatientKey}</Badge>
               )}
@@ -61,15 +54,6 @@ export function ConsultationDeskIntakeHeader({ desk }: ConsultationDeskIntakeHea
               className="max-w-xs sm:max-w-sm px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-slate-100 font-medium focus:bg-white dark:focus:bg-slate-800 focus:border-blue-600 focus:outline-none transition-colors"
             >
               <option value="new">+ Start New Patient Consultation</option>
-              {reviewPatients.length > 0 && (
-                <optgroup label={`Review Queue (${reviewPatients.length} Active Records)`}>
-                  {reviewPatients.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.label}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
               {admittedPatients.length > 0 && (
                 <optgroup label={`Inpatient Wards (${admittedPatients.length} Patients)`}>
                   {admittedPatients.map((p) => (

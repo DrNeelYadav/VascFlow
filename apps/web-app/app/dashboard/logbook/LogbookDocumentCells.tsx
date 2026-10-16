@@ -11,22 +11,19 @@ interface LogbookDocumentCellsProps {
 
 export function LogbookDocumentCells({ patientCase: c }: LogbookDocumentCellsProps) {
   const caseId = c.dsaNo || c.crNumber;
-  const telegramBotUrl = `https://t.me/hermes_pwtpgcju4xgwvyky_bot?start=fluoro_${caseId}`;
 
   return (
     <>
-      {/* 1. Fluoro Runs (Telegram Bot Deep-Link) */}
+      {/* 1. Fluoro Runs (In-App Horos PACS / DICOM Cine Player) */}
       <td className="py-1.5 px-2.5 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-        <a
-          href={telegramBotUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={`Open fluoro loops for IR #${c.dsaNo} in Telegram (@hermes_pwtpgcju4xgwvyky_bot)`}
+        <Link
+          href={`/dashboard/imaging?caseId=${caseId}`}
+          title={`Open in-app fluoroscopy cine player & PACS for IR #${c.dsaNo}`}
           className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-300 dark:border-sky-800 hover:bg-sky-100 dark:hover:bg-sky-900 transition-colors shadow-2xs cursor-pointer active:scale-95"
         >
           <Film className="w-3 h-3 text-sky-600 dark:text-sky-400" />
           <span>Fluoro</span>
-        </a>
+        </Link>
       </td>
 
       {/* 2. Operative Note (WordPad-Style Note) */}

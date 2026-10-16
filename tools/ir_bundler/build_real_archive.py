@@ -27,7 +27,7 @@ from collections import defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).parent
-DEFAULT_ROOT = Path(r"E:\03_Academic_&_Research\DSA SMS jaipur")
+DEFAULT_ROOT = Path(r"D:\Pendrive Backup\03_Academic_&_Research\DSA SMS jaipur")
 INDEX_DIR = HERE / "_index"
 OUT_TS = Path(r"C:\SSO\apps\web-app\app\lib\realData\smsPatientArchiveReal.ts")
 

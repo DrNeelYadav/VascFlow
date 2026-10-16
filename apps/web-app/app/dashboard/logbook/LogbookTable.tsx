@@ -29,7 +29,7 @@ export function LogbookTable({ desk }: LogbookTableProps) {
               <th className="py-2 px-3 w-56">Intervention Procedure</th>
               <th className="py-2 px-3 w-32">Scheme &amp; Bill #</th>
               <th className="py-2 px-3 w-28">Ward</th>
-              <th className="py-2 px-2.5 w-24 text-center">Fluoro (Telegram)</th>
+              <th className="py-2 px-2.5 w-24 text-center">Fluoro</th>
               <th className="py-2 px-2.5 w-24 text-center">Op Note</th>
               <th className="py-2 px-2.5 w-24 text-center">Discharge</th>
               <th className="py-2 px-2.5 w-24 text-center">Post-Op</th>
@@ -77,11 +77,11 @@ export function LogbookTable({ desk }: LogbookTableProps) {
                       </div>
                     </td>
                     <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400">
-                      {c.age}Y • {c.gender === "Female" ? "F" : "M"}
+                      {c.age && c.age !== "—" ? `${c.age}Y` : "—"} • {c.gender === "Female" ? "F" : c.gender === "Male" ? "M" : "—"}
                     </td>
                     <td className="py-1.5 px-3 max-w-[210px]">
-                      <div className="text-slate-700 dark:text-slate-300 truncate" title={c.diagnosis}>
-                        {c.diagnosis}
+                      <div className="text-slate-700 dark:text-slate-300 truncate" title={c.diagnosis || "—"}>
+                        {c.diagnosis && c.diagnosis !== "—" ? c.diagnosis : "—"}
                       </div>
                       {c.ctNumber && c.ctNumber !== "—" && (
                         <span className="inline-block text-[10px] font-mono font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-1 rounded border border-amber-200 dark:border-amber-800">
@@ -89,13 +89,13 @@ export function LogbookTable({ desk }: LogbookTableProps) {
                         </span>
                       )}
                     </td>
-                    <td className="py-1.5 px-3 font-medium text-blue-700 dark:text-sky-300 truncate max-w-[210px]" title={c.procedureName}>
-                      {c.procedureName}
+                    <td className="py-1.5 px-3 font-medium text-blue-700 dark:text-sky-300 truncate max-w-[210px]" title={c.procedureName || "—"}>
+                      {c.procedureName && c.procedureName !== "—" ? c.procedureName : "—"}
                     </td>
                     <td className="py-1.5 px-3">
                       <div className="flex flex-col gap-0.5">
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 w-fit">
-                          {c.schemeType || "MAAY"}
+                          {c.schemeType && c.schemeType !== "—" ? c.schemeType : "—"}
                         </span>
                         {c.billNo && c.billNo !== "—" && (
                           <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
@@ -105,8 +105,8 @@ export function LogbookTable({ desk }: LogbookTableProps) {
                       </div>
                     </td>
                     <td className="py-1.5 px-3">
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border truncate block max-w-[110px] ${wardStyle.bg} ${wardStyle.text} ${wardStyle.border}`} title={c.unit}>
-                        {c.unit || "Cath Lab"}
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border truncate block max-w-[110px] ${wardStyle.bg} ${wardStyle.text} ${wardStyle.border}`} title={c.unit || "—"}>
+                        {c.unit && c.unit !== "—" ? c.unit : "—"}
                       </span>
                     </td>
 

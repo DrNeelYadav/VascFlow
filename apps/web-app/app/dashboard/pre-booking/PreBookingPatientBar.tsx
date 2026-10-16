@@ -38,7 +38,12 @@ const PROCEDURES: { key: ProcedureCategory; label: string; sub: string }[] = [
   { key: "bae", label: "BAE", sub: "Bronchial Artery Embolization" },
   { key: "bleeder", label: "GI Bleed / GIBDA", sub: "Transcatheter Arterial Embolization" },
   { key: "biliary", label: "Biliary Interventions", sub: "PTBD & Biliary Stenting" },
-  { key: "general", label: "General IR", sub: "Routine Interventions" },
+  { key: "varicose", label: "Varicose Veins", sub: "EVLA & Glue Embolization" },
+  { key: "jna", label: "JNA Embolization", sub: "Head & Neck Hypervascular Tumors" },
+  { key: "uae", label: "Uterine Artery Embo (UAE)", sub: "Fibroids, Adenomyosis, PPH" },
+  { key: "fistuloplasty", label: "AV Fistuloplasty", sub: "Dialysis Access Salvage" },
+  { key: "pcn", label: "PCN & Urological IR", sub: "Nephrostomy & Antegrade Stents" },
+  { key: "general", label: "General IR", sub: "Routine Drainage & Biopsy" },
 ];
 
 export const PreBookingPatientBar: React.FC<PreBookingPatientBarProps> = ({

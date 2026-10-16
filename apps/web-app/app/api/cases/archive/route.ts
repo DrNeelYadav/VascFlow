@@ -50,16 +50,19 @@ export async function GET(req: NextRequest) {
     // 4. Year filter
     if (year !== "ALL") {
       filtered = filtered.filter((c) => {
-        const parts = (c.date || "").split(".");
-        const y = parts.length === 3 ? parts[2] : "";
-        return y.includes(year);
+        const parts = (c.date || "").replace(/[\/\-]/g, ".").split(".");
+        let y = parts.length === 3 ? parts[2] : "";
+        if (y.length === 2) y = "20" + y;
+        return y === year || y.includes(year);
       });
     }
 
-    // 5. Sort
-    if (sort === "oldest") {
-      filtered = [...filtered].reverse();
-    }
+    // 5. Sort: Default is ALWAYS Newest First (highest DSA # down to 1), with Oldest First option
+    filtered = [...filtered].sort((a, b) => {
+      const dsaA = parseInt(a.dsaNo || "0", 10);
+      const dsaB = parseInt(b.dsaNo || "0", 10);
+      return sort === "oldest" ? dsaA - dsaB : dsaB - dsaA;
+    });
 
     const total = filtered.length;
     const totalPages = Math.ceil(total / limit) || 1;

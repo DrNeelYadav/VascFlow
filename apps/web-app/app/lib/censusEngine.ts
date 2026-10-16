@@ -212,7 +212,7 @@ export function generateDeIdentifiedCohortFromSmsRegistry(
   return registry.map((p, idx) => {
     const parsedDate = parseRegistryDate(p.date);
     const quarterYear = "Q" + Math.ceil(parsedDate.month / 3) + " " + parsedDate.year;
-    const rawAge = p.age || 45;
+    const rawAge = Number(p.age) || 45;
     const exactAge = Math.min(89, Math.max(18, rawAge));
     const ageGroup =
       exactAge < 30

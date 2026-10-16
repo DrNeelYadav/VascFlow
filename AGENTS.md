@@ -9,6 +9,11 @@
 
 ### A. Clinical Safety First (Zero-Tolerance for Silent Failures)
 * **No Phantom Data:** Never invent, hallucinate, or hardcode fake lab values (e.g. INR, Creatinine, Bilirubin, Platelets) or patient vitals.
+* **Zero Phantom Demographics:** Never default missing gender to "Male" or missing age to 45. Blank demographics must remain strictly blank (`"—"` or `""`). Female patient names (e.g. Smt, Devi, Bai, Kumari, Kanwar, Begum, or female given names like Shivika, Uma, Shruti, Vimlesh, etc.) must be accurately attributed as "Female"; unrecorded or ambiguous cases must remain `"—"` rather than silently defaulted to "Male".
+* **Zero Procedural or Diagnostic Filler:** Never inject placeholder strings such as `"Interventional Radiology Procedure"` into unrecorded procedure or diagnosis fields, and never copy procedure names into diagnosis fields when the diagnosis is blank. Blank source fields must remain blank (`"—"`).
+* **Zero Phantom Document Pre-Population:** In operative notes, discharge summaries, and post-operative recovery flowsheets, never inject hallucinated procedural steps, fake discharge advice, fake medication regimes, or fake lab numbers when the source patient has no recorded note (`hasOpNote = false`, `hasDischarge = false`). Present clean blank lines or explicit empty placeholders so clinicians can unambiguously distinguish unrecorded cases from verified clinical documentation.
+* **Zero Synthetic Identifiers in Master Registers:** Never fabricate receipt/bill numbers (e.g. `RCPT-1090`, `MAAY-1090`) or CT accession numbers when unrecorded in source registers.
+* **Chronological Registry Integrity:** Default cath lab registry and logbook views MUST always be **Newest First** (highest DSA # / latest date at top), with a toggleable option for **Oldest First**.
 * **Deterministic Math:** Clinical scores (Rotterdam BCS-PI, Clichy, MELD/MELD-Na, Cigarroa CI-AKI MACD limit, C/RL ratios) MUST be deterministic pure functions with unit tests.
 * **Traceable Reference Badges:** Clearly distinguish authoritative reference standards (`[REF]`), institutional Rajasthan MAAY/IHMS protocols (`[INST]`), and deterministic calculation outputs (`[CALC]`).
 * **DISHA & PHI Compliance:** Adhere to Indian DISHA & digital health data safeguards. De-identify patient data in logs and client telemetry.

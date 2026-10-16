@@ -29,7 +29,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
-DEFAULT_ROOT = Path(r"E:\03_Academic_&_Research\DSA SMS jaipur")
+DEFAULT_ROOT = Path(r"D:\Pendrive Backup\03_Academic_&_Research\DSA SMS jaipur")
 REGISTRY_FILE = "DSA DATA SHEET.xlsx"
 
 FOLDER_OPERATIVE = "01_Clinical_Operative_Cases_and_Reports"

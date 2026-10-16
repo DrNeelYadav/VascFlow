@@ -52,7 +52,7 @@ export function useUnifiedCasePipeline() {
     const fromRegistry: UnifiedPipelineCase[] = AUTHENTIC_SMS_MASTER_CASES.slice(0, 15).map((c) => ({
       id: `reg-${c.dsaNo}`,
       patientName: c.patientName,
-      age: c.age,
+      age: Number(c.age) || 0,
       gender: c.gender,
       crNumber: c.crNumber,
       dsaNo: `DSA-${c.dsaNo}`,

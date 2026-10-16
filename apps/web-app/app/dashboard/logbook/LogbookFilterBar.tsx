@@ -24,7 +24,7 @@ export function LogbookFilterBar({ desk }: LogbookFilterBarProps) {
               type="text"
               value={desk.searchQuery}
               onChange={(e) => desk.setSearchQuery(e.target.value)}
-              placeholder="Search 1,090 DSA records by Patient Name, CR Number, Diagnosis, or Procedure..."
+              placeholder="Search records by Patient Name, CR Number, Diagnosis, or Procedure..."
               className="w-full pl-8.5 pr-8 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-colors"
             />
             {desk.searchQuery && (
@@ -53,7 +53,7 @@ export function LogbookFilterBar({ desk }: LogbookFilterBarProps) {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
             >
               <ArrowUpDown className="w-3 h-3 text-slate-400" />
-              <span className="capitalize">{desk.sortOrder} First</span>
+              <span>{desk.sortOrder === "newest" ? "Newest First" : "Oldest First"}</span>
             </button>
 
             <button

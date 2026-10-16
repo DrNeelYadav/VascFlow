@@ -8,10 +8,15 @@ import {
   BUDD_CHIARI_DISCHARGE,
   generateIhmsDischargeForPatient,
 } from "./ihmsDischargeTemplates";
+import { GOLD_STANDARD_1090_CASES } from "../../lib/realData/goldStandard1090Cases";
+import { buildRegistryDischargeSummary } from "./registryDischargeHelper";
 
-export function useDischargeSummary() {
+export function useDischargeSummary(requestedCaseId?: string | null) {
   const patients = useEndoflowStore((s) => s.patients);
-  const [selectedPatientId, setSelectedPatientId] = useState<string>("EX01");
+  const [selectedPatientId, setSelectedPatientId] = useState<string>(() => {
+    if (requestedCaseId) return requestedCaseId;
+    return patients[0]?.id || "EX01";
+  });
   const [copied, setCopied] = useState<boolean>(false);
 
   // Pre-generate authentic discharge records from available patients
@@ -47,7 +52,15 @@ export function useDischargeSummary() {
     return map;
   }, [patients]);
 
-  const activeSummary = useMemo(() => {
+  const activeSummary = useMemo((): IhmsDischargeSummaryData => {
+    // 1. Lookup case from 1,090 verified cases
+    const matched = GOLD_STANDARD_1090_CASES.find(
+      (c) => c.dsaNo === selectedPatientId || c.crNumber === selectedPatientId || c.uhid === selectedPatientId
+    );
+    if (matched) {
+      return buildRegistryDischargeSummary(matched);
+    }
+
     return patientSummaries[selectedPatientId] || SUNIL_KUMAR_DISCHARGE;
   }, [patientSummaries, selectedPatientId]);
 

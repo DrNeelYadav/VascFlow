@@ -155,7 +155,7 @@ export const ClinicalMetricsSuite: React.FC<ClinicalMetricsProps> = ({
     AUTHENTIC_SMS_MASTER_CASES.forEach((c) => {
       if (c.gender === "Female") femaleCount++;
       else maleCount++;
-      const a = c.age || 40;
+      const a = Number(c.age) || 40;
       if (a <= 20) ageGroups["Pediatric & Young (<20Y)"]++;
       else if (a <= 40) ageGroups["Adult (21-40Y)"]++;
       else if (a <= 60) ageGroups["Middle Age (41-60Y)"]++;

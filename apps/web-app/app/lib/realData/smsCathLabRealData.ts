@@ -10,8 +10,8 @@ export interface RealSmsPatientCase {
   dsaNo: string;
   patientName: string;
   date: string;
-  age: number;
-  gender: 'Male' | 'Female';
+  age: number | string;
+  gender: 'Male' | 'Female' | 'Other' | '—' | string;
   unit: string;
   crNumber: string;
   uhid?: string;

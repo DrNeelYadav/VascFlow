@@ -15,10 +15,10 @@ export default function CathLabMasterLogbookPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Cath-Lab Master Registry
+            Cath Lab Registry
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            SMS Medical College &amp; Attached Hospitals, Jaipur • 1,090 Audited Interventional Radiology Cases
+            SMS Medical College &amp; Attached Hospitals, Jaipur • Interventional Radiology Procedure Log
           </p>
         </div>
       </div>

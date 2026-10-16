@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useDischargeSummary } from "./useDischargeSummary";
 import { DischargeHeaderBar } from "./DischargeHeaderBar";
 import { DischargeStatutoryDocument } from "./DischargeStatutoryDocument";
 import { DischargeDetailsBox } from "./DischargeDetailsBox";
 import { SurveillanceFollowUpTable } from "./SurveillanceFollowUpTable";
 
-export default function DischargeSummaryPage() {
+function DischargeSummaryContent() {
+  const searchParams = useSearchParams();
+  const caseId = searchParams.get("caseId");
   const {
     patients,
     selectedPatientId,
@@ -16,7 +19,7 @@ export default function DischargeSummaryPage() {
     copied,
     handleCopy,
     handlePrint,
-  } = useDischargeSummary();
+  } = useDischargeSummary(caseId);
 
   const [customAdvice, setCustomAdvice] = useState<string | null>(null);
 
@@ -61,5 +64,13 @@ export default function DischargeSummaryPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function DischargeSummaryPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-xs text-slate-400">Loading discharge summary...</div>}>
+      <DischargeSummaryContent />
+    </Suspense>
   );
 }

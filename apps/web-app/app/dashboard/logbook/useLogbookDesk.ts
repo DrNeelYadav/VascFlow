@@ -144,7 +144,10 @@ Follow-Up: ${c.followup || "Routine surveillance"}`;
     wardFilter,
     setWardFilter: (w: string) => { setWardFilter(w); setCurrentPage(1); },
     sortOrder,
-    toggleSortOrder: () => setSortOrder((o) => (o === "newest" ? "oldest" : "newest")),
+    toggleSortOrder: () => {
+      setSortOrder((o) => (o === "newest" ? "oldest" : "newest"));
+      setCurrentPage(1);
+    },
     currentPage,
     setCurrentPage,
     pageSize,

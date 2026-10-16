@@ -21,26 +21,23 @@ export function useOperativeNoteDocument() {
   const [textAlign, setTextAlign] = useState<"left" | "center" | "right" | "justify">("left");
   const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
-  const initialTemplate = PROCEDURE_TEMPLATES[0];
-  const initialPatient = AUTHENTIC_SMS_MASTER_CASES[0];
-
   const [docData, setDocData] = useState<OperativeNoteDocumentData>({
-    procedureTitle: initialTemplate.title,
-    patientName: initialPatient ? initialPatient.patientName : "",
-    ageSex: initialPatient ? `${initialPatient.age || ""} Y / ${initialPatient.gender || ""}`.trim() : "",
-    dateStr: initialPatient ? initialPatient.date : "",
-    referredBy: initialPatient?.unit || "Interventional Radiology",
-    hidCr: initialPatient ? initialPatient.crNumber : "",
-    irNo: initialPatient ? `DSA-${initialPatient.dsaNo}` : "",
-    allergies: initialTemplate.allergies,
-    anesthesia: initialTemplate.anesthesia,
-    medication: initialTemplate.medication,
-    field: initialTemplate.field,
-    procedureClassification: initialTemplate.procedureClassification,
-    position: initialTemplate.position,
-    clinicalProfile: initialTemplate.clinicalProfile,
-    technique: initialTemplate.technique,
-    postOpPlan: initialTemplate.postOpPlan,
+    procedureTitle: "",
+    patientName: "",
+    ageSex: "",
+    dateStr: "",
+    referredBy: "",
+    hidCr: "",
+    irNo: "",
+    allergies: "",
+    anesthesia: "",
+    medication: "",
+    field: "",
+    procedureClassification: "",
+    position: "",
+    clinicalProfile: "",
+    technique: "",
+    postOpPlan: "",
   });
 
   const draftVault = useContinuousDraftVault<OperativeNoteDocumentData>({

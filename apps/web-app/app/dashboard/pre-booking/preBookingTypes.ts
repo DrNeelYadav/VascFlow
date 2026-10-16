@@ -13,6 +13,11 @@ export type ProcedureCategory =
   | "bae"
   | "bleeder"
   | "biliary"
+  | "varicose"
+  | "jna"
+  | "uae"
+  | "fistuloplasty"
+  | "pcn"
   | "other";
 
 export interface SclerotherapySession {
@@ -139,6 +144,31 @@ export const COMMON_PROCEDURES_TARIFFS: Record<ProcedureCategory, { name: string
     name: "Percutaneous Transhepatic Biliary Stenting (PTBD / SEMS)",
     icd: "C24.0 / K83.1",
     rghsMaay: "2849-IN054A (IR-BIL-01) | IMP 21",
+  },
+  varicose: {
+    name: "Endovenous Laser Ablation / Glue Embolization of Varicose Veins",
+    icd: "I83.9",
+    rghsMaay: "1849-IN075A (IR-VAR-01) | IMP 12, IMP 18",
+  },
+  jna: {
+    name: "Pre-Operative Embolization of JNA & Head-Neck Tumors",
+    icd: "D10.6",
+    rghsMaay: "2849-IN063A (IR-JNA-01) | IMP 39, PVA",
+  },
+  uae: {
+    name: "Uterine Artery Embolization for Fibroid / PPH (UAE / UFE)",
+    icd: "D25.9 / O72.0",
+    rghsMaay: "2849-IN062A (IR-UAE-01) | IMP 39, Gelfoam",
+  },
+  fistuloplasty: {
+    name: "Dialysis AV Fistuloplasty & Central Venoplasty",
+    icd: "T82.8",
+    rghsMaay: "2849-IN065A (IR-AVF-01) | IMP 08 (Balloon)",
+  },
+  pcn: {
+    name: "Percutaneous Nephrostomy & Antegrade Urological IR (PCN / DJ)",
+    icd: "N13.2 / N28.8",
+    rghsMaay: "2849-IN052A (IR-PCN-01) | IMP 05 (PCN Kit)",
   },
   general: {
     name: "General Interventional Radiology Procedure",

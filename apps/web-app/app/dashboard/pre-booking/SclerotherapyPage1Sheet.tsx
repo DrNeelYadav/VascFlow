@@ -3,6 +3,7 @@
 import React from "react";
 import { PreBookingHeader } from "./PreBookingHeader";
 import { PreOpLabChecklist } from "./PreOpLabChecklist";
+import { PlainVascularMalformationDiagram } from "./diagrams/PlainVascularMalformationDiagram";
 
 interface SheetDemographicsProps {
   patientName?: string;
@@ -99,6 +100,24 @@ export const SclerotherapyPage1Sheet: React.FC<SheetDemographicsProps> = ({
             <div><span className="font-bold">MRI STIR Signal:</span> Hyperintense veno-lymphatic channels with fluid levels</div>
           </div>
           <div className="pt-0.5"><span className="font-bold">Extent / Anatomical Compartments:</span> ________________________________________________________________</div>
+        </div>
+
+        {/* Anatomical Lesion & Phlebogram Investigation Pen Sketch */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2.5 border border-black p-2.5">
+          <div>
+            <div className="font-bold text-xs uppercase tracking-wide mb-1">
+              MALFORMATION &amp; OUTFLOW PEN SKETCH
+            </div>
+            <p className="text-[10px] text-slate-600 mb-1.5">
+              Use pen to circle anatomical location, delineate cavernous nidus boundaries, and mark proposed compression occlusion site.
+            </p>
+            <div className="text-[9px] space-y-1 font-mono text-slate-800">
+              <div>&bull; ( X ) Puncture site (21G/23G Butterfly)</div>
+              <div>&bull; ( === ) Compression crepe / manual point</div>
+              <div>&bull; ( &rarr; ) Direct / deep venous draining route</div>
+            </div>
+          </div>
+          <PlainVascularMalformationDiagram />
         </div>
 
         {/* Clinical + Imaging Diagnosis */}

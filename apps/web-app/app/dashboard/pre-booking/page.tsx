@@ -4,13 +4,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useEndoflowStore } from "../useEndoflowStore";
 import { ProcedureCategory } from "./preBookingTypes";
 import { PreBookingPatientBar } from "./PreBookingPatientBar";
-import { SclerotherapyPage1Sheet } from "./SclerotherapyPage1Sheet";
-import { SclerotherapyPage2Sheet } from "./SclerotherapyPage2Sheet";
-import { TacePreBookingSheet } from "./TacePreBookingSheet";
-import { BaePreBookingSheet } from "./BaePreBookingSheet";
-import { BleederPreBookingSheet } from "./BleederPreBookingSheet";
-import { BiliaryPreBookingSheet } from "./BiliaryPreBookingSheet";
-import { GeneralIrPreBookingSheet } from "./GeneralIrPreBookingSheet";
+import { PreBookingSheetRenderer } from "./PreBookingSheetRenderer";
 
 function getAdvanceDate(days = 18): string {
   const d = new Date();
@@ -87,92 +81,19 @@ export default function PreBookingPage() {
         onPrint={handlePrint}
       />
 
-      {/* Printable A4 Sheets Area - Both pages always present */}
+      {/* Printable A4 Sheets Area - Dispatched via PreBookingSheetRenderer */}
       <div className="print:p-0 print:m-0 space-y-6 print:space-y-0">
-        {selectedCategory === "sclerotherapy" && (
-          <>
-            <div className="print:break-after-page">
-              <SclerotherapyPage1Sheet
-                patientName={patientName}
-                age={age}
-                sex={sex}
-                uhid={uhid}
-                contactNumber={contactNumber}
-                location={location}
-                unit={unit}
-                scheduledDate={scheduledDate}
-              />
-            </div>
-            <div className="print:break-before-page">
-              <SclerotherapyPage2Sheet patientName={patientName} uhid={uhid} />
-            </div>
-          </>
-        )}
-
-        {selectedCategory === "tace" && (
-          <TacePreBookingSheet
-            patientName={patientName}
-            age={age}
-            sex={sex}
-            uhid={uhid}
-            contactNumber={contactNumber}
-            location={location}
-            unit={unit}
-            scheduledDate={scheduledDate}
-          />
-        )}
-
-        {selectedCategory === "bae" && (
-          <BaePreBookingSheet
-            patientName={patientName}
-            age={age}
-            sex={sex}
-            uhid={uhid}
-            contactNumber={contactNumber}
-            location={location}
-            unit={unit}
-            scheduledDate={scheduledDate}
-          />
-        )}
-
-        {selectedCategory === "bleeder" && (
-          <BleederPreBookingSheet
-            patientName={patientName}
-            age={age}
-            sex={sex}
-            uhid={uhid}
-            contactNumber={contactNumber}
-            location={location}
-            unit={unit}
-            scheduledDate={scheduledDate}
-          />
-        )}
-
-        {selectedCategory === "biliary" && (
-          <BiliaryPreBookingSheet
-            patientName={patientName}
-            age={age}
-            sex={sex}
-            uhid={uhid}
-            contactNumber={contactNumber}
-            location={location}
-            unit={unit}
-            scheduledDate={scheduledDate}
-          />
-        )}
-
-        {selectedCategory === "general" && (
-          <GeneralIrPreBookingSheet
-            patientName={patientName}
-            age={age}
-            sex={sex}
-            uhid={uhid}
-            contactNumber={contactNumber}
-            location={location}
-            unit={unit}
-            scheduledDate={scheduledDate}
-          />
-        )}
+        <PreBookingSheetRenderer
+          selectedCategory={selectedCategory}
+          patientName={patientName}
+          age={age}
+          sex={sex}
+          uhid={uhid}
+          contactNumber={contactNumber}
+          location={location}
+          unit={unit}
+          scheduledDate={scheduledDate}
+        />
       </div>
     </div>
   );

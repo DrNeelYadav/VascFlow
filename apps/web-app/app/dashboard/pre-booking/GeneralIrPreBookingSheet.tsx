@@ -3,6 +3,7 @@
 import React from "react";
 import { PreBookingHeader } from "./PreBookingHeader";
 import { PreOpLabChecklist } from "./PreOpLabChecklist";
+import { PlainGeneralIrOutlineDiagram } from "./diagrams/PlainGeneralIrOutlineDiagram";
 
 interface SheetDemographicsProps {
   patientName?: string;
@@ -56,6 +57,24 @@ export const GeneralIrPreBookingSheet: React.FC<SheetDemographicsProps> = ({
           <div><span className="font-bold">PLANNED PROCEDURE:</span> {procedureName}</div>
           <div><span className="font-bold">CLINICAL INDICATION &amp; SUMMARY:</span> __________________________________________________________________</div>
           <div><span className="font-bold">ANESTHESIA PLAN:</span> ( &nbsp; ) Local Anesthesia &nbsp;&nbsp; ( &nbsp; ) Conscious Sedation &nbsp;&nbsp; ( &nbsp; ) General Anesthesia</div>
+        </div>
+
+        {/* Anatomical Target & Access Route Pen Sketch */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 border border-black p-2.5">
+          <div>
+            <div className="font-bold text-xs uppercase tracking-wide mb-1">
+              ANATOMICAL TARGET &amp; ACCESS PEN SKETCH
+            </div>
+            <p className="text-[10px] text-slate-600 mb-1.5">
+              Use pen to circle planned vascular access site (IJV, Femoral, Radial), sketch target lesion/organ (Liver, Kidney, Fluid), and draw needle puncture angle.
+            </p>
+            <div className="text-[9px] space-y-1 font-mono text-slate-800">
+              <div>&bull; ( &#9675; ) Vascular access point checkmark</div>
+              <div>&bull; ( X ) Target lesion / collection focus</div>
+              <div>&bull; ( &rarr; ) Puncture path &amp; planned trajectory</div>
+            </div>
+          </div>
+          <PlainGeneralIrOutlineDiagram />
         </div>
 
         {/* Planned Hardware & Consumables */}

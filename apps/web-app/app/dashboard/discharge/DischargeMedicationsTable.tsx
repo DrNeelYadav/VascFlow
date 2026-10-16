@@ -27,16 +27,24 @@ export function DischargeMedicationsTable({ medications }: DischargeMedicationsT
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
-            {medications.map((med, index) => (
-              <tr key={index}>
-                <td className="p-1.5 text-center font-mono text-slate-500">{index + 1}</td>
-                <td className="p-1.5 font-semibold text-slate-900">{med.medicine}</td>
-                <td className="p-1.5 font-mono text-[11px] text-slate-600">{med.route}</td>
-                <td className="p-1.5 font-bold text-slate-800">{med.frequency}</td>
-                <td className="p-1.5 font-mono text-slate-700">{med.days} D</td>
-                <td className="p-1.5 text-slate-600">{med.instructions}</td>
+            {medications.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="p-3 text-center text-xs text-slate-400 italic">
+                  No post-procedure discharge medications recorded.
+                </td>
               </tr>
-            ))}
+            ) : (
+              medications.map((med, index) => (
+                <tr key={index}>
+                  <td className="p-1.5 text-center font-mono text-slate-500">{index + 1}</td>
+                  <td className="p-1.5 font-semibold text-slate-900">{med.medicine}</td>
+                  <td className="p-1.5 font-mono text-[11px] text-slate-600">{med.route}</td>
+                  <td className="p-1.5 font-bold text-slate-800">{med.frequency}</td>
+                  <td className="p-1.5 font-mono text-slate-700">{med.days} D</td>
+                  <td className="p-1.5 text-slate-600">{med.instructions}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

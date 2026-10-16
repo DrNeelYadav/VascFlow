@@ -27,6 +27,10 @@ export async function GET(req: NextRequest) {
         (c) =>
           c.patientName.toLowerCase().includes(search) ||
           c.crNumber.toLowerCase().includes(search) ||
+          (c.uhid && c.uhid.toLowerCase().includes(search)) ||
+          (c.contactNo && c.contactNo.toLowerCase().includes(search)) ||
+          (c.billNo && c.billNo.toLowerCase().includes(search)) ||
+          (c.ctNumber && c.ctNumber.toLowerCase().includes(search)) ||
           c.diagnosis.toLowerCase().includes(search) ||
           c.procedureName.toLowerCase().includes(search) ||
           (c.dsaNo && c.dsaNo.toLowerCase().includes(search))

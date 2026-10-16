@@ -30,6 +30,25 @@ export function useLogbookDesk() {
   const [hasCopied, setHasCopied] = useState<boolean>(false);
   const [isExporting, startExport] = useTransition();
 
+  const [localOverrides, setLocalOverrides] = useState<Record<string, Partial<RealSmsPatientCase>>>(() => {
+    if (typeof window === "undefined") return {};
+    try {
+      const stored = localStorage.getItem("vascflow_master_logbook_overrides");
+      return stored ? JSON.parse(stored) : {};
+    } catch { return {}; }
+  });
+
+  const handleUpdateCase = (dsaNo: string, updates: Partial<RealSmsPatientCase>) => {
+    setLocalOverrides((prev) => {
+      const next = { ...prev, [dsaNo]: { ...prev[dsaNo], ...updates } };
+      try {
+        localStorage.setItem("vascflow_master_logbook_overrides", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    setSelectedCase((prev) => (prev && prev.dsaNo === dsaNo ? { ...prev, ...updates } : prev));
+  };
+
   const queryKey = ["casesArchive", { currentPage, pageSize, searchQuery, schemeFilter, yearFilter, wardFilter, sortOrder }];
 
   const { data, isLoading, isError, error } = useQuery<LogbookApiResponse>({
@@ -51,7 +70,11 @@ export function useLogbookDesk() {
     staleTime: 60 * 1000,
   });
 
-  const cases = data?.cases || [];
+  const rawCases = data?.cases || [];
+  const cases = rawCases.map((c) => ({
+    ...c,
+    ...(localOverrides[c.dsaNo] || {}),
+  }));
   const totalCases = data?.total || 0;
   const totalPages = data?.totalPages || 1;
 
@@ -69,21 +92,17 @@ export function useLogbookDesk() {
         const res = await fetch(`/api/cases/archive?${params.toString()}`);
         if (!res.ok) return;
         const json = await res.json();
-        const exportCases: RealSmsPatientCase[] = json.cases || [];
+        const exportCases: RealSmsPatientCase[] = (json.cases || []).map((c: RealSmsPatientCase) => ({
+          ...c,
+          ...(localOverrides[c.dsaNo] || {}),
+        }));
 
-        const headers = ["DSA No", "Date", "Patient Name", "Age", "Gender", "CR Number", "Diagnosis", "Procedure", "Scheme", "Ward", "Operator"];
+        const headers = ["DSA No", "Date", "Patient Name", "Age", "Gender", "CR Number", "UHID", "Bill No", "Contact No", "CT Number", "Diagnosis", "Procedure", "Scheme", "Ward", "Follow-up", "Operator"];
         const rows = exportCases.map((c) => [
-          c.dsaNo || "",
-          c.date,
-          c.patientName,
-          c.age,
-          c.gender,
-          c.crNumber,
-          c.diagnosis,
-          c.procedureName,
-          c.schemeType || "",
-          c.unit || "",
-          c.primaryOperator || "IR Team",
+          c.dsaNo || "", c.date, c.patientName, c.age, c.gender, c.crNumber,
+          c.uhid || c.crNumber, c.billNo || "—", c.contactNo || "—", c.ctNumber || "—",
+          c.diagnosis, c.procedureName, c.schemeType || "", c.unit || "",
+          c.followup || "—", c.primaryOperator || "IR Team",
         ]);
 
         const csvContent = generateSafeCsv(headers, rows);
@@ -105,9 +124,11 @@ export function useLogbookDesk() {
     const summary = `SMS HOSPITAL CATH-LAB RECORD
 DSA #: ${c.dsaNo || "—"} | Date: ${c.date}
 Patient: ${c.patientName} (${c.age}Y/${c.gender}) | CR: ${c.crNumber}
+UHID: ${c.uhid || c.crNumber} | Contact: ${c.contactNo || "—"} | Bill No: ${c.billNo || "—"} | CT No: ${c.ctNumber || "—"}
 Diagnosis: ${c.diagnosis}
 Procedure: ${c.procedureName}
-Ward/Unit: ${c.unit || "Cath Lab"} | Scheme: ${c.schemeType || "MAAY"}`;
+Ward/Unit: ${c.unit || "Cath Lab"} | Scheme: ${c.schemeType || "MAAY"}
+Follow-Up: ${c.followup || "Routine surveillance"}`;
     navigator.clipboard.writeText(summary);
     setHasCopied(true);
     setTimeout(() => setHasCopied(false), 2000);
@@ -135,6 +156,7 @@ Ward/Unit: ${c.unit || "Cath Lab"} | Scheme: ${c.schemeType || "MAAY"}`;
     error,
     selectedCase,
     setSelectedCase,
+    handleUpdateCase,
     hasCopied,
     handleCopySummary,
     handleExportCsv,

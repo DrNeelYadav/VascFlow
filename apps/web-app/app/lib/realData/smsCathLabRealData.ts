@@ -14,10 +14,18 @@ export interface RealSmsPatientCase {
   gender: 'Male' | 'Female';
   unit: string;
   crNumber: string;
-  schemeType: 'MAAY' | 'RGHS' | 'PAID';
+  uhid?: string;
+  billNo?: string;
+  contactNo?: string;
+  ctNumber?: string;
+  schemeType: 'MAAY' | 'RGHS' | 'PAID' | string;
   procedureName: string;
   diagnosis: string;
   radiationDose: string;
+  followup?: string;
+  hasFluoro?: boolean;
+  hasOpNote?: boolean;
+  hasDischarge?: boolean;
   primaryOperator?: string;
 }
 

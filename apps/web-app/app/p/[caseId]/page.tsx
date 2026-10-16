@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { SmsHospitalCrest } from "../../components/SmsHospitalCrest";
+import { EndoFlowLogo } from "../../components/EndoFlowLogo";
 import {
   ShieldAlert,
   PhoneCall,
@@ -32,13 +32,13 @@ export default async function PatientCarePage({ params }: PatientCarePageProps) 
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs px-4 py-3">
         <div className="max-w-xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <SmsHospitalCrest size={32} />
+            <EndoFlowLogo size="sm" showSubtitle={false} />
             <div>
               <h1 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
-                SMS Hospital, Jaipur
+                Interventional Radiology
               </h1>
               <p className="text-[10px] text-blue-700 font-semibold tracking-wide uppercase">
-                Dept. of Interventional Radiology
+                Digital Discharge Care Portal
               </p>
             </div>
           </div>

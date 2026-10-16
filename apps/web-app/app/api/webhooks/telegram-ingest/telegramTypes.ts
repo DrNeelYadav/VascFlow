@@ -3,6 +3,7 @@ export const AUTHORIZED_CHAT_IDS = new Set<string>([
   "-1002345678901", // SMS Hospital IR Angiosuite Group
   "-1002345678902", // SMS Hospital IR On-Call Residents Group
   "-1002345678903", // SMS IR Daily CT Console Ingestion Bot
+  "589115008",      // Dr. Neel Yadav Direct / Ingestion Bot
   ...(process.env.ALLOWED_TELEGRAM_CHAT_IDS ? process.env.ALLOWED_TELEGRAM_CHAT_IDS.split(",") : []),
 ]);
 

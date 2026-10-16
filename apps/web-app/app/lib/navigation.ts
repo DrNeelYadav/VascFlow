@@ -15,7 +15,10 @@
 export type NavIconKey =
   | "today"
   | "clinic"
+  | "dating"
   | "documentation"
+  | "consent"
+  | "discharge"
   | "logbook"
   | "suite"
   | "library"
@@ -71,13 +74,30 @@ export const WORKSPACES: Workspace[] = [
     ],
   },
   {
+    id: "pre-booking",
+    shortLabel: "Dating",
+    label: "OPD Dating",
+    icon: "clinic",
+    href: "/dashboard/pre-booking",
+    secondary: true,
+    members: [
+      {
+        href: "/dashboard/pre-booking",
+        label: "OPD Dating & Pre-Booking",
+        keywords: "dating pre-booking sclerotherapy tace bae bleeder aiims rghs maay",
+      },
+    ],
+  },
+  {
     id: "documentation",
     shortLabel: "Docs",
-    label: "Documentation",
+    label: "Procedure Notes",
     icon: "documentation",
     href: "/dashboard/operative-notes",
     members: [
-      { href: "/dashboard/operative-notes", label: "Op Notes & Discharge", keywords: "operative note summary sms sheet print discharge" },
+      { href: "/dashboard/operative-notes", label: "Procedure Notes", keywords: "operative note summary wordpad print" },
+      { href: "/dashboard/consent", label: "Informed Consent", keywords: "consent statutory authorization" },
+      { href: "/dashboard/discharge", label: "Discharge Card", keywords: "discharge card summary advice wound care" },
     ],
   },
   {

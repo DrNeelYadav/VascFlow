@@ -6,7 +6,10 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Stethoscope,
+  CalendarClock,
   FileSignature,
+  FileCheck,
+  FileText,
   BookOpen,
   MonitorPlay,
   Library,
@@ -20,7 +23,10 @@ import type { NavIconKey } from "../../lib/navigation";
 const ICONS: Record<NavIconKey, LucideIcon> = {
   today: LayoutDashboard,
   clinic: Stethoscope,
+  dating: CalendarClock,
   documentation: FileSignature,
+  consent: FileCheck,
+  discharge: FileText,
   logbook: BookOpen,
   suite: MonitorPlay,
   library: Library,

@@ -50,6 +50,7 @@ export function UniversalDataSync() {
         useEndoflowStore.getState().setBeds(payload.beds || []);
         useEndoflowStore.getState().setCtReviews(payload.ctReviews || []);
         useEndoflowStore.getState().setBookedCases(payload.bookedCases || []);
+        useEndoflowStore.getState().setSyncAlert(null);
       } catch {
         if (active) {
           useEndoflowStore.getState().setSyncAlert(

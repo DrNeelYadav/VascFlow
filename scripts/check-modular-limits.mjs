@@ -45,6 +45,7 @@ const TARGET_FILES = [
 // Files that are purely static reference catalogs, exempted from the UI 200-line ceiling
 const EXEMPT_DATA_FILES = new Set([
   "dailyRoutineProcedures.ts",
+  "procedureTemplatesCatalog.ts",
 ]);
 
 export function checkModularLimits(root = process.cwd()) {

@@ -114,13 +114,46 @@ export function GoogleSidebar({
           {label}
         </p>
       )}
-      {items.map((w) =>
-        renderItem(
-          { href: w.href, label: w.label, icon: w.icon },
-          isWorkspaceActive(w, pathname),
-          badges[w.id]
-        )
-      )}
+      {items.map((w) => {
+        const isActive = isWorkspaceActive(w, pathname);
+        return (
+          <div key={w.id} className="space-y-0.5">
+            {renderItem(
+              { href: w.href, label: w.label, icon: w.icon },
+              isActive,
+              badges[w.id]
+            )}
+            {!condensed && w.members.length > 1 && (
+              <div className="pl-6 pr-1 space-y-0.5 pb-0.5">
+                {w.members.slice(1).map((sub) => {
+                  const isSubActive = pathname === sub.href || pathname.startsWith(`${sub.href}/`);
+                  return (
+                    <Link
+                      key={sub.href}
+                      href={sub.href}
+                      onClick={() => onCloseMobile?.()}
+                      className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-medium transition-colors ${
+                        isSubActive
+                          ? "bg-blue-100 text-blue-900 dark:bg-sky-950 dark:text-sky-300 font-semibold"
+                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white"
+                      }`}
+                    >
+                      <span
+                        className={`w-1 h-1 rounded-full ${
+                          isSubActive
+                            ? "bg-blue-600 dark:bg-sky-400"
+                            : "bg-slate-300 dark:bg-slate-600"
+                        }`}
+                      />
+                      <span className="truncate">{sub.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 

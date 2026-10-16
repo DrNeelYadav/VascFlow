@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useEndoflowStore } from "../../dashboard/useEndoflowStore";
 import { EndoFlowLogo } from "../EndoFlowLogo";
-import { SmsHospitalCrest } from "../SmsHospitalCrest";
 import { Search, X, Lock, LogOut, Menu, Moon, KeyRound } from "lucide-react";
 import { ChangePasswordModal } from "../ChangePasswordModal";
 import { clearStaffSession } from "../../lib/auth/sessionPersistence";
@@ -147,22 +146,11 @@ export function GoogleHeader({
             </button>
 
             <Link href="/dashboard" className="flex items-center gap-2 shrink-0 group">
-              <SmsHospitalCrest size={28} />
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <EndoFlowLogo
-                    size="sm"
-                    showSubtitle={false}
-                    theme={isCathLabDark ? "light" : "dark"}
-                  />
-                  <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap leading-none shrink-0">
-                    SMS IR
-                  </span>
-                </div>
-                <span className="hidden xl:inline text-[9px] font-medium text-slate-500 dark:text-slate-400 leading-tight">
-                  SMS Medical College &amp; Attached Hospitals
-                </span>
-              </div>
+              <EndoFlowLogo
+                size="sm"
+                showSubtitle={false}
+                theme={isCathLabDark ? "light" : "dark"}
+              />
             </Link>
           </div>
 
@@ -249,14 +237,11 @@ export function GoogleHeader({
                 aria-haspopup="true"
               >
                 <div
-                  className="w-7 h-7 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 flex items-center justify-center font-mono font-semibold text-xs select-none hover:ring-2 hover:ring-blue-500/50 transition-all shrink-0"
+                  className="w-8 h-8 rounded-full bg-blue-600 text-white dark:bg-sky-500 dark:text-slate-950 flex items-center justify-center font-mono font-bold text-xs select-none hover:ring-2 hover:ring-blue-400 transition-all shrink-0 shadow-2xs"
                   title={currentStaff ? `${currentStaff.name} (${currentStaff.title})` : "Dr. Neel Yadav (DM Resident)"}
                 >
-                  {currentStaff?.avatar || "NY"}
+                  DR
                 </div>
-                <span className="hidden sm:inline-block text-xs font-medium text-slate-700 dark:text-slate-300 max-w-40 truncate pr-1">
-                  {currentStaff?.email || "dr.neel@sms.rajasthan.gov.in"}
-                </span>
               </button>
 
               {isDropdownOpen && (

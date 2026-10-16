@@ -3,22 +3,17 @@
 import React from "react";
 
 /**
- * Plain Printable Lungs & Mediastinum Outline Diagram
- * Pure black-and-white vector line contour without shading, hatching, or text labels.
- * Designed for Interventional Radiologists to draw culprit bronchial arteries,
- * bleeding segments, and lung lesions with pen on A4 pre-booking sheets.
+ * Elaborative Clinical Lungs & Bronchial Tree Outline Diagram
+ * Clean pure black-and-white vector line art for marking culprit bronchial/intercostal
+ * arteries, bleeding lobes, and systemic arterial collaterals for BAE pre-booking.
  */
 export const PlainLungsOutlineDiagram: React.FC<{ className?: string }> = ({
   className = "w-full max-w-[340px] mx-auto",
 }) => {
   return (
-    <div className={`relative bg-white text-slate-900 border border-slate-300 rounded-lg p-2 ${className}`}>
-      <div className="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1 flex items-center justify-between">
-        <span>Lungs &amp; Mediastinum (Pen Sketch Area)</span>
-        <span>Mark Bleeder / Culprit Vessel</span>
-      </div>
+    <div className={`relative bg-white text-black ${className}`}>
       <svg
-        viewBox="0 0 380 320"
+        viewBox="0 0 380 300"
         className="w-full h-auto"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -26,26 +21,26 @@ export const PlainLungsOutlineDiagram: React.FC<{ className?: string }> = ({
       >
         {/* Central Trachea & Mainstem Bronchi Outlines */}
         <path
-          d="M 183,20 L 183,105 L 140,140 M 197,20 L 197,105 L 240,140"
+          d="M 183,15 L 183,95 L 140,130 M 197,15 L 197,95 L 240,130"
           strokeWidth="2.2"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M 183,105 C 190,112 190,112 197,105"
+          d="M 183,95 C 190,102 190,102 197,95"
           strokeWidth="2"
           strokeLinecap="round"
           fill="none"
         />
 
-        {/* Right Lung Outline (Apex, Lateral Rib Cage Margin, Diaphragm Dome, Mediastinal Edge) */}
+        {/* Right Lung Outline */}
         <path
-          d="M 165,55 
-             C 150,30 115,30 100,55 
-             C 70,105 50,175 48,240 
-             C 47,270 70,285 105,282 
-             C 140,278 160,255 168,230 
-             C 172,195 168,140 165,55 
+          d="M 165,45 
+             C 150,20 115,20 100,45 
+             C 70,95 50,165 48,230 
+             C 47,260 70,275 105,272 
+             C 140,268 160,245 168,220 
+             C 172,185 168,130 165,45 
              Z"
           strokeWidth="2.2"
           strokeLinecap="round"
@@ -54,18 +49,18 @@ export const PlainLungsOutlineDiagram: React.FC<{ className?: string }> = ({
         />
 
         {/* Right Lung Interlobar Fissures (Horizontal & Oblique) */}
-        <path d="M 52,160 C 95,165 140,175 168,195" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-        <path d="M 65,225 C 110,210 145,215 168,230" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M 52,150 C 95,155 140,165 168,185" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M 65,215 C 110,200 145,205 168,220" strokeWidth="1.5" strokeLinecap="round" fill="none" />
 
-        {/* Left Lung Outline (Apex, Lateral Margin, Diaphragm, Cardiac Notch, Mediastinal Edge) */}
+        {/* Left Lung Outline */}
         <path
-          d="M 215,55 
-             C 230,30 265,30 280,55 
-             C 310,105 330,175 332,240 
-             C 333,270 310,285 275,282 
-             C 240,278 222,255 214,230 
-             C 205,190 205,160 216,130 
-             C 220,100 216,75 215,55 
+          d="M 215,45 
+             C 230,20 265,20 280,45 
+             C 310,95 330,165 332,230 
+             C 333,260 310,275 275,272 
+             C 240,268 222,245 214,220 
+             C 205,180 205,150 216,120 
+             C 220,90 216,65 215,45 
              Z"
           strokeWidth="2.2"
           strokeLinecap="round"
@@ -74,16 +69,20 @@ export const PlainLungsOutlineDiagram: React.FC<{ className?: string }> = ({
         />
 
         {/* Left Lung Oblique Fissure */}
-        <path d="M 285,115 C 260,170 230,220 216,245" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M 285,105 C 260,160 230,210 216,235" strokeWidth="1.5" strokeLinecap="round" fill="none" />
 
-        {/* Heart / Cardiac Silhouette Contour */}
-        <path
-          d="M 172,160 C 170,205 180,250 205,265 C 220,255 224,225 215,165"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeDasharray="4 3"
-          fill="none"
-        />
+        {/* Descending Thoracic Aorta & Intercostobronchial (ICBT) takeoff points */}
+        <path d="M 197,95 L 197,285" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+        <path d="M 197,125 C 175,130 160,140 145,150" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M 197,145 C 220,150 235,160 250,170" strokeWidth="1.6" strokeLinecap="round" />
+
+        {/* Anatomical Lobe Indicators */}
+        <text x="105" y="100" fontSize="10" fontWeight="bold" fill="#000000" stroke="none">RUL</text>
+        <text x="95" y="185" fontSize="10" fontWeight="bold" fill="#000000" stroke="none">RML</text>
+        <text x="105" y="245" fontSize="10" fontWeight="bold" fill="#000000" stroke="none">RLL</text>
+        <text x="265" y="100" fontSize="10" fontWeight="bold" fill="#000000" stroke="none">LUL</text>
+        <text x="265" y="225" fontSize="10" fontWeight="bold" fill="#000000" stroke="none">LLL</text>
+        <text x="175" y="295" fontSize="9" fontWeight="bold" fill="#000000" stroke="none">Desc. Aorta</text>
       </svg>
     </div>
   );

@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { PreBookingHeader } from "./PreBookingHeader";
+import { PreOpLabChecklist } from "./PreOpLabChecklist";
 
 interface SheetDemographicsProps {
   patientName?: string;
@@ -11,14 +13,8 @@ interface SheetDemographicsProps {
   location?: string;
   unit?: string;
   scheduledDate?: string;
-  scheme?: string;
 }
 
-/**
- * Exact Replica of AIIMS Delhi Pre-Operative Sclerotherapy Form (Front Page)
- * Pure printable A4 sheet with blank lines and parentheses for pen annotation.
- * Zero pre-populated clinical values or phantom data.
- */
 export const SclerotherapyPage1Sheet: React.FC<SheetDemographicsProps> = ({
   patientName = "",
   age = "",
@@ -27,30 +23,22 @@ export const SclerotherapyPage1Sheet: React.FC<SheetDemographicsProps> = ({
   contactNumber = "",
   location = "",
   unit = "",
+  scheduledDate = "",
 }) => {
   return (
-    <div className="bg-white text-black p-6 border border-slate-300 print:border-none shadow-sm print:shadow-none w-full max-w-[210mm] mx-auto min-h-[297mm] text-xs font-sans leading-relaxed">
-      {/* Header with Emblem & Statutory Metadata */}
-      <div className="border-b-2 border-black pb-3 mb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center font-bold text-[10px] text-center p-0.5">
-              SMS / AIIMS
-            </div>
-            <div>
-              <h2 className="text-sm font-black uppercase tracking-tight">DEPARTMENT OF INTERVENTIONAL RADIOLOGY</h2>
-              <p className="text-[10px] text-slate-700">SMS Medical College &amp; Attached Hospitals, Jaipur &bull; Vascular Malformation Protocol</p>
-              <p className="text-[10px] font-bold uppercase mt-0.5">PRE-OPERATIVE CLINICAL &amp; IMAGING RECORD (PAGE 1)</p>
-            </div>
-          </div>
-          <div className="text-right text-[10px] font-mono">
-            <div>ICD-10: <span className="font-bold">I83 / D18.0</span></div>
-            <div>RGHS / MAAY: <span className="font-bold">APPROVED</span></div>
-          </div>
-        </div>
+    <div className="bg-white text-black p-6 border border-slate-300 print:border-none shadow-sm print:shadow-none w-full max-w-[210mm] mx-auto min-h-[297mm] text-xs font-sans leading-relaxed flex flex-col justify-between">
+      <div>
+        {/* Clean Centered Institutional Header */}
+        <PreBookingHeader
+          procedureTitle="SCLEROTHERAPY"
+          procedureSubtitle="Percutaneous Image-Guided Sclerotherapy for Vascular Malformations"
+          icdCode="D18.0"
+          schemeCode="1849-IN074A | IMP 01"
+          scheduledDate={scheduledDate}
+        />
 
         {/* Demographics Block */}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-3 pt-2 border-t border-black text-[11px]">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-1 mb-3 pt-1 border-b border-black pb-2 text-[11px]">
           <div><span className="font-bold">Name:</span> {patientName || "______________________________"}</div>
           <div><span className="font-bold">Referring unit:</span> {unit || "______________________________"}</div>
           <div><span className="font-bold">Age / Sex:</span> {age || "____"} / {sex || "____"}</div>
@@ -60,85 +48,69 @@ export const SclerotherapyPage1Sheet: React.FC<SheetDemographicsProps> = ({
           <div><span className="font-bold">RADIOLOGY FILE NO.:</span> ______________________________</div>
           <div><span className="font-bold">RADIOLOGY INVESTIGATION NO.:</span> ______________________________</div>
         </div>
-      </div>
 
-      {/* SYMPTOMS (with duration) */}
-      <div className="mb-3 border-b border-black pb-2">
-        <div className="font-bold text-[11px] uppercase tracking-wide mb-1">SYMPTOMS (with duration)</div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <div>Swelling ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Pain ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Disfigurement ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Skin discoloration ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Bleeding ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Restriction of motion ( &nbsp;&nbsp;&nbsp; )</div>
-        </div>
-        <div className="mt-1.5 flex items-center justify-between">
-          <div>Others (warmth, etc.): ____________________________________</div>
-        </div>
-        <div className="mt-1.5 flex items-center justify-between">
-          <div>Site involved: ______________________________ &nbsp;&nbsp; Extremity / Trunk / H&amp;N</div>
-          <div className="border border-dashed border-black px-2 py-1 text-[10px] text-slate-600">
-            [Site Sketch Box / Pen Drawing]
+        {/* Mandatory Pre-Op Admission Notice & Investigations Checklist */}
+        <PreOpLabChecklist
+          procedureSpecificMarker={{
+            label: "Coagulation Profile",
+            description: "Baseline D-Dimer & Fibrinogen (for large AVM / VM)",
+          }}
+        />
+
+        {/* Symptoms (with duration) */}
+        <div className="mb-2.5 border-b border-black pb-2">
+          <div className="font-bold text-[11px] uppercase tracking-wide mb-1">
+            CLINICAL PRESENTATION &amp; SYMPTOMS
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[10px]">
+            <div>( &nbsp;&nbsp;&nbsp; ) Swelling (Duration: ________)</div>
+            <div>( &nbsp;&nbsp;&nbsp; ) Pain (VAS: ____ / 10)</div>
+            <div>( &nbsp;&nbsp;&nbsp; ) Disfigurement</div>
+            <div>( &nbsp;&nbsp;&nbsp; ) Skin discoloration / Bluish tinge</div>
+            <div>( &nbsp;&nbsp;&nbsp; ) Bleeding / Ulceration</div>
+            <div>( &nbsp;&nbsp;&nbsp; ) Functional restriction of limb</div>
+          </div>
+          <div className="mt-1 text-[10px]">
+            Site &amp; Extent: __________________________________________________ &bull; ( &nbsp; ) Head &amp; Neck &nbsp; ( &nbsp; ) Trunk &nbsp; ( &nbsp; ) Extremity
+          </div>
+          <div className="mt-0.5 text-[10px]">
+            Size variation with dependant position / Valsalva: ( &nbsp; ) Present &nbsp;&nbsp; ( &nbsp; ) Absent
           </div>
         </div>
-        <div className="mt-1">Size variation (with valsalva / dependant position) ( &nbsp;&nbsp;&nbsp; )</div>
-      </div>
 
-      {/* EXAMINATION */}
-      <div className="mb-3 border-b border-black pb-2">
-        <div className="font-bold text-[11px] uppercase tracking-wide mb-1">EXAMINATION</div>
-        <div className="grid grid-cols-2 gap-2">
-          <div>Lump ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Thrill / bruit ( &nbsp;&nbsp;&nbsp; )</div>
+        {/* Examination */}
+        <div className="mb-2.5 border-b border-black pb-2 text-[10px]">
+          <div className="font-bold text-[11px] uppercase tracking-wide mb-1">PHYSICAL EXAMINATION</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div>Soft compressible lump ( &nbsp;&nbsp;&nbsp; )</div>
+            <div>Local warmth / Thrill ( &nbsp;&nbsp;&nbsp; )</div>
+            <div>Phleboliths palpable ( &nbsp;&nbsp;&nbsp; )</div>
+            <div>Bruit on auscultation ( &nbsp;&nbsp;&nbsp; )</div>
+          </div>
         </div>
-        <div className="mt-1">Skin discoloration (with valsalva / dependent position) ( &nbsp;&nbsp;&nbsp; )</div>
-      </div>
 
-      {/* USG */}
-      <div className="mb-3 border-b border-black pb-2">
-        <div className="font-bold text-[11px] uppercase tracking-wide mb-1">USG (DATED: ____________________)</div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-          <div>Echogenicity ( &nbsp;&nbsp;&nbsp; ) &nbsp;&nbsp; Solid / Micro Cystic / MacroCystic / Tubular</div>
-          <div>Phleboliths ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Septations ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Increase on Valsalva? ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Debris / echoes ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Compressible? ( &nbsp;&nbsp;&nbsp; )</div>
-          <div className="col-span-2">Site involved: __________________________________________________</div>
-          <div className="col-span-2">Doppler: No flow / Venous Flow on compressing / arterial flow / Both arterial venous flow</div>
+        {/* Imaging Summary: USG & MRI */}
+        <div className="mb-3 border-b border-black pb-2 text-[10px] space-y-1">
+          <div className="font-bold text-[11px] uppercase tracking-wide">IMAGING PROFILE (USG &amp; MRI FINDINGS)</div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+            <div><span className="font-bold">USG / Doppler:</span> Solid / Microcystic / Macrocystic / Tubular venous spaces</div>
+            <div><span className="font-bold">Compressibility on USG:</span> ( &nbsp; ) Full &nbsp; ( &nbsp; ) Partial &nbsp; ( &nbsp; ) Incompressible</div>
+            <div><span className="font-bold">Doppler Flow:</span> Low-velocity monophasic / High-flow / Arteriovenous</div>
+            <div><span className="font-bold">MRI STIR Signal:</span> Hyperintense veno-lymphatic channels with fluid levels</div>
+          </div>
+          <div className="pt-0.5"><span className="font-bold">Extent / Anatomical Compartments:</span> ________________________________________________________________</div>
         </div>
-      </div>
 
-      {/* MRI */}
-      <div className="mb-3 border-b border-black pb-2">
-        <div className="font-bold text-[11px] uppercase tracking-wide mb-1">MRI (DATED: ____________________)</div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-          <div>Signal intensity: ____________________ &nbsp;&nbsp; Solid / MicroCystic / MacroCystic</div>
-          <div>Phleboliths ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Septations ( &nbsp;&nbsp;&nbsp; )</div>
-          <div>Hemorrhage ( &nbsp;&nbsp;&nbsp; )</div>
-          <div className="col-span-2">Fluid levels ( &nbsp;&nbsp;&nbsp; )</div>
-          <div className="col-span-2">Extent: ____________________________________________________________________________________</div>
+        {/* Clinical + Imaging Diagnosis */}
+        <div className="text-[11px] mb-2">
+          <span className="font-bold">CLINICAL + IMAGING DIAGNOSIS:</span> ____________________________________________________________________
         </div>
-      </div>
-
-      {/* OTHER INVESTIGATIONS, PRIOR SAMPLING & TREATMENT */}
-      <div className="space-y-1.5 mb-3 border-b border-black pb-2 text-[11px]">
-        <div><span className="font-bold">OTHER INVESTIGATIONS:</span> ____________________________________________________________________</div>
-        <div><span className="font-bold">PRIOR SAMPLING:</span> ________________________________________________________________________</div>
-        <div><span className="font-bold">PRIOR TREATMENT:</span> _______________________________________________________________________</div>
-      </div>
-
-      {/* CLINICAL + IMAGING DX */}
-      <div className="text-[11px] mb-4">
-        <span className="font-bold">CLINICAL + IMAGING DX:</span> __________________________________________________________________
       </div>
 
       {/* Signature Footer */}
-      <div className="flex items-center justify-between pt-4 mt-auto border-t border-black text-[10px]">
-        <div>Date of Assessment: ____________________</div>
-        <div>Resident / Fellow Signature: ____________________</div>
+      <div className="flex items-center justify-between pt-3 border-t border-black text-[10px]">
+        <div>Date of Clinical Assessment: ____________________</div>
+        <div>Consulting IR Resident / Fellow: ____________________</div>
         <div>Faculty / Consultant Signature: ____________________</div>
       </div>
     </div>

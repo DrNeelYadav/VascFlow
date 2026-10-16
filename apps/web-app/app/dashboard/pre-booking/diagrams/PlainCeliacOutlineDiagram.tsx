@@ -3,22 +3,17 @@
 import React from "react";
 
 /**
- * Plain Printable Celiac Axis & Mesenteric Arteries Outline Diagram
- * Pure black-and-white vector line contour without shading, hatching, or text labels.
- * Designed for Interventional Radiologists to draw contrast extravasation, pseudoaneurysms,
- * and microcatheter coil placement with pen on A4 pre-booking sheets.
+ * Elaborative Clinical Celiac Axis, SMA & Mesenteric Arteries Outline Diagram
+ * Clean pure black-and-white vector line art for marking contrast extravasation,
+ * pseudoaneurysms, GDA / LGA branches, and selective microcatheter coil placements.
  */
 export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
   className = "w-full max-w-[340px] mx-auto",
 }) => {
   return (
-    <div className={`relative bg-white text-slate-900 border border-slate-300 rounded-lg p-2 ${className}`}>
-      <div className="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1 flex items-center justify-between">
-        <span>Celiac Axis &amp; SMA (Pen Sketch Area)</span>
-        <span>Mark Extravasation / Coiling Site</span>
-      </div>
+    <div className={`relative bg-white text-black ${className}`}>
       <svg
-        viewBox="0 0 380 320"
+        viewBox="0 0 380 300"
         className="w-full h-auto"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +21,7 @@ export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
       >
         {/* Abdominal Aorta Trunk */}
         <path
-          d="M 175,15 L 175,305 M 205,15 L 205,305"
+          d="M 175,10 L 175,290 M 205,10 L 205,290"
           strokeWidth="2.4"
           strokeLinecap="round"
           fill="none"
@@ -34,7 +29,7 @@ export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
 
         {/* Celiac Axis Origin & Main Trunk */}
         <path
-          d="M 190,85 C 190,95 190,110 190,120"
+          d="M 190,75 C 190,85 190,100 190,110"
           strokeWidth="2.4"
           strokeLinecap="round"
           fill="none"
@@ -42,18 +37,18 @@ export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
 
         {/* Splenic Artery (Tortuous branch to anatomical left / diagram right) */}
         <path
-          d="M 190,120 
-             C 215,115 230,130 250,118 
-             C 270,105 285,125 315,115 
-             C 335,110 350,120 365,115"
+          d="M 190,110 
+             C 215,105 230,120 250,108 
+             C 270,95 285,115 315,105 
+             C 335,100 350,110 365,105"
           strokeWidth="2"
           strokeLinecap="round"
           fill="none"
         />
 
-        {/* Left Gastric Artery (Ascending branch) */}
+        {/* Left Gastric Artery (LGA - Ascending branch to lesser curvature) */}
         <path
-          d="M 190,120 C 195,95 205,75 220,60"
+          d="M 190,110 C 195,85 205,65 220,50"
           strokeWidth="1.8"
           strokeLinecap="round"
           fill="none"
@@ -61,7 +56,7 @@ export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
 
         {/* Common Hepatic Artery (CHA) heading to anatomical right / diagram left */}
         <path
-          d="M 190,120 C 165,122 145,115 125,120"
+          d="M 190,110 C 165,112 145,105 125,110"
           strokeWidth="2"
           strokeLinecap="round"
           fill="none"
@@ -69,13 +64,13 @@ export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
 
         {/* Proper Hepatic Artery & Right/Left Branches (Ascending) */}
         <path
-          d="M 125,120 C 115,100 105,75 95,50"
+          d="M 125,110 C 115,90 105,65 95,40"
           strokeWidth="1.8"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M 105,75 C 80,70 65,65 50,70"
+          d="M 105,65 C 80,60 65,55 50,60"
           strokeWidth="1.6"
           strokeLinecap="round"
           fill="none"
@@ -83,7 +78,7 @@ export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
 
         {/* Gastroduodenal Artery (GDA) (Descending branch) */}
         <path
-          d="M 125,120 C 122,150 120,185 115,225"
+          d="M 125,110 C 122,140 120,175 115,215"
           strokeWidth="1.8"
           strokeLinecap="round"
           fill="none"
@@ -91,23 +86,31 @@ export const PlainCeliacOutlineDiagram: React.FC<{ className?: string }> = ({
 
         {/* Superior Mesenteric Artery (SMA) Origin & Branches */}
         <path
-          d="M 190,155 C 190,180 185,215 180,265"
+          d="M 190,145 C 190,170 185,205 180,255"
           strokeWidth="2.2"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M 185,200 C 160,215 135,230 115,255"
+          d="M 185,190 C 160,205 135,220 115,245"
           strokeWidth="1.6"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M 182,230 C 210,240 235,250 260,265"
+          d="M 182,220 C 210,230 235,240 260,255"
           strokeWidth="1.6"
           strokeLinecap="round"
           fill="none"
         />
+
+        {/* Labels for Anatomical Guidance */}
+        <text x="180" y="25" fontSize="10" fontWeight="bold" fill="#000000" stroke="none">Aorta</text>
+        <text x="215" y="45" fontSize="9" fontWeight="bold" fill="#000000" stroke="none">LGA</text>
+        <text x="310" y="95" fontSize="9" fontWeight="bold" fill="#000000" stroke="none">Splenic Art.</text>
+        <text x="65" y="40" fontSize="9" fontWeight="bold" fill="#000000" stroke="none">Hepatic</text>
+        <text x="85" y="160" fontSize="9" fontWeight="bold" fill="#000000" stroke="none">GDA</text>
+        <text x="195" y="160" fontSize="9" fontWeight="bold" fill="#000000" stroke="none">SMA</text>
       </svg>
     </div>
   );

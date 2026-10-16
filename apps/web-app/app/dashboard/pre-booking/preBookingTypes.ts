@@ -105,7 +105,7 @@ export interface PreBookingRecord {
   admissionType: "Day Care" | "Inpatient Ward";
   anesthesiaPlan: "Local Anesthesia" | "Conscious Sedation" | "General Anesthesia";
   safetyChecklist: PreBookingSafetyChecklist;
-  status: "Provisional OPD Date" | "Confirmed" | "Bumped" | "Completed";
+  status: "Provisional OPD Date" | "Confirmed" | "Bumped" | "Completed" | "Rescheduled";
   notes?: string;
   // Category specific fields
   sclerotherapy?: SclerotherapyDetails;

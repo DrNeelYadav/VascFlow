@@ -128,8 +128,15 @@ export const useOpdPreBooking = () => {
     setPrintRecord(newRecord);
   };
 
+  const handleUpdateRecordDate = (recordId: string, newDate: string) => {
+    setBookedRecords((prev) =>
+      prev.map((r) => (r.id === recordId ? { ...r, scheduledDate: newDate, status: "Rescheduled" as const } : r))
+    );
+  };
+
   return {
     bookedRecords,
+    handleUpdateRecordDate,
     selectedCategory,
     handleCategoryChange,
     filterQuery,

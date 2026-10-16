@@ -12,12 +12,15 @@ import {
   User,
 } from "lucide-react";
 import type { useOtCalendar } from "./useOtCalendar";
+import { QuickPostponeDropdown } from "./QuickPostponeDropdown";
+import { useEndoflowStore } from "../useEndoflowStore";
 
 interface CalendarDayAgendaProps {
   cal: ReturnType<typeof useOtCalendar>;
 }
 
 export function CalendarDayAgenda({ cal }: CalendarDayAgendaProps) {
+  const rescheduleCase = useEndoflowStore((s) => s.rescheduleCase);
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs p-4 sm:p-5 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-200 dark:border-slate-800">
@@ -138,6 +141,13 @@ export function CalendarDayAgenda({ cal }: CalendarDayAgendaProps) {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-200 dark:border-slate-800">
+                <QuickPostponeDropdown
+                  currentDateStr={c.scheduledDate || cal.selectedDateStr}
+                  onUpdateDate={(newDate) => {
+                    rescheduleCase(c.id, newDate);
+                    cal.setSelectedDateStr(newDate);
+                  }}
+                />
                 <Link
                   href="/dashboard/operative-notes"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold shadow-2xs transition-colors active:scale-95"

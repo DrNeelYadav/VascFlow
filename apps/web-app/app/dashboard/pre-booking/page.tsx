@@ -81,6 +81,7 @@ export default function PreBookingPage() {
           filterQuery={booking.filterQuery}
           setFilterQuery={booking.setFilterQuery}
           onSelectPrint={(rec) => booking.setPrintRecord(rec)}
+          onUpdateDate={booking.handleUpdateRecordDate}
         />
       ) : (
         <div>
@@ -116,45 +117,28 @@ export default function PreBookingPage() {
 
           {/* Demographics & General Details */}
           <GeneralPreBookingForm
-            patientName={booking.patientName}
-            setPatientName={booking.setPatientName}
-            age={booking.age}
-            setAge={booking.setAge}
-            sex={booking.sex}
-            setSex={booking.setSex}
-            contactNumber={booking.contactNumber}
-            setContactNumber={booking.setContactNumber}
-            location={booking.location}
-            setLocation={booking.setLocation}
-            crUhid={booking.crUhid}
-            setCrUhid={booking.setCrUhid}
-            scheduledDate={booking.scheduledDate}
-            setScheduledDate={booking.setScheduledDate}
-            admissionType={booking.admissionType}
-            setAdmissionType={booking.setAdmissionType}
-            anesthesiaPlan={booking.anesthesiaPlan}
-            setAnesthesiaPlan={booking.setAnesthesiaPlan}
+            patientName={booking.patientName} setPatientName={booking.setPatientName}
+            age={booking.age} setAge={booking.setAge}
+            sex={booking.sex} setSex={booking.setSex}
+            contactNumber={booking.contactNumber} setContactNumber={booking.setContactNumber}
+            location={booking.location} setLocation={booking.setLocation}
+            crUhid={booking.crUhid} setCrUhid={booking.setCrUhid}
+            scheduledDate={booking.scheduledDate} setScheduledDate={booking.setScheduledDate}
+            admissionType={booking.admissionType} setAdmissionType={booking.setAdmissionType}
+            anesthesiaPlan={booking.anesthesiaPlan} setAnesthesiaPlan={booking.setAnesthesiaPlan}
             procedureName={booking.activeTariff.name}
           />
 
           {/* Mandatory Pre-Booking Safety Checklist */}
           <PreBookingSafetyChecklist
-            npoConfirmed={booking.npoConfirmed}
-            setNpoConfirmed={booking.setNpoConfirmed}
-            plateletCount={booking.plateletCount}
-            setPlateletCount={booking.setPlateletCount}
-            inr={booking.inr}
-            setInr={booking.setInr}
-            creatinine={booking.creatinine}
-            setCreatinine={booking.setCreatinine}
-            egfr={booking.egfr}
-            setEgfr={booking.setEgfr}
-            viralMarkers={booking.viralMarkers}
-            setViralMarkers={booking.setViralMarkers}
-            contrastAllergy={booking.contrastAllergy}
-            setContrastAllergy={booking.setContrastAllergy}
-            consentSigned={booking.consentSigned}
-            setConsentSigned={booking.setConsentSigned}
+            npoConfirmed={booking.npoConfirmed} setNpoConfirmed={booking.setNpoConfirmed}
+            plateletCount={booking.plateletCount} setPlateletCount={booking.setPlateletCount}
+            inr={booking.inr} setInr={booking.setInr}
+            creatinine={booking.creatinine} setCreatinine={booking.setCreatinine}
+            egfr={booking.egfr} setEgfr={booking.setEgfr}
+            viralMarkers={booking.viralMarkers} setViralMarkers={booking.setViralMarkers}
+            contrastAllergy={booking.contrastAllergy} setContrastAllergy={booking.setContrastAllergy}
+            consentSigned={booking.consentSigned} setConsentSigned={booking.setConsentSigned}
           />
 
           {/* Specific Procedure Protocols */}
@@ -169,18 +153,9 @@ export default function PreBookingPage() {
               />
             </>
           )}
-
-          {booking.selectedCategory === "tace" && (
-            <TaceDatingForm tace={booking.tace} setTace={booking.setTace} />
-          )}
-
-          {booking.selectedCategory === "bae" && (
-            <BaeDatingForm bae={booking.bae} setBae={booking.setBae} />
-          )}
-
-          {booking.selectedCategory === "bleeder" && (
-            <BleederDatingForm bleeder={booking.bleeder} setBleeder={booking.setBleeder} />
-          )}
+          {booking.selectedCategory === "tace" && <TaceDatingForm tace={booking.tace} setTace={booking.setTace} />}
+          {booking.selectedCategory === "bae" && <BaeDatingForm bae={booking.bae} setBae={booking.setBae} />}
+          {booking.selectedCategory === "bleeder" && <BleederDatingForm bleeder={booking.bleeder} setBleeder={booking.setBleeder} />}
 
           {/* Bottom Action Footer */}
           <div className="flex items-center justify-end gap-3 pt-3 pb-8 border-t border-slate-200 dark:border-slate-800">

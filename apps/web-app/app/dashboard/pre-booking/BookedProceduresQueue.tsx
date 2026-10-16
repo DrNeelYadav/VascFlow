@@ -2,12 +2,14 @@
 
 import React from "react";
 import { PreBookingRecord } from "./preBookingTypes";
+import { QuickPostponeDropdown } from "../calendar/QuickPostponeDropdown";
 
 interface BookedProceduresQueueProps {
   records: PreBookingRecord[];
   filterQuery: string;
   setFilterQuery: (q: string) => void;
   onSelectPrint: (record: PreBookingRecord) => void;
+  onUpdateDate?: (recordId: string, newDate: string) => void;
 }
 
 export const BookedProceduresQueue: React.FC<BookedProceduresQueueProps> = ({
@@ -15,6 +17,7 @@ export const BookedProceduresQueue: React.FC<BookedProceduresQueueProps> = ({
   filterQuery,
   setFilterQuery,
   onSelectPrint,
+  onUpdateDate,
 }) => {
   const filtered = records.filter((r) => {
     const q = filterQuery.toLowerCase();
@@ -111,7 +114,11 @@ export const BookedProceduresQueue: React.FC<BookedProceduresQueueProps> = ({
                       INR {rec.safetyChecklist.inr} &bull; Plt {rec.safetyChecklist.plateletCount.split(" ")[0]}
                     </div>
                   </td>
-                  <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                  <td className="py-2.5 px-3 text-right whitespace-nowrap space-x-2">
+                    <QuickPostponeDropdown
+                      currentDateStr={rec.scheduledDate}
+                      onUpdateDate={(newDate) => onUpdateDate?.(rec.id, newDate)}
+                    />
                     <button
                       type="button"
                       onClick={() => onSelectPrint(rec)}

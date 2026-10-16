@@ -8,17 +8,14 @@ interface SclerotherapyDatingFormProps {
   updateField: <K extends keyof SclerotherapyDetails>(field: K, val: SclerotherapyDetails[K]) => void;
 }
 
-export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = ({
-  details,
-  updateField,
-}) => {
+export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = ({ details, updateField }) => {
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl p-4 shadow-sm mb-5">
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 mb-4">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse" />
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-            Bleomycin & Polidocanol Sclerotherapy — Presentation & Phlebogram
+            Bleomycin &amp; Polidocanol Sclerotherapy — Presentation &amp; Phlebogram
           </h3>
         </div>
         <span className="text-[10px] font-mono bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 px-2 py-0.5 rounded font-bold">
@@ -29,13 +26,11 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
       {/* FRONT PAGE: Presentation & Baseline Imaging */}
       <div className="mb-5">
         <h4 className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2.5">
-          [Front Page] Clinical Complaints & Baseline Imaging
+          [Front Page] Clinical Complaints &amp; Baseline Imaging
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Duration of Symptoms
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Duration of Symptoms</label>
             <input
               type="text"
               value={details.symptomDuration}
@@ -44,11 +39,8 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             />
           </div>
-
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Pain Score (VAS 0–10)
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Pain Score (VAS 0–10)</label>
             <input
               type="number"
               min={0}
@@ -58,7 +50,6 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
             />
           </div>
-
           <div className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
             <input
               type="checkbox"
@@ -71,24 +62,18 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               Facial / Cosmetic Disfigurement
             </label>
           </div>
-
           <div className="sm:col-span-2 md:col-span-3">
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Clinical Complaints & Functional Impairment Notes
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Clinical Complaints &amp; Functional Notes</label>
             <textarea
               rows={2}
               value={details.complaints}
               onChange={(e) => updateField("complaints", e.target.value)}
-              placeholder="e.g. Recurrent bluish compressible swelling over right cheek; functional difficulty on mastication"
+              placeholder="e.g. Recurrent bluish compressible swelling over right cheek; difficulty on mastication"
               className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             />
           </div>
-
           <div className="sm:col-span-1 md:col-span-2">
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Prior USG / Color Doppler Dimensions & Flow
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Prior USG / Doppler Dimensions &amp; Flow</label>
             <input
               type="text"
               value={details.baselineUsgDimensions}
@@ -97,16 +82,13 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
             />
           </div>
-
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Baseline MRI / STIR Characteristics
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Baseline MRI / STIR Characteristics</label>
             <input
               type="text"
               value={details.baselineMriFindings}
               onChange={(e) => updateField("baselineMriFindings", e.target.value)}
-              placeholder="e.g. High STIR signal with no high-flow arterial nidus"
+              placeholder="e.g. High STIR signal with no high-flow nidus"
               className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             />
           </div>
@@ -120,9 +102,7 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Fluid Aspirated
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Fluid Aspirated</label>
             <select
               value={details.fluidAspirated}
               onChange={(e) => updateField("fluidAspirated", e.target.value as any)}
@@ -134,11 +114,8 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               <option value="None">Dry Puncture / None</option>
             </select>
           </div>
-
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Contrast Vol. Injected
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Contrast Vol. Injected</label>
             <input
               type="text"
               value={details.contrastVolInjectedMl}
@@ -147,11 +124,8 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono"
             />
           </div>
-
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Morphological Appearance
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Morphological Appearance</label>
             <select
               value={details.appearance}
               onChange={(e) => updateField("appearance", e.target.value as any)}
@@ -162,11 +136,8 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               <option value="Dysplastic veins">Dysplastic veins</option>
             </select>
           </div>
-
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Draining Vein
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Draining Vein</label>
             <select
               value={details.drainingVeinStatus}
               onChange={(e) => updateField("drainingVeinStatus", e.target.value as any)}
@@ -177,11 +148,8 @@ export const SclerotherapyDatingForm: React.FC<SclerotherapyDatingFormProps> = (
               <option value="Late">Late Draining</option>
             </select>
           </div>
-
           <div className="sm:col-span-2">
-            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-              With Compression (Venous Outflow Occlusion)
-            </label>
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">With Compression (Outflow Occlusion)</label>
             <div className="flex gap-2">
               <select
                 value={details.compressionStatus}

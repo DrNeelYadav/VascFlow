@@ -8,11 +8,14 @@ import path from "node:path";
 
 const TARGET_DIRECTORIES = [
   "apps/web-app/app/dashboard/operative-notes",
+  "apps/web-app/app/dashboard/operative-notes/builders",
   "apps/web-app/app/dashboard/calendar",
   "apps/web-app/app/dashboard/consent",
   "apps/web-app/app/dashboard/protocols",
   "apps/web-app/app/dashboard/schemes-correlation",
   "apps/web-app/app/dashboard/imaging",
+  "apps/web-app/app/dashboard/pre-booking",
+  "apps/web-app/app/dashboard/common",
 ];
 
 const TARGET_FILES = [
@@ -33,6 +36,8 @@ const TARGET_FILES = [
   "apps/web-app/app/dashboard/discharge/DischargeAdviceAndRedFlags.tsx",
   "apps/web-app/app/dashboard/discharge/DischargeSignaturesBlock.tsx",
   "apps/web-app/app/dashboard/discharge/DischargeStatutoryDocument.tsx",
+  "apps/web-app/app/dashboard/discharge/DischargeDetailsBox.tsx",
+  "apps/web-app/app/dashboard/discharge/SurveillanceFollowUpTable.tsx",
   "apps/web-app/app/hooks/useDocPreview.ts",
   "apps/web-app/app/dashboard/op-clinic/ClinicalPhotoAttachment.tsx",
   "apps/web-app/app/dashboard/worklist/TheatreBumpingModal.tsx",
@@ -46,6 +51,7 @@ const TARGET_FILES = [
 const EXEMPT_DATA_FILES = new Set([
   "dailyRoutineProcedures.ts",
   "procedureTemplatesCatalog.ts",
+  "ihmsDischargeTemplates.ts",
 ]);
 
 export function checkModularLimits(root = process.cwd()) {

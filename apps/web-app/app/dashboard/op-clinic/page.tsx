@@ -8,7 +8,9 @@ import {
   Eye,
   AlertTriangle,
   CheckCircle2,
+  FileSpreadsheet,
 } from "lucide-react";
+import { DoubleSaveGoogleDriveModal } from "../../components/DoubleSaveGoogleDriveModal";
 import {
   useOpClinicDesk,
   URGENCY_OPTIONS,
@@ -22,6 +24,7 @@ import { BookingModal } from "./BookingModal";
 export default function OpClinicConsultationDeskPage() {
   const desk = useOpClinicDesk();
   const [activeTab, setActiveTab] = useState<"desk" | "queue">("desk");
+  const [isDoubleSaveOpen, setIsDoubleSaveOpen] = useState(false);
 
   return (
     <div className="space-y-5 max-w-7xl mx-auto pb-12">
@@ -42,6 +45,15 @@ export default function OpClinicConsultationDeskPage() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <button
+            type="button"
+            onClick={() => setIsDoubleSaveOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors shadow-2xs active:scale-95 cursor-pointer shrink-0"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Double-Save (Drive &amp; Sheets)</span>
+          </button>
+
           {/* Segmented Control Mode Switcher */}
           <div className="flex items-center bg-slate-100 dark:bg-slate-800/80 border border-transparent dark:border-slate-700/60 p-1 rounded-xl shrink-0 self-stretch sm:self-auto">
             <button
@@ -135,6 +147,12 @@ export default function OpClinicConsultationDeskPage() {
         desk={desk}
         isOpen={desk.showBookingModal}
         onClose={() => desk.setShowBookingModal(false)}
+      />
+
+      {/* Double-Save Google Drive & Sheets Modal */}
+      <DoubleSaveGoogleDriveModal
+        isOpen={isDoubleSaveOpen}
+        onClose={() => setIsDoubleSaveOpen(false)}
       />
     </div>
   );

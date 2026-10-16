@@ -9,6 +9,7 @@ import {
   exportOperativeNoteAsWordDoc,
   formatOperativeNotePlainText,
 } from "./exportWordDocument";
+import { useContinuousDraftVault } from "../common/useContinuousDraftVault";
 
 export function useOperativeNoteDocument() {
   const [selectedProcedureId, setSelectedProcedureId] = useState<string>("biliary-sems");
@@ -42,12 +43,29 @@ export function useOperativeNoteDocument() {
     postOpPlan: initialTemplate.postOpPlan,
   });
 
+  const draftVault = useContinuousDraftVault<OperativeNoteDocumentData>({
+    key: "operative_note_current",
+    initialData: docData,
+    debounceMs: 2000,
+  });
+
   const handleFieldChange = useCallback(
     <K extends keyof OperativeNoteDocumentData>(key: K, value: OperativeNoteDocumentData[K]) => {
-      setDocData((prev) => ({ ...prev, [key]: value }));
+      setDocData((prev) => {
+        const next = { ...prev, [key]: value };
+        draftVault.setData(next);
+        return next;
+      });
     },
-    []
+    [draftVault]
   );
+
+  const handleRestoreDraft = useCallback(() => {
+    if (draftVault.data) {
+      setDocData(draftVault.data);
+      draftVault.dismissDraft();
+    }
+  }, [draftVault]);
 
   const handleSelectProcedure = useCallback((id: string) => {
     setSelectedProcedureId(id);
@@ -125,5 +143,7 @@ export function useOperativeNoteDocument() {
     handleCopy,
     handlePrint,
     handleDownloadDocx,
+    draftVault,
+    handleRestoreDraft,
   };
 }

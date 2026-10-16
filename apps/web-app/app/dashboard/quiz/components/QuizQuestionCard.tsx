@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { FrcrQuestion, QuizMode, UserAnswerRecord } from "../types";
+import { CheckSquare, Square } from "lucide-react";
 
 interface QuizQuestionCardProps {
   question: FrcrQuestion;
@@ -18,15 +19,24 @@ export function QuizQuestionCard({
   mode,
   onSelectOption,
 }: QuizQuestionCardProps) {
-  const isAnswered = currentAnswer !== undefined;
+  const isMrq = !!question.isMrq;
+  const selectedOptions = currentAnswer?.selectedOptions || [];
+  const singleSelected = currentAnswer?.selectedOption;
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-2xs transition-colors">
-      {/* Top Clinical Identifier */}
+      {/* Top Clinical Identifier & EDiR Badge */}
       <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-100 dark:border-slate-800 text-xs font-mono text-slate-500">
-        <span className="font-semibold text-slate-700 dark:text-slate-300">
-          {question.topic}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-slate-700 dark:text-slate-300">
+            {question.topic}
+          </span>
+          {isMrq && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+              EDiR Multiple Response (MRQ)
+            </span>
+          )}
+        </div>
         <span>{question.id}</span>
       </div>
 
@@ -42,13 +52,12 @@ export function QuizQuestionCard({
         {question.prompt}
       </div>
 
-      {/* Single Best Answer Options */}
+      {/* Single or Multiple Response Options */}
       <div className="space-y-2">
         {question.options.map((optionText, idx) => {
           const letter = OPTION_LETTERS[idx] || `${idx + 1}`;
-          const isSelected = currentAnswer?.selectedOption === idx;
+          const isSelected = isMrq ? selectedOptions.includes(idx) : singleSelected === idx;
 
-          // Neutral, clean exam styling without green colored options or artificial icons
           let containerClasses =
             "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 text-slate-800 dark:text-slate-200";
           let badgeClasses =
@@ -68,14 +77,18 @@ export function QuizQuestionCard({
               onClick={() => onSelectOption(idx)}
               className={`w-full text-left flex items-start gap-3 p-3 rounded-xl border transition-all duration-150 touch-manipulation min-h-[46px] cursor-pointer ${containerClasses}`}
             >
-              {/* Option Letter Badge */}
+              {/* Option Letter Badge or Checkbox */}
               <span
                 className={`w-6 h-6 rounded-lg text-xs flex items-center justify-center shrink-0 mt-0.5 ${badgeClasses}`}
               >
-                {letter}
+                {isMrq ? (
+                  isSelected ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />
+                ) : (
+                  letter
+                )}
               </span>
 
-              {/* Option Text verbatim from Google Docs */}
+              {/* Option Text verbatim */}
               <span className="flex-1 text-xs sm:text-sm leading-snug pt-0.5 select-text">
                 {optionText}
               </span>

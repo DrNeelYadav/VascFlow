@@ -1,37 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { db } from "../../../lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import type {
-  FrcrModuleKey,
-  QuestionAttemptRecord,
-  MasteryLevelInfo,
-  DailyProgressPoint,
-} from "../types";
+import type { FrcrModuleKey, StoredQuizDataset, LastActiveSession } from "../types";
+import { deepMergeDatasets, computeQuizAnalytics } from "./quizAnalyticsHelper";
 
-const LOCAL_STORAGE_KEY = "vascflow_frcr_quiz_firestore_v2";
-
-const MASTERY_LEVELS: MasteryLevelInfo[] = [
-  { level: 1, title: "Radiology Intern", badge: "BookOpen", minCompleted: 0, minAccuracy: 0 },
-  { level: 2, title: "Junior Resident", badge: "Sparkles", minCompleted: 100, minAccuracy: 50 },
-  { level: 3, title: "Senior Resident", badge: "ShieldCheck", minCompleted: 350, minAccuracy: 60 },
-  { level: 4, title: "Registrar", badge: "Award", minCompleted: 750, minAccuracy: 70 },
-  { level: 5, title: "FRCR 2A Exam-Ready", badge: "GraduationCap", minCompleted: 1200, minAccuracy: 75 },
-];
-
-export interface ModuleAttemptsMap {
-  [questionId: string]: QuestionAttemptRecord;
-}
-
-export interface StoredQuizDataset {
-  attempts: Record<FrcrModuleKey, ModuleAttemptsMap>;
-  history: Array<{ date: string; attempted: number; correct: number }>;
-  lastUpdated: number;
-}
+const LOCAL_STORAGE_KEY = "vascflow_frcr_quiz_firestore_v3";
 
 const DEFAULT_DATASET: StoredQuizDataset = {
   attempts: { PAEDS: {}, MSK: {}, CHEST: {}, GUT: {}, GIT: {}, CNS: {} },
+  bookmarks: { PAEDS: {}, MSK: {}, CHEST: {}, GUT: {}, GIT: {}, CNS: {} },
   history: [],
   lastUpdated: Date.now(),
 };
@@ -47,7 +26,11 @@ export function useQuizFirestore() {
     }
   });
 
-  // Background Firestore initial load
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const pendingSyncRef = useRef<boolean>(false);
+  const latestDatasetRef = useRef<StoredQuizDataset>(dataset);
+  latestDatasetRef.current = dataset;
+
   useEffect(() => {
     async function loadFromFirestore() {
       if (!db) return;
@@ -56,36 +39,54 @@ export function useQuizFirestore() {
         const snap = await getDoc(docRef);
         if (snap.exists()) {
           const cloudData = snap.data() as StoredQuizDataset;
-          if (cloudData.lastUpdated && cloudData.lastUpdated > dataset.lastUpdated) {
-            setDataset(cloudData);
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cloudData));
-          }
+          const merged = deepMergeDatasets(latestDatasetRef.current, cloudData);
+          setDataset(merged);
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
         }
       } catch (err) {
-        console.warn("[Firestore] Quiz progress offline fallback active:", err);
+        console.warn("[Firestore] Initial load offline fallback active:", err);
       }
     }
     void loadFromFirestore();
   }, []);
 
-  // Save changes locally and sync to Cloud Firestore
-  const persistDataset = useCallback((updated: StoredQuizDataset) => {
-    setDataset(updated);
+  const flushPendingSync = useCallback(async () => {
+    const current = latestDatasetRef.current;
     try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(current));
     } catch {}
 
-    if (db) {
+    if (!db) return;
+    try {
+      setIsSyncing(true);
       const docRef = doc(db, "frcr_progress", "neel_yadav_dossier");
-      void setDoc(docRef, updated, { merge: true }).catch((err) => {
-        console.warn("[Firestore] Failed to push quiz progress:", err);
-      });
+      await setDoc(docRef, current, { merge: true });
+      pendingSyncRef.current = false;
+    } catch (err) {
+      console.warn("[Firestore] Session sync warning:", err);
+    } finally {
+      setIsSyncing(false);
     }
   }, []);
 
-  // Record an answer attempt
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden" && pendingSyncRef.current) {
+        void flushPendingSync();
+      }
+    };
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => window.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [flushPendingSync]);
+
   const recordAttempt = useCallback(
-    (modKey: FrcrModuleKey, questionId: string, selectedOption: number, isCorrect: boolean) => {
+    (
+      modKey: FrcrModuleKey,
+      questionId: string,
+      selectedOption: number,
+      isCorrect: boolean,
+      selectedOptions?: number[]
+    ) => {
       setDataset((prev) => {
         const modAttempts = { ...(prev.attempts[modKey] || {}) };
         const existing = modAttempts[questionId];
@@ -94,6 +95,7 @@ export function useQuizFirestore() {
 
         modAttempts[questionId] = {
           selectedOption,
+          selectedOptions,
           isCorrect,
           attemptCount: (existing?.attemptCount || 0) + 1,
           correctStreak: newStreak,
@@ -121,70 +123,53 @@ export function useQuizFirestore() {
           lastUpdated: Date.now(),
         };
 
-        persistDataset(updated);
+        pendingSyncRef.current = true;
+        try {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch {}
         return updated;
       });
     },
-    [persistDataset]
+    []
   );
 
-  // Aggregated analytics metrics
-  const analytics = useMemo(() => {
-    let totalAttempted = 0;
-    let totalCorrect = 0;
-    const moduleStats: Record<FrcrModuleKey, { attempted: number; correct: number; mistakes: number }> = {
-      PAEDS: { attempted: 0, correct: 0, mistakes: 0 },
-      MSK: { attempted: 0, correct: 0, mistakes: 0 },
-      CHEST: { attempted: 0, correct: 0, mistakes: 0 },
-      GUT: { attempted: 0, correct: 0, mistakes: 0 },
-      GIT: { attempted: 0, correct: 0, mistakes: 0 },
-      CNS: { attempted: 0, correct: 0, mistakes: 0 },
-    };
-
-    (Object.keys(dataset.attempts) as FrcrModuleKey[]).forEach((mod) => {
-      const atts = Object.values(dataset.attempts[mod] || {});
-      const attCount = atts.length;
-      const corCount = atts.filter((a) => a.isCorrect).length;
-      const misCount = atts.filter((a) => a.isInMistakeQueue).length;
-
-      moduleStats[mod] = { attempted: attCount, correct: corCount, mistakes: misCount };
-      totalAttempted += attCount;
-      totalCorrect += corCount;
+  const toggleBookmark = useCallback((modKey: FrcrModuleKey, questionId: string) => {
+    setDataset((prev) => {
+      const modBms = { ...(prev.bookmarks[modKey] || {}) };
+      modBms[questionId] = !modBms[questionId];
+      const updated: StoredQuizDataset = {
+        ...prev,
+        bookmarks: { ...prev.bookmarks, [modKey]: modBms },
+        lastUpdated: Date.now(),
+      };
+      pendingSyncRef.current = true;
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
     });
+  }, []);
 
-    const accuracyPercent = totalAttempted > 0 ? Math.round((totalCorrect / totalAttempted) * 100) : 0;
+  const updateLastActive = useCallback((lastActive: LastActiveSession) => {
+    setDataset((prev) => {
+      const updated: StoredQuizDataset = { ...prev, lastActive, lastUpdated: Date.now() };
+      pendingSyncRef.current = true;
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  }, []);
 
-    // Calculate Mastery Level
-    let currentLevel = MASTERY_LEVELS[0];
-    for (let i = MASTERY_LEVELS.length - 1; i >= 0; i--) {
-      const lvl = MASTERY_LEVELS[i];
-      if (totalAttempted >= lvl.minCompleted && accuracyPercent >= lvl.minAccuracy) {
-        currentLevel = lvl;
-        break;
-      }
-    }
-
-    // Progression History Points
-    const dailyPoints: DailyProgressPoint[] = dataset.history.slice(-14).map((h) => ({
-      date: h.date,
-      attempted: h.attempted,
-      correct: h.correct,
-      accuracy: h.attempted > 0 ? Math.round((h.correct / h.attempted) * 100) : 0,
-    }));
-
-    return {
-      totalAttempted,
-      totalCorrect,
-      accuracyPercent,
-      currentLevel,
-      moduleStats,
-      dailyPoints,
-    };
-  }, [dataset]);
+  const analytics = useMemo(() => computeQuizAnalytics(dataset), [dataset]);
 
   return {
     dataset,
     analytics,
+    isSyncing,
     recordAttempt,
+    toggleBookmark,
+    updateLastActive,
+    flushPendingSync,
   };
 }

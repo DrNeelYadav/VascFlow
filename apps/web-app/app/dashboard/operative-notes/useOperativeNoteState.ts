@@ -20,10 +20,10 @@ export function useOperativeNoteState() {
   const [gender, setGender] = useState<string>("");
   const [crNumber, setCrNumber] = useState<string>("");
   const [ipdBed, setIpdBed] = useState<string>("");
-  const [dateOfProcedure, setDateOfProcedure] = useState<string>(() => new Date().toISOString().split("T")[0]);
+  const [dateOfProcedure, setDateOfProcedure] = useState<string>("");
   const [admissionNo, setAdmissionNo] = useState<string>("");
-  const [supervisingConsultant, setSupervisingConsultant] = useState<string>("Dr. Meenu Bagarhatta (Sr. Prof & Head)");
-  const [primaryOperator, setPrimaryOperator] = useState<string>("Dr. Naresh Mangalhara (Associate Professor)");
+  const [supervisingConsultant, setSupervisingConsultant] = useState<string>("");
+  const [primaryOperator, setPrimaryOperator] = useState<string>("");
 
   const [customIndication, setCustomIndication] = useState<string>("");
   const [customAccessSite, setCustomAccessSite] = useState<string>("");
@@ -68,16 +68,16 @@ export function useOperativeNoteState() {
   const handleSelectRegistryPatient = (p: typeof allRegistryPatients[0]) => {
     setPatientName(p.patientName);
     setAge(p.age ?? "");
-    setGender(p.gender || "Male");
+    setGender(p.gender || "");
     setCrNumber(p.crNumber || "");
-    setIpdBed(p.unit ? `${p.unit} Ward` : "Male IR Ward");
+    setIpdBed(p.unit ? `${p.unit} Ward` : "");
     setAdmissionNo(p.crNumber ? `A/SMSH/${p.crNumber}` : `A/SMSH/26/${p.dsaNo}`);
     setDateOfProcedure(
       p.date
         ? p.date.includes(".")
           ? p.date.split(".").reverse().join("-")
           : p.date
-        : new Date().toISOString().split("T")[0]
+        : ""
     );
     if (p.primaryOperator) setPrimaryOperator(p.primaryOperator);
     setPatientSearch("");

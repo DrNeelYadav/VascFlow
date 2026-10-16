@@ -159,11 +159,11 @@ export function ConsentStatutoryDeclaration({ studio }: ConsentStatutoryDeclarat
             <div className="text-xs text-zinc-700 mt-4">
               <div>
                 {languageMode === "HI" ? "नाम: " : "Name: "}
-                <strong>{doctorName}</strong>
+                <strong>{doctorName || "_________________"}</strong>
               </div>
               <div>
                 {languageMode === "HI" ? "पद: " : "Desig: "}
-                {doctorDesignation}
+                <span>{doctorDesignation || "_________________"}</span>
               </div>
             </div>
           </div>
@@ -173,8 +173,8 @@ export function ConsentStatutoryDeclaration({ studio }: ConsentStatutoryDeclarat
         <div className="mt-4 pt-2 border-t border-zinc-200 text-[10px] text-zinc-500 flex items-center justify-between">
           <span>
             {languageMode === "HI"
-              ? `सहमति परामर्शकर्ता: ${residentDoctor}`
-              : `Consent Counseled by: ${residentDoctor}`}
+              ? `सहमति परामर्शकर्ता: ${residentDoctor || "_________________"}`
+              : `Consent Counseled by: ${residentDoctor || "_________________"}`}
           </span>
           <span>
             {languageMode === "HI"

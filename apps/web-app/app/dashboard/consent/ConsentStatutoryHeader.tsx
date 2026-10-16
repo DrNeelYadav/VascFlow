@@ -111,7 +111,7 @@ export function ConsentStatutoryHeader({ studio }: ConsentStatutoryHeaderProps) 
             {languageMode === "HI" ? "वार्ड:" : languageMode === "EN" ? "Ward:" : "Ward (वार्ड):"}
           </span>
           <strong className="text-zinc-950">
-            {fixedWard}
+            {fixedWard || "—"}
             {ipdNumber ? ` • IPD: ${ipdNumber}` : ""}
           </strong>
         </div>

@@ -11,30 +11,29 @@ import {
 import { DoubleSaveGoogleDriveModal } from "../../components/DoubleSaveGoogleDriveModal";
 import { useOpClinicDesk } from "./useOpClinicDesk";
 import { ConsultationDeskForm } from "./ConsultationDeskForm";
+import { ClinicalPipelineHeader } from "../common/ClinicalPipelineHeader";
 
 export default function OpClinicConsultationDeskPage() {
   const desk = useOpClinicDesk();
   const [isDoubleSaveOpen, setIsDoubleSaveOpen] = useState(false);
 
   return (
-    <div className="space-y-5 max-w-7xl mx-auto pb-12 font-sans select-none">
-      {/* 1. OPD Header */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600/10 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm shrink-0">
-            <Stethoscope className="w-6 h-6 stroke-[1.8]" />
-          </div>
-          <div>
-            <h1 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-              OPD Consultation &amp; Triage Desk
-            </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Outpatient intake, clinical disposition matrix, and Day-Care Cath-Lab scheduling.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
+    <div className="max-w-6xl mx-auto px-2 py-4 pb-12 font-sans select-none space-y-4">
+      {/* 1. Harmonized 5-Stage Clinical Pipeline Header */}
+      <ClinicalPipelineHeader
+        currentStage="op-clinic"
+        title="OPD Consultation &amp; Triage Desk"
+        subtitle="Outpatient intake, clinical disposition matrix, and Day-Care Cath-Lab scheduling."
+        activePatient={
+          desk.patientName
+            ? {
+                name: desk.patientName,
+                crUhid: desk.accessionNumber,
+                ageSex: [desk.age ? `${desk.age}y` : "", desk.sex].filter(Boolean).join(" / "),
+              }
+            : undefined
+        }
+        actions={
           <button
             type="button"
             onClick={() => setIsDoubleSaveOpen(true)}
@@ -43,8 +42,8 @@ export default function OpClinicConsultationDeskPage() {
             <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Double-Save (Drive &amp; Sheets)</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Cloud Sync Failure Alert */}
       {desk.syncAlert && (

@@ -41,13 +41,13 @@ export const HOSPITAL_SOURCES = [
 export const BLANK_PATIENT_FORM = {
   patientName: "",
   age: "" as unknown as number,
-  sex: "Male" as "Male" | "Female",
+  sex: "" as "Male" | "Female",
   contactNumber: "",
   residentContact: "",
-  referringDepartment: "Gastroenterology & Hepatology",
+  referringDepartment: "",
   urgencyCategory: "Routine / Non-Urgent",
   accessionNumber: "",
-  hospitalSource: "SONI Hospital",
+  hospitalSource: "SMS Hospital",
   organSystem: "Liver & Hepatobiliary",
   diseaseKey: "budd_chiari_dips",
   customProcedureTitle: "",
@@ -348,13 +348,13 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
     if (review) {
       setPatientName(review.patientName || "");
       setAge(review.age ?? "");
-      setSex(review.sex || "Male");
+      setSex(review.sex || ("" as any));
       setContactNumber(review.contactNumber || "");
       setResidentContact(review.residentContact || "");
-      setReferringDepartment(review.referringDepartment || "Gastroenterology & Hepatology");
+      setReferringDepartment(review.referringDepartment || "");
       setUrgencyCategory(review.urgencyCategory || "Routine / Non-Urgent");
       setAccessionNumber(review.accessionNumber || review.ctNumber || "");
-      setHospitalSource(review.hospitalSource || "SONI Hospital");
+      setHospitalSource(review.hospitalSource || "");
       setOrganSystem(review.organSystem || "Liver & Hepatobiliary");
       setDiseaseKey(review.diseaseKey || "budd_chiari_dips");
       setCustomProcedureTitle(review.customProcedureTitle || "");
@@ -385,13 +385,13 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
     if (patient) {
       setPatientName(patient.name || "");
       setAge(patient.age ?? "");
-      setSex(patient.sex || "Male");
+      setSex(patient.sex || ("" as any));
       setContactNumber(patient.phone || "");
       setResidentContact("");
-      setReferringDepartment("Gastroenterology & Hepatology");
+      setReferringDepartment("");
       setUrgencyCategory("Routine / Non-Urgent");
       setAccessionNumber(patient.scanId || "");
-      setHospitalSource("SONI Hospital");
+      setHospitalSource("");
       setDiseaseKey(patient.procedureKey);
       const proto = IR_CLINICAL_PROTOCOLS.find((pr) => pr.key === patient.procedureKey);
       if (proto) {
@@ -462,9 +462,9 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
 
   const effectiveProcedureTitle = useMemo(() => {
     if (organSystem === "Others") {
-      return customProcedureTitle.trim() || "Interventional Radiology Procedure";
+      return customProcedureTitle.trim();
     }
-    return matchedProtocol?.title || "Interventional Radiology Procedure";
+    return matchedProtocol?.title || "";
   }, [organSystem, customProcedureTitle, matchedProtocol]);
 
   const effectiveDiseaseKey = useMemo(() => {
@@ -602,7 +602,7 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
         organSystem,
         diseaseKey: effectiveDiseaseKey,
         procedureTitle: effectiveProcedureTitle,
-        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim(),
         presentingComplaints: clinicalHistory.trim(),
         clinicalHistory: clinicalHistory.trim(),
         clinicalHistory3Months: clinicalHistory.trim(),
@@ -625,7 +625,7 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
         age: Number(age) || 0,
         sex,
         date: new Date().toISOString().split("T")[0],
-        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim(),
         clinicalHistory: clinicalHistory.trim(),
         clinicalHistory3Months: clinicalHistory.trim(),
         presentingComplaints: clinicalHistory.trim(),
@@ -867,7 +867,7 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
         organSystem,
         diseaseKey: effectiveDiseaseKey,
         procedureTitle: effectiveProcedureTitle,
-        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim(),
         presentingComplaints: clinicalHistory.trim(),
         clinicalHistory: clinicalHistory.trim(),
         clinicalHistory3Months: clinicalHistory.trim(),
@@ -890,7 +890,7 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
         age: Number(age) || 0,
         sex,
         date: new Date().toISOString().split("T")[0],
-        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim(),
         clinicalHistory: clinicalHistory.trim(),
         clinicalHistory3Months: clinicalHistory.trim(),
         presentingComplaints: clinicalHistory.trim(),
@@ -1202,14 +1202,14 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
         organSystem,
         diseaseKey: effectiveDiseaseKey,
         procedureTitle: effectiveProcedureTitle,
-        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim(),
         presentingComplaints: clinicalHistory.trim(),
         clinicalHistory: clinicalHistory.trim(),
         clinicalHistory3Months: clinicalHistory.trim(),
         ctReviewNotes: cectFindings.trim(),
         cectFindings: cectFindings.trim(),
         status:
-          disposition === "NO_INTERVENTION_NEEDED" ? "Pending Review" : "Reviewed by Neel / Nilesh",
+          disposition === "NO_INTERVENTION_NEEDED" ? "Pending Review" : "To be reviewed by consultant",
         disposition,
         sosTriggerSymptoms:
           disposition === "DEFERRED_REVIEW_SOS" ? sosTriggerSymptoms.trim() : undefined,
@@ -1222,7 +1222,7 @@ export function useOpClinicDesk(): UseOpClinicDeskReturn {
         age: Number(age) || 0,
         sex,
         date: new Date().toISOString().split("T")[0],
-        primaryDiagnosis: primaryDiagnosis.trim() || effectiveProcedureTitle,
+        primaryDiagnosis: primaryDiagnosis.trim(),
         clinicalHistory: clinicalHistory.trim(),
         clinicalHistory3Months: clinicalHistory.trim(),
         presentingComplaints: clinicalHistory.trim(),

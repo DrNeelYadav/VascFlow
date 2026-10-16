@@ -72,7 +72,7 @@ describe("Phase 30: Epoch III Verification, Print Layout Fidelity & Document Com
       const summary = SUNIL_KUMAR_DISCHARGE;
       expect(summary.admissionDetails.hospitalName).toContain("SAWAI MAN SINGH");
       expect(summary.admissionDetails.departmentName).toContain("INTERVENTIONAL RADIOLOGY");
-      expect(summary.admissionDetails.unitHead).toBe("Dr. Alok Verma");
+      expect(summary.admissionDetails.unitHead).toBe("");
       expect(summary.caseSummary.diagnosis).toBeDefined();
       expect(summary.procedureDetails.length).toBeGreaterThan(0);
       expect(summary.dischargeMedications.length).toBeGreaterThan(0);

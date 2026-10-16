@@ -21,33 +21,37 @@ export function LogbookTable({ desk }: LogbookTableProps) {
         <table className="w-full text-left border-collapse min-w-[1380px]">
           <thead>
             <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 select-none">
-              <th className="py-2 px-3 w-16">DSA #</th>
-              <th className="py-2 px-3 w-24">Date</th>
-              <th className="py-2 px-3 w-48">Patient &amp; UHID</th>
-              <th className="py-2 px-3 w-24">Age / Sex</th>
-              <th className="py-2 px-3 w-56">Diagnosis &amp; CT #</th>
-              <th className="py-2 px-3 w-56">Intervention Procedure</th>
-              <th className="py-2 px-3 w-32">Scheme &amp; Bill #</th>
-              <th className="py-2 px-3 w-28">Ward</th>
-              <th className="py-2 px-2.5 w-24 text-center">Fluoro</th>
-              <th className="py-2 px-2.5 w-24 text-center">Op Note</th>
-              <th className="py-2 px-2.5 w-24 text-center">Discharge</th>
-              <th className="py-2 px-2.5 w-24 text-center">Post-Op</th>
+              <th className="py-2 px-3 w-14">DSA #</th>
+              <th className="py-2 px-3 w-20">Date</th>
+              <th className="py-2 px-3 w-40">Patient Name</th>
+              <th className="py-2 px-3 w-32">UHID</th>
+              <th className="py-2 px-3 w-28">CR / HID</th>
+              <th className="py-2 px-3 w-28">Mobile #</th>
+              <th className="py-2 px-3 w-20">Age / Sex</th>
+              <th className="py-2 px-3 w-44">Diagnosis</th>
+              <th className="py-2 px-3 w-32">CT #</th>
+              <th className="py-2 px-3 w-48">Intervention Procedure</th>
+              <th className="py-2 px-3 w-24">Scheme</th>
+              <th className="py-2 px-3 w-24">Bill #</th>
+              <th className="py-2 px-3 w-24">Ward</th>
+              <th className="py-2 px-2 text-center w-20">Fluoro</th>
+              <th className="py-2 px-2 text-center w-20">Op Note</th>
+              <th className="py-2 px-2 text-center w-20">Discharge</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs text-slate-800 dark:text-slate-200">
             {isLoading ? (
               Array.from({ length: 8 }).map((_, i) => (
                 <tr key={i} className="animate-pulse h-10">
-                  <td colSpan={12} className="py-2 px-3">
+                  <td colSpan={16} className="py-2 px-3">
                     <div className="h-4 bg-slate-200 dark:bg-slate-700/60 rounded w-full" />
                   </td>
                 </tr>
               ))
             ) : cases.length === 0 ? (
               <tr>
-                <td colSpan={12} className="py-12 text-center text-slate-400 dark:text-slate-500">
-                  No matching cath-lab records found for the selected criteria.
+                <td colSpan={16} className="py-12 text-center text-slate-400 dark:text-slate-500">
+                  No matching records found for the selected criteria.
                 </td>
               </tr>
             ) : (
@@ -62,55 +66,58 @@ export function LogbookTable({ desk }: LogbookTableProps) {
                     <td className="py-1.5 px-3 font-mono font-semibold text-slate-900 dark:text-slate-100">
                       {c.dsaNo || "—"}
                     </td>
-                    <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400">
-                      {c.date}
+                    <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      {c.date || "—"}
                     </td>
                     <td className="py-1.5 px-3">
-                      <div className="font-medium text-slate-900 dark:text-white truncate max-w-[180px]">
-                        {c.patientName}
-                      </div>
-                      <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500 flex items-center gap-1.5 truncate">
-                        <span>UHID: {c.uhid || c.crNumber}</span>
-                        {c.contactNo && c.contactNo !== "—" && (
-                          <span className="text-slate-400">• Mob: {c.contactNo}</span>
-                        )}
-                      </div>
+                      <span className="font-medium text-slate-900 dark:text-white truncate block max-w-[170px]" title={c.patientName}>
+                        {c.patientName || "—"}
+                      </span>
                     </td>
-                    <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+                    <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      {c.uhid && c.uhid !== "—" ? c.uhid : "—"}
+                    </td>
+                    <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      {c.crNumber && c.crNumber !== "—" ? c.crNumber : "—"}
+                    </td>
+                    <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      {c.contactNo && c.contactNo !== "—" ? c.contactNo : "—"}
+                    </td>
+                    <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">
                       {c.age && c.age !== "—" ? `${c.age}Y` : "—"} • {c.gender === "Female" ? "F" : c.gender === "Male" ? "M" : "—"}
                     </td>
-                    <td className="py-1.5 px-3 max-w-[210px]">
-                      <div className="text-slate-700 dark:text-slate-300 truncate" title={c.diagnosis || "—"}>
+                    <td className="py-1.5 px-3 max-w-[200px]">
+                      <span className="text-slate-700 dark:text-slate-300 truncate block" title={c.diagnosis || "—"}>
                         {c.diagnosis && c.diagnosis !== "—" ? c.diagnosis : "—"}
-                      </div>
-                      {c.ctNumber && c.ctNumber !== "—" && (
-                        <span className="inline-block text-[10px] font-mono font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-1 rounded border border-amber-200 dark:border-amber-800">
-                          CT: {c.ctNumber}
+                      </span>
+                    </td>
+                    <td className="py-1.5 px-3 max-w-[150px]">
+                      {c.ctNumber && c.ctNumber !== "—" ? (
+                        <span className="inline-block text-[10px] font-mono font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-1 rounded border border-amber-200 dark:border-amber-800 truncate max-w-full" title={c.ctNumber}>
+                          {c.ctNumber}
                         </span>
+                      ) : (
+                        <span className="text-slate-300 dark:text-slate-600 font-mono">—</span>
                       )}
                     </td>
                     <td className="py-1.5 px-3 font-medium text-blue-700 dark:text-sky-300 truncate max-w-[210px]" title={c.procedureName || "—"}>
                       {c.procedureName && c.procedureName !== "—" ? c.procedureName : "—"}
                     </td>
-                    <td className="py-1.5 px-3">
-                      <div className="flex flex-col gap-0.5">
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 w-fit">
-                          {c.schemeType && c.schemeType !== "—" ? c.schemeType : "—"}
-                        </span>
-                        {c.billNo && c.billNo !== "—" && (
-                          <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
-                            {c.billNo}
-                          </span>
-                        )}
-                      </div>
+                    <td className="py-1.5 px-3 whitespace-nowrap">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 w-fit inline-block">
+                        {c.schemeType && c.schemeType !== "—" ? c.schemeType : "—"}
+                      </span>
                     </td>
-                    <td className="py-1.5 px-3">
+                    <td className="py-1.5 px-3 font-mono text-[10px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                      {c.billNo && c.billNo !== "—" ? c.billNo : "—"}
+                    </td>
+                    <td className="py-1.5 px-3 whitespace-nowrap">
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border truncate block max-w-[110px] ${wardStyle.bg} ${wardStyle.text} ${wardStyle.border}`} title={c.unit || "—"}>
                         {c.unit && c.unit !== "—" ? c.unit : "—"}
                       </span>
                     </td>
 
-                    {/* Dedicated 4 Document & Media Columns */}
+                    {/* Dedicated 3 Document & Media Columns */}
                     <LogbookDocumentCells patientCase={c} />
                   </tr>
                 );

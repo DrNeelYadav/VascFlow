@@ -7,6 +7,8 @@ import { DischargeHeaderBar } from "./DischargeHeaderBar";
 import { DischargeStatutoryDocument } from "./DischargeStatutoryDocument";
 import { DischargeDetailsBox } from "./DischargeDetailsBox";
 import { SurveillanceFollowUpTable } from "./SurveillanceFollowUpTable";
+import { ClinicalPipelineHeader } from "../common/ClinicalPipelineHeader";
+import { PageBreakDivider } from "../common/PageBreakDivider";
 
 function DischargeSummaryContent() {
   const searchParams = useSearchParams();
@@ -35,7 +37,29 @@ function DischargeSummaryContent() {
   }, [activeSummary, customAdvice]);
 
   return (
-    <div className="space-y-4 max-w-6xl mx-auto pb-12 select-none">
+    <div className="max-w-6xl mx-auto px-2 py-4 pb-12 font-sans select-none space-y-4">
+      {/* 1. Harmonized 5-Stage Clinical Pipeline Header */}
+      <ClinicalPipelineHeader
+        currentStage="discharge"
+        title="Rajasthan IHMS e-Hospital Discharge Summary"
+        subtitle="Statutory electronic discharge ticket, RMSCL e-Aushadhi medication kit, and post-op surveillance schedule."
+        activePatient={
+          displayedSummary.admissionDetails.patientName
+            ? {
+                name: displayedSummary.admissionDetails.patientName,
+                crUhid: displayedSummary.admissionDetails.hid,
+                ageSex: [
+                  displayedSummary.admissionDetails.age,
+                  displayedSummary.admissionDetails.gender,
+                ]
+                  .filter(Boolean)
+                  .join(" / "),
+                procedure: displayedSummary.procedureDetails[0]?.surgicalProcedure,
+              }
+            : undefined
+        }
+      />
+
       <DischargeHeaderBar
         patients={patients}
         selectedPatientId={selectedPatientId}
@@ -54,8 +78,15 @@ function DischargeSummaryContent() {
       {/* Official Rajasthan IHMS e-Hospital Standard Discharge Document */}
       <DischargeStatutoryDocument summary={displayedSummary} />
 
+      {/* Page break divider before Surveillance follow-up sheet */}
+      <PageBreakDivider
+        label="Post-Operative Surveillance &amp; Doppler Review Schedule"
+        pageNumber={2}
+        totalPages={2}
+      />
+
       {/* Dedicated Follow-up Surveillance Sheet (Excluding Sundays & Gazetted Holidays) */}
-      <div className="pt-3 print:hidden">
+      <div className="pt-2 print:block">
         <SurveillanceFollowUpTable
           dischargeDateStr={displayedSummary.admissionDetails.dateOfDischarge}
           patientName={displayedSummary.admissionDetails.patientName}

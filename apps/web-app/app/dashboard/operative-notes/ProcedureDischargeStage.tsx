@@ -6,6 +6,7 @@ import { DischargeHeaderBar } from "../discharge/DischargeHeaderBar";
 import { DischargeStatutoryDocument } from "../discharge/DischargeStatutoryDocument";
 import { DischargeDetailsBox } from "../discharge/DischargeDetailsBox";
 import { SurveillanceFollowUpTable } from "../discharge/SurveillanceFollowUpTable";
+import { PageBreakDivider } from "../common/PageBreakDivider";
 
 interface ProcedureDischargeStageProps {
   patientName?: string;
@@ -80,8 +81,15 @@ export const ProcedureDischargeStage: React.FC<ProcedureDischargeStageProps> = (
       {/* Official Rajasthan IHMS e-Hospital Standard Discharge Document */}
       <DischargeStatutoryDocument summary={displayedSummary} />
 
+      {/* Page break divider before Surveillance follow-up sheet */}
+      <PageBreakDivider
+        label="Post-Operative Surveillance &amp; Doppler Review Schedule"
+        pageNumber={2}
+        totalPages={2}
+      />
+
       {/* Dedicated Follow-up Surveillance Sheet */}
-      <div className="pt-3 print:hidden">
+      <div className="pt-2 print:block">
         <SurveillanceFollowUpTable
           dischargeDateStr={displayedSummary.admissionDetails.dateOfDischarge}
           patientName={displayedSummary.admissionDetails.patientName}

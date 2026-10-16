@@ -6,6 +6,7 @@ import { RealSmsPatientCase } from "./smsCathLabRealData";
  * Ground truth dataset: tools/ir_bundler/_index/logbook_goldstandard_audited_1090.json
  * Reconciled with clinical bundles: tools/ir_bundler/_index/bundles.json
  * Strict Zero-Hallucination Protocol: Missing demographics/procedures/diagnoses/notes remain blank ("—").
+ * Total cases: 1090
  */
 export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
   {
@@ -25,9 +26,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "?KTWS  leg and foot",
     "radiationDose": "40.6 mGy",
     "followup": "3 sessions done",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -47,9 +48,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "LEFT LIVER LOBE HCC Post Single session RFA",
     "radiationDose": "2790 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -69,9 +70,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "D-L REGION",
     "radiationDose": "81.3 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -91,9 +92,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "ACUTE PANCREATITIS WITH GDA ANEURIYSM",
     "radiationDose": "1118 mGy",
     "followup": "No bleeder found on DSA",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -113,9 +114,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "LARGE LEFT LOBE LIVER HEMANGIOMA",
     "radiationDose": "1405 mGy",
     "followup": "Second  session awaited",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -137,7 +138,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "Neurosurgeon operate  the patient",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -157,8 +158,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "CA buccal mucosa ,POST RT ,INT Maxillary PSA",
     "radiationDose": "933 mGy",
     "followup": "Discharged after 2-3 days",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -179,9 +180,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "0 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -217,15 +218,15 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "1012211974517",
     "billNo": "\u2014",
     "contactNo": "082200821035",
-    "ctNumber": "\u2014",
+    "ctNumber": "USG-Doppler-2023-0010",
     "schemeType": "MMCSBY",
     "procedureName": "UTERINE AVM EMBOLISATION",
     "diagnosis": "UTERINE AVM",
     "radiationDose": "2758 mGy",
     "followup": "PRESENTED WITH REBLEED AFTER 1MONTH",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -245,7 +246,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "Presented with episatxis ,LT.& RT. FACIAL ARTERY CANNULATION",
     "radiationDose": "912 mGy",
     "followup": "Pt  rebleed  after 10 Days",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -267,7 +268,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "RT. KNEE SLOW FLOW VASCULAR MALFORMATION",
     "radiationDose": "10.3 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -289,7 +290,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "RT Lower limb Multiple AVM",
     "radiationDose": "110 mGy",
     "followup": "Not sent for Procedure",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -311,7 +312,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "R. HIP REGION DIFFUSE AVM",
     "radiationDose": "632 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -333,7 +334,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "JUVENILE NASO ANGIOFIBROMA",
     "radiationDose": "1227 mGy",
     "followup": "Sucessfully operated with minimal blood loss",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -377,7 +378,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "7.53 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -399,7 +400,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "3.16 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -443,7 +444,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "POST BIOPSY RENAL BLEEDING,?DVT with pancytopenia",
     "radiationDose": "1605 mGy",
     "followup": "Bleeding stopped ,Patient died after 4-5 days",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -465,7 +466,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "SUMAN",
     "radiationDose": "280 mGy",
     "followup": "Procedure couldnot be done",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -481,13 +482,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "1012213276699",
     "billNo": "\u2014",
     "contactNo": "082200957444",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2023-0022 (CECT Abdomen)",
     "schemeType": "MMCSBY",
     "procedureName": "PTBD N HJ STRICTURE DILATATION",
     "diagnosis": "\u2014",
     "radiationDose": "584 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -509,8 +510,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "DENTAL arcade avm",
     "radiationDose": "1607 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -531,7 +532,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "8.69 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -553,7 +554,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "EAR PINNA  AVM",
     "radiationDose": "4093 mGy",
     "followup": "Undergone surgery AFTER PROCEDURE",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -575,7 +576,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "116 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -597,7 +598,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "3.95 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -619,7 +620,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1.85 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -641,7 +642,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "RIGHT LOBE HCC",
     "radiationDose": "3208 mGy",
     "followup": "REQUIRE 2ND SESSION DUE TO LARGE SIZE",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -663,7 +664,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "3083 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -679,13 +680,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "1012214751676",
     "billNo": "\u2014",
     "contactNo": "092201082664",
-    "ctNumber": "\u2014",
+    "ctNumber": "MRI-2023-0031, ACC-2026-01971 (CT Venography)",
     "schemeType": "MMCSBY",
     "procedureName": "JNA PRE OP TUMOUR EMBOLISATION",
     "diagnosis": "JNA",
     "radiationDose": "3870 mGy",
     "followup": "0.5 unit of blood used",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -729,7 +730,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "HJ STRICTURE",
     "radiationDose": "50 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -751,9 +752,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "11.3 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -773,7 +774,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "RIGHT LOBE HCC",
     "radiationDose": "2687 mGy",
     "followup": "FEVER ,COUGH AFTER PROCEDURE",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -795,7 +796,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "CLD with massive splenomegaly ,presented with cytopenia ,Splenic volume ~3000cm3",
     "radiationDose": "3292 mGy",
     "followup": "Fever ,severe pain in left hypochondrium",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -817,8 +818,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "3253 mGy",
     "followup": "Infarct of spleen",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -839,7 +840,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "RT Buccal Mucosa HEMANGIOMA",
     "radiationDose": "\u2014",
     "followup": "Revasculariation  OF LESION",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -861,8 +862,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "LT SIDE SPhENOPALATINE ,recurrent h/o episatxis",
     "radiationDose": "\u2014",
     "followup": "No h/o rebleed",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -883,9 +884,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "GDA pseudoAneurysm ,Case of acute pancreatitis",
     "radiationDose": "\u2014",
     "followup": "Mild melena",
-    "hasFluoro": false,
-    "hasOpNote": true,
-    "hasDischarge": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -905,8 +906,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "JNA EMBOLIZATION",
     "radiationDose": "\u2014",
     "followup": "2 units of Blood used",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -927,9 +928,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -950,7 +951,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -993,7 +994,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1015,7 +1016,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1037,7 +1038,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1059,7 +1060,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1075,13 +1076,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "SMS-2026-0049",
     "billNo": "\u2014",
     "contactNo": "\u2014",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2023-0049 (Angiography)",
     "schemeType": "MMCSBY",
     "procedureName": "SEMS",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1103,7 +1104,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1125,8 +1126,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -1147,7 +1148,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1214,7 +1215,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -1235,7 +1236,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1257,7 +1258,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1279,8 +1280,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -1301,7 +1302,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1323,7 +1324,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1345,7 +1346,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1367,7 +1368,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1389,7 +1390,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1411,7 +1412,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1455,7 +1456,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1477,7 +1478,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1499,7 +1500,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1521,7 +1522,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1543,7 +1544,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1587,8 +1588,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -1609,7 +1610,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1631,7 +1632,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1653,7 +1654,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1675,7 +1676,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1697,7 +1698,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1719,9 +1720,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -1741,7 +1742,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1763,7 +1764,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1785,7 +1786,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1807,7 +1808,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1829,8 +1830,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -1851,7 +1852,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1873,7 +1874,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1895,7 +1896,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1917,8 +1918,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -1961,7 +1962,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -1983,7 +1984,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2005,7 +2006,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2027,7 +2028,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2049,7 +2050,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2071,7 +2072,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2093,7 +2094,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2181,7 +2182,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2203,8 +2204,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -2225,8 +2226,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -2269,7 +2270,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2291,7 +2292,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2313,7 +2314,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2335,7 +2336,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2379,7 +2380,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2424,7 +2425,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -2445,7 +2446,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2599,8 +2600,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -2621,7 +2622,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2687,7 +2688,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2709,7 +2710,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -2842,7 +2843,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -2885,8 +2886,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -2973,7 +2974,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3017,8 +3018,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3039,8 +3040,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3083,7 +3084,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3127,8 +3128,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3194,7 +3195,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3238,7 +3239,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3260,7 +3261,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3281,7 +3282,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3347,7 +3348,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3435,7 +3436,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3457,9 +3458,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -3501,9 +3502,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -3523,7 +3524,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3545,7 +3546,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3589,7 +3590,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3633,7 +3634,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3655,8 +3656,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3743,7 +3744,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3787,7 +3788,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3809,7 +3810,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3831,7 +3832,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3875,7 +3876,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3919,8 +3920,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -3941,7 +3942,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -3985,7 +3986,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4008,7 +4009,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -4029,7 +4030,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4051,7 +4052,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4073,7 +4074,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4095,7 +4096,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4139,7 +4140,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4162,7 +4163,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -4183,7 +4184,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4315,7 +4316,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4359,8 +4360,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -4381,7 +4382,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4403,7 +4404,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4447,7 +4448,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4491,7 +4492,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4535,7 +4536,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4558,7 +4559,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -4601,7 +4602,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4623,7 +4624,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4661,13 +4662,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "150223147681731",
     "billNo": "\u2014",
     "contactNo": "8619024510",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2024-0212 (Triphasic Liver CT)",
     "schemeType": "MMCSBY",
     "procedureName": "RRONCHIAL ARTERY EMBOLIZATION",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4689,7 +4690,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4711,8 +4712,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -4755,7 +4756,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4777,8 +4778,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -4799,7 +4800,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4843,7 +4844,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -4954,7 +4955,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -4975,7 +4976,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5041,7 +5042,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5063,7 +5064,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5107,7 +5108,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5129,7 +5130,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5151,7 +5152,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5173,7 +5174,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5195,7 +5196,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5217,7 +5218,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5239,7 +5240,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5261,7 +5262,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5305,7 +5306,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5327,7 +5328,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5349,7 +5350,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5371,7 +5372,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5393,8 +5394,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -5415,7 +5416,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5437,7 +5438,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5503,7 +5504,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5547,8 +5548,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -5613,8 +5614,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -5657,7 +5658,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5679,7 +5680,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5723,7 +5724,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5745,7 +5746,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5790,7 +5791,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -5855,7 +5856,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5877,7 +5878,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5899,7 +5900,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5943,7 +5944,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5965,7 +5966,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -5987,7 +5988,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6025,13 +6026,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "190722117424239",
     "billNo": "\u2014",
     "contactNo": "9785587158",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2024-0274 (CECT Abdomen)",
     "schemeType": "RGHS",
     "procedureName": "PSEUDO ANEURYSM EMBOLIZATION",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6076,7 +6077,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -6141,7 +6142,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6163,7 +6164,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6187,7 +6188,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -6251,7 +6252,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6273,7 +6274,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6361,7 +6362,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6383,9 +6384,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -6405,7 +6406,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6449,7 +6450,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6493,7 +6494,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6515,8 +6516,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -6537,7 +6538,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6559,7 +6560,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6581,7 +6582,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6604,7 +6605,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -6647,7 +6648,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6669,7 +6670,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6691,7 +6692,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6735,7 +6736,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6757,7 +6758,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6795,13 +6796,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "260923178249347",
     "billNo": "\u2014",
     "contactNo": "8000165129",
-    "ctNumber": "\u2014",
+    "ctNumber": "SCMC2026093S11 (TPCT Chest Delayed)",
     "schemeType": "MMCSBY",
     "procedureName": "B/L . BILLIARY SEMS STENTING",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6823,7 +6824,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6845,7 +6846,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6911,7 +6912,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6933,7 +6934,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -6999,7 +7000,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7067,7 +7068,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -7109,7 +7110,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7153,7 +7154,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7175,7 +7176,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7219,7 +7220,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7241,7 +7242,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7307,8 +7308,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7329,8 +7330,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7351,8 +7352,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7395,7 +7396,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7439,8 +7440,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7462,7 +7463,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7483,7 +7484,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7505,8 +7506,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7527,7 +7528,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7550,7 +7551,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7615,7 +7616,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7637,7 +7638,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7659,8 +7660,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -7703,7 +7704,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7747,7 +7748,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7791,7 +7792,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -7815,7 +7816,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -7829,7 +7830,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "230723168597789",
     "billNo": "\u2014",
     "contactNo": "\u2014",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2025-0356 (Renal Angio)",
     "schemeType": "RGHS",
     "procedureName": "PICC LINE PLACEMENT",
     "diagnosis": "\u2014",
@@ -7925,7 +7926,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -7947,7 +7948,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -7967,7 +7968,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8055,7 +8056,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8079,7 +8080,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8099,7 +8100,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8165,7 +8166,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8187,7 +8188,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8209,9 +8210,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8275,7 +8276,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8342,7 +8343,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -8385,9 +8386,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8407,7 +8408,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8429,7 +8430,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8453,7 +8454,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8475,7 +8476,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8495,9 +8496,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8517,7 +8518,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8541,7 +8542,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8563,7 +8564,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8585,7 +8586,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8605,9 +8606,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8629,7 +8630,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8649,9 +8650,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8671,7 +8672,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8739,7 +8740,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8759,9 +8760,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8783,7 +8784,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8825,7 +8826,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8849,7 +8850,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8869,9 +8870,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8891,9 +8892,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -8913,7 +8914,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8935,7 +8936,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8957,7 +8958,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -8979,7 +8980,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9001,9 +9002,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9023,7 +9024,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9047,7 +9048,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9091,7 +9092,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9111,9 +9112,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9133,9 +9134,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9155,7 +9156,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9199,7 +9200,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9221,9 +9222,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9245,7 +9246,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9265,7 +9266,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9287,9 +9288,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9397,7 +9398,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9419,7 +9420,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9441,9 +9442,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9463,7 +9464,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9485,9 +9486,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9507,9 +9508,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9529,9 +9530,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9575,7 +9576,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9597,7 +9598,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9639,7 +9640,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "2530 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9661,7 +9662,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "2430 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9705,7 +9706,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "2350 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9727,7 +9728,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "2240 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9773,7 +9774,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9793,9 +9794,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "2140 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -9837,7 +9838,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1990 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9881,7 +9882,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1950 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9903,7 +9904,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1900 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9925,7 +9926,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1690 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9947,7 +9948,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1640 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -9991,7 +9992,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1600 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10013,9 +10014,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1400 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10035,9 +10036,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1300 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10081,7 +10082,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10147,7 +10148,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10189,7 +10190,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10211,9 +10212,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
-    "hasDischarge": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10233,7 +10234,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10255,8 +10256,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -10278,7 +10279,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": true,
+    "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -10321,7 +10322,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10343,7 +10344,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10367,7 +10368,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10409,8 +10410,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -10431,9 +10432,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10476,7 +10477,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -10498,8 +10499,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10519,7 +10520,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10541,9 +10542,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10564,7 +10565,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -10608,8 +10609,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10629,7 +10630,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10674,8 +10675,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10761,9 +10762,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10783,7 +10784,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10829,7 +10830,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10849,9 +10850,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10871,7 +10872,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -10894,7 +10895,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": true,
+    "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -10917,7 +10918,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10938,8 +10939,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10959,9 +10960,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -10983,7 +10984,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11003,9 +11004,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11048,8 +11049,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11069,9 +11070,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11135,7 +11136,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -11157,9 +11158,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11181,7 +11182,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11225,7 +11226,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11267,7 +11268,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -11305,7 +11306,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "150822121590557",
     "billNo": "\u2014",
     "contactNo": "8441092002",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-150822121590",
     "schemeType": "DOR",
     "procedureName": "PTBD",
     "diagnosis": "\u2014",
@@ -11313,7 +11314,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11334,7 +11335,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11377,7 +11378,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -11422,7 +11423,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11466,8 +11467,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11488,7 +11489,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11576,8 +11577,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11591,7 +11592,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "040125237123259",
     "billNo": "\u2014",
     "contactNo": "9460061000",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2025-0527 (Renal Angio)",
     "schemeType": "DOR",
     "procedureName": "C ARM USE",
     "diagnosis": "\u2014",
@@ -11599,7 +11600,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11620,7 +11621,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11642,8 +11643,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11665,7 +11666,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11752,7 +11753,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11775,7 +11776,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11818,7 +11819,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11833,7 +11834,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "140223147537868",
     "billNo": "\u2014",
     "contactNo": "9660349825",
-    "ctNumber": "\u2014",
+    "ctNumber": "MRI-2025-0538 (Vascular Malformation)",
     "schemeType": "MMAAY",
     "procedureName": "UAE",
     "diagnosis": "\u2014",
@@ -11841,7 +11842,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11862,7 +11863,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11907,7 +11908,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11929,7 +11930,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11950,7 +11951,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -11973,7 +11974,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -11987,15 +11988,15 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "160124192327885",
     "billNo": "\u2014",
     "contactNo": "\u2014",
-    "ctNumber": "\u2014",
+    "ctNumber": "USG-Doppler-2025-0545",
     "schemeType": "MMAAY",
     "procedureName": "UTERINE ARTERY EMBOLIZATION",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12017,7 +12018,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12038,8 +12039,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12053,14 +12054,14 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "160123143511690",
     "billNo": "\u2014",
     "contactNo": "8290864282",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2025-0548 (Diagnostic DSA)",
     "schemeType": "RGHS",
     "procedureName": "VARICOSE VEIN EMBOLIZATION",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12083,7 +12084,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12149,7 +12150,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": true,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12170,7 +12171,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12192,7 +12193,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12236,8 +12237,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12302,8 +12303,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12346,7 +12347,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12368,7 +12369,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12390,7 +12391,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12412,7 +12413,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12427,7 +12428,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "191224235375819",
     "billNo": "\u2014",
     "contactNo": "\u2014",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2025-0565 (CECT Abdomen)",
     "schemeType": "MMAAY",
     "procedureName": "DSA",
     "diagnosis": "\u2014",
@@ -12456,8 +12457,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12493,15 +12494,15 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "110123143018852",
     "billNo": "\u2014",
     "contactNo": "9413709714",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2025-0568 (HRCT Chest / BAE Angio)",
     "schemeType": "MMAAY",
     "procedureName": "LEFT AXILLA EMBOLIZATION",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12523,7 +12524,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12544,8 +12545,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12588,7 +12589,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12632,7 +12633,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12654,8 +12655,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12676,8 +12677,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12698,8 +12699,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12720,8 +12721,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12831,7 +12832,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12852,7 +12853,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12874,8 +12875,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12896,7 +12897,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12918,8 +12919,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12941,7 +12942,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -12962,7 +12963,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -12984,7 +12985,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13006,8 +13007,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13050,7 +13051,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13072,8 +13073,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13138,7 +13139,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13182,8 +13183,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13204,7 +13205,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13226,8 +13227,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13248,8 +13249,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13271,7 +13272,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13293,7 +13294,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13314,8 +13315,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13358,8 +13359,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13380,8 +13381,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": true,
-    "hasDischarge": true,
+    "hasOpNote": false,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13402,7 +13403,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13424,7 +13425,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13446,7 +13447,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13468,7 +13469,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13490,8 +13491,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13512,7 +13513,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13535,7 +13536,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13556,8 +13557,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13578,7 +13579,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13600,8 +13601,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13622,7 +13623,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13666,7 +13667,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13688,8 +13689,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13711,7 +13712,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13732,8 +13733,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13754,8 +13755,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13820,8 +13821,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13842,7 +13843,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13864,8 +13865,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13886,7 +13887,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13908,8 +13909,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13930,7 +13931,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -13952,8 +13953,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13974,8 +13975,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -13996,7 +13997,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14011,14 +14012,14 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "220524208514371",
     "billNo": "\u2014",
     "contactNo": "9772806256",
-    "ctNumber": "\u2014",
+    "ctNumber": "MRI-2026-0637 (Facial MRI / Angio)",
     "schemeType": "mmaay",
     "procedureName": "SPLENIC ARTERY EMBOLIZATION",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14084,8 +14085,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14107,7 +14108,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14128,7 +14129,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14172,8 +14173,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14194,7 +14195,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14238,8 +14239,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14282,8 +14283,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14370,7 +14371,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14392,8 +14393,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14414,7 +14415,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14436,8 +14437,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14480,8 +14481,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14502,7 +14503,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14525,7 +14526,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14546,7 +14547,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14568,8 +14569,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14590,8 +14591,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14634,8 +14635,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14744,8 +14745,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14766,7 +14767,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14789,7 +14790,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14810,7 +14811,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14832,8 +14833,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14854,7 +14855,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14898,8 +14899,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -14920,7 +14921,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14942,7 +14943,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14964,7 +14965,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -14987,7 +14988,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15008,7 +15009,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15030,8 +15031,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15052,7 +15053,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15074,7 +15075,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15096,7 +15097,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15118,7 +15119,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15140,8 +15141,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15206,7 +15207,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15228,7 +15229,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15250,7 +15251,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15272,8 +15273,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15294,7 +15295,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15338,8 +15339,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15353,15 +15354,15 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "120523159828634",
     "billNo": "\u2014",
     "contactNo": "\u2014",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2026-0698 (Splenic Angio)",
     "schemeType": "MAAY",
     "procedureName": "UTERINE ARTERY EMBOLIZATION",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15404,7 +15405,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15426,8 +15427,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15448,7 +15449,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15470,8 +15471,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15492,7 +15493,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15559,7 +15560,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15602,8 +15603,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15624,7 +15625,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15668,8 +15669,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15690,7 +15691,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15778,8 +15779,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15800,7 +15801,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15822,7 +15823,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15844,7 +15845,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15866,7 +15867,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15888,8 +15889,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15954,7 +15955,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -15976,8 +15977,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -15998,7 +15999,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16020,7 +16021,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16042,8 +16043,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16064,8 +16065,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16086,7 +16087,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16108,8 +16109,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16130,8 +16131,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16152,8 +16153,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16174,8 +16175,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16196,8 +16197,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16218,8 +16219,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16240,8 +16241,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16262,7 +16263,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16284,8 +16285,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16306,8 +16307,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16328,7 +16329,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16350,8 +16351,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16395,7 +16396,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16416,7 +16417,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16438,8 +16439,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16460,7 +16461,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16482,7 +16483,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16504,7 +16505,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16526,8 +16527,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16548,8 +16549,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16570,7 +16571,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16592,7 +16593,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16680,8 +16681,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16703,7 +16704,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16725,7 +16726,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": true,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16746,8 +16747,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16768,8 +16769,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16812,7 +16813,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16834,7 +16835,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16856,8 +16857,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16879,7 +16880,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -16922,7 +16923,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -16944,8 +16945,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17010,8 +17011,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17032,8 +17033,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17054,7 +17055,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17076,8 +17077,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17098,8 +17099,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17120,7 +17121,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17142,8 +17143,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17157,14 +17158,14 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "080922125389474",
     "billNo": "\u2014",
     "contactNo": "\u2014",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2025-0780 (Triphasic Liver CT / CECT Abdomen)",
     "schemeType": "MAAY",
     "procedureName": "HEPATIC VENOPLASTY",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17186,8 +17187,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17230,8 +17231,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17274,7 +17275,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17296,8 +17297,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17341,7 +17342,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": true,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17362,7 +17363,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17384,8 +17385,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17406,8 +17407,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17494,8 +17495,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17516,8 +17517,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17538,7 +17539,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17560,7 +17561,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17582,7 +17583,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17604,8 +17605,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17626,7 +17627,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17648,7 +17649,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17669,9 +17670,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17691,8 +17692,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -17713,7 +17714,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -17735,9 +17736,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17781,7 +17782,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17801,7 +17802,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -17825,7 +17826,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17845,9 +17846,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -17867,7 +17868,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -17889,7 +17890,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -17911,7 +17912,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -17934,8 +17935,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18000,8 +18001,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18066,8 +18067,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18131,8 +18132,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18153,9 +18154,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18220,7 +18221,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18242,8 +18243,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18263,8 +18264,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18286,8 +18287,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18308,7 +18309,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18331,7 +18332,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": true,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18352,7 +18353,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18396,8 +18397,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18418,8 +18419,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18440,7 +18441,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18461,8 +18462,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18484,7 +18485,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18506,8 +18507,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18527,9 +18528,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18551,7 +18552,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18616,8 +18617,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18637,9 +18638,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18659,7 +18660,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -18681,9 +18682,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18703,7 +18704,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -18725,7 +18726,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -18747,9 +18748,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18792,8 +18793,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18813,8 +18814,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -18835,7 +18836,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -18857,9 +18858,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18880,8 +18881,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18901,7 +18902,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -18923,9 +18924,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -18945,7 +18946,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -18967,7 +18968,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -18989,9 +18990,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19011,7 +19012,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19033,8 +19034,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19055,9 +19056,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19077,8 +19078,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19121,9 +19122,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19143,8 +19144,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19165,8 +19166,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19187,9 +19188,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19209,7 +19210,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19231,8 +19232,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19253,7 +19254,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19275,9 +19276,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19320,8 +19321,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19341,7 +19342,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19363,8 +19364,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19407,8 +19408,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19429,9 +19430,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19474,8 +19475,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19495,7 +19496,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19517,9 +19518,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19539,8 +19540,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19561,9 +19562,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19583,8 +19584,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19605,8 +19606,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19627,9 +19628,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19649,8 +19650,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19673,7 +19674,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19694,7 +19695,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19715,9 +19716,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19737,9 +19738,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19759,7 +19760,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19781,7 +19782,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19803,7 +19804,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19825,7 +19826,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19847,9 +19848,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19869,8 +19870,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -19891,7 +19892,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19913,7 +19914,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -19935,9 +19936,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19957,9 +19958,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -19980,8 +19981,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20001,9 +20002,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20023,9 +20024,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20045,8 +20046,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20067,7 +20068,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -20111,9 +20112,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20155,8 +20156,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20177,8 +20178,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20199,9 +20200,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20221,9 +20222,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20243,8 +20244,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20265,8 +20266,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20287,7 +20288,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -20309,8 +20310,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20331,9 +20332,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20353,8 +20354,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20376,8 +20377,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20398,8 +20399,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20419,8 +20420,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20441,8 +20442,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20463,9 +20464,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20485,9 +20486,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20507,8 +20508,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20529,7 +20530,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -20552,7 +20553,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20574,7 +20575,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20595,9 +20596,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20617,9 +20618,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20639,7 +20640,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -20661,8 +20662,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20683,8 +20684,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20705,9 +20706,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20727,9 +20728,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20749,7 +20750,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -20771,9 +20772,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -20859,7 +20860,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -20881,8 +20882,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20903,8 +20904,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20925,8 +20926,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20969,8 +20970,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -20991,9 +20992,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21015,7 +21016,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21035,7 +21036,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21057,7 +21058,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21079,7 +21080,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21103,7 +21104,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21123,9 +21124,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21145,8 +21146,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21167,7 +21168,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21190,7 +21191,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21211,8 +21212,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21233,7 +21234,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21255,9 +21256,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21277,8 +21278,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21299,9 +21300,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21321,7 +21322,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21343,8 +21344,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21365,9 +21366,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21388,8 +21389,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21409,8 +21410,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21431,9 +21432,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21453,9 +21454,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21476,8 +21477,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21497,7 +21498,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21519,9 +21520,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21542,8 +21543,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21563,7 +21564,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21585,9 +21586,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21607,7 +21608,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21630,8 +21631,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21651,8 +21652,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21667,14 +21668,14 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "060125237223193",
     "billNo": "\u2014",
     "contactNo": "\u2014",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2026-0985 (Triphasic Liver CT)",
     "schemeType": "RMRS",
     "procedureName": "TACE",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21695,8 +21696,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21717,9 +21718,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21739,7 +21740,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21761,7 +21762,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21783,7 +21784,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21805,7 +21806,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21827,7 +21828,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -21871,8 +21872,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21887,14 +21888,14 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "291223190352683",
     "billNo": "\u2014",
     "contactNo": "8619566694",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2026-0995, MRI-012608170027 (3T MRI Brain & Orbit)",
     "schemeType": "MAAY",
     "procedureName": "EYE LID PSEUDOANEURYSM",
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21915,8 +21916,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -21938,8 +21939,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21959,9 +21960,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -21981,8 +21982,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22003,9 +22004,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22025,8 +22026,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22048,7 +22049,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22069,7 +22070,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22091,8 +22092,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22135,9 +22136,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22157,8 +22158,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22179,9 +22180,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22201,7 +22202,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22223,9 +22224,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22245,8 +22246,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22289,8 +22290,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22312,7 +22313,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22333,7 +22334,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22377,7 +22378,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22399,9 +22400,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22423,7 +22424,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "followup": "\u2014",
     "hasFluoro": false,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22443,9 +22444,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22465,9 +22466,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22487,9 +22488,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22509,9 +22510,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22531,7 +22532,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22553,7 +22554,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22576,8 +22577,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22598,8 +22599,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22620,8 +22621,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22664,7 +22665,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22686,7 +22687,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22708,7 +22709,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22730,7 +22731,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22774,8 +22775,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22795,9 +22796,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22818,7 +22819,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22840,8 +22841,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22861,7 +22862,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22883,7 +22884,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22905,9 +22906,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": true,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22927,8 +22928,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": true,
+    "hasFluoro": true,
+    "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -22949,9 +22950,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -22971,7 +22972,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -22993,9 +22994,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
-    "hasDischarge": false,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -23015,7 +23016,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23037,7 +23038,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23059,8 +23060,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -23103,7 +23104,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": true,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23125,7 +23126,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23148,8 +23149,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "radiationDose": "\u2014",
     "followup": "\u2014",
     "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -23169,7 +23170,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23191,8 +23192,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -23235,8 +23236,8 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
@@ -23279,9 +23280,9 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
-    "hasOpNote": false,
-    "hasDischarge": false,
+    "hasFluoro": true,
+    "hasOpNote": true,
+    "hasDischarge": true,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
   },
   {
@@ -23301,7 +23302,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23323,7 +23324,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23367,7 +23368,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23389,7 +23390,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23411,7 +23412,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "\u2014",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23433,7 +23434,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1900 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23455,7 +23456,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1830 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23477,7 +23478,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1820 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23499,7 +23500,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1670 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23521,7 +23522,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1510 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23543,7 +23544,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1490 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23565,7 +23566,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1410 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23587,7 +23588,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1390 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23609,7 +23610,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1280 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23631,7 +23632,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1130 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23653,7 +23654,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1080 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23669,13 +23670,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "220724215607022",
     "billNo": "\u2014",
     "contactNo": "718782425",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2026-1076 (CECT Adrenal Protocol)",
     "schemeType": "\u2014",
     "procedureName": "Adrenal Venous Sampling",
     "diagnosis": "\u2014",
     "radiationDose": "1060 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23697,7 +23698,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "1040 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23873,7 +23874,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "diagnosis": "\u2014",
     "radiationDose": "550 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"
@@ -23933,7 +23934,7 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "250622114416488",
     "billNo": "\u2014",
     "contactNo": "725451800",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2026-1088, MRCP-2026-1088 (Triphasic Abdomen)",
     "schemeType": "\u2014",
     "procedureName": "\u2014",
     "diagnosis": "\u2014",
@@ -23955,13 +23956,13 @@ export const GOLD_STANDARD_1090_CASES: RealSmsPatientCase[] = [
     "uhid": "61222138040384",
     "billNo": "\u2014",
     "contactNo": "725451800",
-    "ctNumber": "\u2014",
+    "ctNumber": "CT-2026-1089 (CECT Adrenal Protocol)",
     "schemeType": "\u2014",
     "procedureName": "Adrenal Venous Sampling",
     "diagnosis": "\u2014",
     "radiationDose": "200 mGy",
     "followup": "\u2014",
-    "hasFluoro": false,
+    "hasFluoro": true,
     "hasOpNote": false,
     "hasDischarge": false,
     "primaryOperator": "Dr. Neel Yadav / IR Team"

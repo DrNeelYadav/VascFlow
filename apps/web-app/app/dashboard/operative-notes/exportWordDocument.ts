@@ -50,14 +50,9 @@ p { margin: 6pt 0; line-height: 1.4; }
 
 <table class='signatures'>
 <tr>
-<td><span class='bold'>Dr Meenu Bagarhatta</span><br/>Senior Professor &amp; Head</td>
-<td><span class='bold'>Dr Rajkumar Yadav</span><br/>Professor (DM - IR)</td>
-<td><span class='bold'>Dr Naresh Mangalhara</span><br/>Associate Professor (PDCC IR)</td>
-</tr>
-<tr>
-<td><span class='bold'>Dr Shashank Sharma</span><br/>Assistant Professor</td>
-<td><span class='bold'>Dr. Alok Verma</span><br/>Assistant Professor (PDCC IR)</td>
-<td><span class='bold'>Dr Ayush Khandelwal</span><br/>Assistant Professor (PDCC IR)</td>
+<td><span class='bold'>Operating Interventional Radiologist</span><br/>Name: ____________________<br/>Desig: ____________________</td>
+<td><span class='bold'>Assisting Fellow / Resident</span><br/>Name: ____________________<br/>Signature: ________________</td>
+<td><span class='bold'>Consultant / Unit Head</span><br/>Name: ____________________<br/>Seal &amp; Signature: _________</td>
 </tr>
 </table>
 </body>
@@ -98,7 +93,6 @@ ${docData.technique}
 Post procedure plan:
 ${docData.postOpPlan}
 
-Faculty Signatures:
-Dr Meenu Bagarhatta (Senior Professor & Head) | Dr Rajkumar Yadav (Professor, DM IR) | Dr Naresh Mangalhara (Associate Professor)
-Dr Shashank Sharma (Assistant Professor) | Dr. Alok Verma (Assistant Professor) | Dr Ayush Khandelwal (Assistant Professor)`;
+Signatures:
+Operating Radiologist: ____________________ | Assisting Fellow: ____________________ | Unit Head: ____________________`;
 }

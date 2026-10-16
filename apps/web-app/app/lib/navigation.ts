@@ -82,13 +82,23 @@ export const WORKSPACES: Workspace[] = [
     ],
   },
   {
+    id: "imaging",
+    shortLabel: "Imaging",
+    label: "Imaging & PACS",
+    icon: "suite",
+    href: "/dashboard/imaging",
+    members: [
+      { href: "/dashboard/imaging", label: "Imaging & PACS", keywords: "imaging pacs dicom viewer ct dsa angio stone horos" },
+    ],
+  },
+  {
     id: "logbook",
-    shortLabel: "Registry",
-    label: "Master Registry",
+    shortLabel: "Register",
+    label: "Register",
     icon: "logbook",
     href: "/dashboard/logbook",
     members: [
-      { href: "/dashboard/logbook", label: "Cath-Lab Registry", keywords: "master logbook 1090 cases export csv" },
+      { href: "/dashboard/logbook", label: "Register", keywords: "master register 1090 cases export csv" },
     ],
   },
   {

@@ -40,7 +40,7 @@ export const UaePreBookingSheet: React.FC<SheetDemographicsProps> = ({
         {/* Demographics Block */}
         <div className="grid grid-cols-2 gap-x-6 gap-y-1 mb-3 pt-1 border-b border-black pb-2 text-[11px]">
           <div><span className="font-bold">Name:</span> {patientName || "______________________________"}</div>
-          <div><span className="font-bold">Referring unit:</span> {unit || "Gynaecology & Obstetrics"}</div>
+          <div><span className="font-bold">Referring unit:</span> {unit || "______________________________"}</div>
           <div><span className="font-bold">Age / Sex:</span> {age || "____"} / {sex || "F"}</div>
           <div><span className="font-bold">Address:</span> {location || "______________________________"}</div>
           <div><span className="font-bold">Mob No.:</span> {contactNumber || "______________________________"}</div>

@@ -196,10 +196,8 @@ export function buildOperativeNote(
   procedure: MasterProcedure,
   options: OperativeNoteOptions
 ): string {
-  const supervising =
-    options.supervisingConsultant ||
-    'Dr. Meenu Bagarhatta (Sr. Prof & Head) / Dr. Shashank Sharma (Prof)';
-  const operator = options.primaryOperator || 'Dr. Naresh Mangalhara (Associate Professor)';
+  const supervising = options.supervisingConsultant || '—';
+  const operator = options.primaryOperator || '—';
   const suite =
     options.suite ||
     (procedure.modality === 'CT'
@@ -251,9 +249,6 @@ LOCAL PUNCTURE SITE & NEUROVASCULAR PROTOCOL:
 
 ${divider}
 INSTITUTIONAL FACULTY & OPERATOR SIGN-OFF:
-Dr. Meenu Bagarhatta           Dr. Naresh K Mangalhara           Dr. Shashank Sharma           Dr. Alok Verma
-Senior Professor & Head        Associate Professor (PDCC IR)     Professor                     Assistant Professor (PDCC IR)
-
 Attending Primary Operator: ${operator}
 Supervising Consultant   : ${supervising}
 ${divider}`;
@@ -263,10 +258,8 @@ export function buildOperativeSummary(
   procedure: MasterProcedure,
   options: OperativeNoteOptions
 ): string {
-  const supervising =
-    options.supervisingConsultant ||
-    'Dr. Meenu Bagarhatta (Sr. Prof & Head) / Dr. Shashank Sharma (Prof)';
-  const operator = options.primaryOperator || 'Dr. Naresh Mangalhara (Associate Professor)';
+  const supervising = options.supervisingConsultant || '—';
+  const operator = options.primaryOperator || '—';
   const suite =
     options.suite ||
     (procedure.modality === 'CT'

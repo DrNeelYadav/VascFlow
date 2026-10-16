@@ -1,0 +1,79 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    id: "/?app=endoflow-sms-ir",
+    name: "EndoFlow | SMS IR Angiosuite",
+    short_name: "EndoFlow",
+    description:
+      "Institutional Angiosuite Clinical Workflow System for Interventional Radiology, SMS Hospital, Jaipur.",
+    start_url: "/dashboard",
+    scope: "/",
+    display: "standalone",
+    orientation: "any",
+    background_color: "#202124",
+    theme_color: "#202124",
+    icons: [
+      {
+        src: "/favicon.ico?v=3",
+        sizes: "16x16 24x24 32x32 48x48 64x64 128x128 256x256",
+        type: "image/x-icon",
+        purpose: "any",
+      },
+      {
+        src: "/favicon-32x32.png?v=3",
+        sizes: "32x32",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-48.png?v=3",
+        sizes: "48x48",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-96.png?v=3",
+        sizes: "96x96",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-128.png?v=3",
+        sizes: "128x128",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon.png?v=3",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-256.png?v=3",
+        sizes: "256x256",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-512.png?v=3",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon.png?v=3",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-512.png?v=3",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+    ],
+  };
+}

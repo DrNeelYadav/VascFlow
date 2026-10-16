@@ -19,6 +19,7 @@ describe("navigation registry", () => {
       "consent",
       "operative-notes",
       "discharge",
+      "imaging",
       "logbook",
       "publications",
     ].map((slug) => `/dashboard/${slug}`);
@@ -77,6 +78,7 @@ describe("navigation registry", () => {
     expect(WORKSPACES.filter((w) => !w.secondary).map((w) => w.id)).toEqual([
       "today",
       "pipeline",
+      "imaging",
       "logbook",
       "research",
     ]);

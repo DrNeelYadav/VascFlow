@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { X, Copy, Check, Film, FileText, ClipboardCheck, Activity, Edit3, Save, Phone } from "lucide-react";
+import { X, Copy, Check, Film, FileText, ClipboardCheck, Edit3, Save, Phone } from "lucide-react";
 import type { useLogbookDesk } from "./useLogbookDesk";
 
 interface LogbookDrawerProps {
@@ -80,22 +80,42 @@ export function LogbookDrawer({ desk }: LogbookDrawerProps) {
           {/* Quick Document & Cine Launchers */}
           <div className="space-y-1.5 pt-1">
             <span className="text-[10px] uppercase font-bold text-slate-400">Clinical Documents &amp; Media</span>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <a href={telegramBotUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 p-2 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 font-semibold shadow-2xs">
-                <Film className="w-3.5 h-3.5 text-sky-600" />
-                <span>Fluoro Runs (Telegram)</span>
-              </a>
-              <Link href={`/dashboard/operative-notes?caseId=${caseId}`} className="flex items-center gap-1.5 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 font-semibold shadow-2xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              {selectedCase.hasFluoro ? (
+                <Link
+                  href={`/dashboard/imaging?caseId=${caseId}`}
+                  className="flex items-center gap-1.5 p-2 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 font-semibold shadow-2xs"
+                >
+                  <Film className="w-3.5 h-3.5 text-sky-600" />
+                  <span>Fluoro Cine</span>
+                </Link>
+              ) : (
+                <div className="flex items-center gap-1.5 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40 text-slate-400 border border-slate-200 dark:border-slate-800 text-[11px] font-medium opacity-60">
+                  <Film className="w-3.5 h-3.5" />
+                  <span>No Fluoro</span>
+                </div>
+              )}
+              <Link
+                href={`/dashboard/operative-notes?caseId=${caseId}`}
+                className={`flex items-center gap-1.5 p-2 rounded-lg border font-semibold shadow-2xs ${
+                  selectedCase.hasOpNote
+                    ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200"
+                }`}
+              >
                 <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Operative Note</span>
+                <span>{selectedCase.hasOpNote ? "Op Note" : "+ Draft"}</span>
               </Link>
-              <Link href={`/dashboard/discharge?caseId=${caseId}`} className="flex items-center gap-1.5 p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 font-semibold shadow-2xs">
+              <Link
+                href={`/dashboard/discharge?caseId=${caseId}`}
+                className={`flex items-center gap-1.5 p-2 rounded-lg border font-semibold shadow-2xs ${
+                  selectedCase.hasDischarge
+                    ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200"
+                }`}
+              >
                 <ClipboardCheck className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Discharge Summary</span>
-              </Link>
-              <Link href={`/dashboard/cath-lab-flowsheet?caseId=${caseId}`} className="flex items-center gap-1.5 p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 font-semibold shadow-2xs">
-                <Activity className="w-3.5 h-3.5 text-amber-600" />
-                <span>Post-Op PACU</span>
+                <span>{selectedCase.hasDischarge ? "Summary" : "+ Card"}</span>
               </Link>
             </div>
           </div>

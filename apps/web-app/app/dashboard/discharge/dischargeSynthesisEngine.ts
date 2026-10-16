@@ -247,7 +247,7 @@ export function synthesizeDischargeRecord({
       surgicalProcedure: "",
       anaesthesiaType: "LOCAL",
       procedureDetail: "",
-      processDoneBy: "Dr Shashank Sharma",
+      processDoneBy: "",
     };
 
     proc.surgicalProcedure =
@@ -316,7 +316,7 @@ export function synthesizeDischargeRecord({
       surgicalProcedure: "",
       anaesthesiaType: "LOCAL",
       procedureDetail: "",
-      processDoneBy: "Dr Shashank Sharma",
+      processDoneBy: "",
     };
 
     proc.surgicalProcedure = "PERCUTANEOUS TRANSVENOUS VARICOCELE EMBOLIZATION";
@@ -359,7 +359,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "",
         anaesthesiaType: "CONSCIOUS SEDATION",
         procedureDetail: "",
-        processDoneBy: "Dr Meenu Bagarhatta",
+        processDoneBy: "",
       };
       proc.surgicalProcedure =
         "DIRECT INTRAHEPATIC PORTOSYSTEMIC SHUNT (DIPS) / TIPS";
@@ -444,7 +444,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Alok Verma",
+        processDoneBy: "",
       };
       proc.surgicalProcedure = "BRONCHIAL ARTERY EMBOLIZATION (BAE)";
       proc.operationType = "Major";
@@ -518,7 +518,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Shashank Sharma",
+        processDoneBy: "",
       };
       proc.surgicalProcedure =
         "PERCUTANEOUS TRANSHEPATIC BILIARY DRAINAGE (PTBD)";
@@ -583,7 +583,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "BILIARY SELF-EXPANDING METAL STENT (SEMS) PLACEMENT",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Shashank Sharma",
+        processDoneBy: "",
       };
       proc.surgicalProcedure = "BILIARY SELF-EXPANDING METAL STENT (SEMS) PLACEMENT";
       proc.operationType = "Major";
@@ -619,7 +619,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "ULTRASOUND-GUIDED PERCUTANEOUS ABSCESS DRAINAGE (PCD)",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Naresh Mangalhara",
+        processDoneBy: "",
       };
       proc.surgicalProcedure = "ULTRASOUND-GUIDED PERCUTANEOUS ABSCESS DRAINAGE (PCD)";
       proc.operationType = "Minor";
@@ -655,7 +655,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "PARTIAL SPLENIC ARTERY EMBOLIZATION (SAE)",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Meenu Bagarhatta",
+        processDoneBy: "",
       };
       proc.surgicalProcedure = "PARTIAL SPLENIC ARTERY EMBOLIZATION (SAE)";
       proc.operationType = "Major";
@@ -691,7 +691,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "PERCUTANEOUS TRANSLUMINAL FISTULOPLASTY (AVF PTA)",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Alok Verma",
+        processDoneBy: "",
       };
       proc.surgicalProcedure = "PERCUTANEOUS TRANSLUMINAL FISTULOPLASTY (AVF PTA)";
       proc.operationType = "Minor";
@@ -725,7 +725,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "CONVENTIONAL TRANSARTERIAL CHEMOEMBOLIZATION (cTACE)",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Alok Verma",
+        processDoneBy: "",
       };
       proc.surgicalProcedure = "CONVENTIONAL TRANSARTERIAL CHEMOEMBOLIZATION (cTACE)";
       proc.operationType = "Major";
@@ -761,7 +761,7 @@ export function synthesizeDischargeRecord({
         surgicalProcedure: "",
         anaesthesiaType: "LOCAL",
         procedureDetail: "",
-        processDoneBy: "Dr Alok Verma",
+        processDoneBy: "",
       };
       proc.surgicalProcedure =
         "ULTRASOUND-GUIDED PERCUTANEOUS CORE LIVER BIOPSY";
@@ -814,7 +814,7 @@ export function synthesizeDischargeRecord({
       recoveryBed: "Cath-Lab Holding Rec-01",
       distalPulses: "Strong (+++) - Dorsalis pedis and posterior tibial arterial pulsations palpated strong and equal bilaterally",
       immediateComplications: "Nil - Zero hematoma, zero DVT on completion Doppler, zero sensory deficit",
-      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr. Neel Yadav",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "",
       recordedAt: `${new Date().toLocaleDateString("en-IN")} 11:30 AM`,
       notes: `Successful ${varicose.modality} ablation of ${varicose.laterality} GSV. Non-compressible occluded GSV cast confirmed. Patient cleared for discharge.`,
     };
@@ -828,7 +828,7 @@ export function synthesizeDischargeRecord({
       recoveryBed: "Daycare Holding Bay 03",
       distalPulses: "Strong (+++) - Bilateral femoral and distal peripheral pulses intact",
       immediateComplications: "Nil - Zero access site hematoma, zero coil migration, zero scrotal swelling",
-      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr. Neel Yadav",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "",
       recordedAt: `${new Date().toLocaleDateString("en-IN")} 11:45 AM`,
       notes: "Internal spermatic vein embolization completed. Hemostasis verified. Discharged on oral NSAIDs and scrotal support advice.",
     };
@@ -842,7 +842,7 @@ export function synthesizeDischargeRecord({
       recoveryBed: "Cath-Lab Holding PACU-01",
       distalPulses: "Strong (+++) - Distal peripheral pulses palpated and intact bilaterally",
       immediateComplications: "Nil - Zero access site bleeding, zero pseudoaneurysm, zero distal vascular compromise",
-      recordedBy: updated.procedureDetails[0]?.processDoneBy || "Dr. Neel Yadav",
+      recordedBy: updated.procedureDetails[0]?.processDoneBy || "",
       recordedAt: `${new Date().toLocaleDateString("en-IN")} 12:15 PM`,
       notes: `Technical outcome: ${otherIr.technicalSuccess}. Post-operative recovery monitoring completed uneventfully.`,
     };

@@ -4,6 +4,7 @@ import React from "react";
 import { ProcedureCategory } from "./preBookingTypes";
 import { SclerotherapyPage1Sheet } from "./SclerotherapyPage1Sheet";
 import { SclerotherapyPage2Sheet } from "./SclerotherapyPage2Sheet";
+import { PageBreakDivider } from "../common/PageBreakDivider";
 import { TacePreBookingSheet } from "./TacePreBookingSheet";
 import { BaePreBookingSheet } from "./BaePreBookingSheet";
 import { BleederPreBookingSheet } from "./BleederPreBookingSheet";
@@ -37,6 +38,7 @@ export const PreBookingSheetRenderer: React.FC<SheetRendererProps> = (props) => 
           <div className="print:break-after-page">
             <SclerotherapyPage1Sheet {...props} />
           </div>
+          <PageBreakDivider label="Anatomy & Phlebogram Pen Sketch" pageNumber={2} totalPages={2} />
           <div className="print:break-before-page">
             <SclerotherapyPage2Sheet patientName={patientName} uhid={uhid} />
           </div>

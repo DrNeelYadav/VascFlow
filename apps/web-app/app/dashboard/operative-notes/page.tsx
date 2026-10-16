@@ -12,13 +12,14 @@ import { AUTHENTIC_SMS_MASTER_CASES } from "../../lib/realData/smsMasterAnalysis
 import { GOLD_STANDARD_1090_CASES } from "../../lib/realData/goldStandard1090Cases";
 import { useEndoflowStore } from "../useEndoflowStore";
 import { Search } from "lucide-react";
+import { ClinicalPipelineHeader } from "../common/ClinicalPipelineHeader";
 
 function OperativeNotesContent() {
   const searchParams = useSearchParams();
   const requestedCaseId = searchParams.get("caseId");
   const doc = useOperativeNoteDocument();
   const storePatients = useEndoflowStore((s) => s.patients);
-  const [activeStage, setActiveStage] = useState<ProcedureDossierStage>("dating");
+  const [activeStage, setActiveStage] = useState<ProcedureDossierStage>("op_note");
   const [patientSearch, setPatientSearch] = useState<string>("");
 
   const initialCase = useMemo(() => {
@@ -86,7 +87,24 @@ function OperativeNotesContent() {
   }, []);
 
   return (
-    <div className="space-y-4 max-w-[1700px] mx-auto pb-16 font-sans select-none">
+    <div className="max-w-6xl mx-auto px-2 py-4 pb-16 font-sans select-none space-y-4">
+      {/* 1. Harmonized 5-Stage Clinical Pipeline Header */}
+      <ClinicalPipelineHeader
+        currentStage="operative-notes"
+        title="Post-Operative Notes &amp; Procedural Dossier"
+        subtitle="Standardized WordPad operative notes, fluoroscopy hardware logs, and clinical procedure protocol."
+        activePatient={
+          patientName
+            ? {
+                name: patientName,
+                crUhid: uhid,
+                ageSex: [age ? `${age}y` : "", sex].filter(Boolean).join(" / "),
+                procedure: procedureTitle,
+              }
+            : undefined
+        }
+      />
+
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-2xs print:hidden space-y-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-1 max-w-xl">

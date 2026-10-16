@@ -26,7 +26,7 @@ export const GeneralIrPreBookingSheet: React.FC<SheetDemographicsProps> = ({
   location = "",
   unit = "",
   scheduledDate = "",
-  procedureName = "General Interventional Radiology Procedure",
+  procedureName = "",
 }) => {
   return (
     <div className="bg-white text-black p-6 border border-slate-300 print:border-none shadow-sm print:shadow-none w-full max-w-[210mm] mx-auto min-h-[297mm] text-xs font-sans leading-relaxed flex flex-col justify-between">
@@ -54,7 +54,7 @@ export const GeneralIrPreBookingSheet: React.FC<SheetDemographicsProps> = ({
 
         {/* Planned Procedure & Indication */}
         <div className="border border-black p-2.5 mb-3 text-[11px] space-y-1.5">
-          <div><span className="font-bold">PLANNED PROCEDURE:</span> {procedureName}</div>
+          <div><span className="font-bold">PLANNED PROCEDURE:</span> {procedureName || "______________________________"}</div>
           <div><span className="font-bold">CLINICAL INDICATION &amp; SUMMARY:</span> __________________________________________________________________</div>
           <div><span className="font-bold">ANESTHESIA PLAN:</span> ( &nbsp; ) Local Anesthesia &nbsp;&nbsp; ( &nbsp; ) Conscious Sedation &nbsp;&nbsp; ( &nbsp; ) General Anesthesia</div>
         </div>

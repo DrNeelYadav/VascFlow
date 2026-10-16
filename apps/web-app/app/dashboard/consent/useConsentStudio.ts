@@ -32,16 +32,12 @@ export function useConsentStudio() {
   const [procedureDate, setProcedureDate] = useState<string>("");
   const [procedureTime, setProcedureTime] = useState<string>("");
 
-  const fixedWard = "IR Ward (Old Gastro Ward)";
+  const [fixedWard, setFixedWard] = useState<string>("");
 
-  // Staff Credentials
-  const [doctorName, setDoctorName] = useState<string>("Prof. (Dr.) Interventional Radiologist");
-  const [doctorDesignation, setDoctorDesignation] = useState<string>(
-    "Senior Professor & Head, Interventional Radiology",
-  );
-  const [residentDoctor, setResidentDoctor] = useState<string>(
-    "Dr. Neel Yadav, DM Resident, Interventional Radiology",
-  );
+  // Staff Credentials (strictly blank by default — zero phantom data)
+  const [doctorName, setDoctorName] = useState<string>("");
+  const [doctorDesignation, setDoctorDesignation] = useState<string>("");
+  const [residentDoctor, setResidentDoctor] = useState<string>("");
 
   // Labs
   const [weightKg, setWeightKg] = useState<string | number>("");
@@ -153,6 +149,7 @@ export function useConsentStudio() {
     procedureTime,
     setProcedureTime,
     fixedWard,
+    setFixedWard,
     doctorName,
     setDoctorName,
     doctorDesignation,

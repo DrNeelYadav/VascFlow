@@ -98,6 +98,58 @@ describe("Phase 40: Epoch IV Verification, Webhook Security & OCR Accuracy Certi
       expect(data.crNumber).toBe("CR-90214");
       expect(data.suggestedProcedure).toContain("DIPS");
     });
+
+    it("ingests video fluoro loop with hashtag and sets mediaType to VIDEO_CINE", async () => {
+      const payload = {
+        message: {
+          message_id: 9982,
+          chat: { id: "-1002345678901" },
+          caption: "Post-coiling angiogram control run #CR88990",
+          video: { file_id: "vid_telegram_fluoro_123" },
+        },
+      };
+
+      const req = new NextRequest("http://localhost:3000/api/webhooks/telegram-ingest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.ok).toBe(true);
+      expect(data.mediaType).toBe("VIDEO_CINE");
+      expect(data.fileId).toBe("vid_telegram_fluoro_123");
+      expect(data.crNumber).toBe("CR-88990");
+      expect(data.suggestedProcedure).toBe("Fluoroscopy Cine Loop Review");
+    });
+
+    it("ingests DICOM zip document and sets mediaType to DOCUMENT_ZIP", async () => {
+      const payload = {
+        message: {
+          message_id: 9983,
+          chat: { id: "-1002345678901" },
+          caption: "Outside DSA DICOM series #CR77123",
+          document: { file_id: "doc_telegram_dicom_zip_456", file_name: "Patient_DSA_Series.zip" },
+        },
+      };
+
+      const req = new NextRequest("http://localhost:3000/api/webhooks/telegram-ingest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.ok).toBe(true);
+      expect(data.mediaType).toBe("DOCUMENT_ZIP");
+      expect(data.fileId).toBe("doc_telegram_dicom_zip_456");
+      expect(data.crNumber).toBe("CR-77123");
+      expect(data.suggestedProcedure).toBe("DICOM Series Review");
+    });
   });
 
   describe("4. Gemini Vision Multimodal OCR Extraction & Zero-Phantom Guardrails", () => {

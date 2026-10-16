@@ -88,8 +88,8 @@ export interface PreBookingSafetyChecklist {
   inr: string;
   creatinine: string;
   egfr: string;
-  viralMarkers: "Non-Reactive" | "Reactive" | "Awaited";
-  contrastAllergy: "No" | "Yes (Premedicated with Steroid+Antihistamine)";
+  viralMarkers: "Non-Reactive" | "Reactive" | "Awaited" | "";
+  contrastAllergy: "No" | "Yes (Premedicated with Steroid+Antihistamine)" | "";
   consentSigned: boolean;
 }
 

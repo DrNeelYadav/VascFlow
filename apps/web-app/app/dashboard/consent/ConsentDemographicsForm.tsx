@@ -165,6 +165,32 @@ export function ConsentDemographicsForm({ studio }: ConsentDemographicsFormProps
             className="w-full text-xs border border-zinc-200 dark:border-slate-700 rounded-lg p-2 bg-white dark:bg-slate-900 font-mono"
           />
         </div>
+
+        <div>
+          <label className="text-[10px] font-bold uppercase text-zinc-400 block mb-1">
+            Ward / Unit
+          </label>
+          <input
+            type="text"
+            placeholder="Ward (Optional)"
+            value={studio.fixedWard}
+            onChange={(e) => studio.setFixedWard(e.target.value)}
+            className="w-full text-xs border border-zinc-200 dark:border-slate-700 rounded-lg p-2 bg-white dark:bg-slate-900"
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] font-bold uppercase text-zinc-400 block mb-1">
+            Attending Doctor
+          </label>
+          <input
+            type="text"
+            placeholder="Attending Doctor (Optional)"
+            value={studio.doctorName}
+            onChange={(e) => studio.setDoctorName(e.target.value)}
+            className="w-full text-xs border border-zinc-200 dark:border-slate-700 rounded-lg p-2 bg-white dark:bg-slate-900"
+          />
+        </div>
       </div>
     </div>
   );

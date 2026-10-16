@@ -148,22 +148,21 @@ describe("DICOM & Cine Web Player Suite", () => {
   });
 
   describe("GoogleSidebar Navigation Integration", () => {
-    it("verifies Imaging & Cine Viewer is removed from sidebar per user instruction", () => {
+    it("verifies Imaging & Cine Viewer is present in sidebar per user instruction", () => {
       const navPath = path.resolve(
         process.cwd(),
         "apps/web-app/app/lib/navigation.ts"
       );
       const content = fs.readFileSync(navPath, "utf-8");
 
-      // Removed from sidebar navigation per user instruction
-      expect(content).not.toContain('href: "/dashboard/imaging"');
+      // Included in sidebar navigation per user instruction
+      expect(content).toContain('href: "/dashboard/imaging"');
       // The sidebar must consume the registry, not a private copy of the list.
       const sidebar = fs.readFileSync(
         path.resolve(process.cwd(), "apps/web-app/app/components/GoogleSidebar.tsx"),
         "utf-8"
       );
       expect(sidebar).toContain("from \"../lib/navigation\"");
-      expect(sidebar).not.toContain("/dashboard/imaging");
     });
   });
 

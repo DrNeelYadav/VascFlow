@@ -20,7 +20,7 @@ export const PreOpLabChecklist: React.FC<PreOpLabChecklistProps> = ({
           <span>&bull; IMPORTANT ADMISSION NOTICE FOR PATIENT</span>
         </div>
         <p className="mt-0.5 text-slate-800 font-semibold leading-snug">
-          Please report to the Interventional Radiology Ward{" "}
+          Please report to the designated ward / admitting unit{" "}
           <span className="underline font-black text-black">1 DAY PRIOR</span> to the scheduled
           procedure date for indoor bed admission, pre-procedural verification, and nursing preparation.
         </p>

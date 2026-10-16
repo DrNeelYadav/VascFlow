@@ -387,7 +387,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/proxy") ||
     pathname === "/unauthorized" ||
-    pathname === "/favicon.ico"
+    pathname === "/favicon.ico" ||
+    pathname === "/manifest.json" ||
+    pathname === "/manifest.webmanifest" ||
+    /\.(png|jpg|jpeg|svg|ico|webp)$/.test(pathname)
   ) {
     return attachPerimeterHeaders(NextResponse.next());
   }
@@ -461,6 +464,6 @@ export async function middleware(request: NextRequest) {
  */
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.json|manifest.webmanifest|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)",
   ],
 };

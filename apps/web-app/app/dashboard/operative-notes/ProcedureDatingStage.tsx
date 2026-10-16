@@ -9,6 +9,7 @@ import { TacePreBookingSheet } from "../pre-booking/TacePreBookingSheet";
 import { BaePreBookingSheet } from "../pre-booking/BaePreBookingSheet";
 import { BleederPreBookingSheet } from "../pre-booking/BleederPreBookingSheet";
 import { GeneralIrPreBookingSheet } from "../pre-booking/GeneralIrPreBookingSheet";
+import { PageBreakDivider } from "../common/PageBreakDivider";
 
 interface ProcedureDatingStageProps {
   patientName: string;
@@ -127,6 +128,9 @@ export const ProcedureDatingStage: React.FC<ProcedureDatingStageProps> = ({
                   scheduledDate={scheduledDate}
                 />
               </div>
+            )}
+            {(scleroPage === "both") && (
+              <PageBreakDivider label="Anatomy & Phlebogram Pen Sketch" pageNumber={2} totalPages={2} />
             )}
             {(scleroPage === "page2" || scleroPage === "both") && (
               <div className="print:break-before-page">

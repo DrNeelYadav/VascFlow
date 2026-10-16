@@ -4,6 +4,7 @@ import React from "react";
 import { ConsentStatutoryHeader } from "./ConsentStatutoryHeader";
 import { ConsentProcedureDetails } from "./ConsentProcedureDetails";
 import { ConsentStatutoryDeclaration } from "./ConsentStatutoryDeclaration";
+import { PageBreakDivider } from "../common/PageBreakDivider";
 import type { useConsentStudio } from "./useConsentStudio";
 
 interface ConsentStatutoryDocumentProps {
@@ -15,6 +16,11 @@ export function ConsentStatutoryDocument({ studio }: ConsentStatutoryDocumentPro
     <div className="bg-white p-8 md:p-10 rounded-xl border border-zinc-200 shadow-sm print:shadow-none print:border-none print:p-0 print:m-0 print:w-full flex flex-col gap-6 text-zinc-900">
       <ConsentStatutoryHeader studio={studio} />
       <ConsentProcedureDetails studio={studio} />
+      <PageBreakDivider
+        label="Voluntary Declaration &amp; Mandatory Signatures"
+        pageNumber={2}
+        totalPages={2}
+      />
       <ConsentStatutoryDeclaration studio={studio} />
     </div>
   );

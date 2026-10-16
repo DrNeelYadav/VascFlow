@@ -20,28 +20,24 @@ export const useOpdPreBooking = () => {
   // Form State
   const [patientName, setPatientName] = useState("");
   const [age, setAge] = useState<number | "">("");
-  const [sex, setSex] = useState<"M" | "F" | "Other">("M");
+  const [sex, setSex] = useState<"M" | "F" | "Other" | "">("");
   const [contactNumber, setContactNumber] = useState("");
-  const [location, setLocation] = useState("Jaipur, Rajasthan");
+  const [location, setLocation] = useState("");
   const [crUhid, setCrUhid] = useState("");
   const [scheme, setScheme] = useState<SchemeType>("RGHS");
-  const [scheduledDate, setScheduledDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 2);
-    return d.toISOString().split("T")[0];
-  });
+  const [scheduledDate, setScheduledDate] = useState("");
   const [admissionType, setAdmissionType] = useState<"Day Care" | "Inpatient Ward">("Day Care");
   const [anesthesiaPlan, setAnesthesiaPlan] = useState<"Local Anesthesia" | "Conscious Sedation" | "General Anesthesia">("Local Anesthesia");
 
-  // Safety Checklist State
-  const [npoConfirmed, setNpoConfirmed] = useState(true);
-  const [plateletCount, setPlateletCount] = useState("180,000 / uL");
-  const [inr, setInr] = useState("1.10");
-  const [creatinine, setCreatinine] = useState("0.85 mg/dL");
-  const [egfr, setEgfr] = useState("96 mL/min");
-  const [viralMarkers, setViralMarkers] = useState<"Non-Reactive" | "Reactive" | "Awaited">("Non-Reactive");
-  const [contrastAllergy, setContrastAllergy] = useState<"No" | "Yes (Premedicated with Steroid+Antihistamine)">("No");
-  const [consentSigned, setConsentSigned] = useState(true);
+  // Safety Checklist State (strictly blank unverified defaults)
+  const [npoConfirmed, setNpoConfirmed] = useState(false);
+  const [plateletCount, setPlateletCount] = useState("");
+  const [inr, setInr] = useState("");
+  const [creatinine, setCreatinine] = useState("");
+  const [egfr, setEgfr] = useState("");
+  const [viralMarkers, setViralMarkers] = useState<"Non-Reactive" | "Reactive" | "Awaited" | "">("");
+  const [contrastAllergy, setContrastAllergy] = useState<"No" | "Yes (Premedicated with Steroid+Antihistamine)" | "">("");
+  const [consentSigned, setConsentSigned] = useState(false);
 
   // Specific Forms State
   const [tace, setTace] = useState<TaceDetails>({
@@ -95,8 +91,8 @@ export const useOpdPreBooking = () => {
       createdAt: new Date().toISOString(),
       scheduledDate,
       patientName,
-      age: Number(age) || 45,
-      sex,
+      age: Number(age) || 0,
+      sex: (sex as "M" | "F" | "Other") || "Other",
       contactNumber,
       location,
       crUhid: crUhid || `CR-${Date.now().toString().slice(-5)}`,
@@ -113,8 +109,8 @@ export const useOpdPreBooking = () => {
         inr,
         creatinine,
         egfr,
-        viralMarkers,
-        contrastAllergy,
+        viralMarkers: viralMarkers || "",
+        contrastAllergy: contrastAllergy || "",
         consentSigned,
       },
       status: "Provisional OPD Date",

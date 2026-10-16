@@ -65,6 +65,7 @@ export function ConsultationDeskDemographics({ desk }: ConsultationDeskDemograph
               onChange={(e) => desk.setSex(e.target.value as "Male" | "Female")}
               className="flex-1 h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-slate-100 font-medium focus:border-blue-600 focus:outline-none transition-colors"
             >
+              <option value="">Sex</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>

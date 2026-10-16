@@ -110,14 +110,14 @@ export type Labs = z.infer<typeof LabsSchema>;
 
 export const IpdLocationSchema = z.object({
   admissionType: z.string().default("IPD"),
-  ward: z.string().default("IR Ward D-Block"),
+  ward: z.string().default(""),
   bed: z.string().default("Bed 01"),
   podDay: z.string().default("Pre-Op"),
 });
 export type IpdLocation = z.infer<typeof IpdLocationSchema>;
 
 export const PreOpPrepSchema = z.object({
-  bedLocation: z.string().default("Ward D-Block"),
+  bedLocation: z.string().default(""),
   npoHours: z.number().min(0).default(0),
   inrChecked: z.boolean().default(false),
   creatinineChecked: z.boolean().default(false),
@@ -179,7 +179,7 @@ export const EndoflowPatientSchema = z.object({
   scanId: z.string().min(1),
   phone: z.string().default(""),
   unit: z.string().default("Gastroenterology"),
-  postedBy: z.string().default("Dr. Neel Yadav"),
+  postedBy: z.string().default(""),
   time: z.string().default("09:00 AM"),
   summary: z.string().default("Clinical presentation and indication."),
   procedureKey: z.string().min(1),
@@ -371,7 +371,7 @@ export const BookedCaseSchema = z.object({
   organSystem: z.string().default("Liver & Hepatobiliary"),
   diseaseKey: z.string().min(1),
   procedureTitle: z.string().min(1),
-  bookedBy: z.string().default("Dr. Neel Yadav (DM01)"),
+  bookedBy: z.string().default(""),
   bookedAt: z.string().default(new Date().toISOString()),
   orderedLabs: z.array(z.string()).default([]),
   specialInvestigations: z.array(z.string()).default([]),
@@ -451,6 +451,7 @@ export const CtReviewSchema = z.object({
   contactNumber: z.string().optional().default(""),
   status: z.enum([
     "Pending Review",
+    "Reviewed by Consultant",
     "Reviewed by Neel / Nilesh",
     "To be reviewed by consultant",
     "Booking Cath-Lab on next available date",

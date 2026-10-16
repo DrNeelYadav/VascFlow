@@ -26,7 +26,7 @@ describe("PWA Icon & Desktop Taskbar Branding Suite", () => {
     const manifestPath = path.join(publicDir, "manifest.json");
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
 
-    expect(manifest.name).toBe("EndoFlow | Clinical IR Angiosuite OS");
+    expect(manifest.name).toBe("EndoFlow | SMS IR Angiosuite");
     expect(manifest.short_name).toBe("EndoFlow");
 
     const anyIcons = manifest.icons.filter((i: any) => i.purpose === "any");
@@ -42,10 +42,10 @@ describe("PWA Icon & Desktop Taskbar Branding Suite", () => {
     const layoutPath = path.join(appDir, "layout.tsx");
     const content = fs.readFileSync(layoutPath, "utf-8");
 
-    expect(content).toContain('shortcut: "/favicon.ico"');
-    expect(content).toContain('url: "/favicon.ico"');
-    expect(content).toContain('url: "/icon-48.png"');
-    expect(content).toContain('url: "/icon.png"');
+    expect(content).toContain('shortcut: "/favicon.ico?v=3"');
+    expect(content).toContain('url: "/favicon.ico?v=3"');
+    expect(content).toContain('url: "/icon-48.png?v=3"');
+    expect(content).toContain('url: "/icon.png?v=3"');
   });
 
   it("verifies clinical forms retain the official SMS Hospital logo seal", () => {

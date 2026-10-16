@@ -13,7 +13,7 @@ export function buildRegistryDischargeSummary(matched: RealSmsPatientCase): Ihms
       hospitalName: "Sawai Man Singh (SMS) Medical College & Attached Hospitals",
       hospitalAddress: "J.L.N. Marg, Jaipur - 302004 (Rajasthan)",
       departmentName: "Department of Radiodiagnosis & Interventional Radiology",
-      unitHead: "Prof. & HOD / Head of IR",
+      unitHead: "",
       unitName: matched.unit && matched.unit !== "—" ? matched.unit : "Interventional Radiology",
       opdDays: "Mon-Sat (09:00 AM - 01:00 PM)",
       hid: matched.crNumber || matched.uhid || "—",
@@ -88,7 +88,7 @@ export function buildRegistryDischargeSummary(matched: RealSmsPatientCase): Ihms
         surgicalProcedure: matched.procedureName && matched.procedureName !== "—" ? matched.procedureName : "—",
         anaesthesiaType: "LOCAL",
         procedureDetail: matched.procedureName && matched.procedureName !== "—" ? `${matched.procedureName} performed via standard angiosuite protocol.` : "—",
-        processDoneBy: matched.primaryOperator || "Dr. Neel Yadav / IR Team",
+        processDoneBy: matched.primaryOperator && matched.primaryOperator !== "—" ? matched.primaryOperator : "—",
       },
     ],
     ddcDrugs: [],
@@ -99,8 +99,8 @@ export function buildRegistryDischargeSummary(matched: RealSmsPatientCase): Ihms
       conditionOnDischarge: "Stable",
       followUp: matched.followup && matched.followup !== "—" ? matched.followup : "Review in IR OPD",
       followUpDate: "—",
-      approvedBy: "Dr. Alok Verma",
-      dischargePreparedBy: "Dr. Neel Yadav",
+      approvedBy: "—",
+      dischargePreparedBy: "—",
     },
   };
 }

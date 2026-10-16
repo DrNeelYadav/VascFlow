@@ -55,25 +55,12 @@ export const PreBookingPatientBar: React.FC<PreBookingPatientBarProps> = ({
 }) => {
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl p-3 shadow-xs mb-4 print:hidden space-y-3">
-      {/* 1. Clinical Pipeline Progression Bar */}
+      {/* Protocol & Print Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-          <span className="text-[10px] uppercase font-bold text-slate-400">Clinical Pipeline:</span>
-          <span className="px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
-            1. Dating Form
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+            A4 Pre-Operative Dating &amp; Protocol Controls
           </span>
-          <span className="text-slate-400">&rarr;</span>
-          <Link href="/dashboard/consent" className="hover:underline text-slate-600 dark:text-slate-400">
-            2. Consent Form
-          </Link>
-          <span className="text-slate-400">&rarr;</span>
-          <Link href="/dashboard/operative-notes" className="hover:underline text-slate-600 dark:text-slate-400">
-            3. Operative Notes
-          </Link>
-          <span className="text-slate-400">&rarr;</span>
-          <Link href="/dashboard/discharge" className="hover:underline text-slate-600 dark:text-slate-400">
-            4. Discharge Card
-          </Link>
         </div>
 
         <button

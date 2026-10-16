@@ -17,6 +17,7 @@ import {
   FlaskConical,
   Settings,
   GraduationCap,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
 import type { NavIconKey } from "../../lib/navigation";
@@ -24,6 +25,7 @@ import type { NavIconKey } from "../../lib/navigation";
 const ICONS: Record<NavIconKey, LucideIcon> = {
   today: LayoutDashboard,
   clinic: Stethoscope,
+  pipeline: Workflow,
   dating: CalendarClock,
   documentation: FileSignature,
   consent: FileCheck,

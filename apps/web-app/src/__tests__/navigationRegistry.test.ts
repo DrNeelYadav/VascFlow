@@ -15,10 +15,11 @@ describe("navigation registry", () => {
     const appRoutes = [
       "calendar",
       "op-clinic",
+      "pre-booking",
+      "consent",
       "operative-notes",
+      "discharge",
       "logbook",
-      "imaging",
-      "schemes-correlation",
       "publications",
     ].map((slug) => `/dashboard/${slug}`);
 
@@ -49,11 +50,11 @@ describe("navigation registry", () => {
   });
 
   it("resolves nested detail routes to their parent member", () => {
-    expect(getWorkspaceForPath("/dashboard/operative-notes/PT01")?.id).toBe("documentation");
+    expect(getWorkspaceForPath("/dashboard/operative-notes/PT01")?.id).toBe("pipeline");
   });
 
   it("prefers the longest matching route over a shorter sibling", () => {
-    expect(getWorkspaceForPath("/dashboard/operative-notes")?.id).toBe("documentation");
+    expect(getWorkspaceForPath("/dashboard/operative-notes")?.id).toBe("pipeline");
   });
 
   it("returns no workspace for the bare dashboard index", () => {
@@ -75,11 +76,8 @@ describe("navigation registry", () => {
   it("orders the workflow the way a clinician moves through a case", () => {
     expect(WORKSPACES.filter((w) => !w.secondary).map((w) => w.id)).toEqual([
       "today",
-      "clinic",
-      "documentation",
+      "pipeline",
       "logbook",
-      "suite",
-      "library",
       "research",
     ]);
   });

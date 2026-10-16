@@ -14,7 +14,7 @@ import { WORKSPACES, isWorkspaceActive, type Workspace } from "../../lib/navigat
  * the drawer. The choice of four is presentation only - the registry still
  * governs what exists.
  */
-const DOCK_WORKSPACE_IDS = ["today", "clinic", "documentation", "logbook"];
+const DOCK_WORKSPACE_IDS = ["today", "pipeline", "logbook", "research"];
 
 export function MobileBottomNav({ onToggleMore }: { onToggleMore: () => void }) {
   const pathname = usePathname();
@@ -23,7 +23,7 @@ export function MobileBottomNav({ onToggleMore }: { onToggleMore: () => void }) 
   const bookedCases = useEndoflowStore((s) => s.bookedCases);
 
   const badges: Record<string, number> = {
-    clinic: ctReviews.filter((r) => r.status === "Pending Review").length,
+    pipeline: ctReviews.filter((r) => r.status === "Pending Review").length,
     today: bookedCases.filter((c) => c.status !== "Completed").length,
   };
 

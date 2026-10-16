@@ -148,18 +148,15 @@ describe("DICOM & Cine Web Player Suite", () => {
   });
 
   describe("GoogleSidebar Navigation Integration", () => {
-    it("verifies Imaging & Cine Viewer is reachable from the sidebar", () => {
-      // The sidebar no longer hardcodes a nav list; it renders the shared
-      // registry in app/lib/navigation. Reachability is asserted against that
-      // registry so the guarantee survives a change to either file.
+    it("verifies Imaging & Cine Viewer is removed from sidebar per user instruction", () => {
       const navPath = path.resolve(
         process.cwd(),
         "apps/web-app/app/lib/navigation.ts"
       );
       const content = fs.readFileSync(navPath, "utf-8");
 
-      expect(content).toContain('href: "/dashboard/imaging"');
-      expect(content).toContain('label: "Imaging"');
+      // Removed from sidebar navigation per user instruction
+      expect(content).not.toContain('href: "/dashboard/imaging"');
       // The sidebar must consume the registry, not a private copy of the list.
       const sidebar = fs.readFileSync(
         path.resolve(process.cwd(), "apps/web-app/app/components/GoogleSidebar.tsx"),

@@ -5,23 +5,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useEndoflowStore } from "../dashboard/useEndoflowStore";
-import { EndoFlowLogo } from "./EndoFlowLogo";
-import { WorkspaceIcon } from "./shell/WorkspaceIcon";
+import { SidebarWorkspaceItem } from "./shell/SidebarWorkspaceItem";
 import {
   WORKSPACES,
   ADMIN_ENTRY,
   isWorkspaceActive,
-  type NavIconKey,
   type Workspace,
 } from "../lib/navigation";
 import { isNeelYadavUser } from "../lib/auth-guards";
+import { WorkspaceIcon } from "./shell/WorkspaceIcon";
 
 /**
  * Desktop sidebar. Renders the workspace registry from `lib/navigation`, so it
  * can never drift from the mobile dock, the command palette or the tab bar.
  */
 export function GoogleSidebar({
-  onOpenDataTools,
   isMobileOpen = false,
   onCloseMobile,
 }: {
@@ -42,7 +40,7 @@ export function GoogleSidebar({
 
   /** Live counters keyed by workspace id. Absent key means no badge. */
   const badges: Record<string, number> = {
-    clinic: pendingReviewsCount,
+    pipeline: pendingReviewsCount,
     today: bookedCasesCount,
   };
 
@@ -67,48 +65,6 @@ export function GoogleSidebar({
   const showAdmin = currentStaff?.role === "ADMIN";
   const condensed = isCollapsed && !isMobileOpen;
 
-  const renderItem = (
-    item: { href: string; label: string; icon: NavIconKey },
-    active: boolean,
-    badge?: number
-  ) => (
-    <Link
-      href={item.href}
-      onClick={() => onCloseMobile?.()}
-      title={item.label}
-      aria-current={active ? "page" : undefined}
-      className={`relative group flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-150 ${
-        active
-          ? "bg-blue-600 text-white dark:bg-sky-500 dark:text-slate-950 font-semibold shadow-xs"
-          : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white"
-      } ${condensed ? "justify-center px-0 h-8" : ""}`}
-    >
-      <WorkspaceIcon
-        icon={item.icon}
-        className={`w-3.5 h-3.5 shrink-0 transition-colors ${
-          active
-            ? "text-white dark:text-slate-950"
-            : "text-slate-400 group-hover:text-blue-600 dark:text-slate-400 dark:group-hover:text-sky-400"
-        }`}
-      />
-      {!condensed && <span className="flex-1 truncate tracking-tight">{item.label}</span>}
-      {!condensed && badge !== undefined && badge > 0 && (
-        <span
-          className={`px-1.5 py-0.2 rounded text-[10px] font-semibold tabular-nums ${
-            active
-              ? "bg-white/20 text-white"
-              : "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
-          }`}
-        >
-          {badge}
-        </span>
-      )}
-      {condensed && badge !== undefined && badge > 0 && (
-        <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-500" />
-      )}
-    </Link>
-  );
-
   const renderGroup = (label: string, items: Workspace[]) => (
     <div className="space-y-0.5">
       {!condensed && (
@@ -116,46 +72,17 @@ export function GoogleSidebar({
           {label}
         </p>
       )}
-      {items.map((w) => {
-        const isActive = isWorkspaceActive(w, pathname);
-        return (
-          <div key={w.id} className="space-y-0.5">
-            {renderItem(
-              { href: w.href, label: w.label, icon: w.icon },
-              isActive,
-              badges[w.id]
-            )}
-            {!condensed && w.members.length > 1 && (
-              <div className="pl-6 pr-1 space-y-0.5 pb-0.5">
-                {w.members.slice(1).map((sub) => {
-                  const isSubActive = pathname === sub.href || pathname.startsWith(`${sub.href}/`);
-                  return (
-                    <Link
-                      key={sub.href}
-                      href={sub.href}
-                      onClick={() => onCloseMobile?.()}
-                      className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-medium transition-colors ${
-                        isSubActive
-                          ? "bg-blue-100 text-blue-900 dark:bg-sky-950 dark:text-sky-300 font-semibold"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white"
-                      }`}
-                    >
-                      <span
-                        className={`w-1 h-1 rounded-full ${
-                          isSubActive
-                            ? "bg-blue-600 dark:bg-sky-400"
-                            : "bg-slate-300 dark:bg-slate-600"
-                        }`}
-                      />
-                      <span className="truncate">{sub.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {items.map((w) => (
+        <SidebarWorkspaceItem
+          key={w.id}
+          workspace={w}
+          isActive={isWorkspaceActive(w, pathname)}
+          currentPath={pathname}
+          condensed={condensed}
+          badge={badges[w.id]}
+          onNavigate={() => onCloseMobile?.()}
+        />
+      ))}
     </div>
   );
 
@@ -214,8 +141,21 @@ export function GoogleSidebar({
           {(secondary.length > 0 || showAdmin) && (
             <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-3">
               {renderGroup("Personal", secondary)}
-              {showAdmin &&
-                renderItem(ADMIN_ENTRY, pathname.startsWith(ADMIN_ENTRY.href))}
+              {showAdmin && (
+                <Link
+                  href={ADMIN_ENTRY.href}
+                  onClick={() => onCloseMobile?.()}
+                  title={ADMIN_ENTRY.label}
+                  className={`relative group flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${
+                    pathname.startsWith(ADMIN_ENTRY.href)
+                      ? "bg-blue-600 text-white dark:bg-sky-500 dark:text-slate-950 font-semibold shadow-xs"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white"
+                  } ${condensed ? "justify-center px-0 h-8" : ""}`}
+                >
+                  <WorkspaceIcon icon={ADMIN_ENTRY.icon} className="w-3.5 h-3.5 shrink-0" />
+                  {!condensed && <span className="flex-1 truncate tracking-tight">{ADMIN_ENTRY.label}</span>}
+                </Link>
+              )}
             </div>
           )}
         </div>

@@ -15,6 +15,7 @@
 export type NavIconKey =
   | "today"
   | "clinic"
+  | "pipeline"
   | "dating"
   | "documentation"
   | "consent"
@@ -67,40 +68,17 @@ export const WORKSPACES: Workspace[] = [
     ],
   },
   {
-    id: "clinic",
-    shortLabel: "Clinic",
-    label: "OPD Clinic",
-    icon: "clinic",
+    id: "pipeline",
+    shortLabel: "Pipeline",
+    label: "OPD Pipeline",
+    icon: "pipeline",
     href: "/dashboard/op-clinic",
     members: [
-      { href: "/dashboard/op-clinic", label: "OPD Clinic", keywords: "consultation review booking disposition" },
-    ],
-  },
-  {
-    id: "pre-booking",
-    shortLabel: "Dating",
-    label: "OPD Dating",
-    icon: "clinic",
-    href: "/dashboard/pre-booking",
-    secondary: true,
-    members: [
-      {
-        href: "/dashboard/pre-booking",
-        label: "OPD Dating & Pre-Booking",
-        keywords: "dating pre-booking sclerotherapy tace bae bleeder aiims rghs maay",
-      },
-    ],
-  },
-  {
-    id: "documentation",
-    shortLabel: "Docs",
-    label: "Procedure Notes",
-    icon: "documentation",
-    href: "/dashboard/operative-notes",
-    members: [
-      { href: "/dashboard/operative-notes", label: "Procedure Notes", keywords: "operative note summary wordpad print" },
-      { href: "/dashboard/consent", label: "Informed Consent", keywords: "consent statutory authorization" },
-      { href: "/dashboard/discharge", label: "Discharge Card", keywords: "discharge card summary advice wound care" },
+      { href: "/dashboard/op-clinic", label: "1. Booking Clinic", keywords: "consultation review booking disposition triage opd clinic" },
+      { href: "/dashboard/pre-booking", label: "2. Dating Form", keywords: "dating pre-booking sclerotherapy tace bae bleeder aiims rghs maay a4" },
+      { href: "/dashboard/consent", label: "3. Informed Consent", keywords: "consent statutory authorization risks bilingual legal" },
+      { href: "/dashboard/operative-notes", label: "4. Operative Note", keywords: "operative note procedure summary wordpad dsa cath lab" },
+      { href: "/dashboard/discharge", label: "5. Discharge Card", keywords: "discharge card summary advice wound care surveillance" },
     ],
   },
   {
@@ -111,26 +89,6 @@ export const WORKSPACES: Workspace[] = [
     href: "/dashboard/logbook",
     members: [
       { href: "/dashboard/logbook", label: "Cath-Lab Registry", keywords: "master logbook 1090 cases export csv" },
-    ],
-  },
-  {
-    id: "suite",
-    shortLabel: "Imaging",
-    label: "Imaging",
-    icon: "suite",
-    href: "/dashboard/imaging",
-    members: [
-      { href: "/dashboard/imaging", label: "Imaging", keywords: "dicom cine xa ct mr us viewer" },
-    ],
-  },
-  {
-    id: "library",
-    shortLabel: "Schemes",
-    label: "Scheme Codes",
-    icon: "library",
-    href: "/dashboard/schemes-correlation",
-    members: [
-      { href: "/dashboard/schemes-correlation", label: "Scheme Codes", keywords: "scheme package icd billing maay rghs" },
     ],
   },
   {

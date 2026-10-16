@@ -1,11 +1,11 @@
 {
-  "name": "SMS IR Angiosuite | EndoFlow",
+  "name": "EndoFlow | Clinical IR Angiosuite OS",
   "short_name": "EndoFlow",
   "description": "Institutional Angiosuite Clinical Workflow System for Interventional Radiology.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#F8F9FA",
-  "theme_color": "#F8F9FA",
+  "background_color": "#202124",
+  "theme_color": "#202124",
   "icons": [
     {
       "src": "/endoflow_logo.svg",
@@ -15,12 +15,14 @@
     {
       "src": "/icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/apple-icon.png",

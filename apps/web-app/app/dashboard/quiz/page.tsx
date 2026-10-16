@@ -1,28 +1,30 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { ShieldAlert, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useEndoflowStore } from "../useEndoflowStore";
 import { isNeelYadavUser } from "../../lib/auth-guards";
 import { useQuizStore } from "./hooks/useQuizStore";
 import { useQuizTimer } from "./hooks/useQuizTimer";
+import { QuizAccessGate } from "./components/QuizAccessGate";
+import { QuizHubHeader } from "./components/QuizHubHeader";
+import { QuizProgressionGraph } from "./components/QuizProgressionGraph";
+import { QuizModuleGrid } from "./components/QuizModuleGrid";
 import { QuizHeader } from "./components/QuizHeader";
 import { QuizQuestionCard } from "./components/QuizQuestionCard";
 import { QuizExplanationCard } from "./components/QuizExplanationCard";
 import { QuizBottomDock } from "./components/QuizBottomDock";
 import { QuizGridModal } from "./components/QuizGridModal";
 import { QuizSummaryModal } from "./components/QuizSummaryModal";
+import type { FrcrModuleKey } from "./types";
 
 export default function FrcrQuizPage() {
-  const router = useRouter();
   const currentStaff = useEndoflowStore((s) => s.currentStaff);
   const { data: session, status } = useSession();
+  const [viewMode, setViewMode] = useState<"hub" | "workspace">("hub");
 
-  // Strict Neel Yadav Access Gate
-  const isAuthorized =
-    isNeelYadavUser(currentStaff) || isNeelYadavUser(session?.user);
+  const isAuthorized = isNeelYadavUser(currentStaff) || isNeelYadavUser(session?.user);
 
   const {
     activeModule,
@@ -33,6 +35,7 @@ export default function FrcrQuizPage() {
     totalQuestions,
     mode,
     setMode,
+    isMistakesOnly,
     answers,
     currentAnswer,
     bookmarks,
@@ -50,120 +53,136 @@ export default function FrcrQuizPage() {
     goToPrev,
     goToQuestion,
     switchModule,
-    resetModuleProgress,
+    analytics,
   } = useQuizStore();
 
   const { formattedTime } = useQuizTimer(mode);
 
-  // If unauthorized after auth finishes loading, show discreet gate
   if (status !== "loading" && !isAuthorized) {
-    return (
-      <div className="flex-1 flex items-center justify-center p-6 text-center">
-        <div className="max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl">
-          <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 mx-auto flex items-center justify-center mb-4">
-            <ShieldAlert className="w-7 h-7" />
-          </div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-            Restricted Study Workspace
-          </h2>
-          <p className="text-xs text-slate-500 leading-relaxed mb-6">
-            This personal FRCR Part 2A examination preparation suite is strictly
-            configured for Dr. Neel Yadav.
-          </p>
-          <button
-            type="button"
-            onClick={() => router.push("/dashboard/calendar")}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-xs font-semibold hover:opacity-90 transition cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to Department Schedule</span>
-          </button>
-        </div>
-      </div>
-    );
+    return <QuizAccessGate />;
   }
 
-  if (!currentQuestion) {
-    return (
-      <div className="flex-1 flex items-center justify-center p-8 text-sm text-slate-500">
-        Loading FRCR 2A question bank...
-      </div>
-    );
-  }
+  const handleLaunchModule = (modKey: FrcrModuleKey, mistakesOnly: boolean = false) => {
+    switchModule(modKey, mistakesOnly);
+    setViewMode("workspace");
+  };
+
+  const totalMistakesOverall = Object.values(analytics.moduleStats).reduce((acc, m) => acc + m.mistakes, 0);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 relative -m-2 sm:-m-3 lg:-m-4 bg-slate-50/60 dark:bg-slate-950/60">
-      {/* Mobile-First Header */}
-      <QuizHeader
-        activeModule={activeModule}
-        currentIndex={currentIndex}
-        totalQuestions={totalQuestions}
-        mode={mode}
-        formattedTime={formattedTime}
-        isBookmarked={isCurrentBookmarked}
-        scorePercent={scorePercent}
-        answeredCount={answeredCount}
-        onSelectModule={switchModule}
-        onToggleMode={setMode}
-        onToggleBookmark={toggleBookmark}
-        onOpenGrid={() => setIsGridOpen(true)}
-      />
+      {viewMode === "hub" ? (
+        <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-5 max-w-6xl w-full mx-auto pb-16">
+          <QuizHubHeader
+            totalAttempted={analytics.totalAttempted}
+            totalCorrect={analytics.totalCorrect}
+            totalBank={1727}
+            accuracyPercent={analytics.accuracyPercent}
+            currentLevel={analytics.currentLevel}
+            totalMistakes={totalMistakesOverall}
+            onLaunchMistakes={() => handleLaunchModule(activeModule, true)}
+          />
 
-      {/* Main Clinical Case Content Area */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4 space-y-4 max-w-4xl w-full mx-auto pb-24 md:pb-16">
-        <QuizQuestionCard
-          question={currentQuestion}
-          currentAnswer={currentAnswer}
-          mode={mode}
-          onSelectOption={selectAnswer}
-        />
+          <QuizProgressionGraph points={analytics.dailyPoints} />
 
-        <QuizExplanationCard
-          question={currentQuestion}
-          currentAnswer={currentAnswer}
-          mode={mode}
-        />
-      </div>
+          <QuizModuleGrid
+            moduleStats={analytics.moduleStats}
+            onSelectModule={(key) => handleLaunchModule(key, false)}
+            onLaunchModuleMistakes={(key) => handleLaunchModule(key, true)}
+          />
+        </div>
+      ) : (
+        <>
+          <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 py-1.5 flex items-center justify-between text-xs">
+            <button
+              type="button"
+              onClick={() => setViewMode("hub")}
+              className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition font-medium cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Progress Hub</span>
+            </button>
+            {isMistakesOnly && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300">
+                Re-testing Mistakes Queue
+              </span>
+            )}
+          </div>
 
-      {/* Fixed Thumb-Friendly Bottom Navigation Dock */}
-      <QuizBottomDock
-        currentIndex={currentIndex}
-        totalQuestions={totalQuestions}
-        answeredCount={answeredCount}
-        mode={mode}
-        onPrev={goToPrev}
-        onNext={goToNext}
-        onOpenGrid={() => setIsGridOpen(true)}
-        onSubmitExam={() => setIsSummaryOpen(true)}
-      />
+          <QuizHeader
+            activeModule={activeModule}
+            currentIndex={currentIndex}
+            totalQuestions={totalQuestions}
+            mode={mode}
+            formattedTime={formattedTime}
+            isBookmarked={isCurrentBookmarked}
+            scorePercent={scorePercent}
+            answeredCount={answeredCount}
+            onSelectModule={(m) => switchModule(m, false)}
+            onToggleMode={setMode}
+            onToggleBookmark={toggleBookmark}
+            onOpenGrid={() => setIsGridOpen(true)}
+          />
 
-      {/* Question Palette Matrix Modal */}
-      <QuizGridModal
-        isOpen={isGridOpen}
-        onClose={() => setIsGridOpen(false)}
-        questions={questions}
-        currentIndex={currentIndex}
-        answers={answers}
-        bookmarks={bookmarks}
-        mode={mode}
-        onSelectQuestion={goToQuestion}
-      />
+          <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4 space-y-4 max-w-4xl w-full mx-auto pb-24 md:pb-16">
+            {currentQuestion && (
+              <>
+                <QuizQuestionCard
+                  question={currentQuestion}
+                  currentAnswer={currentAnswer}
+                  mode={mode}
+                  onSelectOption={selectAnswer}
+                />
+                <QuizExplanationCard
+                  question={currentQuestion}
+                  currentAnswer={currentAnswer}
+                  mode={mode}
+                />
+              </>
+            )}
+          </div>
 
-      {/* Session Evaluation / Result Modal */}
-      <QuizSummaryModal
-        isOpen={isSummaryOpen}
-        onClose={() => setIsSummaryOpen(false)}
-        moduleInfo={moduleInfo}
-        totalQuestions={totalQuestions}
-        answeredCount={answeredCount}
-        correctCount={correctCount}
-        scorePercent={scorePercent}
-        onReset={resetModuleProgress}
-        onReviewMistakes={() => {
-          setIsSummaryOpen(false);
-          setIsGridOpen(true);
-        }}
-      />
+          <QuizBottomDock
+            currentIndex={currentIndex}
+            totalQuestions={totalQuestions}
+            answeredCount={answeredCount}
+            mode={mode}
+            onPrev={goToPrev}
+            onNext={goToNext}
+            onOpenGrid={() => setIsGridOpen(true)}
+            onSubmitExam={() => setIsSummaryOpen(true)}
+          />
+
+          <QuizGridModal
+            isOpen={isGridOpen}
+            onClose={() => setIsGridOpen(false)}
+            questions={questions}
+            currentIndex={currentIndex}
+            answers={answers}
+            bookmarks={bookmarks}
+            mode={mode}
+            onSelectQuestion={goToQuestion}
+          />
+
+          <QuizSummaryModal
+            isOpen={isSummaryOpen}
+            onClose={() => setIsSummaryOpen(false)}
+            moduleInfo={moduleInfo}
+            totalQuestions={totalQuestions}
+            answeredCount={answeredCount}
+            correctCount={correctCount}
+            scorePercent={scorePercent}
+            onReset={() => {
+              setIsSummaryOpen(false);
+              switchModule(activeModule, false);
+            }}
+            onReviewMistakes={() => {
+              setIsSummaryOpen(false);
+              switchModule(activeModule, true);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest";
+import fs from "fs";
+import path from "path";
 import { isNeelYadavUser } from "@/app/lib/auth-guards";
 import { WORKSPACES, getWorkspaceForPath } from "@/app/lib/navigation";
 import { FRCR_MODULES, MODULE_QUESTIONS } from "@/app/dashboard/quiz/data";
@@ -48,7 +50,7 @@ describe("FRCR 2A Quiz App & Privacy Access Control", () => {
     });
   });
 
-  describe("FRCR 2A Question Bank Datasets (Drive Modules)", () => {
+  describe("FRCR 2A Question Bank Datasets & Verbatim Explanation Blocks", () => {
     const modules: FrcrModuleKey[] = ["PAEDS", "MSK", "CHEST", "GUT", "GIT", "CNS"];
 
     it("contains all 6 modules with accurate metadata", () => {
@@ -58,26 +60,54 @@ describe("FRCR 2A Quiz App & Privacy Access Control", () => {
       }
     });
 
-    it("verifies structure, 5 options and valid answers across all modules", () => {
+    it("verifies structure, 5 options, and explanationBlocks across all modules", () => {
       let totalQuestions = 0;
+      let totalImageBlocks = 0;
+
       for (const mod of modules) {
         const questions = MODULE_QUESTIONS[mod];
         expect(questions.length).toBeGreaterThan(200);
         totalQuestions += questions.length;
 
-        // Spot check first 5 questions of each module
-        for (const q of questions.slice(0, 5)) {
+        for (const q of questions.slice(0, 10)) {
           expect(q.id).toMatch(new RegExp(`^${mod}-\\d{3}$`));
           expect(q.prompt).toBeTruthy();
           expect(q.options).toHaveLength(5);
           expect(q.correctAnswer).toBeGreaterThanOrEqual(0);
           expect(q.correctAnswer).toBeLessThanOrEqual(4);
           expect(q.explanation).toBeTruthy();
+          expect(Array.isArray(q.explanationBlocks)).toBe(true);
+        }
+
+        // Count image blocks across the module
+        for (const q of questions) {
+          if (q.explanationBlocks) {
+            for (const b of q.explanationBlocks) {
+              if (b.type === "image") {
+                totalImageBlocks++;
+                expect(b.src).toMatch(new RegExp(`^/quiz/images/${mod.toLowerCase()}/`));
+              }
+            }
+          }
         }
       }
 
-      // Assert total question count across all 6 modules exceeds 1,700 questions
+      // Assert total question count exceeds 1,700 questions
       expect(totalQuestions).toBeGreaterThan(1700);
+      // Assert embedded medical images exist in explanations
+      expect(totalImageBlocks).toBeGreaterThan(100);
+    });
+
+    it("verifies medical image files exist on disk in public/quiz/images", () => {
+      const publicQuizImages = path.join(process.cwd(), "apps", "web-app", "public", "quiz", "images");
+      expect(fs.existsSync(publicQuizImages)).toBe(true);
+
+      for (const mod of modules) {
+        const modDir = path.join(publicQuizImages, mod.toLowerCase());
+        expect(fs.existsSync(modDir)).toBe(true);
+        const images = fs.readdirSync(modDir);
+        expect(images.length).toBeGreaterThan(10);
+      }
     });
   });
 });

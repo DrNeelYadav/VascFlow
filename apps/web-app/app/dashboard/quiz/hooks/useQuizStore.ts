@@ -3,86 +3,61 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { FrcrModuleKey, FrcrQuestion, QuizMode, UserAnswerRecord } from "../types";
 import { getQuestionsForModule, FRCR_MODULES } from "../data";
-
-const STORAGE_PREFIX = "endoflow_frcr2a_";
+import { useQuizFirestore } from "./useQuizFirestore";
 
 export function useQuizStore() {
+  const { dataset, analytics, recordAttempt } = useQuizFirestore();
   const [activeModule, setActiveModule] = useState<FrcrModuleKey>("PAEDS");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [mode, setMode] = useState<QuizMode>("tutor");
-  const [answers, setAnswers] = useState<Record<string, UserAnswerRecord>>({});
+  const [isMistakesOnly, setIsMistakesOnly] = useState<boolean>(false);
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
   const [isGridOpen, setIsGridOpen] = useState<boolean>(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState<boolean>(false);
 
-  // Load questions for the active module
-  const questions: FrcrQuestion[] = useMemo(() => {
+  // All questions for the active module
+  const baseQuestions: FrcrQuestion[] = useMemo(() => {
     return getQuestionsForModule(activeModule);
   }, [activeModule]);
 
-  // Load saved progress from localStorage on module change
-  useEffect(() => {
-    try {
-      const savedAnswers = localStorage.getItem(`${STORAGE_PREFIX}answers_${activeModule}`);
-      if (savedAnswers) setAnswers(JSON.parse(savedAnswers));
-      else setAnswers({});
+  // Questions filtered if in "Re-test Mistakes" mode
+  const questions: FrcrQuestion[] = useMemo(() => {
+    if (!isMistakesOnly) return baseQuestions;
+    const modAttempts = dataset.attempts[activeModule] || {};
+    const filtered = baseQuestions.filter((q) => modAttempts[q.id]?.isInMistakeQueue);
+    return filtered.length > 0 ? filtered : baseQuestions;
+  }, [baseQuestions, isMistakesOnly, dataset.attempts, activeModule]);
 
-      const savedBookmarks = localStorage.getItem(`${STORAGE_PREFIX}bookmarks_${activeModule}`);
-      if (savedBookmarks) setBookmarks(JSON.parse(savedBookmarks));
-      else setBookmarks({});
-
-      const savedIndex = localStorage.getItem(`${STORAGE_PREFIX}index_${activeModule}`);
-      if (savedIndex) {
-        const parsedIdx = parseInt(savedIndex, 10);
-        if (!isNaN(parsedIdx) && parsedIdx >= 0 && parsedIdx < (getQuestionsForModule(activeModule).length || 1)) {
-          setCurrentIndex(parsedIdx);
-        } else {
-          setCurrentIndex(0);
-        }
-      } else {
-        setCurrentIndex(0);
-      }
-    } catch {}
-  }, [activeModule]);
-
-  // Sync index to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_PREFIX}index_${activeModule}`, String(currentIndex));
-    } catch {}
-  }, [activeModule, currentIndex]);
+  // Map answers for the active module from Firestore dataset
+  const answers: Record<string, UserAnswerRecord> = useMemo(() => {
+    const modAttempts = dataset.attempts[activeModule] || {};
+    const map: Record<string, UserAnswerRecord> = {};
+    Object.entries(modAttempts).forEach(([qid, att]) => {
+      map[qid] = {
+        selectedOption: att.selectedOption,
+        isCorrect: att.isCorrect,
+        timestamp: att.lastAttemptedAt,
+      };
+    });
+    return map;
+  }, [dataset.attempts, activeModule]);
 
   const currentQuestion = questions[currentIndex] || questions[0];
+  const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
 
   const selectAnswer = useCallback(
     (optionIndex: number) => {
       if (!currentQuestion) return;
       const isCorrect = optionIndex === currentQuestion.correctAnswer;
-      const newAnswers = {
-        ...answers,
-        [currentQuestion.id]: {
-          selectedOption: optionIndex,
-          isCorrect,
-          timestamp: Date.now(),
-        },
-      };
-      setAnswers(newAnswers);
-      try {
-        localStorage.setItem(`${STORAGE_PREFIX}answers_${activeModule}`, JSON.stringify(newAnswers));
-      } catch {}
+      recordAttempt(activeModule, currentQuestion.id, optionIndex, isCorrect);
     },
-    [currentQuestion, answers, activeModule]
+    [currentQuestion, activeModule, recordAttempt]
   );
 
   const toggleBookmark = useCallback(() => {
     if (!currentQuestion) return;
-    const nextState = !bookmarks[currentQuestion.id];
-    const newBookmarks = { ...bookmarks, [currentQuestion.id]: nextState };
-    setBookmarks(newBookmarks);
-    try {
-      localStorage.setItem(`${STORAGE_PREFIX}bookmarks_${activeModule}`, JSON.stringify(newBookmarks));
-    } catch {}
-  }, [currentQuestion, bookmarks, activeModule]);
+    setBookmarks((prev) => ({ ...prev, [currentQuestion.id]: !prev[currentQuestion.id] }));
+  }, [currentQuestion]);
 
   const goToNext = useCallback(() => {
     if (currentIndex < questions.length - 1) {
@@ -96,34 +71,19 @@ export function useQuizStore() {
     }
   }, [currentIndex]);
 
-  const goToQuestion = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < questions.length) {
-        setCurrentIndex(index);
-        setIsGridOpen(false);
-      }
-    },
-    [questions.length]
-  );
+  const goToQuestion = useCallback((index: number) => {
+    if (index >= 0 && index < questions.length) {
+      setCurrentIndex(index);
+      setIsGridOpen(false);
+    }
+  }, [questions.length]);
 
-  const switchModule = useCallback((mod: FrcrModuleKey) => {
+  const switchModule = useCallback((mod: FrcrModuleKey, mistakesOnly: boolean = false) => {
     setActiveModule(mod);
+    setIsMistakesOnly(mistakesOnly);
     setCurrentIndex(0);
   }, []);
 
-  const resetModuleProgress = useCallback(() => {
-    setAnswers({});
-    setBookmarks({});
-    setCurrentIndex(0);
-    setIsSummaryOpen(false);
-    try {
-      localStorage.removeItem(`${STORAGE_PREFIX}answers_${activeModule}`);
-      localStorage.removeItem(`${STORAGE_PREFIX}bookmarks_${activeModule}`);
-      localStorage.removeItem(`${STORAGE_PREFIX}index_${activeModule}`);
-    } catch {}
-  }, [activeModule]);
-
-  // Statistics
   const answeredCount = Object.keys(answers).length;
   const correctCount = Object.values(answers).filter((a) => a.isCorrect).length;
   const scorePercent = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
@@ -137,8 +97,10 @@ export function useQuizStore() {
     totalQuestions: questions.length,
     mode,
     setMode,
+    isMistakesOnly,
+    setIsMistakesOnly,
     answers,
-    currentAnswer: currentQuestion ? answers[currentQuestion.id] : undefined,
+    currentAnswer,
     bookmarks,
     isCurrentBookmarked: currentQuestion ? !!bookmarks[currentQuestion.id] : false,
     isGridOpen,
@@ -154,6 +116,6 @@ export function useQuizStore() {
     goToPrev,
     goToQuestion,
     switchModule,
-    resetModuleProgress,
+    analytics,
   };
 }

@@ -1,8 +1,16 @@
 /**
- * Types for FRCR 2A Radiodiagnosis Quizzing App.
+ * Types for FRCR 2A Radiodiagnosis Examination Workstation & Progress OS.
+ * Strictly Gated for Dr. Neel Yadav.
  */
 
 export type FrcrModuleKey = "PAEDS" | "MSK" | "CHEST" | "GUT" | "GIT" | "CNS";
+
+export interface ExplanationBlock {
+  type: "text" | "image";
+  content?: string;
+  src?: string;
+  caption?: string;
+}
 
 export interface FrcrQuestion {
   id: string;
@@ -12,6 +20,7 @@ export interface FrcrQuestion {
   prompt: string;
   options: string[];
   explanation: string;
+  explanationBlocks?: ExplanationBlock[];
   correctAnswer: number; // 0-indexed: 0=A, 1=B, 2=C, 3=D, 4=E
 }
 
@@ -33,8 +42,33 @@ export interface UserAnswerRecord {
   timestamp: number;
 }
 
+export interface QuestionAttemptRecord {
+  selectedOption: number;
+  isCorrect: boolean;
+  attemptCount: number;
+  correctStreak: number; // Cleared from mistake queue when correctStreak >= 2
+  isInMistakeQueue: boolean;
+  lastAttemptedAt: number;
+}
+
 export interface ModuleProgress {
   answers: Record<string, UserAnswerRecord>;
+  attempts?: Record<string, QuestionAttemptRecord>;
   bookmarks: Record<string, boolean>;
   lastIndex: number;
+}
+
+export interface DailyProgressPoint {
+  date: string;
+  attempted: number;
+  correct: number;
+  accuracy: number;
+}
+
+export interface MasteryLevelInfo {
+  level: number;
+  title: string;
+  badge: string;
+  minCompleted: number;
+  minAccuracy: number;
 }

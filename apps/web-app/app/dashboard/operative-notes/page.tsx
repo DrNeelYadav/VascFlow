@@ -4,10 +4,6 @@ import React, { useState, useMemo, useCallback, useEffect, Suspense } from "reac
 import { useSearchParams } from "next/navigation";
 import { useOperativeNoteDocument } from "./useOperativeNoteDocument";
 import { OperativeNotePreview } from "./OperativeNotePreview";
-import { ProcedureDossierStagesBar, ProcedureDossierStage } from "./ProcedureDossierStagesBar";
-import { ProcedureDatingStage } from "./ProcedureDatingStage";
-import { ProcedureConsentStage } from "./ProcedureConsentStage";
-import { ProcedureDischargeStage } from "./ProcedureDischargeStage";
 import { AUTHENTIC_SMS_MASTER_CASES } from "../../lib/realData/smsMasterAnalysisCases";
 import { GOLD_STANDARD_1090_CASES } from "../../lib/realData/goldStandard1090Cases";
 import { useEndoflowStore } from "../useEndoflowStore";
@@ -19,7 +15,6 @@ function OperativeNotesContent() {
   const requestedCaseId = searchParams.get("caseId");
   const doc = useOperativeNoteDocument();
   const storePatients = useEndoflowStore((s) => s.patients);
-  const [activeStage, setActiveStage] = useState<ProcedureDossierStage>("op_note");
   const [patientSearch, setPatientSearch] = useState<string>("");
 
   const initialCase = useMemo(() => {
@@ -35,8 +30,6 @@ function OperativeNotesContent() {
   const [age, setAge] = useState<string>(initialCase?.age && initialCase.age !== "—" ? String(initialCase.age) : "");
   const [sex, setSex] = useState<string>(initialCase?.gender && initialCase.gender !== "—" ? initialCase.gender : "");
   const [uhid, setUhid] = useState<string>(initialCase?.uhid || initialCase?.crNumber || "");
-  const [contactNumber, setContactNumber] = useState<string>(initialCase?.contactNo && initialCase.contactNo !== "—" ? initialCase.contactNo : "");
-  const [location, setLocation] = useState<string>("");
   const [unit, setUnit] = useState<string>(initialCase?.unit && initialCase.unit !== "—" ? initialCase.unit : "Interventional Radiology");
   const [procedureTitle, setProcedureTitle] = useState<string>(initialCase?.procedureName && initialCase.procedureName !== "—" ? initialCase.procedureName : "");
 
@@ -80,7 +73,6 @@ function OperativeNotesContent() {
     setAge(String(p.age));
     setSex(p.sex);
     setUhid(p.hid);
-    setContactNumber(p.phone || "");
     setUnit(p.unit || "Interventional Radiology");
     setProcedureTitle(p.procedure);
     setPatientSearch("");
@@ -152,28 +144,9 @@ function OperativeNotesContent() {
         )}
       </div>
 
-      <ProcedureDossierStagesBar activeStage={activeStage} onStageChange={setActiveStage} />
-
+      {/* Standalone Operative Note Editor & WordPad Sheet */}
       <div className="pt-1">
-        {activeStage === "dating" && (
-          <ProcedureDatingStage
-            patientName={patientName}
-            age={age}
-            sex={sex}
-            uhid={uhid}
-            contactNumber={contactNumber}
-            location={location}
-            unit={unit}
-            scheduledDate={doc.docData.dateStr || ""}
-          />
-        )}
-        {activeStage === "consent" && (
-          <ProcedureConsentStage patientName={patientName} age={age} sex={sex} uhid={uhid} procedureTitle={procedureTitle} />
-        )}
-        {activeStage === "op_note" && <OperativeNotePreview docManager={doc} />}
-        {activeStage === "discharge" && (
-          <ProcedureDischargeStage patientName={patientName} age={age} sex={sex} uhid={uhid} procedureTitle={procedureTitle} />
-        )}
+        <OperativeNotePreview docManager={doc} />
       </div>
     </div>
   );

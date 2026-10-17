@@ -4,8 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useEndoflowStore } from "../useEndoflowStore";
 import {
   IhmsDischargeSummaryData,
-  SUNIL_KUMAR_DISCHARGE,
-  BUDD_CHIARI_DISCHARGE,
+  BLANK_IHMS_DISCHARGE,
   generateIhmsDischargeForPatient,
 } from "./ihmsDischargeTemplates";
 import { GOLD_STANDARD_1090_CASES } from "../../lib/realData/goldStandard1090Cases";
@@ -15,16 +14,13 @@ export function useDischargeSummary(requestedCaseId?: string | null) {
   const patients = useEndoflowStore((s) => s.patients);
   const [selectedPatientId, setSelectedPatientId] = useState<string>(() => {
     if (requestedCaseId) return requestedCaseId;
-    return patients[0]?.id || "EX01";
+    return patients[0]?.id || "";
   });
   const [copied, setCopied] = useState<boolean>(false);
 
   // Pre-generate authentic discharge records from available patients
   const patientSummaries = useMemo(() => {
-    const map: Record<string, IhmsDischargeSummaryData> = {
-      EX01: SUNIL_KUMAR_DISCHARGE,
-      EX02: BUDD_CHIARI_DISCHARGE,
-    };
+    const map: Record<string, IhmsDischargeSummaryData> = {};
     patients.forEach((p) => {
       map[p.id] = generateIhmsDischargeForPatient({
         id: p.id,
@@ -53,6 +49,10 @@ export function useDischargeSummary(requestedCaseId?: string | null) {
   }, [patients]);
 
   const activeSummary = useMemo((): IhmsDischargeSummaryData => {
+    if (!selectedPatientId) {
+      return BLANK_IHMS_DISCHARGE;
+    }
+
     // 1. Lookup case from 1,090 verified cases
     const matched = GOLD_STANDARD_1090_CASES.find(
       (c) => c.dsaNo === selectedPatientId || c.crNumber === selectedPatientId || c.uhid === selectedPatientId
@@ -61,7 +61,7 @@ export function useDischargeSummary(requestedCaseId?: string | null) {
       return buildRegistryDischargeSummary(matched);
     }
 
-    return patientSummaries[selectedPatientId] || SUNIL_KUMAR_DISCHARGE;
+    return patientSummaries[selectedPatientId] || BLANK_IHMS_DISCHARGE;
   }, [patientSummaries, selectedPatientId]);
 
   const handlePrint = useCallback(() => {

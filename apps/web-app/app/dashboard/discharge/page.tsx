@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useDischargeSummary } from "./useDischargeSummary";
 import { DischargeHeaderBar } from "./DischargeHeaderBar";
 import { DischargeStatutoryDocument } from "./DischargeStatutoryDocument";
-import { DischargeDetailsBox } from "./DischargeDetailsBox";
 import { SurveillanceFollowUpTable } from "./SurveillanceFollowUpTable";
 import { ClinicalPipelineHeader } from "../common/ClinicalPipelineHeader";
 import { PageBreakDivider } from "../common/PageBreakDivider";
@@ -23,19 +22,6 @@ function DischargeSummaryContent() {
     handlePrint,
   } = useDischargeSummary(caseId);
 
-  const [customAdvice, setCustomAdvice] = useState<string | null>(null);
-
-  const displayedSummary = React.useMemo(() => {
-    if (!customAdvice) return activeSummary;
-    return {
-      ...activeSummary,
-      dischargeDetails: {
-        ...activeSummary.dischargeDetails,
-        dischargeAdvice: customAdvice,
-      },
-    };
-  }, [activeSummary, customAdvice]);
-
   return (
     <div className="max-w-6xl mx-auto px-2 py-4 pb-12 font-sans select-none space-y-4">
       {/* 1. Harmonized 5-Stage Clinical Pipeline Header */}
@@ -44,17 +30,17 @@ function DischargeSummaryContent() {
         title="Rajasthan IHMS e-Hospital Discharge Summary"
         subtitle="Statutory electronic discharge ticket, RMSCL e-Aushadhi medication kit, and post-op surveillance schedule."
         activePatient={
-          displayedSummary.admissionDetails.patientName
+          activeSummary.admissionDetails.patientName
             ? {
-                name: displayedSummary.admissionDetails.patientName,
-                crUhid: displayedSummary.admissionDetails.hid,
+                name: activeSummary.admissionDetails.patientName,
+                crUhid: activeSummary.admissionDetails.hid,
                 ageSex: [
-                  displayedSummary.admissionDetails.age,
-                  displayedSummary.admissionDetails.gender,
+                  activeSummary.admissionDetails.age,
+                  activeSummary.admissionDetails.gender,
                 ]
                   .filter(Boolean)
                   .join(" / "),
-                procedure: displayedSummary.procedureDetails[0]?.surgicalProcedure,
+                procedure: activeSummary.procedureDetails[0]?.surgicalProcedure,
               }
             : undefined
         }
@@ -65,18 +51,14 @@ function DischargeSummaryContent() {
         selectedPatientId={selectedPatientId}
         onSelectPatient={(id) => {
           setSelectedPatientId(id);
-          setCustomAdvice(null);
         }}
         copied={copied}
         onCopy={handleCopy}
         onPrint={handlePrint}
       />
 
-      {/* Structured Dropdown-to-Narrative Assistant Box */}
-      <DischargeDetailsBox onInsertAdvice={(elaborated) => setCustomAdvice(elaborated)} />
-
       {/* Official Rajasthan IHMS e-Hospital Standard Discharge Document */}
-      <DischargeStatutoryDocument summary={displayedSummary} />
+      <DischargeStatutoryDocument summary={activeSummary} />
 
       {/* Page break divider before Surveillance follow-up sheet */}
       <PageBreakDivider
@@ -88,10 +70,10 @@ function DischargeSummaryContent() {
       {/* Dedicated Follow-up Surveillance Sheet (Excluding Sundays & Gazetted Holidays) */}
       <div className="pt-2 print:block">
         <SurveillanceFollowUpTable
-          dischargeDateStr={displayedSummary.admissionDetails.dateOfDischarge}
-          patientName={displayedSummary.admissionDetails.patientName}
-          crUhid={displayedSummary.admissionDetails.hid}
-          procedureName={displayedSummary.procedureDetails[0]?.surgicalProcedure || "IR Procedure"}
+          dischargeDateStr={activeSummary.admissionDetails.dateOfDischarge}
+          patientName={activeSummary.admissionDetails.patientName}
+          crUhid={activeSummary.admissionDetails.hid}
+          procedureName={activeSummary.procedureDetails[0]?.surgicalProcedure || "—"}
         />
       </div>
     </div>

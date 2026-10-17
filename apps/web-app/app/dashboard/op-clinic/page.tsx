@@ -22,7 +22,7 @@ export default function OpClinicConsultationDeskPage() {
       {/* 1. Harmonized 5-Stage Clinical Pipeline Header */}
       <ClinicalPipelineHeader
         currentStage="op-clinic"
-        title="OPD Consultation &amp; Triage Desk"
+        title="Booking Clinic &amp; Triage Desk"
         subtitle="Outpatient intake, clinical disposition matrix, and Day-Care Cath-Lab scheduling."
         activePatient={
           desk.patientName

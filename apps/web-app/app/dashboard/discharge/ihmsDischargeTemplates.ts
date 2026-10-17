@@ -193,6 +193,103 @@ export interface IhmsDischargeSummaryData {
 // ============================================================================
 
 /**
+ * Clean Blank IHMS Discharge Template for unpopulated records.
+ * Strictly adheres to Zero-Phantom Data clinical safety rules.
+ */
+export const BLANK_IHMS_DISCHARGE: IhmsDischargeSummaryData = {
+  id: "IHMS-BLANK",
+  patientId: "",
+  admissionDetails: {
+    hospitalName: "SAWAI MAN SINGH HOSPITAL JAIPUR",
+    hospitalAddress: "SAWAI RAM SINGH ROAD TONK ROAD, JAIPUR",
+    departmentName: "INTERVENTIONAL RADIOLOGY",
+    unitHead: "Prof. (Dr.) Interventional Radiology",
+    unitName: "UNIT-IR (ROOM NO 1090)",
+    opdDays: "MON, WED, FRI",
+    hid: "—",
+    patientName: "",
+    age: "—",
+    gender: "",
+    admissionNo: "—",
+    dateOfAdmission: "—",
+    dateOfDischarge: "—",
+    admissionType: "ON DOCTOR ADVICE",
+    dischargeType: "NORMAL DISCHARGE",
+    patientCategory: "GENERAL",
+    wardBed: "—",
+    abhaAddress: "—",
+    abhaNumber: "—",
+    unitDoctors: [],
+  },
+  caseSummary: {
+    icdDiagnosis: "—",
+    diagnosis: "—",
+    complaints: "—",
+    caseHistory: "—",
+    pastHistory: "—",
+    familyHistory: "—",
+    personalHistory: "—",
+    riskFactor: "—",
+  },
+  physicalExam: {
+    atAdmission: {
+      bloodPressure: "—",
+      pr: "—",
+      temp: "—",
+      rr: "—",
+      spo2: "—",
+      pallor: "Absent",
+      icterus: "Absent",
+      cyanosis: "Absent",
+      clubbing: "Absent",
+      lymphnodes: "Absent",
+      edema: "Absent",
+    },
+    atDischarge: {
+      bloodPressure: "—",
+      pr: "—",
+      temp: "—",
+      rr: "—",
+      spo2: "—",
+      pallor: "Absent",
+      icterus: "Absent",
+      cyanosis: "Absent",
+      clubbing: "Absent",
+      lymphnodes: "Absent",
+      edema: "Absent",
+    },
+  },
+  systemicExam: {
+    respiration: "NAD",
+    cvs: "NAD",
+    perAbdomen: "Soft, non-tender",
+    cns: "NAD",
+    cranialNerve: "NAD",
+    cerebellum: "Normal",
+    meningealSigns: {
+      neckRigidity: "Absent",
+      kernigsSign: "Absent",
+    },
+    localExamination: "—",
+  },
+  investigations: {
+    labResults: [],
+  },
+  procedureDetails: [],
+  ddcDrugs: [],
+  dischargeMedications: [],
+  dischargeDetails: {
+    generalAdvise: "—",
+    conditionOnDischarge: "Improved",
+    followUp: "IR OPD Room 1090",
+    followUpDate: "—",
+    approvedBy: "SMS Medical College & Attached Hospitals",
+    dischargePreparedBy: "Resident Doctor (IR)",
+  },
+  attachments: [],
+};
+
+/**
  * Blank export template.
  *
  * The identifying fields (name, hospital ID, admission number, ABHA address)

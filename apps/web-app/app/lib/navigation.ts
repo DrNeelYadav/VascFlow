@@ -77,7 +77,7 @@ export const WORKSPACES: Workspace[] = [
       { href: "/dashboard/op-clinic", label: "1. Booking Clinic", keywords: "consultation review booking disposition triage opd clinic" },
       { href: "/dashboard/pre-booking", label: "2. Dating Form", keywords: "dating pre-booking sclerotherapy tace bae bleeder aiims rghs maay a4" },
       { href: "/dashboard/consent", label: "3. Informed Consent", keywords: "consent statutory authorization risks bilingual legal" },
-      { href: "/dashboard/operative-notes", label: "4. Operative Note", keywords: "operative note procedure summary wordpad dsa cath lab" },
+      { href: "/dashboard/operative-notes", label: "4. Post-Operative Note", keywords: "operative note procedure summary wordpad dsa cath lab" },
       { href: "/dashboard/discharge", label: "5. Discharge Card", keywords: "discharge card summary advice wound care surveillance" },
     ],
   },

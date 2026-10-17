@@ -45,9 +45,9 @@ function getValidClinicDate(base: Date, days: number): { dateStr: string; note: 
 
 export const SurveillanceFollowUpTable: React.FC<SurveillanceFollowUpTableProps> = ({
   dischargeDateStr = new Date().toISOString().split("T")[0],
-  patientName = "Patient",
-  crUhid = "CR-000",
-  procedureName = "IR Procedure",
+  patientName = "—",
+  crUhid = "—",
+  procedureName = "—",
 }) => {
   const baseDate = useMemo(() => parseYmd(dischargeDateStr), [dischargeDateStr]);
 

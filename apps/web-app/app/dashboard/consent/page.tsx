@@ -1,23 +1,22 @@
 "use client";
 
 import React from "react";
+import { Printer } from "lucide-react";
 import { useConsentStudio } from "./useConsentStudio";
-import { ConsentHeader } from "./ConsentHeader";
 import { ConsentDemographicsForm } from "./ConsentDemographicsForm";
 import { ConsentStatutoryDocument } from "./ConsentStatutoryDocument";
-import { NursingPreOpChecklistPanel } from "./NursingPreOpChecklistPanel";
 import { ClinicalPipelineHeader } from "../common/ClinicalPipelineHeader";
 
 export default function ConsentPage() {
   const studio = useConsentStudio();
 
   return (
-    <div className="max-w-6xl mx-auto px-2 py-4 font-sans select-none space-y-4 print:p-0 print:m-0 print:max-w-none print:w-full print:block">
-      {/* 1. Harmonized 5-Stage Clinical Pipeline Header */}
+    <div className="max-w-5xl mx-auto px-2 py-4 font-sans select-none space-y-4 print:p-0 print:m-0 print:max-w-none print:w-full print:block">
+      {/* 1. Harmonized Clinical Pipeline Header */}
       <ClinicalPipelineHeader
         currentStage="consent"
         title="Informed Consent &amp; Statutory Authorization"
-        subtitle="Statutory bilingual IR procedure consent document, patient risk counseling, and nursing pre-op checklist."
+        subtitle="Official statutory bilingual IR procedure consent document, patient risk counseling, and legal authorizations."
         activePatient={
           studio.patientName
             ? {
@@ -29,17 +28,23 @@ export default function ConsentPage() {
               }
             : undefined
         }
+        actions={
+          <button
+            type="button"
+            onClick={studio.handlePrint}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Print Consent Form</span>
+          </button>
+        }
       />
 
-      {/* 2. Consent Tabs & Language Controls */}
-      <ConsentHeader studio={studio} />
-
-      {/* 3. Case Selection & Demographics */}
+      {/* 2. Patient Demographics & Procedure Selection */}
       <ConsentDemographicsForm studio={studio} />
 
-      {/* 4. Active Document View */}
-      {studio.activeTab === "CONSENT" && <ConsentStatutoryDocument studio={studio} />}
-      {studio.activeTab === "PREPARATION" && <NursingPreOpChecklistPanel studio={studio} />}
+      {/* 3. Official Bilingual Statutory Consent Document */}
+      <ConsentStatutoryDocument studio={studio} />
     </div>
   );
 }

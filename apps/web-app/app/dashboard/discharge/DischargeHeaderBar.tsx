@@ -3,6 +3,7 @@
 import React from "react";
 import { Button } from "@vascule/ui-kit/button";
 import { Printer, Copy, Check } from "lucide-react";
+import { GOLD_STANDARD_1090_CASES } from "../../lib/realData/goldStandard1090Cases";
 
 interface PatientOption {
   id: string;
@@ -38,20 +39,30 @@ export function DischargeHeaderBar({
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
         <select
           value={selectedPatientId}
           onChange={(e) => onSelectPatient(e.target.value)}
-          className="h-8 px-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-slate-100 font-medium cursor-pointer shadow-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="h-10 sm:h-8 px-2.5 text-base sm:text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-slate-100 font-medium cursor-pointer shadow-xs focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto min-h-[40px] sm:min-h-0"
           aria-label="Select Patient"
         >
-          <option value="EX01">Sunil Kumar (VenaSeal / Varicose)</option>
-          <option value="EX02">Anjum Nisha (Budd-Chiari / DIPS)</option>
-          {patients.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name} ({p.procedure})
-            </option>
-          ))}
+          <option value="">— Select Patient / Clean Blank Summary —</option>
+          {patients.length > 0 && (
+            <optgroup label="OPD Clinic Consultation Cases">
+              {patients.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} {p.procedure ? `(${p.procedure})` : ""}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          <optgroup label="Master Cath-Lab Registry (Verified Cases)">
+            {GOLD_STANDARD_1090_CASES.slice(0, 20).map((c) => (
+              <option key={c.dsaNo} value={c.dsaNo}>
+                {c.patientName} (DSA-{c.dsaNo} • {c.procedureName})
+              </option>
+            ))}
+          </optgroup>
         </select>
 
         <Button
@@ -59,7 +70,7 @@ export function DischargeHeaderBar({
           variant="outline"
           size="sm"
           onClick={onCopy}
-          className="h-8 px-3 gap-1.5 font-medium border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-xs active:translate-y-px transition-all"
+          className="min-h-[38px] sm:min-h-8 flex-1 sm:flex-none justify-center px-3 gap-1.5 font-medium border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-xs active:translate-y-px transition-all touch-manipulation"
           title="Copy discharge summary to clipboard"
         >
           {copied ? (
@@ -80,7 +91,7 @@ export function DischargeHeaderBar({
           variant="primary"
           size="sm"
           onClick={onPrint}
-          className="h-8 px-3 gap-1.5 font-medium bg-blue-600 hover:bg-blue-700 text-white border border-blue-700 shadow-xs active:translate-y-px transition-all"
+          className="min-h-[38px] sm:min-h-8 flex-1 sm:flex-none justify-center px-3 gap-1.5 font-medium bg-blue-600 hover:bg-blue-700 text-white border border-blue-700 shadow-xs active:translate-y-px transition-all touch-manipulation"
           title="Print discharge summary"
         >
           <Printer className="w-3.5 h-3.5 text-white" />

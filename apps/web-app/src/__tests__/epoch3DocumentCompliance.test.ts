@@ -169,6 +169,15 @@ describe("Phase 30: Epoch III Verification, Print Layout Fidelity & Document Com
       expect(content).toContain("break-inside: avoid");
     });
 
+    it("enforces multi-page break rules and container unclipping for Chromium/WebKit pagination", () => {
+      const printCssPath = path.resolve(process.cwd(), "apps/web-app/app/styles/print.css");
+      const content = readFileSync(printCssPath, "utf-8");
+      expect(content).toContain("break-before: page !important");
+      expect(content).toContain("page-break-before: always !important");
+      expect(content).toContain("overflow: visible !important");
+      expect(content).toContain(".print-break-before");
+    });
+
     it("provides the useDocPreview zoom calculations, print triggers, and clipboard helpers", async () => {
       // Zoom calculation bounds
       expect(calculateDocZoom(100, 10)).toBe(110);

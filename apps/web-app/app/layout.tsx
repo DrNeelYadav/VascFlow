@@ -73,7 +73,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-blue-50 selection:text-blue-600 overflow-x-hidden">
+      <body className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-blue-50 selection:text-blue-600 overflow-x-hidden print:overflow-visible print:h-auto print:min-h-0">
         <Providers>{children}</Providers>
       </body>
     </html>

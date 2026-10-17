@@ -15,7 +15,7 @@ export const SclerotherapyPage2Sheet: React.FC<SclerotherapyPage2SheetProps> = (
   sessions = [],
 }) => {
   return (
-    <div className="bg-white text-black p-6 border border-slate-300 print:border-none shadow-sm print:shadow-none w-full max-w-[210mm] mx-auto min-h-[297mm] text-xs font-sans leading-relaxed flex flex-col justify-between">
+    <div className="bg-white text-black p-6 border border-slate-300 print:border-none shadow-sm print:shadow-none w-full max-w-[210mm] mx-auto min-h-[297mm] print:min-h-0 print:h-auto print:block a4-print-sheet text-xs font-sans leading-relaxed flex flex-col justify-between">
       <div>
         {/* Top Reference Bar */}
         <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-3 text-[11px]">

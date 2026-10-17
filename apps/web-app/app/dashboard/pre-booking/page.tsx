@@ -84,7 +84,7 @@ export default function PreBookingPage() {
       />
 
       {/* 3. Single Standalone A4 Clinical Dating Sheet */}
-      <div className="print:p-0 print:m-0">
+      <div className="print:p-0 print:m-0 print-document print:block">
         <PreBookingSheetRenderer
           selectedCategory={selectedCategory}
           patientName={patientName}

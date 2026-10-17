@@ -30,8 +30,37 @@
     padding: 0 !important;
     width: 100% !important;
     height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  /* Reset all ancestor wrappers for multi-page document pagination in Next.js App Router */
+  html,
+  body,
+  #__next,
+  [data-nextjs-scroll-focus-boundary],
+  div,
+  main,
+  section,
+  article,
+  form {
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+  }
+
+  html,
+  body,
+  main,
+  .print-document,
+  .printable-area,
+  .a4-print-sheet {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    position: static !important;
   }
 
   /* Non-Printable Elements */
@@ -53,7 +82,8 @@
   /* Main Document Canvas */
   main,
   .print-document,
-  .printable-area {
+  .printable-area,
+  .a4-print-sheet {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -61,6 +91,29 @@
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
+  }
+
+  /* Multi-page break rules */
+  .page-break,
+  .print-break-before,
+  .print\:break-before-page,
+  [data-page-break="true"] {
+    break-before: page !important;
+    page-break-before: always !important;
+    display: block !important;
+    clear: both !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .print-break-after,
+  .print\:break-after-page {
+    break-after: page !important;
+    page-break-after: always !important;
+    display: block !important;
+    clear: both !important;
   }
 
   /* Page Break Hygiene */

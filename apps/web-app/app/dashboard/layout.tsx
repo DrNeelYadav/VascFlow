@@ -30,8 +30,11 @@ export default function DashboardLayout({
 
   useEffect(() => {
     try {
+      const savedTheme = localStorage.getItem("endoflow_theme");
       const savedDark = localStorage.getItem("endoflow_dark_mode");
-      if (savedDark !== null) {
+      if (savedTheme !== null) {
+        setIsCathLabDark(savedTheme === "dark");
+      } else if (savedDark !== null) {
         setIsCathLabDark(savedDark === "true");
       } else if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
         setIsCathLabDark(true);
@@ -41,6 +44,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     try {
+      localStorage.setItem("endoflow_theme", isCathLabDark ? "dark" : "light");
       localStorage.setItem("endoflow_dark_mode", String(isCathLabDark));
       if (typeof document !== "undefined") {
         if (isCathLabDark) {
@@ -101,11 +105,11 @@ export default function DashboardLayout({
   }, [session, status, setCurrentStaff]);
 
   const containerBg = isCathLabDark
-    ? "dark bg-slate-950 text-slate-100"
+    ? "bg-slate-950 text-slate-100"
     : "bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100";
 
   return (
-    <div className={`h-dvh overflow-hidden overflow-x-hidden ${isCathLabDark ? "dark " : ""}${containerBg} flex flex-col font-sans antialiased`}>
+    <div className={`h-dvh overflow-hidden overflow-x-hidden print:h-auto print:min-h-0 print:max-h-none print:overflow-visible print:block print:static ${containerBg} flex flex-col font-sans antialiased`}>
       {/* Google Workspace Header with Pill Search Bar & Bedside Lock */}
       <div className="print:hidden">
         <GoogleHeader
@@ -118,7 +122,7 @@ export default function DashboardLayout({
       </div>
 
       {/* Main Workspace with GoogleSidebar */}
-      <div className="flex-1 flex overflow-hidden print:overflow-visible print:block print:h-auto">
+      <div className="flex-1 flex overflow-hidden print:overflow-visible print:block print:h-auto print:min-h-0 print:max-h-none print:static">
         <div className="print:hidden">
           <GoogleSidebar
             onOpenDataTools={() => setShowDataTools(true)}
@@ -126,7 +130,7 @@ export default function DashboardLayout({
             onCloseMobile={() => setIsMobileSidebarOpen(false)}
           />
         </div>
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-3 lg:p-4 pb-20 md:pb-6 relative print:p-0 print:m-0 print:bg-white print:overflow-visible print:h-auto print:block flex flex-col">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-3 lg:p-4 pb-20 md:pb-6 relative print:static print:p-0 print:m-0 print:bg-white print:overflow-visible print:h-auto print:min-h-0 print:max-h-none print:block flex flex-col">
           <WorkspaceTabs />
           {children}
         </main>

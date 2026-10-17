@@ -27,7 +27,7 @@ export const VaricoseVeinPreBookingSheet: React.FC<SheetDemographicsProps> = ({
   scheduledDate = "",
 }) => {
   return (
-    <div className="bg-white text-black p-6 border border-slate-300 print:border-none shadow-sm print:shadow-none w-full max-w-[210mm] mx-auto min-h-[297mm] text-xs font-sans leading-relaxed flex flex-col justify-between">
+    <div className="bg-white text-black p-6 border border-slate-300 print:border-none shadow-sm print:shadow-none w-full max-w-[210mm] mx-auto min-h-[297mm] print:min-h-0 print:h-auto print:block a4-print-sheet text-xs font-sans leading-relaxed flex flex-col justify-between">
       <div>
         <PreBookingHeader
           procedureTitle="VARICOSE VEINS"

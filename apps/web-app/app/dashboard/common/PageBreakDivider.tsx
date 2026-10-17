@@ -29,8 +29,19 @@ export const PageBreakDivider: React.FC<PageBreakDividerProps> = ({
         <div className="flex-1 border-t-2 border-dashed border-slate-300 dark:border-slate-700" />
       </div>
 
-      {/* CSS print page break rule */}
-      <div className="hidden print:block print:break-before-page" />
+      {/* Robust CSS print page break rule for Chromium & Firefox */}
+      <div
+        className="hidden print:block print-break-before page-break"
+        style={{
+          breakBefore: "page",
+          pageBreakBefore: "always",
+          clear: "both",
+          height: "1px",
+          margin: 0,
+          padding: 0,
+          visibility: "hidden",
+        }}
+      />
     </>
   );
 };

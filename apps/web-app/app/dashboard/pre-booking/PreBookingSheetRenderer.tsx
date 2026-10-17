@@ -33,7 +33,20 @@ export const PreBookingSheetRenderer: React.FC<SheetRendererProps> = (props) => 
 
   switch (selectedCategory) {
     case "sclerotherapy":
-      return <SclerotherapyPage1Sheet {...props} />;
+      return (
+        <div className="space-y-6 print:space-y-0 print:block print-document">
+          <div className="print:block">
+            <SclerotherapyPage1Sheet {...props} />
+          </div>
+          <PageBreakDivider label="Anatomy &amp; Phlebogram Pen Sketch (Page 2)" pageNumber={2} totalPages={2} />
+          <div
+            className="print:block print-break-before"
+            style={{ breakBefore: "page", pageBreakBefore: "always" }}
+          >
+            <SclerotherapyPage2Sheet patientName={patientName} uhid={uhid} />
+          </div>
+        </div>
+      );
     case "tace":
       return <TacePreBookingSheet {...props} />;
     case "bae":

@@ -8,6 +8,7 @@ export default defineConfig({
       "@vascule/utils": path.resolve(__dirname, "./packages/utils/src"),
       "@": path.resolve(__dirname, "./apps/web-app"),
       "server-only": path.resolve(__dirname, "./apps/web-app/src/__tests__/empty-module.ts"),
+      "next/server": path.resolve(__dirname, "./node_modules/next/server.js"),
     },
   },
   test: {

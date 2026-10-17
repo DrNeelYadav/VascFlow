@@ -629,9 +629,32 @@ export interface EndoflowState {
 // ============================================================================
 
 const safeStorage = createJSONStorage(() => {
-  if (typeof window !== "undefined") return window.localStorage;
+  if (typeof window !== "undefined") {
+    return {
+      getItem: (key: string) => {
+        try {
+          return window.localStorage.getItem(key);
+        } catch {
+          return null;
+        }
+      },
+      setItem: (key: string, value: string) => {
+        try {
+          window.localStorage.setItem(key, value);
+        } catch (e) {
+          console.warn("[safeStorage] LocalStorage quota limit reached; suppressed safely:", e);
+        }
+      },
+      removeItem: (key: string) => {
+        try {
+          window.localStorage.removeItem(key);
+        } catch {}
+      },
+    };
+  }
   return { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 });
+
 
 // ============================================================================
 // ASYNC FIRESTORE PERSISTENCE HELPER (TRY/CATCH WRAPPED)
@@ -1619,6 +1642,18 @@ export const useEndoflowStore = create<EndoflowState>()(
         return persistedState;
       },
       storage: safeStorage,
+      partialize: (state) => ({
+        currentStaff: state.currentStaff,
+        activeCaseId: state.activeCaseId,
+        searchQuery: state.searchQuery,
+        filterModality: state.filterModality,
+        // Bound active local collections to 50 items so localStorage never exceeds 5MB
+        patients: state.patients.slice(0, 50),
+        bookedCases: state.bookedCases.slice(0, 50),
+        ctReviews: state.ctReviews.slice(0, 50),
+        beds: state.beds,
+        dopplerRecords: state.dopplerRecords.slice(0, 50),
+      }),
     }
   )
 );

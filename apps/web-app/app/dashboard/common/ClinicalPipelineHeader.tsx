@@ -10,6 +10,9 @@ import {
   LogOut,
   User,
 } from "lucide-react";
+import { MultiDeviceSyncBadge } from "./MultiDeviceSyncBadge";
+
+
 
 export type ClinicalWorkflowStage =
   | "op-clinic"
@@ -148,11 +151,10 @@ export const ClinicalPipelineHeader: React.FC<ClinicalPipelineHeaderProps> = ({
           </p>
         </div>
 
-        {actions && (
-          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-            {actions}
-          </div>
-        )}
+        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          <MultiDeviceSyncBadge />
+          {actions}
+        </div>
       </div>
     </div>
   );

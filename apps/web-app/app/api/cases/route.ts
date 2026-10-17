@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { getAdminFirestore } from "@/app/lib/firebaseAdmin";
 import {
   canViewIdentifiableClinicalData,
   getVerifiedStaff,
-  redactClinicalRecord,
 } from "@/app/lib/auth/clinicalAccess";
+import { ClinicalDataGateway } from "@/app/lib/server/clinicalDataGateway";
 
 /**
  * GET /api/cases
- * Retrieves cases from Google Cloud Firestore collection "cases".
+ * Retrieves cases via the unified ClinicalDataGateway (PostgreSQL -> Firestore -> In-Memory).
+ * Supports cursor pagination and enforces DISHA role-based redactions.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -22,34 +21,29 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const limitCount = Math.min(
+    const limit = Math.min(
       100,
       Math.max(1, parseInt(searchParams.get("limit") || "50", 10) || 50)
     );
+    const cursor = searchParams.get("cursor") || undefined;
 
-    const db = getAdminFirestore();
-    const snapshot = await db.collection("cases").limit(limitCount).get();
-    const doctor = canViewIdentifiableClinicalData(staff);
-    const data = snapshot.docs.map((docSnap) => {
-      const record = { id: docSnap.id, ...docSnap.data() };
-      return doctor ? record : redactClinicalRecord(record);
-    });
+    const data = await ClinicalDataGateway.getCases({ limit, cursor }, staff);
+
     return NextResponse.json(data, {
       headers: { "Cache-Control": "private, no-store" },
     });
   } catch (error: any) {
-    console.error("[Firestore /api/cases GET] Live read failed:", error?.message);
+    console.error("[ClinicalDataGateway /api/cases GET] Read failed:", error?.message);
     return NextResponse.json(
-      { error: "Live case data is unavailable." },
-      { status: 503, headers: { "Cache-Control": "no-store" } }
+      { error: "Case records are currently unavailable." },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
 }
 
 /**
  * POST /api/cases
- * Adds or updates a clinical procedure case in Google Cloud Firestore.
- * Preserves custom case IDs to prevent split-brain mismatches with status routes.
+ * Adds or updates a clinical procedure case with optimistic locking and multi-tiered persistence.
  */
 export async function POST(req: Request) {
   try {
@@ -77,27 +71,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const nowIso = new Date().toISOString();
-    const targetId = body.id || body.caseId || `case_${Date.now()}`;
-    const newRecord = {
-      ...body,
-      id: targetId,
-      createdAt: body.createdAt || nowIso,
-      updatedAt: nowIso,
-    };
+    const savedRecord = await ClinicalDataGateway.saveCase(body, staff);
 
-    const db = getAdminFirestore();
-    await db.collection("cases").doc(String(targetId)).set(newRecord, { merge: true });
-
-    return NextResponse.json(
-      newRecord,
-      { status: 201 }
-    );
+    return NextResponse.json(savedRecord, { status: 201 });
   } catch (error: any) {
-    console.error("[Firestore /api/cases POST] Live write failed:", error?.message);
+    console.error("[ClinicalDataGateway /api/cases POST] Save failed:", error?.message);
     return NextResponse.json(
-      { error: "Live case data could not be saved." },
-      { status: 503 }
+      { error: "Case data could not be saved." },
+      { status: 500 }
     );
   }
 }
+

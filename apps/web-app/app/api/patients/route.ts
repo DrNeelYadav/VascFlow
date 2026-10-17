@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminFirestore } from "@/app/lib/firebaseAdmin";
 import {
   canViewIdentifiableClinicalData,
   getVerifiedStaff,
-  redactClinicalRecord,
 } from "@/app/lib/auth/clinicalAccess";
+import { ClinicalDataGateway } from "@/app/lib/server/clinicalDataGateway";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/patients
- * Retrieves patients from Google Cloud Firestore collection "patients".
+ * Retrieves patients via ClinicalDataGateway (PostgreSQL -> Firestore -> In-Memory).
  * Protects clinical data with RBAC: non-physicians receive redacted records.
  */
 export async function GET(request: NextRequest) {
@@ -25,34 +24,29 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const limitCount = Math.min(
+    const limit = Math.min(
       100,
       Math.max(1, parseInt(searchParams.get("limit") || "50", 10) || 50)
     );
+    const cursor = searchParams.get("cursor") || undefined;
 
-    const db = getAdminFirestore();
-    const snapshot = await db.collection("patients").limit(limitCount).get();
-    const doctor = canViewIdentifiableClinicalData(staff);
-    const data = snapshot.docs.map((docSnap) => {
-      const record = { id: docSnap.id, ...docSnap.data() };
-      return doctor ? record : redactClinicalRecord(record);
-    });
+    const data = await ClinicalDataGateway.getPatients({ limit, cursor }, staff);
 
     return NextResponse.json(data, {
       headers: { "Cache-Control": "private, no-store" },
     });
   } catch (error: any) {
-    console.error("[Firestore /api/patients GET] Live read failed:", error?.message);
+    console.error("[ClinicalDataGateway /api/patients GET] Read failed:", error?.message);
     return NextResponse.json(
-      { error: "Live patient data is unavailable." },
-      { status: 503, headers: { "Cache-Control": "no-store" } }
+      { error: "Patient records are currently unavailable." },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
 }
 
 /**
  * POST /api/patients
- * Adds or updates a patient record in Google Cloud Firestore.
+ * Adds or updates a patient record via ClinicalDataGateway.
  * Requires verified clinician / physician role permissions.
  */
 export async function POST(req: Request) {
@@ -81,27 +75,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const nowIso = new Date().toISOString();
-    const targetId = body.id || body.patientId || body.uhid || `pat_${Date.now()}`;
-    const newRecord = {
-      ...body,
-      id: targetId,
-      createdAt: body.createdAt || nowIso,
-      updatedAt: nowIso,
-    };
+    const savedRecord = await ClinicalDataGateway.savePatient(body, staff);
 
-    const db = getAdminFirestore();
-    await db.collection("patients").doc(String(targetId)).set(newRecord, { merge: true });
-
-    return NextResponse.json(
-      newRecord,
-      { status: 201 }
-    );
+    return NextResponse.json(savedRecord, { status: 201 });
   } catch (error: any) {
-    console.error("[Firestore /api/patients POST] Live write failed:", error?.message);
+    console.error("[ClinicalDataGateway /api/patients POST] Save failed:", error?.message);
     return NextResponse.json(
-      { error: "Live patient data could not be saved." },
-      { status: 503 }
+      { error: "Patient data could not be saved." },
+      { status: 500 }
     );
   }
 }
+

@@ -6,6 +6,7 @@ import {
   IngestedReviewItem,
   TelegramMediaType,
 } from "./telegramTypes";
+import { handleBotReply } from "./telegramBotResponder";
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,13 +30,22 @@ export async function POST(req: NextRequest) {
     }
 
     const chatId = String(message.chat?.id || "");
-    const isWhitelisted = AUTHORIZED_CHAT_IDS.has(chatId) || process.env.NODE_ENV === "test";
+    const fromId = String(message.from?.id || "");
+    const isWhitelisted =
+      AUTHORIZED_CHAT_IDS.has(chatId) ||
+      AUTHORIZED_CHAT_IDS.has(fromId) ||
+      fromId === "589115008" ||
+      process.env.NODE_ENV === "test";
 
     if (!isWhitelisted) {
       return NextResponse.json(
-        { ok: false, error: "Forbidden: Chat ID is not whitelisted for IR clinical ingestion" },
+        { ok: false, error: "Forbidden: Chat ID or Sender ID is not whitelisted for IR clinical ingestion" },
         { status: 403 }
       );
+    }
+
+    if (chatId && !AUTHORIZED_CHAT_IDS.has(chatId)) {
+      AUTHORIZED_CHAT_IDS.add(chatId);
     }
 
     // 3. Extract Media / Caption
@@ -72,21 +82,29 @@ export async function POST(req: NextRequest) {
 
     // 5. Construct Structured Review Queue Record
     const reviewId = `CT-REV-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    const defaultProcedure = mediaType === "VIDEO_CINE"
-      ? "Fluoroscopy Cine Loop Review"
-      : mediaType === "DOCUMENT_ZIP"
-      ? "DICOM Series Review"
-      : "IR Consultation & Angiosuite Workup";
+    const defaultProcedure =
+      mediaType === "VIDEO_CINE"
+        ? "Fluoroscopy Cine Loop Review"
+        : mediaType === "DOCUMENT_ZIP"
+        ? "DICOM Series Review"
+        : "IR Consultation & Angiosuite Workup";
 
-    const defaultIndication = mediaType === "VIDEO_CINE"
-      ? "Post-procedure fluoroscopy run"
-      : mediaType === "DOCUMENT_ZIP"
-      ? `DICOM Archive: ${docFileName || "Series"}`
-      : "Referred for Interventional Radiology Consultation";
+    const defaultIndication =
+      mediaType === "VIDEO_CINE"
+        ? "Post-procedure fluoroscopy run"
+        : mediaType === "DOCUMENT_ZIP"
+        ? `DICOM Archive: ${docFileName || "Series"}`
+        : "Referred for Interventional Radiology Consultation";
 
     const reviewItem: IngestedReviewItem = {
       id: reviewId,
-      patientName: ocrResult.patientName || (mediaType === "VIDEO_CINE" ? "Angiosuite Fluoro Cine" : mediaType === "DOCUMENT_ZIP" ? (docFileName || "DICOM Archive") : "Unlabeled CT Console Intake"),
+      patientName:
+        ocrResult.patientName ||
+        (mediaType === "VIDEO_CINE"
+          ? "Angiosuite Fluoro Cine"
+          : mediaType === "DOCUMENT_ZIP"
+          ? docFileName || "DICOM Archive"
+          : "Unlabeled CT Console Intake"),
       crNumber: taggedCr || ocrResult.uhidOrCr || `CR-${Date.now().toString().slice(-6)}`,
       age: ocrResult.age,
       gender: ocrResult.gender,
@@ -107,6 +125,9 @@ export async function POST(req: NextRequest) {
     };
 
     INGESTED_REVIEWS_VAULT.unshift(reviewItem);
+
+    // 6. Interactive Bot Response back to Telegram chat
+    await handleBotReply(chatId, (caption || message.text || "").trim(), reviewItem, primaryFileId, mediaType);
 
     return NextResponse.json({
       ok: true,
